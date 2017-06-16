@@ -1,0 +1,39 @@
+﻿using AnyTagNet;
+using AnyTagNet.BL;
+using LuceneTest.TagMgr;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Media;
+
+namespace AnyTag.UI
+{
+    
+    interface IGObjCollection
+    {
+        void AddGObjs(IEnumerable<GObj> all);
+        void AddEdge(IEnumerable<PathEdge> edge);
+        IEnumerable<UIElement> GetAllTextBlocks();
+        IEnumerable<UIElement> GetAllLines();
+    }
+    interface IRectLayoutCalc
+    {
+        void Calc(ref Size s, IEnumerable<GObj> objs, LayoutOption o);
+    }
+
+    enum LayoutOption
+    {
+        FixWidth, FixHeight, FixRadio
+    }
+    interface IGLayoutResult
+    {
+        bool HasCalc(string tag);
+        void AddCalc(string tag);
+        void AddEdge(string parent, string child);
+        IEnumerable<PathEdge> GetEdges();
+        void Clear();
+    }
+}

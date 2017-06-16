@@ -1,0 +1,94 @@
+﻿<Window x:Class="LuceneTest.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:avalonDock="http://schemas.xceed.com/wpf/xaml/avalondock"
+        xmlns:autoTextbox="clr-namespace:LuceneTest.AutoComplete"
+        xmlns:tagsbar ="clr-namespace:LuceneTest.TagsBar"
+        xmlns:local="clr-namespace:LuceneTest"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="350" Width="525" SizeChanged="Window_SizeChanged">
+    <Window.Resources>
+        <Style x:Key="BACK">
+            <Style.Triggers >
+                <Trigger Property="Control.IsMouseOver" Value="True">
+                    <Setter Property="Control.Background" Value="Red"></Setter>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
+    <Grid >
+        <Grid.RowDefinitions>
+            <RowDefinition Height="30" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <tagsbar:TagsBar Grid.Row="0" Style="{StaticResource BACK}">
+            <Button Width="40">Hello</Button>
+            <Button Width="40">Hello</Button>
+            <autoTextbox:AutoTextbox x:Name="autoTextBox"    Background="White" Width="200"></autoTextbox:AutoTextbox>
+        </tagsbar:TagsBar>
+        <avalonDock:DockingManager x:Name="dockingManager" Grid.Row="1">
+            <avalonDock:DockingManager.Theme>
+                <avalonDock:GenericTheme></avalonDock:GenericTheme>
+            </avalonDock:DockingManager.Theme>
+            <avalonDock:LayoutRoot x:Name="dockRoot">
+                <avalonDock:LayoutPanel Orientation="Horizontal">
+
+                    <avalonDock:LayoutDocumentPaneGroup>
+                        <avalonDock:LayoutDocumentPane >
+                            <avalonDock:LayoutDocument Title="Tag视图" CanClose="False" x:Name="ldock">
+                                <ScrollViewer x:Name="scrollViewer" DockPanel.Dock="Bottom" VerticalAlignment="Top"  Background="White" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" MouseDoubleClick="scrollViewer_MouseDoubleClick">
+                                    <Canvas x:Name="canvas" HorizontalAlignment="Left" 
+                                            MenuItem.Click="canvas_Click"  VerticalAlignment="Top"  Background="White" 
+                                            MouseLeftButtonDown="canvas_MouseLeftButtonDown" 
+                                            MouseRightButtonDown="canvas_MouseRightButtonDown_1" >
+                                    </Canvas>
+                                </ScrollViewer>
+                            </avalonDock:LayoutDocument>
+                        </avalonDock:LayoutDocumentPane>
+                    </avalonDock:LayoutDocumentPaneGroup>
+
+                    <avalonDock:LayoutAnchorablePaneGroup x:Name="pg1" DockWidth="350" Orientation="Vertical" >
+                        <avalonDock:LayoutAnchorablePane >
+                            <avalonDock:LayoutAnchorable x:Name="searchPane"  Title="搜索" CanClose="False" >
+                                <Grid x:Name="rGrid">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="*" />
+                                        <RowDefinition Height="50" />
+                                    </Grid.RowDefinitions>
+
+                                    
+                                    <ListBox Grid.Row="0" Name="lst" 
+                                             MouseDoubleClick="lst_MouseDoubleClick"  Background="White">
+
+                                        <ListBox.ItemTemplate>
+                                            <DataTemplate>
+                                                <DockPanel>
+                                                    <Image Source="{Binding Path=icon}" ></Image>
+                                                    <TextBlock Text="{Binding Path=Detail}" >
+
+                                                    </TextBlock>
+                                                </DockPanel>
+                                            </DataTemplate>
+                                        </ListBox.ItemTemplate>
+                                    </ListBox>
+                                    <ScrollViewer Grid.Row="1">
+                                    <tagsbar:TagsPanel  x:Name="tagsBar"></tagsbar:TagsPanel>
+                                    </ScrollViewer>
+                                </Grid>
+                            </avalonDock:LayoutAnchorable>
+                        </avalonDock:LayoutAnchorablePane>
+                    </avalonDock:LayoutAnchorablePaneGroup>
+                </avalonDock:LayoutPanel>
+            </avalonDock:LayoutRoot>
+        </avalonDock:DockingManager>
+
+
+
+
+
+
+
+    </Grid>
+</Window>

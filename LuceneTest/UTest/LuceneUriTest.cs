@@ -1,0 +1,120 @@
+﻿using LuceneTest.UriMgr;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace LuceneTest.UTest
+{
+    [TestClass]
+    public class LuceneUriTest
+    {
+        IUriDB db = null;
+        [TestInitialize]
+        public void setup()
+        {
+            //if (!System.IO.Directory.Exists(Cfg.Ins.TagDB))
+            //{
+            //    System.IO.Directory.CreateDirectory(Cfg.Ins.TagDB);
+            //}
+            db = UriDBFactory.CreateUriDB();
+        }
+        [TestCleanup]
+        public void teardown()
+        {
+            db.Dispose();
+            db = null;
+            //if (System.IO.Directory.Exists(Cfg.Ins.TagDB))
+            //    System.IO.Directory.Delete(Cfg.Ins.TagDB,true);
+        }
+
+        [TestMethod]
+        public void test1()
+        {
+            db.AddUri(@"c:\a.txt");
+            List<string> uris = db.Query("a");
+            Assert.AreEqual(1, uris.Count);
+            Assert.AreEqual(@"c:\a.txt", uris[0]);
+
+
+            uris = db.Query("a.txt");
+            Assert.AreEqual(1, uris.Count);
+            Assert.AreEqual(@"c:\a.txt", uris[0]);
+
+            uris = db.Query("b.txt");
+            Assert.AreEqual(0, uris.Count);
+        }
+
+
+        [TestMethod]
+        public void test2()
+        {
+            db.AddUri(@"c:\a.txt",new List<string>() { "tag1","tag2"});
+            AssertIn(@"c:\a.txt", "tag1", "tag2", "TAG1", "TAG2","a.txt","tag");
+            AssertNotIn("tag3");
+           
+        }
+
+
+        [TestMethod]
+        public void test3()
+        {
+            string uri = @"c:\a.txt";
+            db.AddUri(uri, new List<string>() { "tag1", "tag2" },"TITLE1");
+            AssertIn(uri, "TITLE1", "a","a.txt","tag","tag1","tag2","TITLE","TITLE1","title1");
+            AssertNotIn("b", "TITLE2","title2");
+            
+        }
+
+        private void AssertIn(string uri,string title,params string[] tag)
+        {
+            List<string> uris = null;
+            foreach(string t in tag)
+            {
+                uris = db.Query(t);
+                Assert.AreEqual(1, uris.Count);
+                Assert.AreEqual(uri, uris[0]);
+            }
+            uris = db.Query(title);
+            Assert.AreEqual(1, uris.Count);
+            Assert.AreEqual(uri, uris[0]);
+
+            
+        }
+
+        private void AssertNotIn(params string[] tag)
+        {
+            List<string> uris = null;
+            foreach (string t in tag)
+            {
+                uris = db.Query(t);
+                Assert.AreEqual(0, uris.Count);
+            }
+            
+        }
+        [TestMethod]
+        public void test4()
+        {
+            string uri = @"c:\a.txt";
+            db.AddUri(uri, new List<string>() { "tag1", "tag2" }, "TITLE1");
+            AssertIn(uri, "TITLE1","tag1", "tag2");
+
+            db.AddUri(@"c:\a.txt", new List<string>() { "tag3", "tag4" }, "TITLE2");
+            AssertIn(uri, "TITLE2","tag1", "tag2","tag3","tag4");
+
+
+
+            db.DelUri(uri, new List<string>() { "tag1" });
+            AssertNotIn("tag1");
+            AssertIn(uri, "tag2", "tag3", "tag4");
+
+
+            db.DelUri(uri, new List<string>() { "tag2" });
+            AssertNotIn("tag1","tag2");
+            AssertIn(uri, "tag3", "tag4","TITLE2");
+
+        }
+    }
+}

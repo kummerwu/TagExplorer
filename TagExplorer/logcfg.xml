@@ -1,0 +1,31 @@
+﻿<log4net>
+  
+  <!--日志记录器logger，可以有多个-->
+    <logger name="fileLog">
+      <level value="ALL" />
+      <appender-ref ref="RollingLogFileAppender" />
+      <appender-ref ref="ConsoleAppender" />
+    </logger>
+    <appender name="ConsoleAppender"  type="log4net.Appender.ConsoleAppender" >
+      <layout type="log4net.Layout.PatternLayout">
+        <param name="ConversionPattern"  value="[%d][%-4p] %m%n"/>
+      </layout>
+    </appender>
+
+    <appender name="RollingLogFileAppender"  type="log4net.Appender.RollingFileAppender" >
+      <!--log存放的路径-->
+      <param name="File" value="D:/02-个人目录/LuceneTest/TagExplorer/log4netfile.txt"  />
+      <param name="AppendToFile" value="true" />
+      <param name="StaticLogFileName" value="true"/>
+      <param name="MaximumFileSize" value="10MB"/>
+      <param name="Threshold" value="ALL"></param>
+
+     
+
+      <layout type="log4net.Layout.PatternLayout">
+        <param name="ConversionPattern"  value="[%d][%-4p] %m%n"  />
+      </layout>
+    </appender>
+	
+  
+</log4net>
