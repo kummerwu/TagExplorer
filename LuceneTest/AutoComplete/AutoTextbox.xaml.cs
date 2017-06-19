@@ -226,7 +226,7 @@ namespace LuceneTest.AutoComplete
 
                 if (matchToken.Length >= searchThreshold)
                 {
-                    List<string> words = search.GetAutoComplete(matchToken);
+                    List<string> words = search.QueryAutoComplete(matchToken);
                     foreach (string w in words)
                     {
                         ComboBoxItem cbItem = new ComboBoxItem();

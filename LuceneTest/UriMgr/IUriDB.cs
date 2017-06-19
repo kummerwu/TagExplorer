@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace LuceneTest.UriMgr
 {
-    interface IUriDB:IDisposable
+    public interface IUriDB:IDisposable
     {
         int AddUri(string Uri);
         int AddUri(string Uri, List<string> tags);
@@ -15,5 +15,10 @@ namespace LuceneTest.UriMgr
         int DelUri(string Uri, List<string> tags);
         int UpdateUri(string Uri, string Title);
         List<string> Query(string query);
+        DataChanged DBNotify { get; set; }
+        string GetTitle(string Uri);
+        List<string> GetTags(string Uri);
+        
     }
+    public delegate void DataChanged();
 }

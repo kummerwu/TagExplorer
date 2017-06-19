@@ -25,6 +25,8 @@ using Contrib.Regex;
 using LuceneTest.TagMgr;
 using LuceneTest.TagLayout;
 using LuceneTest.AutoComplete;
+using AnyTagNet.BL;
+using LuceneTest.UriMgr;
 
 namespace LuceneTest
 {
@@ -41,13 +43,55 @@ namespace LuceneTest
            public  const int MAX_SEARCH = 10;
         }
 
-        
+        public static RoutedCommand MyCommand = new RoutedCommand();
+        private void MyCmd_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            if (e.Source != null)
+            {
+                e.CanExecute = true;
+            }
+            else { e.CanExecute = false; }
+        }
+
+        private void MyCmd_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            if (e.Source != null)
+            {
+                var target = e.Source as Control;
+                if (target != null)
+                {
+                    if (target.Foreground == Brushes.Blue)
+                    {
+                        target.Foreground = Brushes.Black;
+                    }
+                    else
+                    {
+                        target.Foreground = Brushes.Blue;
+                    }
+                }
+            }
+        }
         public MainWindow()
         {
             InitializeComponent();
-            MyAnalyzer.dbg(".txt");
+            tagCanvas.TagChangedHandler += tagChanged;
+            autoTextBox.textBox.TextChanged += TextBox_TextChanged;
+            uriDB.DBNotify += DBChanged;
             test();
             //test2();
+        }
+        public void DBChanged()
+        {
+            uriPanel.UpdateResult(autoTextBox.Text, uriDB,tagDB);
+        }
+        private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            uriPanel.UpdateResult(autoTextBox.Text, uriDB,tagDB);
+        }
+
+        public void tagChanged(string tag)
+        {
+            autoTextBox.Text = tag;
         }
         string PATH = @"D:\02TagSpaces\index";
         string INPUT_PATH = @"D:\02TagSpaces\test";
@@ -140,16 +184,19 @@ namespace LuceneTest
         //       }
         //   };
 
+        public void Update(string root)
+        {
+            CalcCanvasHeight();
+            tagCanvas.UriDB = uriDB;
+            tagCanvas.Update(tagDB, root);
+        }
         ITagDB tagDB = TagDBFactory.CreateTagDB();
-        ITagLayout tagLayout = TagLayoutFactory.CreateLayout();
+        IUriDB uriDB = UriDBFactory.CreateUriDB();
+        //ITagLayout tagLayout = TagLayoutFactory.CreateLayout();
         public void test()
         {
-            autoTextBox.Search = new SearchDemo();
-            for (int i = 0; i < 2; i++)
-            {
-                tagsBar.AddTag("Hello"+i); //tagsBar.Items.Add(new Separator());
-                tagsBar.AddTag("World"+i); //tagsBar.Items.Add(new Separator());
-            }
+            autoTextBox.Search = tagDB;
+            
 
             tagDB.AddTag("parent1", "child1");
             tagDB.AddTag("parent1", "child2");
@@ -162,22 +209,25 @@ namespace LuceneTest
             tagDB.AddTag("parent2", "child2");
             tagDB.AddTag("parent2", "child3");
             tagDB.AddTag("parent2", "child4");
-            tagLayout.Layout(tagDB, "parent11");
-            canvas.Children.Clear();
 
-            IEnumerable<UIElement> lines = tagLayout.Lines;
-            IEnumerable<UIElement> allTxt = tagLayout.TagArea;
-            canvas.Width = tagLayout.Size.Width;
-            canvas.Height = tagLayout.Size.Height;
-            CalcCanvasHeight();
-            foreach (Line l in lines)
-            {
-                canvas.Children.Add(l);
-            }
-            foreach (TextBlock t in allTxt)
-            {
-                canvas.Children.Add(t);
-            }
+            Update( "parent1");
+            //tagLayout.Layout(tagDB, "parent11");
+
+            //canvas.Children.Clear();
+
+            //IEnumerable<UIElement> lines = tagLayout.Lines;
+            //IEnumerable<UIElement> allTxt = tagLayout.TagArea;
+            //canvas.Width = tagLayout.Size.Width;
+            //canvas.Height = tagLayout.Size.Height;
+            //CalcCanvasHeight();
+            //foreach (Line l in lines)
+            //{
+            //    canvas.Children.Add(l);
+            //}
+            //foreach (TextBlock t in allTxt)
+            //{
+            //    canvas.Children.Add(t);
+            //}
             //IndexWriter writer = new IndexWriter(FSDirectory.Open(PATH),
             //    //new StandardAnalyzer(Lucene.Net.Util.Version.LUCENE_30), 
             //    //new SimpleAnalyzer(),
@@ -208,49 +258,13 @@ namespace LuceneTest
             
         }
 
-        private void txt_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            //if (txt.Text.Trim() == "") return;
-            //txt2.Clear();
-            
-            ////query = parser.Parse(txt.Text+"*");
-            //query = new RegexQuery(new Term(LuceneConstants.FILE_NAME, txt.Text + ".*"));
-            //System.Diagnostics.Debug.WriteLine(query.ToString());
-            //ScoreDoc[] docs = idx.Search(query, 100).ScoreDocs;
-            //for (int i = 0; i < docs.Length; i++)
-            //{
-            //    Document doc = idx.Doc(docs[i].Doc);
-            //    txt2.AppendText(doc.Get(LuceneConstants.TYPE) + " " + doc.Get(LuceneConstants.FILE_NAME) + " " + doc.Get(LuceneConstants.FILE_PATH)+"\r\n");
-            //    //MessageBox.Show(doc.Get("title"));
-            //}
-            //idx.Dispose();
-        }
-
+        
         private void scrollViewer_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
 
         }
 
-        private void canvas_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
-        {
-
-        }
-
-        private void canvas_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private void canvas_MouseRightButtonDown_1(object sender, MouseButtonEventArgs e)
-        {
-
-        }
-
-        private void canvas_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {
-
-        }
-
+        
         private void autoTextBox_KeyDown(object sender, KeyEventArgs e)
         {
 
@@ -262,11 +276,49 @@ namespace LuceneTest
         }
         private void CalcCanvasHeight()
         {
-            canvas.Height = Math.Max(canvas.Height, rGrid.RenderSize.Height-10);
+            //canvas.Height = Math.Max(canvas.Height, rGrid.RenderSize.Height-10);
+            tagCanvas.CanvasMinHeight = uriPanel.RenderSize.Height - 10;
         }
         private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             CalcCanvasHeight();
+        }
+
+        private void autoTextBox_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                if (e.KeyboardDevice.Modifiers == ModifierKeys.Control)
+                {
+                    string tag = tagDB.AddTag(autoTextBox.Text);
+                    if (tag != null)
+                    {
+                        Update(tag);
+                        autoTextBox.Text = "";
+                    }
+                    
+                }
+                else if(tagDB.QueryTagAlias(autoTextBox.Text).Count>0)
+                {
+                    Update(autoTextBox.Text);
+                }
+                //else if (autoTextBox.Text.IndexOfAny(GConfig.SpecialChar.ToArray<char>()) == -1)
+                //{
+                //    ShowTagGraph(autoTextBox.Text, true);
+                //    autoTextBox.Text = "";
+                //    ShowLstItem();
+                //}
+            }
+        }
+
+        private void CommandBinding_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = true;
+        }
+
+        private void CommandBinding_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            tagCanvas.Paste();
         }
     }
 }

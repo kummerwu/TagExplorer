@@ -7,12 +7,12 @@ namespace LuceneTest.AutoComplete
 
     public interface ISearchDataProvider
     {
-        List<string> GetAutoComplete(string searchTerm);
+        List<string> QueryAutoComplete(string searchTerm);
     }
 
-    public class SearchDemo : ISearchDataProvider
+    public class SearchDemo1 : ISearchDataProvider
     {
-        public List<string> GetAutoComplete(string searchTerm)
+        public List<string> QueryAutoComplete(string searchTerm)
         {
             if (searchTerm.Contains("0")) return new List<string>();
             else if (searchTerm.Contains("1")) return new List<string>() { searchTerm};

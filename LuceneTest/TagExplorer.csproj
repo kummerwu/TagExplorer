@@ -76,6 +76,7 @@
     <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework, Version=10.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -147,6 +148,9 @@
       <DependentUpon>AutoTextbox.xaml</DependentUpon>
     </Compile>
     <Compile Include="AutoComplete\ISearchDataProvider.cs" />
+    <Compile Include="TagGraph\TagCanvas.xaml.cs">
+      <DependentUpon>TagCanvas.xaml</DependentUpon>
+    </Compile>
     <Compile Include="TagLayout\GLayout.cs" />
     <Compile Include="TagLayout\GObj.cs" />
     <Compile Include="TagLayout\GStyle.cs" />
@@ -157,14 +161,18 @@
     <Compile Include="TagLayout\RectlayoutCalcImpl.cs" />
     <Compile Include="TagLayout\TagLayout.cs" />
     <Compile Include="TagLayout\TagLayoutFactory.cs" />
-    <Compile Include="TagsBar\TagsBar.cs" />
+    <Compile Include="TagMgr\TagInf.cs" />
     <Compile Include="TagsBar\TagsPanel.xaml.cs">
       <DependentUpon>TagsPanel.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UriInfList\UriInfoPanel.xaml.cs">
+      <DependentUpon>UriInfoPanel.xaml</DependentUpon>
     </Compile>
     <Compile Include="UTest\LayoutTest.cs" />
     <Compile Include="Utils\Cfg.cs" />
     <Compile Include="Utils\FileOperator.cs" />
     <Compile Include="Utils\GConfig.cs" />
+    <Compile Include="Utils\GIconHelper.cs" />
     <Compile Include="Utils\Logger.cs" />
     <Compile Include="TagMgr\ITagDB.cs" />
     <Compile Include="TagMgr\LuceneTagDB.cs" />
@@ -192,7 +200,15 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="TagGraph\TagCanvas.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="TagsBar\TagsPanel.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UriInfList\UriInfoPanel.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -227,5 +243,6 @@
   <ItemGroup>
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -27,8 +27,24 @@ namespace LuceneTest.UriMgr
         QueryParser parser;
         Query query;
 
+        
+        
 
         Directory dir = null;
+        DataChanged dbChangedHandler;
+        public DataChanged DBNotify
+        {
+            get
+            {
+                return dbChangedHandler;
+            }
+
+            set
+            {
+                dbChangedHandler += value;
+            }
+        }
+
         public LuceneUriDB()
         {
             dir = new RAMDirectory();
@@ -51,10 +67,36 @@ namespace LuceneTest.UriMgr
             parser = new MultiFieldQueryParser(Lucene.Net.Util.Version.LUCENE_30,
                 new string[] { F_URI, F_URI_TAGS, F_URI_TITLE },
                 new UriQueryAnalyser());
+
+
+            
+        }
+        public void test()
+        {
+            //TEST
+            AddUri(@"c:\a.txt");
+            Document doc = GetDoc(@"c:\a.txt");
+            List<string> ret = Query("a");
+        }
+        public static string dbg(string text,Analyzer analyzer)
+        {
+            //Analyzer analyzer = new UriAnalyser();
+            System.IO.StringReader reader = new System.IO.StringReader(text);
+            TokenStream tokenStream = analyzer.TokenStream("", reader);
+
+            StringBuilder sb = new StringBuilder();
+            // 递归处理所有语汇单元  
+            while (tokenStream.IncrementToken())
+            {
+                string s = tokenStream.ToString();
+                sb.AppendLine(s);
+            }
+            Console.Write(sb.ToString());
+            return sb.ToString();
         }
         Document GetDoc(string uri)
         {
-            Term term = new Term(F_URI, uri);
+            Term term = new Term(F_URI, uri.ToLower()); //kummer:能用分词器吗，这儿暂时没有找到方法，只好手工将uri转换为小写
             Query query = new TermQuery(term);
             ScoreDoc[] docs = search.Search(query, 1).ScoreDocs;
             Document doc = null;
@@ -69,6 +111,7 @@ namespace LuceneTest.UriMgr
             writer.Flush(true, true, true);
             reader = writer.GetReader();
             search = new IndexSearcher(reader);
+            dbChangedHandler?.Invoke();
         }
         public Document AddUriDocument(string Uri)
         {
@@ -94,7 +137,10 @@ namespace LuceneTest.UriMgr
         {
             if (doc != null)
             {
-                writer.UpdateDocument(new Term(F_URI, Uri), doc);
+                writer.UpdateDocument(new Term(F_URI, Uri.ToLower()), doc); //没有指定分析器，导致大小写有bug，相同的Uri会存在两个
+                //writer.UpdateDocument(new Term(F_URI, Uri), doc,new UriQueryAnalyser());
+
+                //writer.DeleteDocuments(new Term(F_URI, Uri));
                 Commit();
             }
         }
@@ -144,7 +190,7 @@ namespace LuceneTest.UriMgr
         }
         public int DelUri(string Uri, bool Delete)
         {
-            writer.DeleteDocuments(new Term(F_URI, Uri));
+            writer.DeleteDocuments(new Term(F_URI, Uri.ToLower()));
             Commit();
             if(Delete)
             {
@@ -162,13 +208,20 @@ namespace LuceneTest.UriMgr
 
         public List<string> Query(string querystr)
         {
+
             List<string> ret = new List<string>();
-            query = parser.Parse(querystr);
-            ScoreDoc[] docs = search.Search(query, Cfg.Ins.TAG_MAX_RELATION).ScoreDocs;
-            for (int i = 0; i < docs.Length; i++)
+            try
             {
-                Document doc = search.Doc(docs[i].Doc);
-                ret.Add(doc.GetField(F_URI).StringValue);
+                query = parser.Parse(querystr);
+                ScoreDoc[] docs = search.Search(query, Cfg.Ins.TAG_MAX_RELATION).ScoreDocs;
+                for (int i = 0; i < docs.Length; i++)
+                {
+                    Document doc = search.Doc(docs[i].Doc);
+                    ret.Add(doc.GetField(F_URI).StringValue);
+                }
+            }catch(Exception e)
+            {
+
             }
             return ret;
         }
@@ -205,6 +258,34 @@ namespace LuceneTest.UriMgr
             doc.Add(new Field(F_URI_TITLE, Title, Field.Store.YES, Field.Index.ANALYZED));
             Commit(Uri, doc);
             return 0;
+        }
+
+        public string GetTitle(string Uri)
+        {
+            string ret = "";
+            Document doc = GetDoc(Uri);
+            if(doc!=null)
+            {
+                ret = doc.GetField(F_URI_TITLE).StringValue;
+            }
+            return ret;
+        }
+
+        public List<string> GetTags(string Uri)
+        {
+            List<string> ret = new List<string>();
+            if (Uri == null) return ret;
+
+            Document doc = GetDoc(Uri);
+            if (doc != null)
+            {
+                Field[] fields = doc.GetFields(F_URI_TAGS);
+                foreach(Field f in fields)
+                {
+                    ret.Add(f.StringValue);
+                }
+            }
+            return ret;
         }
     }
 }

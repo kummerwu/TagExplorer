@@ -13,6 +13,13 @@ namespace AnyTag.BL
 {
     class FileOperator
     {
+        public static void LocateFile(string f)
+        {
+            if(isValidFileUrl(f))
+            {
+                System.Diagnostics.Process.Start("explorer.exe", "/select," + f);
+            }
+        }
         public static void OpenTagDir(string title)
         {
             if (title != null)

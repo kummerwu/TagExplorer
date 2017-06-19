@@ -1,4 +1,6 @@
-﻿using Lucene.Net.Analysis;
+﻿using AnyTagNet.BL;
+using Contrib.Regex;
+using Lucene.Net.Analysis;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Search;
@@ -114,12 +116,18 @@ namespace LuceneTest.TagMgr
         }
         private List<string> GetByField(string tag, string queryFieldName,string fieldName)
         {
-            List<string> ret = new List<string>();
+            
             Term term = new Term(queryFieldName, tag);
             Query query = new TermQuery(term);
+            return GetByQuery(fieldName,  query);
+        }
+
+        private List<string> GetByQuery(string fieldName,  Query query)
+        {
+            List<string> ret = new List<string>();
             ScoreDoc[] docs = search.Search(query, Cfg.Ins.TAG_MAX_RELATION).ScoreDocs;
             Document doc = null;
-            foreach(ScoreDoc sdoc in docs)
+            foreach (ScoreDoc sdoc in docs)
             {
                 doc = search.Doc(sdoc.Doc);
                 Field[] fs = doc.GetFields(fieldName);
@@ -132,6 +140,7 @@ namespace LuceneTest.TagMgr
             }
             return ret;
         }
+
         public List<string> QueryTagAlias(string tag)
         {
             return GetByField(tag,F_TAGNAME,F_TAGNAME);
@@ -199,6 +208,41 @@ namespace LuceneTest.TagMgr
             writer.DeleteDocuments(query);
             Commit();
             return R_OK;
+        }
+
+        public List<string> QueryAutoComplete(string searchTerm)
+        {
+            Query query = new RegexQuery(new Term(F_TAGNAME, ".*" + searchTerm + ".*"));
+            return GetByQuery(F_TAGNAME, query);
+        }
+
+        public string AddTag(string sentence)
+        {
+            TagInf tagInf = TagInf.ParseTRG(sentence);
+            string tag = null;
+            if (tagInf != null)
+            {
+
+                if (tagInf.GetAlias().Count > 0)
+                {
+                    tag = tagInf.GetAlias()[0];
+                    if (tagInf.GetChdren().Count == 0)
+                    {
+                        AddTag(tag, null);
+                    }
+                    foreach (string c in tagInf.GetChdren())
+                    {
+                        AddTag(tag, c);
+                    }
+                    foreach (string a in tagInf.GetAlias())
+                    {
+                        AddTag(tag, a);
+                    }
+                    //Update(tag);
+                }
+
+            }
+            return tag;
         }
     }
 }

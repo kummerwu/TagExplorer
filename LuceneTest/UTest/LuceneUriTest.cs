@@ -54,9 +54,76 @@ namespace LuceneTest.UTest
             db.AddUri(@"c:\a.txt",new List<string>() { "tag1","tag2"});
             AssertIn(@"c:\a.txt", "tag1", "tag2", "TAG1", "TAG2","a.txt","tag");
             AssertNotIn("tag3");
-           
+
+            db.AddUri(@"c:\a.txt", new List<string>() { "tag1", "tag2" });
+            AssertIn(@"c:\a.txt", "tag1", "tag2", "TAG1", "TAG2", "a.txt", "tag");
+            AssertNotIn("tag3");
+
         }
 
+        [TestMethod]
+        public void test20170617_1()
+        {
+            db.AddUri(@"c:\a.txt", new List<string>() { "tag1"});
+            AssertIn(@"c:\a.txt", "tag1");
+
+        }
+        [TestMethod]
+        public void test20170617_2()//URI中有大小写的情况
+        {
+            db.AddUri(@"c:\a.Txt", new List<string>() { "tag1" });
+            AssertIn(@"c:\a.txt", "tag1");
+
+        }
+
+        [TestMethod]
+        public void test20170617_3()//一个失败的案例
+        {
+            db.AddUri(@"D:\00_工作备份\Work\ROSng软件架构及应用V1.1.pptx", new List<string>() { "parent1" });
+            AssertIn(@"D:\00_工作备份\Work\ROSng软件架构及应用V1.1.pptx", "1");
+
+        }
+        [TestMethod]
+        public void test20170617_3_1()//一个失败的案例
+        {
+            db.AddUri(@"D:\00_工作备份\Work\ROSng软件架构及应用V1.1.pptx", new List<string>() { "parent1" });
+            db.AddUri(@"D:\00_工作备份\Work\ROSng软件架构及应用V1.1.pptx", new List<string>() { "parent1" });
+            AssertIn(@"D:\00_工作备份\Work\ROSng软件架构及应用V1.1.pptx", "1");
+
+        }
+
+        [TestMethod]
+        public void test20170617_4()//测试删除文件，好像案例3测试不通过的原因就是删除失败了。
+        {
+            db.AddUri(@"D:\00_工作备份\Work\ROSng软件架构及应用V1.1.pptx", new List<string>() { "parent1" });
+            AssertIn(@"D:\00_工作备份\Work\ROSng软件架构及应用V1.1.pptx", "parent1");
+            db.DelUri(@"D:\00_工作备份\Work\ROSng软件架构及应用V1.1.pptx", false);
+            AssertNotIn(@"D:\00_工作备份\Work\ROSng软件架构及应用V1.1.pptx", "parent1");
+        }
+
+        [TestMethod]
+        public void test20170619_1()//发现同一个文件连续添加两次会有两个文档在db中
+        {
+            db.AddUri(@"D:\00_工作备份\Work\ROSng软件架构及应用V1.1.pptx", new List<string>() { "parent1" });
+            AssertIn(@"D:\00_工作备份\Work\ROSng软件架构及应用V1.1.pptx", "parent1");
+            db.AddUri(@"D:\00_工作备份\Work\ROSng软件架构及应用V1.1.pptx", new List<string>() { "parent1" });
+            AssertIn(@"D:\00_工作备份\Work\ROSng软件架构及应用V1.1.pptx", "parent1");
+            db.AddUri(@"D:\00_工作备份\Work\ROSng软件架构及应用V1.1.pptx", new List<string>() { "parent1" });
+            AssertIn(@"D:\00_工作备份\Work\ROSng软件架构及应用V1.1.pptx", "parent1");
+        }
+
+        [TestMethod]
+        public void test20170619_2()//发现同一个文件连续添加两次会有两个文档在db中，
+            //最终定位不是这个原因，是因为某个字段长度超过了50个字符，我们的解析器有问题（1-50 Ngram）
+        {
+            //string dir = @"D:\02-个人目录\LuceneTest\TagExplorer\DocumentBase\Doc\child4";
+            string dir = @"D:\00_工作备份\Work\ROSng软件架构及应用V1.1.pptx\Doc\child4";
+            string tag = "child4";
+            db.AddUri(dir, new List<string>() { tag });
+            AssertIn(dir, tag);
+            db.AddUri(dir, new List<string>() { tag });
+            AssertIn(dir, tag);
+        }
 
         [TestMethod]
         public void test3()
@@ -75,11 +142,11 @@ namespace LuceneTest.UTest
             {
                 uris = db.Query(t);
                 Assert.AreEqual(1, uris.Count);
-                Assert.AreEqual(uri, uris[0]);
+                Assert.AreEqual(uri, uris[0],true);
             }
             uris = db.Query(title);
             Assert.AreEqual(1, uris.Count);
-            Assert.AreEqual(uri, uris[0]);
+            Assert.AreEqual(uri, uris[0],true);
 
             
         }

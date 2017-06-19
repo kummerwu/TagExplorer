@@ -5,6 +5,22 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:LuceneTest.TagsBar"
              mc:Ignorable="d" 
+             xmlns:autoTextbox="clr-namespace:LuceneTest.AutoComplete"
              d:DesignHeight="300" d:DesignWidth="300">
-    <WrapPanel x:Name="parent"></WrapPanel>
+    <UserControl.Resources>
+        <Style x:Key="tagMouseOver">
+            <Style.Triggers >
+                <Trigger Property="Control.IsMouseOver" Value="True">
+                    <Setter Property="Control.Background" Value="Red"></Setter>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </UserControl.Resources>
+
+    <ScrollViewer >
+        <WrapPanel>
+            <autoTextbox:AutoTextbox x:Name="autoTextBox"    Background="White" Width="150" Height="30" KeyUp="autoTextBox_KeyUp" ></autoTextbox:AutoTextbox>
+            <WrapPanel x:Name="parent" > </WrapPanel>
+        </WrapPanel>
+    </ScrollViewer>
 </UserControl>

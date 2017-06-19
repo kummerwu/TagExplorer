@@ -61,7 +61,7 @@ namespace AnyTags.Net
                 {
                     string exe = Process.GetCurrentProcess().MainModule.FileName;
                     string exePath = Path.GetFileNameWithoutExtension(exe);
-                    exePath = @"D:\01TheBrain\test";
+                    exePath =  @"D:\02-个人目录\LuceneTest\TagExplorer\DocumentBase";
                     if(!Directory.Exists(exePath))
                     {
                         Directory.CreateDirectory(exePath);
