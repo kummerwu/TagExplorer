@@ -1,5 +1,6 @@
 ﻿using AnyTag.UI;
 using AnyTagNet.BL;
+using LuceneTest;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -13,7 +14,7 @@ namespace AnyTagNet
     class GObjCollection : IGObjCollection
     {
         GStyle style = new GStyle();
-        List<TextBlock> allTxt = new List<TextBlock>();
+        List<TagBox> allTxt = new List<TagBox>();
         List<UIElement> allEdge = new List<UIElement>();
         Hashtable gobjMaps = new Hashtable();
         public GObjCollection()
@@ -28,7 +29,7 @@ namespace AnyTagNet
                 if (gobjMaps[g.Tag] == null)
                 {
                     gobjMaps.Add(g.Tag, g);
-                    TextBlock b = new TextBlock();
+                    TagBox b = new TagBox();
                     style.Apply(g, b);
                     allTxt.Add(b);
                 }

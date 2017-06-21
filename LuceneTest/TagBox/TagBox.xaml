@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:LuceneTest"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
-    <Border x:Name="bdr" BorderThickness="2" BorderBrush="Black">
+    <Border x:Name="bdr" BorderThickness="0" BorderBrush="Black">
         <TextBlock x:Name="txt">
             
         </TextBlock>

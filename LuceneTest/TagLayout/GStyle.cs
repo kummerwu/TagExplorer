@@ -1,4 +1,5 @@
-﻿using System;
+﻿using LuceneTest;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -34,7 +35,7 @@ namespace AnyTagNet
             i = i % colors.Length;
             return colors[i];
         } 
-        public void Apply(GObj g,TextBlock b)
+        public void Apply(GObj g,TagBox b)
         {
             b.FontFamily = GConfig.GFontF;
             b.FontSize = g.FontSize;

@@ -148,7 +148,7 @@
       <DependentUpon>AutoTextbox.xaml</DependentUpon>
     </Compile>
     <Compile Include="AutoComplete\ISearchDataProvider.cs" />
-    <Compile Include="TagBox.xaml.cs">
+    <Compile Include="TagBox\TagBox.xaml.cs">
       <DependentUpon>TagBox.xaml</DependentUpon>
     </Compile>
     <Compile Include="TagGraph\TagCanvas.xaml.cs">
@@ -203,7 +203,7 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="TagBox.xaml">
+    <Page Include="TagBox\TagBox.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
