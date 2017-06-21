@@ -47,14 +47,23 @@ namespace LuceneTest.UriMgr
 
         public LuceneUriDB()
         {
-            dir = new RAMDirectory();
-            dir = FSDirectory.Open(Cfg.Ins.UriDB);
-            bool create = !System.IO.Directory.Exists(Cfg.Ins.UriDB);
-            if (create)
+            bool create = true;
+            if (Cfg.Ins.IsDbg)
             {
-                System.IO.Directory.CreateDirectory(Cfg.Ins.UriDB);
+                dir = new RAMDirectory();
+                create = true;
             }
-            create = true;
+            else
+            {
+                create = !System.IO.Directory.Exists(Cfg.Ins.UriDB);
+                if (create)
+                {
+                    System.IO.Directory.CreateDirectory(Cfg.Ins.UriDB);
+                }
+                dir = FSDirectory.Open(Cfg.Ins.UriDB);
+                
+            }
+            
             writer = new IndexWriter(dir,
                                     new UriAnalyser(),
                                     create,

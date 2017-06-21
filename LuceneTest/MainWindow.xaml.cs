@@ -196,21 +196,24 @@ namespace LuceneTest
         public void test()
         {
             autoTextBox.Search = tagDB;
-            
+            Update("我的大脑");
+            //for(int i = 0;i<1000;i++)
+            //{
+            //    tagDB.AddTag(i.ToString(), (i * 1000).ToString());
+            //}
+            //tagDB.AddTag("parent1", "child1");
+            //tagDB.AddTag("parent1", "child2");
+            //tagDB.AddTag("parent1", "child3");
+            //tagDB.AddTag("parent1", "child4");
 
-            tagDB.AddTag("parent1", "child1");
-            tagDB.AddTag("parent1", "child2");
-            tagDB.AddTag("parent1", "child3");
-            tagDB.AddTag("parent1", "child4");
+            //tagDB.MergeAliasTag("parent1", "parent11");
 
-            tagDB.MergeAliasTag("parent1", "parent11");
+            //tagDB.AddTag("parent2", "child1");
+            //tagDB.AddTag("parent2", "child2");
+            //tagDB.AddTag("parent2", "child3");
+            //tagDB.AddTag("parent2", "child4");
 
-            tagDB.AddTag("parent2", "child1");
-            tagDB.AddTag("parent2", "child2");
-            tagDB.AddTag("parent2", "child3");
-            tagDB.AddTag("parent2", "child4");
-
-            Update( "parent1");
+            //Update( "parent1");
             //tagLayout.Layout(tagDB, "parent11");
 
             //canvas.Children.Clear();
@@ -319,6 +322,14 @@ namespace LuceneTest
         private void CommandBinding_Executed(object sender, ExecutedRoutedEventArgs e)
         {
             tagCanvas.Paste();
+        }
+
+        private void Window_Closed(object sender, EventArgs e)
+        {
+            tagDB.Dispose();
+            uriDB.Dispose();
+            tagDB = null;
+            uriDB = null;
         }
     }
 }

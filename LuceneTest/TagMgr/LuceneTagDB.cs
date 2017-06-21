@@ -26,14 +26,24 @@ namespace LuceneTest.TagMgr
         Directory dir = null;
         public LuceneTagDB()
         {
-            dir = new RAMDirectory();
-            //dir = FSDirectory.Open(Cfg.Ins.TagDB);
-            bool create = !System.IO.Directory.Exists(Cfg.Ins.TagDB);
-            if(create)
+            bool create = true;
+            if (Cfg.Ins.IsDbg)
             {
-                System.IO.Directory.CreateDirectory(Cfg.Ins.TagDB);
+                dir = new RAMDirectory();
+                create = true;
             }
-            create = true;
+            else
+            {
+                create = !System.IO.Directory.Exists(Cfg.Ins.TagDB);
+                if (create)
+                {
+                    System.IO.Directory.CreateDirectory(Cfg.Ins.TagDB);
+                }
+                dir = FSDirectory.Open(Cfg.Ins.TagDB);
+                
+            }
+            
+            
             writer = new IndexWriter(dir,
                                     new KeywordAnalyzer(),
                                     create, 
@@ -105,11 +115,14 @@ namespace LuceneTest.TagMgr
         private void Commit()
         {
             //Logger.Log("Commit");
-            writer.Flush(true,true,true);
+            //writer.Flush(true,true,true);
+            writer.Commit(); //kummer： 原来调用了Flush，但是没有调用Commit，程序重启以后，所有数据似乎都丢失了。
             //Logger.Log("getRader");
             reader = writer.GetReader();
             //Logger.Log("newSearch");
             search = new IndexSearcher(reader);
+            
+            
             //Logger.Log("FinishedCommit");
 
 

@@ -63,7 +63,7 @@ namespace LuceneTest.TagGraph
         {
             this.tagDB = tagDB;
             this.root = root;
-            SetCurrentTag(root);
+            
             canvas.Children.Clear();
             ITagLayout tagLayout = TagLayoutFactory.CreateLayout();
             tagLayout.Layout(tagDB, root);
@@ -83,6 +83,7 @@ namespace LuceneTest.TagGraph
                 t.MouseLeftButtonDown += T_MouseLeftButtonDown;
                 canvas.Children.Add(t);
             }
+            SetCurrentTag(root);
         }
 
         private void T_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -129,12 +130,62 @@ namespace LuceneTest.TagGraph
             FileOperator.OpenTagDir(currentTag);
             
         }
+        Border border = null;
+        private void SetBorder(string tag)
+        {
+            
+            TextBlock tagBlock = null;
+
+            foreach(UIElement u in canvas.Children)
+            {
+                if(u is TextBlock)
+                {
+                    TextBlock t = u as TextBlock;
+                    if (t != null && t.Text == tag)
+                    {
+                        tagBlock = t;
+                    }
+                }
+                
+            }
+
+            if (tagBlock != null)
+            {
+                TextBlock old = null;
+                if (border == null)
+                {
+                    border = new Border();
+                    border.BorderBrush = new SolidColorBrush(Colors.Black);
+                    border.BorderThickness = new Thickness(2);
+
+                }
+                else
+                {
+                    old = border.Child as TextBlock;
+                    old.Margin = new Thickness(border.Margin.Left + 2, border.Margin.Top + 2, 0, 0);
+                    canvas.Children.Remove(border);
+                    border.Child = null;
+                    canvas.Children.Add(old);
+                }
+
+                canvas.Children.Remove(tagBlock);
+                border.Width = tagBlock.Width + 4;
+                border.Height = tagBlock.Height + 4;
+                border.Margin = new Thickness(tagBlock.Margin.Left-2, tagBlock.Margin.Top-2, 0,0);
+                tagBlock.Margin = new Thickness();
+                border.Child = tagBlock;
+                canvas.Children.Add(border);
+
+            }
+        }
         private string currentTag = "";
         public void SetCurrentTag(string tag)
         {
             if (currentTag == tag) return;
-
+            string oldTag = currentTag;
             currentTag = tag;
+
+            SetBorder(tag);
             CurrentTagInf.Text = currentTag;
             if(TagChangedHandler!=null)
             {

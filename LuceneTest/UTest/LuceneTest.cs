@@ -140,6 +140,25 @@ namespace LuceneTest.UTest
             Assert.AreEqual(true, alias.Contains("p2"));
         }
         [TestMethod]
+        public void testReopen()//关闭后重新打开
+        {
+            Logger.Log("begin test reopen");
+            db.AddTag("p1", "c1");
+            List<string> alias = db.QueryTagAlias("p1");
+            foreach(string a in alias)
+            {
+                Logger.Log(a);
+            }
+            Assert.AreEqual(1, alias.Count);
+            Assert.AreEqual("p1", alias[0]);
+            Logger.Log("end test reopen");
+
+            //db = TagDBFactory.CreateTagDB();
+            //alias = db.QueryTagAlias("p1");
+            //Assert.AreEqual(1, alias.Count);
+            //Assert.AreEqual("p1", alias[0]);
+        }
+        [TestMethod]
         public void testAlias_Single2()
         {
             db.MergeAliasTag("p1", "p2");
