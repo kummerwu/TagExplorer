@@ -40,7 +40,14 @@ namespace LuceneTest.TagGraph
         }
         private double canvasMinHeight = 0;
         private double realHeight = 0;
-        private void SetHeight() { canvas.Height = Math.Max(realHeight, canvasMinHeight); }
+        private void SetHeight()
+        {
+            if(double.IsNaN(canvasMinHeight) || double.IsInfinity(canvasMinHeight) )
+            {
+                canvasMinHeight = 0;
+            }
+            canvas.Height = Math.Max(realHeight, canvasMinHeight);
+        }
         private ITagDB tagDB = null;
         public IUriDB UriDB = null;
         private string root;
@@ -147,8 +154,14 @@ namespace LuceneTest.TagGraph
 
                 if(tb!=null)
                 {
-                    if (tb.Selected) tb.Selected = false;
-                    if (tb.Text == tag) tb.Selected = true;
+                    if (tb.Selected)
+                    {
+                        tb.Selected = false;
+                    }
+                    if (tb.Text == tag)
+                    {
+                        tb.Selected = true;
+                    }
                 }
             }
             
@@ -199,11 +212,15 @@ namespace LuceneTest.TagGraph
         private string currentTag = "";
         public void SetCurrentTag(string tag)
         {
+            SetBorder(tag); //这一句必须放在下面检查并return之前，
+                            //即无论currentTag是否变化，都需要更新一下border，否则会有bug；
+                            //bug现象：在curtag没有变化的时候，重新绘制整个graph，
+                            //会出现所有的tag都不显示边框（包括curtag），因为直接返回了。
             if (currentTag == tag) return;
             string oldTag = currentTag;
             currentTag = tag;
 
-            SetBorder(tag);
+            
             CurrentTagInf.Text = currentTag;
             if(TagChangedHandler!=null)
             {
@@ -258,6 +275,15 @@ namespace LuceneTest.TagGraph
         private void tagAreaMenu_ContextMenuOpening(object sender, ContextMenuEventArgs e)
         {
             UpdateCurrentTagByContextMenu();
+        }
+
+        private void scrollViewer_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            double h = e.NewSize.Height;
+            Grid p = scrollViewer.Parent as Grid;
+
+            canvasMinHeight = p.ActualHeight;
+            SetHeight();
         }
     }
 }

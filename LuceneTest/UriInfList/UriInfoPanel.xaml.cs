@@ -129,10 +129,13 @@ namespace LuceneTest.UriInfList
             List<SearchItemInf> ret = new List<SearchItemInf>();
             foreach (string key in files)
             {
-                SearchItemInf it = new SearchItemInf();
-                it._Detail = key;
-                it._icon = GIconHelper.GetBitmapFromFile(key);
-                ret.Add(it);
+                if (FileOperator.isValidFileUrl(key))
+                {
+                    SearchItemInf it = new SearchItemInf();
+                    it._Detail = key;
+                    it._icon = GIconHelper.GetBitmapFromFile(key);
+                    ret.Add(it);
+                }
             }
             return ret;
         }

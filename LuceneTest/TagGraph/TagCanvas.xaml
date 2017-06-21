@@ -27,7 +27,7 @@
             <RowDefinition Height="*"></RowDefinition>
             <RowDefinition Height="50"></RowDefinition>
         </Grid.RowDefinitions>
-        <ScrollViewer Grid.Row="0" x:Name="scrollViewer" DockPanel.Dock="Bottom" VerticalAlignment="Top"  Background="AliceBlue" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" MouseDoubleClick="scrollViewer_MouseDoubleClick">
+        <ScrollViewer Grid.Row="0" x:Name="scrollViewer" DockPanel.Dock="Bottom" VerticalAlignment="Top"  Background="AliceBlue" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" MouseDoubleClick="scrollViewer_MouseDoubleClick" SizeChanged="scrollViewer_SizeChanged">
             <Canvas x:Name="canvas" HorizontalAlignment="Left" MenuItem.Click="canvas_Click"  VerticalAlignment="Top"  Background="AliceBlue" MouseLeftButtonDown="canvas_MouseLeftButtonDown" MouseRightButtonDown="canvas_MouseRightButtonDown" >
             </Canvas>
         </ScrollViewer>
