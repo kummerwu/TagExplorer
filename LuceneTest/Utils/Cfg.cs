@@ -16,13 +16,15 @@ namespace LuceneTest.Core
                 if(_ins==null)
                 {
                     _ins = new Cfg();
+
                 }
                 return _ins;
             }
         }
-        public string TagDB = @"D:\02-个人目录\LuceneTest\TagExplorer\DocumentBase\TagDB";
-        public string UriDB = @"D:\02-个人目录\LuceneTest\TagExplorer\DocumentBase\UriDB";
-
+        private const string Root = @"D:\00TagExplorerBase";
+        public string TagDB = Root+@"\TagDB";
+        public string UriDB = Root+@"\UriDB";
+        public string DocBase = Root+@"\DocumentBase";
         public int TAG_MAX_RELATION = 1000;
         public bool IsDbg = false;
     }

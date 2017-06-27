@@ -28,7 +28,7 @@
             <RowDefinition Height="30" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        <ToolBar Grid.Row="0" Style="{StaticResource BACK}">
+        <ToolBar Grid.Row="0" >
             <Button Width="40">Hello</Button>
             <Button Width="40">Hello</Button>
             <autoTextbox:AutoTextbox x:Name="autoTextBox"    Background="White" Width="200" KeyUp="autoTextBox_KeyUp" ></autoTextbox:AutoTextbox>
@@ -40,7 +40,7 @@
             <avalonDock:LayoutRoot x:Name="dockRoot">
                 <avalonDock:LayoutPanel Orientation="Horizontal">
 
-                    <avalonDock:LayoutDocumentPaneGroup>
+                    <avalonDock:LayoutDocumentPaneGroup >
                         <avalonDock:LayoutDocumentPane >
                             <avalonDock:LayoutDocument Title="Tag视图" CanClose="False" x:Name="ldock">
                                 <tagGraph:TagCanvas x:Name="tagCanvas"></tagGraph:TagCanvas>
@@ -48,7 +48,7 @@
                         </avalonDock:LayoutDocumentPane>
                     </avalonDock:LayoutDocumentPaneGroup>
 
-                    <avalonDock:LayoutAnchorablePaneGroup x:Name="pg1" DockWidth="350" Orientation="Vertical" >
+                    <avalonDock:LayoutAnchorablePaneGroup x:Name="pg1" DockWidth="550" Orientation="Vertical">
                         <avalonDock:LayoutAnchorablePane >
                             <avalonDock:LayoutAnchorable x:Name="searchPane"  Title="搜索" CanClose="False" >
                                 <uriPanel:UriListBox x:Name="uriPanel"></uriPanel:UriListBox>

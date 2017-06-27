@@ -1,4 +1,5 @@
 ﻿using AnyTagNet;
+using LuceneTest.Core;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -61,7 +62,7 @@ namespace AnyTags.Net
                 {
                     string exe = Process.GetCurrentProcess().MainModule.FileName;
                     string exePath = Path.GetFileNameWithoutExtension(exe);
-                    exePath =  @"D:\02-个人目录\LuceneTest\TagExplorer\DocumentBase";
+                    exePath =  Cfg.Ins.DocBase;
                     if(!Directory.Exists(exePath))
                     {
                         Directory.CreateDirectory(exePath);

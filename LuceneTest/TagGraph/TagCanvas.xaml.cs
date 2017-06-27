@@ -216,7 +216,8 @@ namespace LuceneTest.TagGraph
                             //即无论currentTag是否变化，都需要更新一下border，否则会有bug；
                             //bug现象：在curtag没有变化的时候，重新绘制整个graph，
                             //会出现所有的tag都不显示边框（包括curtag），因为直接返回了。
-            if (currentTag == tag) return;
+            
+            //if (currentTag == tag) return;
             string oldTag = currentTag;
             currentTag = tag;
 
@@ -256,10 +257,28 @@ namespace LuceneTest.TagGraph
             List<string> tags = new List<string>() { currentTag };
             foreach(string f in files)
             {
-                UriDB.AddUri(f, tags);
+                string dstFile = CopyToHouse(f, currentTag);
+                if (dstFile != null)
+                {
+                    UriDB.AddUri(dstFile, tags);
+                }
+                
             }
         }
-
+        private string  CopyToHouse(string f, string tag)
+        {
+            System.IO.FileInfo fi = new System.IO.FileInfo(f);
+            string dstDir = MyPath.GetDirPath(tag);
+            string dstFile = System.IO.Path.Combine(dstDir, fi.Name);
+            if (!System.IO.File.Exists(dstFile))//TODO 已经存在的需要提示覆盖、放弃、重命名
+            {
+                if(FileOperator.CopyFile(f, dstFile))
+                {
+                    return dstFile;
+                }
+            }
+            return null;
+        }
         private void copyAreaNode_Click(object sender, RoutedEventArgs e)
         {
             UpdateCurrentTagByContextMenu();
