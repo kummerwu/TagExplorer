@@ -33,17 +33,24 @@
             <Button Width="40">Hello</Button>
             <autoTextbox:AutoTextbox x:Name="autoTextBox"    Background="White" Width="200" KeyUp="autoTextBox_KeyUp" ></autoTextbox:AutoTextbox>
         </ToolBar>
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*"></ColumnDefinition>
+                <ColumnDefinition Width="1*"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <tagGraph:TagCanvas x:Name="tagCanvas" Grid.Column="0"></tagGraph:TagCanvas>
+            <uriPanel:UriListBox x:Name="uriPanel" Grid.Column="1"></uriPanel:UriListBox>
+        </Grid>
+        <!--
         <avalonDock:DockingManager x:Name="dockingManager" Grid.Row="1">
-            <avalonDock:DockingManager.Theme>
-                <avalonDock:GenericTheme></avalonDock:GenericTheme>
-            </avalonDock:DockingManager.Theme>
+
             <avalonDock:LayoutRoot x:Name="dockRoot">
                 <avalonDock:LayoutPanel Orientation="Horizontal">
 
                     <avalonDock:LayoutDocumentPaneGroup >
                         <avalonDock:LayoutDocumentPane >
                             <avalonDock:LayoutDocument Title="Tag视图" CanClose="False" x:Name="ldock">
-                                <tagGraph:TagCanvas x:Name="tagCanvas"></tagGraph:TagCanvas>
+                                
                             </avalonDock:LayoutDocument>
                         </avalonDock:LayoutDocumentPane>
                     </avalonDock:LayoutDocumentPaneGroup>
@@ -51,7 +58,7 @@
                     <avalonDock:LayoutAnchorablePaneGroup x:Name="pg1" DockWidth="550" Orientation="Vertical">
                         <avalonDock:LayoutAnchorablePane >
                             <avalonDock:LayoutAnchorable x:Name="searchPane"  Title="搜索" CanClose="False" >
-                                <uriPanel:UriListBox x:Name="uriPanel"></uriPanel:UriListBox>
+                                
                             </avalonDock:LayoutAnchorable>
                         </avalonDock:LayoutAnchorablePane>
                     </avalonDock:LayoutAnchorablePaneGroup>
@@ -61,7 +68,7 @@
 
 
 
-
+-->
 
 
 

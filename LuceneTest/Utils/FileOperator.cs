@@ -1,13 +1,11 @@
 ﻿using AnyTags.Net;
+using LuceneTest.Core;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 
 namespace AnyTag.BL
@@ -109,6 +107,7 @@ namespace AnyTag.BL
 
         public static bool CopyFile(string src,string dst)
         {
+            Logger.Log(string.Format("CopyFile: {0} => {1}", src, dst));
             SHFILEOPSTRUCT fileop = new SHFILEOPSTRUCT();
             fileop.hwnd = IntPtr.Zero;
             fileop.hNameMappings = IntPtr.Zero;
@@ -121,9 +120,17 @@ namespace AnyTag.BL
         }
         public static void LocateFile(string f)
         {
+
             if(isValidFileUrl(f))
             {
+                f = '"' + f + '"';
+                string cmd = "/select," + f;
+                Logger.Log("LocateFile: [{0}]", cmd);
                 System.Diagnostics.Process.Start("explorer.exe", "/select," + f);
+            }
+            else
+            {
+                Logger.Log(string.Format("LocateFile not validFileUrl: [{0}]", f));
             }
         }
         public static void OpenTagDir(string title)
@@ -132,13 +139,17 @@ namespace AnyTag.BL
             {
                 string tag = title;
                 string dir = MyPath.GetDirPath(tag);
+                Logger.Log("OpenTagDir {0} {1}", tag, dir);
                 Process.Start(dir);
             }
         }
         public static void StartFile(string file)
         {
-            if(isValidFileUrl(file))
+            Logger.Log("StartFile {0} ", file);
+            if (isValidFileUrl(file))
             {
+                
+                Logger.Log("StartFile {0} is valid", file);
                 Process.Start(file);
             }
         }
