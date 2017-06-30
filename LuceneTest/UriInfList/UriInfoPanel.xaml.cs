@@ -3,6 +3,7 @@ using AnyTagNet;
 using LuceneTest.TagMgr;
 using LuceneTest.UriMgr;
 using System.Collections.Generic;
+using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -98,13 +99,23 @@ namespace LuceneTest.UriInfList
 
     public class SearchItemInf
     {
-        public string _Detail;
+        public string _Detail
+        {
+            set
+            {
+                name = Path.GetFileName(value);
+                dir = Path.GetDirectoryName(value);
+                all = value;
+            }
+        }
+
+        private string name, dir,all;
         public BitmapSource _icon;
         public string Detail
         {
             get
             {
-                return _Detail;
+                return all;
             }
         }
         public BitmapSource icon
@@ -112,6 +123,20 @@ namespace LuceneTest.UriInfList
             get
             {
                 return _icon;
+            }
+        }
+        public string Name
+        {
+            get
+            {
+                return name;
+            }
+        }
+        public string Dir
+        {
+            get
+            {
+                return dir;
             }
         }
 

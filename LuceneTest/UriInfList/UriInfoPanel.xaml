@@ -16,8 +16,30 @@
             <RowDefinition Height="50" />
         </Grid.RowDefinitions>
 
+        <ListView Grid.Row="0" Name="lst" MouseDoubleClick="lst_MouseDoubleClick_1"  Background="White" SelectionChanged="lst_SelectionChanged">
+            <ListView.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Name="miOpen" Header="打开文件" Click="miOpen_Click"/>
+                    <MenuItem Name="miOpenPath" Header="打开所在路径" Click="miOpenPath_Click" />
+                </ContextMenu>
+            </ListView.ContextMenu>
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Header="类型"  Width="50">
 
-        <ListBox Grid.Row="0" Name="lst" 
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <Image Source="{Binding Path=icon}"  Stretch="None"/>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <GridViewColumn Header="名称" DisplayMemberBinding="{Binding Path=Name}" Width="100"/>
+                    <GridViewColumn Header="路径" DisplayMemberBinding="{Binding Path=Dir}" Width="100"/>
+                </GridView>
+            </ListView.View>
+        </ListView>
+<!--
+        <ListBox Grid.Row="0" Name="lst2" 
                  MouseDoubleClick="lst_MouseDoubleClick_1"  Background="White" SelectionChanged="lst_SelectionChanged">
             <ListBox.ContextMenu>
                 <ContextMenu>
@@ -27,15 +49,22 @@
             </ListBox.ContextMenu>
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <DockPanel>
-                        <Image Source="{Binding Path=icon}" ></Image>
-                        <TextBlock Text="{Binding Path=Detail}" >
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Name="Icon"/>
+                            <ColumnDefinition Name="文件名"/>
+                            <ColumnDefinition Name="目录"/>
+                        </Grid.ColumnDefinitions>
+                        <Image Grid.Column="0" Source="{Binding Path=icon}" ></Image>
+                        <TextBlock Grid.Column="1" Text="{Binding Path=Name}" ></TextBlock>
+                        <TextBlock Grid.Column="2" Text="{Binding Path=Dir}"></TextBlock>
 
-                        </TextBlock>
-                    </DockPanel>
+                    </Grid>
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
+        
+        -->
         
             <tagsbar:TagsPanel  x:Name="tagsBar" Grid.Row="1"></tagsbar:TagsPanel>
     </Grid>
