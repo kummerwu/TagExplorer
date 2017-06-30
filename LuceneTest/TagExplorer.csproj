@@ -241,8 +241,8 @@
     <Compile Include="TagsBar\TagsPanel.xaml.cs">
       <DependentUpon>TagsPanel.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UriInfList\UriInfoPanel.xaml.cs">
-      <DependentUpon>UriInfoPanel.xaml</DependentUpon>
+    <Compile Include="UriInfList\UriListBox.xaml.cs">
+      <DependentUpon>UriListBox.xaml</DependentUpon>
     </Compile>
     <Compile Include="Utils\Cfg.cs" />
     <Compile Include="Utils\FileOperator.cs" />
@@ -285,7 +285,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="UriInfList\UriInfoPanel.xaml">
+    <Page Include="UriInfList\UriListBox.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
