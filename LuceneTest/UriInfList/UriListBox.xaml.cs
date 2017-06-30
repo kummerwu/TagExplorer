@@ -2,6 +2,7 @@
 using AnyTagNet;
 using LuceneTest.TagMgr;
 using LuceneTest.UriMgr;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Windows;
@@ -34,6 +35,17 @@ namespace LuceneTest.UriInfList
                 
             }
             UpdateCurrentUriByContextMenu();
+
+            //自动调整列的宽度
+            GridView gv = lst.View as GridView;
+            if (gv != null)
+            {
+                foreach (GridViewColumn gvc in gv.Columns)
+                {
+                    gvc.Width = gvc.ActualWidth;
+                    gvc.Width = Double.NaN;
+                }
+            }
         }
         
 
