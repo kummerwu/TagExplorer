@@ -10,7 +10,7 @@
         xmlns:tagGraph ="clr-namespace:LuceneTest.TagGraph"
         xmlns:local="clr-namespace:LuceneTest"
         mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="525" SizeChanged="Window_SizeChanged" WindowState="Maximized" WindowStartupLocation="CenterScreen" Closed="Window_Closed">
+        Title="TagExplorer" Height="350" Width="525" SizeChanged="Window_SizeChanged" WindowState="Maximized" WindowStartupLocation="CenterScreen" Closed="Window_Closed">
     <Window.CommandBindings>
         <CommandBinding Command="Paste" CanExecute="CommandBinding_CanExecute" Executed="CommandBinding_Executed"/>
     </Window.CommandBindings>
