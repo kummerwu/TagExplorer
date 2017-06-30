@@ -1,6 +1,6 @@
 ﻿namespace LuceneTest.UriMgr
 {
-    class UriDBFactory
+    public class UriDBFactory
     {
         public static IUriDB CreateUriDB()
         {

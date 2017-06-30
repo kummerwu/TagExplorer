@@ -1,6 +1,6 @@
 ﻿namespace LuceneTest.Core
 {
-    class Logger
+    public class Logger
     {
         private static log4net.ILog log = log4net.LogManager.GetLogger("fileLog");
         public static void Log(string s)

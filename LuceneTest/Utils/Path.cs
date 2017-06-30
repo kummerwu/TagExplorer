@@ -12,7 +12,10 @@ namespace AnyTags.Net
         //根据后缀名，获得该后缀名对应的模板文件
         public static string DefaultDocTemplate(string postfix)
         {
-            return Path.Combine(TemplateRoot, GConfig.DefaultTag + "." + postfix);
+            postfix = postfix.TrimStart('.');
+            string[] allTemplate = Directory.GetFiles(TemplateRoot, "*."+postfix);
+            if (allTemplate.Length > 0) return allTemplate[0];
+            else return null;
         }
         //模板文件存放的根路径
         private static string TemplateRoot
@@ -28,11 +31,26 @@ namespace AnyTags.Net
         public static List<string> GetPostfix()
         {
             List<string> ret = new List<string>();
-            string[] allTemplate = Directory.GetFiles(TemplateRoot, GConfig.DefaultTag + ".*");
+            string[] allTemplate = Directory.GetFiles(TemplateRoot,  "*.*");
             foreach (string f in allTemplate)
             {
                 FileInfo fi = new FileInfo(f);
                 ret.Add(fi.Extension.Trim('.'));
+            }
+            return ret;
+        }
+        public static string GetTemplateFileFilter()
+        {
+            string ret = "";
+            string[] allTemplate = Directory.GetFiles(TemplateRoot, "*.*");
+            foreach (string f in allTemplate)
+            {
+                FileInfo fi = new FileInfo(f);
+                if(ret!="")
+                {
+                    ret += "|";
+                }
+                ret += (fi.Name+"|*"+fi.Extension);
             }
             return ret;
         }

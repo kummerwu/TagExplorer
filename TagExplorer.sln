@@ -5,6 +5,8 @@ VisualStudioVersion = 14.0.25123.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TagExplorer", "LuceneTest\TagExplorer.csproj", "{4E06CE05-41C9-4A42-B9A7-FF80960474F2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UTLT", "UTLT\UTLT.csproj", "{A0877F3A-8674-4E54-9BBA-9CB8799657DE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -29,6 +31,18 @@ Global
 		{4E06CE05-41C9-4A42-B9A7-FF80960474F2}.Release|x86.ActiveCfg = Release|x86
 		{4E06CE05-41C9-4A42-B9A7-FF80960474F2}.Release|x86.Build.0 = Release|x86
 		{4E06CE05-41C9-4A42-B9A7-FF80960474F2}.Release|x86.Deploy.0 = Release|x86
+		{A0877F3A-8674-4E54-9BBA-9CB8799657DE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A0877F3A-8674-4E54-9BBA-9CB8799657DE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A0877F3A-8674-4E54-9BBA-9CB8799657DE}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{A0877F3A-8674-4E54-9BBA-9CB8799657DE}.Debug|x64.Build.0 = Debug|Any CPU
+		{A0877F3A-8674-4E54-9BBA-9CB8799657DE}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{A0877F3A-8674-4E54-9BBA-9CB8799657DE}.Debug|x86.Build.0 = Debug|Any CPU
+		{A0877F3A-8674-4E54-9BBA-9CB8799657DE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A0877F3A-8674-4E54-9BBA-9CB8799657DE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A0877F3A-8674-4E54-9BBA-9CB8799657DE}.Release|x64.ActiveCfg = Release|Any CPU
+		{A0877F3A-8674-4E54-9BBA-9CB8799657DE}.Release|x64.Build.0 = Release|Any CPU
+		{A0877F3A-8674-4E54-9BBA-9CB8799657DE}.Release|x86.ActiveCfg = Release|Any CPU
+		{A0877F3A-8674-4E54-9BBA-9CB8799657DE}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

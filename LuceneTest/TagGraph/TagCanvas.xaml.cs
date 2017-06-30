@@ -3,8 +3,10 @@ using AnyTags.Net;
 using LuceneTest.TagLayout;
 using LuceneTest.TagMgr;
 using LuceneTest.UriMgr;
+using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -262,7 +264,11 @@ namespace LuceneTest.TagGraph
             System.IO.FileInfo fi = new System.IO.FileInfo(f);
             string dstDir = MyPath.GetDirPath(tag);
             string dstFile = System.IO.Path.Combine(dstDir, fi.Name);
-            if (!System.IO.File.Exists(dstFile))//TODO 已经存在的需要提示覆盖、放弃、重命名
+            if(dstFile==f)
+            {
+                return f;
+            }
+            if (!System.IO.File.Exists(dstFile) && !System.IO.Directory.Exists(dstFile))//TODO 已经存在的需要提示覆盖、放弃、重命名
             {
                 if(FileOperator.CopyFile(f, dstFile))
                 {
@@ -295,6 +301,35 @@ namespace LuceneTest.TagGraph
 
             canvasMinHeight = p.ActualHeight;
             SetHeight();
+        }
+
+        private void miNew_Click(object sender, RoutedEventArgs e)
+        {
+            UpdateCurrentTagByContextMenu();
+            string initDir = MyPath.GetDirPath(currentTag);
+            SaveFileDialog sf = new SaveFileDialog();
+            sf.InitialDirectory = initDir;
+
+            sf.Filter = MyTemplate.GetTemplateFileFilter();//"One文件(*.one)|*.one|Mind文件(*.xmind)|*.xmind";
+            if(sf.ShowDialog()==true)
+            {
+                if(File.Exists(sf.FileName))
+                {
+                    MessageBox.Show("该文件已经存在"+sf.FileName,"文件名冲突",MessageBoxButton.OK,MessageBoxImage.Error);
+                    return;
+                }
+                else
+                {
+                    FileInfo fi = new FileInfo(sf.FileName);
+                    string tmplateFile = MyTemplate.DefaultDocTemplate(fi.Extension);
+                    if (tmplateFile != null &&  File.Exists(tmplateFile))
+                    {
+                        File.Copy(tmplateFile, sf.FileName);
+                        AddUri(new List<string>() { sf.FileName });
+                        FileOperator.StartFile(sf.FileName);
+                    }
+                }
+            }
         }
     }
 }

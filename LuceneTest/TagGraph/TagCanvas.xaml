@@ -15,6 +15,7 @@
             <MenuItem Name="miCopy" Header="复制"/>
             <MenuItem Name="miPaste" Header="粘贴" Click="miPaste_Click"/>
             <Separator></Separator>
+            <MenuItem Name="miNew" Header="新建" Click="miNew_Click"></MenuItem>
             <MenuItem Name="miEdit" Header="编辑">
                 <MenuItem Name="miEditOne" Header="编辑.One"></MenuItem>
             </MenuItem>

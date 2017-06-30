@@ -1,6 +1,6 @@
 ﻿namespace LuceneTest.Core
 {
-    class Cfg
+    public class Cfg
     {
         private static Cfg _ins;
         public static Cfg Ins

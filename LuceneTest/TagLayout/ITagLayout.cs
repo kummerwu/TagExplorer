@@ -4,7 +4,7 @@ using System.Windows;
 
 namespace LuceneTest.TagLayout
 {
-    interface ITagLayout
+    public interface ITagLayout
     {
         void Layout(ITagDB db, string root);
         Size Size { get; }

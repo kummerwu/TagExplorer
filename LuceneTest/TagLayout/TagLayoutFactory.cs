@@ -1,6 +1,6 @@
 ﻿namespace LuceneTest.TagLayout
 {
-    class TagLayoutFactory
+    public class TagLayoutFactory
     {
         public static ITagLayout CreateLayout()
         {

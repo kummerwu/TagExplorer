@@ -1,6 +1,6 @@
 ﻿namespace LuceneTest.TagMgr
 {
-    class TagDBFactory
+    public class TagDBFactory
     {
         public static ITagDB CreateTagDB()
         {
