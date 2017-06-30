@@ -39,6 +39,7 @@ namespace LuceneTest.UriInfList
 
         private void lst_MouseDoubleClick_1(object sender, MouseButtonEventArgs e)
         {
+            
             OpenSelectedUri();
         }
         private void ChangeCurrentUri(string uri)
@@ -72,7 +73,10 @@ namespace LuceneTest.UriInfList
             OpenSelectedUri();
 
         }
-
+        private void lstItem_MouseDoubleClick(object sender,RoutedEventArgs e)
+        {
+            OpenSelectedUri();
+        }
         private void OpenSelectedUri()
         {
             UpdateCurrentUriByContextMenu();

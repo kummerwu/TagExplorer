@@ -8,7 +8,11 @@
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
 
-    
+    <UserControl.Resources>
+        <Style x:Key="itemstyle" TargetType="{x:Type ListViewItem}">
+            <EventSetter Event="MouseDoubleClick" Handler="lstItem_MouseDoubleClick" />
+        </Style>
+    </UserControl.Resources>
 
     <Grid x:Name="rGrid">
         <Grid.RowDefinitions>
@@ -16,7 +20,7 @@
             <RowDefinition Height="50" />
         </Grid.RowDefinitions>
 
-        <ListView Grid.Row="0" Name="lst" MouseDoubleClick="lst_MouseDoubleClick_1"  Background="White" SelectionChanged="lst_SelectionChanged">
+        <ListView Grid.Row="0" Name="lst" ItemContainerStyle="{StaticResource itemstyle}"  Background="White" SelectionChanged="lst_SelectionChanged">
             <ListView.ContextMenu>
                 <ContextMenu>
                     <MenuItem Name="miOpen" Header="打开文件" Click="miOpen_Click"/>

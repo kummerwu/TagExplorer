@@ -1,5 +1,6 @@
 ﻿using AnyTags.Net;
 using System;
+using System.Collections;
 using System.Drawing;
 using System.IO;
 using System.Runtime.InteropServices;
@@ -11,11 +12,11 @@ namespace AnyTagNet
 {
     class GIconHelper
     {
-        Icon GetIconByFile(string full)
+        private Icon GetIconByFile(string full)
         {
             return Icon.ExtractAssociatedIcon(full);
         }
-        public static WriteableBitmap GetWriteableBitmapFromFile(string f)
+        private static WriteableBitmap GetWriteableBitmapFromFile(string f)
         {
             var icon = GIconHelper.GetFileIcon(f, false).ToBitmap();
             IntPtr hBitmap = icon.GetHbitmap();
@@ -26,7 +27,47 @@ namespace AnyTagNet
             icon.Dispose();
             return writeableBmp;
         }
+
+        private static string FileToType(string f)
+        {
+            if (f.StartsWith("http:") || f.StartsWith("https:"))
+            {
+                return ".http";
+            }
+            else if (Directory.Exists(f))
+            {
+                return ".directory";
+            }
+            else if(File.Exists(f))
+            {
+                return Path.GetExtension(f);
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        static Hashtable iconCache = new Hashtable();
         public static BitmapSource GetBitmapFromFile(string f)
+        {
+            if (iconCache.Count > 1000) iconCache.Clear();
+
+            string type = FileToType(f);
+            if (iconCache[type] == null)
+            {
+                BitmapSource s = GetBitmapFromFileNoCache(f);
+                if (s != null)
+                {
+                    if (type == null) return s;
+                    else iconCache.Add(type, s);
+                }
+            }
+            return iconCache[type] as BitmapSource;
+            
+
+        }
+        public static BitmapSource GetBitmapFromFileNoCache(string f)
         {
             var icon = GIconHelper.GetFileIcon(f, false).ToBitmap();
             IntPtr hBitmap = icon.GetHbitmap();
@@ -44,7 +85,7 @@ namespace AnyTagNet
         /// /// 如果想获得.ICO文件所表示的图标，则必须是文件的完整路径。 
         /// /// /// 是否大图标 
         /// /// 文件的默认图标 
-        public static Icon GetFileIcon(string fileName, bool largeIcon)
+        private static Icon GetFileIcon(string fileName, bool largeIcon)
         {
             if(fileName.StartsWith("http:") || fileName.StartsWith("https:"))
             {
@@ -91,7 +132,7 @@ namespace AnyTagNet
             UseFileAttributes = 0x00000010
         }
 
-        public static string ShortTxt(string txt)
+        private static string ShortTxt(string txt)
         {
             int MAXLEN = 48;
             int PRELEN = 5;
