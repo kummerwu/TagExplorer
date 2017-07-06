@@ -5,10 +5,24 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:LuceneTest"
              mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="300">
-    <Border x:Name="bdr" BorderThickness="0" BorderBrush="Black">
-        <TextBlock x:Name="txt">
-            
+             >
+    <Border  x:Name="bdr"
+             BorderBrush="Black"  BorderThickness="0" 
+              >
+
+
+        <!--   <Border  >
+            <Border.Effect>
+                <DropShadowEffect BlurRadius="6" Color="Green" Direction="235" Opacity="0.5"
+           RenderingBias="Quality" ShadowDepth="10" />
+            </Border.Effect>
+            -->
+
+        
+        <TextBlock x:Name="txt" Text="Hello World" >
+
         </TextBlock>
-    </Border>
+        </Border>
+    
+    
 </UserControl>

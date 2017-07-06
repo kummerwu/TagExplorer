@@ -1,4 +1,5 @@
-﻿using LuceneTest;
+﻿using CodeFluent.Runtime.BinaryServices;
+using LuceneTest;
 using System;
 using System.Windows;
 using System.Windows.Media;
@@ -39,7 +40,7 @@ namespace AnyTagNet
             b.Margin = new Thickness(g.Content.X, g.Content.Y, 0, 0);
             b.TextAlignment = TextAlignment.Center;
             b.Text = g.Tag ;
-            b.Background = new SolidColorBrush(GetColor(g.Distance));
+            b.Background1 = new SolidColorBrush(GetColor(g.Distance));
             
         }
 

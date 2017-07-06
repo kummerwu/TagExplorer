@@ -27,15 +27,20 @@ namespace UTLT
             //if (System.IO.Directory.Exists(Cfg.Ins.TagDB))
             //    System.IO.Directory.Delete(Cfg.Ins.TagDB,true);
         }
+
+        //两个URI之间有匹配关系，一个是另外一个的子串
+        //先增加父串，再增加子串
         [TestMethod]
-        public void testPrefixSame1()
+        public void TestUriMgr_PrefixSame1()
         {
             db.AddUri(@"c:\aaaa", new List<string>() { "tag1", "tag2" });
             db.AddUri(@"c:\a",new List<string>() { "tag1", "tag2" });
             Assert.AreEqual(2, db.Query("a").Count);
         }
+        //两个URI之间有匹配关系，一个是另外一个的子串
+        //先增加子串，再增加父串
         [TestMethod]
-        public void testPrefixSame2()
+        public void TestUriMgr_PrefixSame2()
         {
             db.AddUri(@"c:\a", new List<string>() { "tag1", "tag2" });
             db.AddUri(@"c:\aaaa", new List<string>() { "tag1", "tag2" });
@@ -43,7 +48,7 @@ namespace UTLT
             Assert.AreEqual(2, db.Query("a").Count);
         }
         [TestMethod]
-        public void test1()
+        public void TestUriMgr_Base()
         {
             db.AddUri(@"c:\a.txt");
             List<string> uris = db.Query("a");
@@ -59,9 +64,9 @@ namespace UTLT
             Assert.AreEqual(0, uris.Count);
         }
 
-
+        //TAG区分大小写
         [TestMethod]
-        public void test2()
+        public void TestUriMgr_Base2()
         {
             db.AddUri(@"c:\a.txt",new List<string>() { "tag1","tag2"});
             AssertIn(@"c:\a.txt", "tag1", "tag2", "TAG1", "TAG2","a.txt","tag");
@@ -74,14 +79,14 @@ namespace UTLT
         }
 
         [TestMethod]
-        public void test20170617_1()
+        public void TestUriMgr_Base3()
         {
             db.AddUri(@"c:\a.txt", new List<string>() { "tag1"});
             AssertIn(@"c:\a.txt", "tag1");
 
         }
         [TestMethod]
-        public void test20170617_2()//URI中有大小写的情况
+        public void TestUriMgr_Base4()//URI中有大小写的情况
         {
             db.AddUri(@"c:\a.Txt", new List<string>() { "tag1" });
             AssertIn(@"c:\a.txt", "tag1");
@@ -89,14 +94,14 @@ namespace UTLT
         }
 
         [TestMethod]
-        public void test20170617_3()//一个失败的案例
+        public void TestUriMgr_LongURI1()//一个失败的案例，Uri字符串超长
         {
             db.AddUri(@"D:\00_工作备份\Work\ROSng软件架构及应用V1.1.pptx", new List<string>() { "parent1" });
             AssertIn(@"D:\00_工作备份\Work\ROSng软件架构及应用V1.1.pptx", "1");
 
         }
         [TestMethod]
-        public void test20170617_3_1()//一个失败的案例
+        public void TestUriMgr_LongURI2()//一个失败的案例,Uri字符串超长
         {
             db.AddUri(@"D:\00_工作备份\Work\ROSng软件架构及应用V1.1.pptx", new List<string>() { "parent1" });
             db.AddUri(@"D:\00_工作备份\Work\ROSng软件架构及应用V1.1.pptx", new List<string>() { "parent1" });
@@ -105,7 +110,7 @@ namespace UTLT
         }
 
         [TestMethod]
-        public void test20170617_4()//测试删除文件，好像案例3测试不通过的原因就是删除失败了。
+        public void TestUriMgr_Del()//测试删除文件，好像案例3测试不通过的原因就是删除失败了。
         {
             db.AddUri(@"D:\00_工作备份\Work\ROSng软件架构及应用V1.1.pptx", new List<string>() { "parent1" });
             AssertIn(@"D:\00_工作备份\Work\ROSng软件架构及应用V1.1.pptx", "parent1");
@@ -114,7 +119,7 @@ namespace UTLT
         }
 
         [TestMethod]
-        public void test20170619_1()//发现同一个文件连续添加两次会有两个文档在db中
+        public void TestUriMgr_AddSameUri()//发现同一个文件连续添加两次会有两个文档在db中
         {
             db.AddUri(@"D:\00_工作备份\Work\ROSng软件架构及应用V1.1.pptx", new List<string>() { "parent1" });
             AssertIn(@"D:\00_工作备份\Work\ROSng软件架构及应用V1.1.pptx", "parent1");
@@ -125,7 +130,7 @@ namespace UTLT
         }
 
         [TestMethod]
-        public void test20170619_2()//发现同一个文件连续添加两次会有两个文档在db中，
+        public void TestUriMgr_AddSameUri2()//发现同一个文件连续添加两次会有两个文档在db中，
             //最终定位不是这个原因，是因为某个字段长度超过了50个字符，我们的解析器有问题（1-50 Ngram）
         {
             //string dir = @"D:\02-个人目录\LuceneTest\TagExplorer\DocumentBase\Doc\child4";
@@ -138,7 +143,7 @@ namespace UTLT
         }
 
         [TestMethod]
-        public void test3()
+        public void TestUriMgr_AddUriWithTitle()
         {
             string uri = @"c:\a.txt";
             db.AddUri(uri, new List<string>() { "tag1", "tag2" },"TITLE1");
@@ -174,7 +179,7 @@ namespace UTLT
             
         }
         [TestMethod]
-        public void test4()
+        public void TestUriMgr_AddDel()
         {
             string uri = @"c:\a.txt";
             db.AddUri(uri, new List<string>() { "tag1", "tag2" }, "TITLE1");

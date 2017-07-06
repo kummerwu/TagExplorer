@@ -28,7 +28,7 @@ namespace UTLT
             //    System.IO.Directory.Delete(Cfg.Ins.TagDB,true);
         }
         [TestMethod]
-        public void testBaseAdd()
+        public void TestTag_AddBase()//简单添加
         {
             db.AddTag("p", "c1");
            
@@ -37,7 +37,7 @@ namespace UTLT
             Assert.AreEqual("c1", c[0]);
         }
 
-        public void testBaseRemove()
+        public void TestTag_AddDel()//添加后删除
         {
             db.AddTag("p", "c1");
 
@@ -52,7 +52,7 @@ namespace UTLT
         }
 
         [TestMethod]
-        public void testChildren()
+        public void TestTag_AddMultiChildren()//父节点，有多个子节点
         {
             Logger.Log("0");
             db.AddTag("p", "c1");
@@ -69,7 +69,7 @@ namespace UTLT
         }
 
         [TestMethod]
-        public void testParent()
+        public void TestTag_AddMultiParent()//子节点，有多个父节点
         {
             Logger.Log("0");
             db.AddTag("p1", "c");
@@ -86,7 +86,7 @@ namespace UTLT
         }
 
         [TestMethod]
-        public void testParent100()
+        public void TestTag_Add100Parent()//一个节点添加100个父节点
         {
             int i = 0;
             for (i = 0; i < 100; i++)
@@ -105,7 +105,7 @@ namespace UTLT
 
 
         [TestMethod]
-        public void testChild100()
+        public void TestTag_Add100Child()//一个父节点，添加100个子节点
         {
             int i = 0;
             for (i = 0; i < 100; i++)
@@ -123,7 +123,7 @@ namespace UTLT
         }
 
         [TestMethod]
-        public void testAlias()
+        public void TestTag_AddAlias()//添加别名
         {
             db.AddTag("p1", "c1");
             List<string> alias = db.QueryTagAlias("p1");
@@ -137,7 +137,7 @@ namespace UTLT
             Assert.AreEqual(true, alias.Contains("p2"));
         }
         [TestMethod]
-        public void testReopen()//关闭后重新打开
+        public void TestTag_Reopen()//关闭后重新打开
         {
             Logger.Log("begin test reopen");
             db.AddTag("p1", "c1");
@@ -156,7 +156,7 @@ namespace UTLT
             //Assert.AreEqual("p1", alias[0]);
         }
         [TestMethod]
-        public void testAlias_Single2()
+        public void TestTag_AliasAddAndQuery()
         {
             db.MergeAliasTag("p1", "p2");
             List<string>alias = db.QueryTagAlias("p1");
@@ -171,7 +171,7 @@ namespace UTLT
         }
 
         [TestMethod]
-        public void testAlias2()
+        public void TestTag_AliasAddAndQuery2()
         {
             db.AddTag("p1", "c1");
             db.AddTag("p2", "c2");

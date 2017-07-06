@@ -23,7 +23,7 @@ namespace LuceneTest.TagsBar
         {
             this.db = db;
             this.tagsDB = tagsDB;
-            autoTextBox.Search = tagsDB;
+            autoTextBox.SearchDataProvider = tagsDB;
             curUri = uri;
             List<string> tags = db.GetTags(uri);
             parent.Children.Clear();

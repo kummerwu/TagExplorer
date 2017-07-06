@@ -202,7 +202,7 @@ namespace LuceneTest.AutoComplete
             }
         }
         ISearchDataProvider search;
-        public ISearchDataProvider Search
+        public ISearchDataProvider SearchDataProvider
         {
             set { search = value; }
         }

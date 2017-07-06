@@ -217,14 +217,14 @@ namespace LuceneTest.TagGraph
 
             
             CurrentTagInf.Text = currentTag;
-            if(TagChangedHandler!=null)
+            if(SelectedTagChanged!=null)
             {
-                TagChangedHandler(tag);
+                SelectedTagChanged(tag);
             }
         }
 
         public delegate void CurrentTagChanged(string tag);
-        public CurrentTagChanged TagChangedHandler = null;
+        public CurrentTagChanged SelectedTagChanged = null;
 
         private void miPaste_Click(object sender, RoutedEventArgs e)
         {
@@ -256,7 +256,6 @@ namespace LuceneTest.TagGraph
                 {
                     UriDB.AddUri(dstFile, tags);
                 }
-                
             }
         }
         private string  CopyToHouse(string f, string tag)

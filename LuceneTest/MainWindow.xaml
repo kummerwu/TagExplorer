@@ -39,7 +39,7 @@
                 <ColumnDefinition Width="1*"></ColumnDefinition>
             </Grid.ColumnDefinitions>
             <tagGraph:TagCanvas x:Name="tagCanvas" Grid.Column="0"></tagGraph:TagCanvas>
-            <uriPanel:UriListBox x:Name="uriPanel" Grid.Column="1"></uriPanel:UriListBox>
+            <uriPanel:UriListBox x:Name="uriList" Grid.Column="1"></uriPanel:UriListBox>
         </Grid>
         <!--
         <avalonDock:DockingManager x:Name="dockingManager" Grid.Row="1">

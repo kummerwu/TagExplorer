@@ -12,7 +12,7 @@ namespace LuceneTest.UriMgr
         int DelUri(string Uri, List<string> tags);
         int UpdateUri(string Uri, string Title);
         List<string> Query(string query);
-        DataChanged DBNotify { get; set; }
+        DataChanged UriDBChanged { get; set; }
         string GetTitle(string Uri);
         List<string> GetTags(string Uri);
         

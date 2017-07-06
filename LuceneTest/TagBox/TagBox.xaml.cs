@@ -1,5 +1,6 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 
 namespace LuceneTest
 {
@@ -31,6 +32,14 @@ namespace LuceneTest
         public TextAlignment TextAlignment
         { get { return txt.TextAlignment; }
             internal set { txt.TextAlignment = value; }
+        }
+
+        public SolidColorBrush Background1
+        {
+            set
+            {
+                txt.Background = value;
+            }
         }
     }
 }

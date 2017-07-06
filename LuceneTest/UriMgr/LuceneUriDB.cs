@@ -14,6 +14,7 @@ namespace LuceneTest.UriMgr
     class LuceneUriDB : IUriDB
     {
         const string F_URI = "furi";
+        const string F_KEY = "key";
         const string F_URI_TITLE = "ftitle";
         const string F_URI_TAGS = "ftags";
         const string F_CREATE_TIME = "fctime";
@@ -30,7 +31,7 @@ namespace LuceneTest.UriMgr
 
         Directory dir = null;
         DataChanged dbChangedHandler;
-        public DataChanged DBNotify
+        public DataChanged UriDBChanged
         {
             get
             {
@@ -103,7 +104,7 @@ namespace LuceneTest.UriMgr
         }
         Document GetDoc(string uri)
         {
-            Term term = new Term(F_URI, uri.ToLower()); //kummer:能用分词器吗，这儿暂时没有找到方法，只好手工将uri转换为小写
+            Term term = new Term(F_KEY, uri.ToLower()); //kummer:能用分词器吗，这儿暂时没有找到方法，只好手工将uri转换为小写
             Query query = new TermQuery(term);
             ScoreDoc[] docs = search.Search(query, 1).ScoreDocs;
             Document doc = null;
@@ -127,6 +128,7 @@ namespace LuceneTest.UriMgr
             {
                 doc = new Document();
                 doc.Add(new Field(F_URI, Uri,Field.Store.YES, Field.Index.ANALYZED));
+                doc.Add(new Field(F_KEY, Uri.ToLower(), Field.Store.YES, Field.Index.NOT_ANALYZED));
                 writer.AddDocument(doc);
             }
             
@@ -144,7 +146,7 @@ namespace LuceneTest.UriMgr
         {
             if (doc != null)
             {
-                writer.UpdateDocument(new Term(F_URI, Uri.ToLower()), doc); //没有指定分析器，导致大小写有bug，相同的Uri会存在两个
+                writer.UpdateDocument(new Term(F_KEY, Uri.ToLower()), doc); //没有指定分析器，导致大小写有bug，相同的Uri会存在两个
                 //writer.UpdateDocument(new Term(F_URI, Uri), doc,new UriQueryAnalyser());
 
                 //writer.DeleteDocuments(new Term(F_URI, Uri));
@@ -197,7 +199,7 @@ namespace LuceneTest.UriMgr
         }
         public int DelUri(string Uri, bool Delete)
         {
-            writer.DeleteDocuments(new Term(F_URI, Uri.ToLower()));
+            writer.DeleteDocuments(new Term(F_KEY, Uri.ToLower()));
             Commit();
             if(Delete)
             {

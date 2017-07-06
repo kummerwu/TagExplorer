@@ -38,10 +38,10 @@ namespace LuceneTest
         public MainWindow()
         {
             InitializeComponent();
-            tagCanvas.TagChangedHandler += tagChanged;
+            tagCanvas.SelectedTagChanged += selectedTagChanged;
             autoTextBox.textBox.TextChanged += TextBox_TextChanged;
-            uriDB.DBNotify += DBChanged;
-            autoTextBox.Search = tagDB;
+            uriDB.UriDBChanged += UpdateUriList;
+            autoTextBox.SearchDataProvider = tagDB;
             Update("我的大脑");
             Logger.Log(@"
 ////////////////////////////////////////////////////////////////////
@@ -51,42 +51,44 @@ namespace LuceneTest
 ///////////////////////////////////////////////////////////////////
 ");
         }
-        public void DBChanged()
+        public void UpdateUriList()
         {
-            uriPanel.UpdateResult(autoTextBox.Text, uriDB,tagDB);
+            uriList.UpdateResult(autoTextBox.Text, uriDB,tagDB);
         }
         private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            uriPanel.UpdateResult(autoTextBox.Text, uriDB,tagDB);
+            UpdateUriList();
         }
 
-        public void tagChanged(string tag)
+        public void selectedTagChanged(string tag)
         {
             autoTextBox.Text = tag;
+            //修改text后，会自动触发 TextBox_TextChanged
+            //进一步触发             UpdateUriList
         }
-        public void SearchDir(string dir,IndexWriter w)
-        {
-            Document doc = new Document();
-            doc.Add(new Field(LuceneConstants.FILE_PATH, dir, Field.Store.YES, Field.Index.NOT_ANALYZED));
-            doc.Add(new Field(LuceneConstants.TYPE, "DIR", Field.Store.YES, Field.Index.NOT_ANALYZED));
-            doc.Add(new Field(LuceneConstants.FILE_NAME, new System.IO.DirectoryInfo(dir).Name, Field.Store.YES, Field.Index.NOT_ANALYZED_NO_NORMS));
-            w.AddDocument(doc);
+        //public void SearchDir(string dir,IndexWriter w)
+        //{
+        //    Document doc = new Document();
+        //    doc.Add(new Field(LuceneConstants.FILE_PATH, dir, Field.Store.YES, Field.Index.NOT_ANALYZED));
+        //    doc.Add(new Field(LuceneConstants.TYPE, "DIR", Field.Store.YES, Field.Index.NOT_ANALYZED));
+        //    doc.Add(new Field(LuceneConstants.FILE_NAME, new System.IO.DirectoryInfo(dir).Name, Field.Store.YES, Field.Index.NOT_ANALYZED_NO_NORMS));
+        //    w.AddDocument(doc);
 
-            string[] files = System.IO.Directory.GetFiles(dir);
-            foreach(string f in files)
-            {
-                Document docf = new Document();
-                docf.Add(new Field(LuceneConstants.FILE_PATH, f, Field.Store.YES, Field.Index.NOT_ANALYZED));
-                docf.Add(new Field(LuceneConstants.TYPE, "FILE", Field.Store.YES, Field.Index.NOT_ANALYZED));
-                docf.Add(new Field(LuceneConstants.FILE_NAME, new System.IO.FileInfo(f).Name, Field.Store.YES, Field.Index.ANALYZED));
-                w.AddDocument(docf); 
-            }
-            string[] dirs = System.IO.Directory.GetDirectories(dir);
-            foreach(string subd in dirs)
-            {
-                SearchDir(subd, w);
-            }
-        }
+        //    string[] files = System.IO.Directory.GetFiles(dir);
+        //    foreach(string f in files)
+        //    {
+        //        Document docf = new Document();
+        //        docf.Add(new Field(LuceneConstants.FILE_PATH, f, Field.Store.YES, Field.Index.NOT_ANALYZED));
+        //        docf.Add(new Field(LuceneConstants.TYPE, "FILE", Field.Store.YES, Field.Index.NOT_ANALYZED));
+        //        docf.Add(new Field(LuceneConstants.FILE_NAME, new System.IO.FileInfo(f).Name, Field.Store.YES, Field.Index.ANALYZED));
+        //        w.AddDocument(docf); 
+        //    }
+        //    string[] dirs = System.IO.Directory.GetDirectories(dir);
+        //    foreach(string subd in dirs)
+        //    {
+        //        SearchDir(subd, w);
+        //    }
+        //}
 
 
 
@@ -120,7 +122,7 @@ namespace LuceneTest
         private void CalcCanvasHeight()
         {
             //canvas.Height = Math.Max(canvas.Height, rGrid.RenderSize.Height-10);
-            tagCanvas.CanvasMinHeight = uriPanel.RenderSize.Height - 10;
+            tagCanvas.CanvasMinHeight = uriList.RenderSize.Height - 10;
         }
         private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
         {
