@@ -15,6 +15,7 @@ namespace LuceneTest.UriMgr
     {
         const string F_URI = "furi";
         const string F_KEY = "key";
+        const string F_ID = "guid";
         const string F_URI_TITLE = "ftitle";
         const string F_URI_TAGS = "ftags";
         const string F_CREATE_TIME = "fctime";
@@ -114,6 +115,19 @@ namespace LuceneTest.UriMgr
             }
             return doc;
         }
+        Document GetDoc(Guid id)
+        {
+            Term term = new Term(F_ID, id.ToString()); //kummer:能用分词器吗，这儿暂时没有找到方法，只好手工将uri转换为小写
+            Query query = new TermQuery(term);
+            ScoreDoc[] docs = search.Search(query, 1).ScoreDocs;
+            
+            Document doc = null;
+            if (docs.Length == 1)
+            {
+                doc = search.Doc(docs[0].Doc);
+            }
+            return doc;
+        }
         private void Commit()
         {
             writer.Flush(true, true, true);
@@ -121,27 +135,86 @@ namespace LuceneTest.UriMgr
             search = new IndexSearcher(reader);
             dbChangedHandler?.Invoke();
         }
-        public Document AddUriDocument(string Uri)
+        private Document GetDocEx(string Uri,out bool needUpdate,out Guid id)
         {
-            Document doc = GetDoc(Uri);
+            Document doc = null;
+            id = NtfsFileID.GetID(Uri);
+            doc = GetDoc(id);
             if(doc==null)
             {
-                doc = new Document();
-                doc.Add(new Field(F_URI, Uri,Field.Store.YES, Field.Index.ANALYZED));
-                doc.Add(new Field(F_KEY, Uri.ToLower(), Field.Store.YES, Field.Index.NOT_ANALYZED));
-                writer.AddDocument(doc);
+                doc = GetDoc(Uri);
             }
-            
+            if(doc==null)
+            {
+                needUpdate = true;
+            }
+            else
+            {
+                Field fid = doc.GetField(F_ID);
+                Field fkey = doc.GetField(F_KEY);
+                System.Diagnostics.Debug.Assert(fkey != null);
+                needUpdate = ((fid == null || fid.StringValue != id.ToString())
+                    || (fkey == null || fkey.StringValue != Uri.ToLower())
+                    );
+            }
+            return doc;
+        }
+        public Document AddUriDocument(string Uri)
+        {
+            Guid id;
+            bool needUpdate;
+            Document doc = GetDocEx(Uri, out needUpdate, out id);
+            if (!needUpdate) return doc;
+           
+            //doc确实不存在，说明是一个新的文件
+            if (doc == null)
+            {
+                doc = new Document();
+                
+            }
+            else //doc已经存在，需要更新
+            {
+                writer.DeleteDocuments(new Term(F_KEY, Uri.ToLower()));
+                writer.DeleteDocuments(new Term(F_ID, id.ToString()));
+                doc.RemoveField(F_ID);
+                doc.RemoveField(F_KEY);
+                doc.RemoveField(F_URI);
+                
+            }
+            doc.Add(new Field(F_URI, Uri, Field.Store.YES, Field.Index.ANALYZED));
+            doc.Add(new Field(F_KEY, Uri.ToLower(), Field.Store.YES, Field.Index.NOT_ANALYZED));
+            doc.Add(new Field(F_ID, id.ToString(), Field.Store.YES, Field.Index.NOT_ANALYZED));
+            writer.AddDocument(doc);
             return doc;
         }
 
         public int AddUri(string Uri, List<string> tags)
         {
-            Document doc = AddUriDocument(Uri, tags);
-            Commit(Uri, doc);
-            return 0;
+            lock (this)
+            {
+                Document doc = AddUriDocument(Uri, tags);
+                Commit(Uri, doc);
+                return 0;
+            }
         }
-
+        public int AddUri(string Uri, List<string> tags, string Title)
+        {
+            lock (this)
+            {
+                Document doc = AddUriDocument(Uri, tags, Title);
+                Commit(Uri, doc);
+                return 0;
+            }
+        }
+        public int AddUri(string Uri)
+        {
+            lock (this)
+            {
+                Document doc = AddUriDocument(Uri);
+                Commit(Uri, doc);
+                return 0;
+            }
+        }
         private void Commit(string Uri, Document doc)
         {
             if (doc != null)
@@ -178,12 +251,7 @@ namespace LuceneTest.UriMgr
             return doc;
         }
 
-        public int AddUri(string Uri, List<string> tags, string Title)
-        {
-            Document doc = AddUriDocument(Uri, tags, Title);
-            Commit(Uri, doc);
-            return 0;
-        }
+        
         private Document AddUriDocument(string Uri, List<string> tags, string Title)
         {
             Document doc = AddUriDocument(Uri, tags);
@@ -235,12 +303,7 @@ namespace LuceneTest.UriMgr
             return ret;
         }
 
-        public int AddUri(string Uri)
-        {
-            Document doc = AddUriDocument(Uri);
-            Commit(Uri, doc);
-            return 0;
-        }
+        
 
         public int DelUri(string Uri, List<string> tags)
         {
@@ -295,6 +358,44 @@ namespace LuceneTest.UriMgr
                 }
             }
             return ret;
+        }
+        //自动检查某个路径是否有文件发生变化,
+        //root可以是一个文件，也可以是一个目录
+        //如果是文件,deepth为0（检查一下）
+        //如果是目录，deepth表示需要搜索的深度。
+        public void AutoUpdate(string root,int deepth)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Notify()
+        {
+            dbChangedHandler?.Invoke();
+        }
+        public void Dbg()
+        {
+            int max = search.MaxDoc;
+            for (int i = 0; i < max; i++)
+            {
+                Document doc = search.Doc(i);
+                if(doc!=null)
+                {
+                    
+                    Console.WriteLine(string.Format(@"
+==============={0}
+{1}={2}
+{3}={4}
+{5}={6}
+
+", i, F_ID, doc.Get(F_ID), F_KEY, doc.Get(F_KEY), F_URI, doc.Get(F_URI)));
+
+                    foreach (Field f in doc.GetFields(F_URI_TAGS))
+                    {
+                        Console.Write("tag="+f.StringValue);
+                    }
+                    Console.Write("########################");
+                }
+            }
         }
     }
 }

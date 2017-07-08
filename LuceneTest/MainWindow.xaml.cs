@@ -15,6 +15,7 @@ using System.IO;
 using LuceneTest.TagMgr;
 using LuceneTest.UriMgr;
 using LuceneTest.Core;
+using AnyTags.Net;
 
 namespace LuceneTest
 {
@@ -32,7 +33,7 @@ namespace LuceneTest
         }
 
         public static RoutedCommand MyCommand = new RoutedCommand();
-        
+
 
         
         public MainWindow()
@@ -50,7 +51,10 @@ namespace LuceneTest
 //
 ///////////////////////////////////////////////////////////////////
 ");
+            
         }
+
+
         public void UpdateUriList()
         {
             uriList.UpdateResult(autoTextBox.Text, uriDB,tagDB);
@@ -102,7 +106,7 @@ namespace LuceneTest
         ITagDB tagDB = TagDBFactory.CreateTagDB();
         IUriDB uriDB = UriDBFactory.CreateUriDB();
         //ITagLayout tagLayout = TagLayoutFactory.CreateLayout();
-        
+
         
         private void scrollViewer_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {

@@ -1,5 +1,4 @@
-﻿using CodeFluent.Runtime.BinaryServices;
-using LuceneTest;
+﻿using LuceneTest;
 using System;
 using System.Windows;
 using System.Windows.Media;
@@ -9,11 +8,11 @@ namespace AnyTagNet
 {
     class GStyle
     {
-        Color[] colors = new Color[] {
+        static  Color[] colors1 = new Color[] {
                // Color.FromRgb(255,0,0      ),
                 Color.FromRgb(255,51,0     ),
-                Color.FromRgb(255,102,0    ),
-                Color.FromRgb(255,153,0    ),
+                //Color.FromRgb(255,102,0    ),
+                //Color.FromRgb(255,153,0    ),
                 Color.FromRgb(255,255,0    ),
                 //Color.FromRgb(204,255,51),
                 Color.FromRgb(153,255,0    ),
@@ -23,9 +22,29 @@ namespace AnyTagNet
                 Color.FromRgb(102,0,255    ),
                 Color.FromRgb(255,0,255    ),
                 Color.FromRgb(255,0,102    ),
-        };   
-        public Color GetColor(int i)
+        };
+        static Color[] colors2 = new Color[] {
+            Color.FromRgb(255,0,0),
+            //Color.FromRgb(255,255,0),
+            Color.FromRgb(0,255,0),
+            Color.FromRgb(0,255,255),
+            Color.FromRgb(0,0,255),
+            Color.FromRgb(255,0,255),
+
+        };
+        static Color C(int c) { return Color.FromRgb((byte)((c & 0xFF0000) >> 16), (byte)((c &0xFF00)>>8), (byte)(c &0xFF)); }
+        static Color[] colors3 = new Color[] {
+            C(0xFF6666),C(0x99CC00),C(0x99CCFF),C(0xFFFF33)
+
+        };
+        Color[] colors = colors3;
+        public Color GetColor(int distance,int level)
         {
+            int i = distance;
+            if(level==-1)
+            {
+                i = 0;
+            }
             i = i % colors.Length;
             i += colors.Length;
             i = i % colors.Length;
@@ -40,7 +59,7 @@ namespace AnyTagNet
             b.Margin = new Thickness(g.Content.X, g.Content.Y, 0, 0);
             b.TextAlignment = TextAlignment.Center;
             b.Text = g.Tag ;
-            b.Background1 = new SolidColorBrush(GetColor(g.Distance));
+            b.Background1 = new SolidColorBrush(GetColor(g.Distance,g.Level));
             
         }
 
@@ -49,13 +68,13 @@ namespace AnyTagNet
         {
             if (Math.Min(parent.Level, child.Level) == 0)
             {
-                l.Stroke = new SolidColorBrush(GetColor(parent.Distance));
+                l.Stroke = new SolidColorBrush(GetColor(parent.Distance,parent.Level));
                 l.StrokeThickness = GConfig.StrokeThickness*1.5;
                 l.StrokeDashArray = GConfig.StrokeDashArray;
             }
             else
             {
-                l.Stroke = new SolidColorBrush(GetColor(parent.Distance));
+                l.Stroke = new SolidColorBrush(GetColor(parent.Distance,parent.Level));
                 l.StrokeThickness = GConfig.StrokeThickness;
                 l.StrokeDashArray = GConfig.StrokeDashArray;
             }

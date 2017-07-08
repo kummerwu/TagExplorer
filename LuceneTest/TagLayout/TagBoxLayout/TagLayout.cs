@@ -47,27 +47,18 @@ namespace LuceneTest.TagLayout
 
         public void Layout(ITagDB db, string tag)
         {
-            IGLayoutResult result = new GLayoutResult();
-            IRectLayoutCalc c = new RectlayoutCalcImpl();
-            IEnumerable<GObj> objs = null;
-            GObj gobj = null;
-
-
-            IGObjCollection gcanvas = new GObjCollection();
-
-            gobj = GObj.ParseOut(tag, null, null, db, result, 0, 0);
-            gobj.AdjustXY(0, 0);
-            objs = gobj.GetAll();
-            gcanvas.AddGObjs(objs);
-            gcanvas.AddEdge(result.GetEdges());
+            //计算布局信息
+            GObj gobj = GObj.LayoutTag(tag, db);
             layoutSize.Height = gobj.OuterBox.Height + 10;
             layoutSize.Width = gobj.OuterBox.Width + GConfig.XContentPadding;
             rootPos.X = gobj.Content.X;
             rootPos.Y = gobj.Content.Y;
-            //scrollViewer.ScrollToHorizontalOffset(gobj.Content.X);
-            //scrollViewer.ScrollToVerticalOffset(gobj.Content.Y);
-            //return gcanvas;
 
+            //根据布局信息，生成UIElement控件并对控件的Style进行渲染。
+            IGObjCollection gcanvas = new GObjCollection();
+            gcanvas.AddGObjs(gobj.GetAll());
+            gcanvas.AddEdge(gobj.GetEdges());
+            
             lines = gcanvas.GetAllLines();
             allTxt = gcanvas.GetAllTextBlocks();
             

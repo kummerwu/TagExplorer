@@ -15,7 +15,7 @@ namespace AnyTag.UI
     }
     interface IRectLayoutCalc
     {
-        void Calc(ref Size s, IEnumerable<GObj> objs, LayoutOption o);
+        void Calc(ref Size initSize, IEnumerable<GObj> objs, LayoutOption o);
     }
 
     enum LayoutOption

@@ -3,10 +3,11 @@ using LuceneTest.Core;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Text.RegularExpressions;
 
 namespace AnyTags.Net
 {
-    class MyTemplate
+    public class MyTemplate
     {
         //模板管理，可以为每一个tag新建一个或多个描述文件，这些描述文件的格式
         //根据后缀名，获得该后缀名对应的模板文件
@@ -55,7 +56,7 @@ namespace AnyTags.Net
             return ret;
         }
     }
-    class MyPath
+    public class MyPath
     {
         public static string DBFILE
         {
@@ -106,7 +107,17 @@ namespace AnyTags.Net
                 return docRoot;
             }
         }
+        public static string GetTagByPath(string path)
+        {
+            if (!path.Contains(DocRoot)) return null; //根本不在doc目录中
+            if (!File.Exists(path) && !Directory.Exists(path)) return null;
 
+            string[] dirs= path.Substring(DocRoot.Length).Split(
+                new char[] { Path.DirectorySeparatorChar }, 
+                System.StringSplitOptions.RemoveEmptyEntries);
+            if (dirs.Length !=2) return null;
+            else return dirs[0];
+        }
         public static string GetFilePath(string tag, string postfix)
         {
             return System.IO.Path.Combine(GetDirPath(tag), tag + "." + postfix);
@@ -119,6 +130,12 @@ namespace AnyTags.Net
                 Directory.CreateDirectory(dir);
             }
             return dir;
+        }
+
+        public static bool FileWatcherFilter(string uri)
+        {
+            string name = Path.GetFileName(uri);
+            return Regex.IsMatch(name, @"(_files$)|(^~)",RegexOptions.IgnoreCase);
         }
 
     }

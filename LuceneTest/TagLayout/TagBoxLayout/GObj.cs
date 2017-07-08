@@ -56,12 +56,16 @@ namespace AnyTagNet
     class GObj
     {
         //公有属性：
-        public Rect Content = new Rect();
-        public Rect InnerBox = new Rect();
-        public Rect OuterBox = new Rect();
+        public Rect Content = new Rect();   //自身文字所占用的矩形大小（加了一个ContentPadding）
+        public Rect InnerBox = new Rect();  //自身文字所占的区域（再加了一个XPadding和YPadding）
+
+        public Rect OuterBox = new Rect();  //整个Gobj所占区域，包括三部分（Parent区域，自身区域，Children区域）
+
+
         public double FontSize = GConfig.FontSize;
         public string Tag;
         public int Level = 0;
+        public int Distance; //本节点离当前节点（跟节点的距离）
 
         //私有属性
         private ITagDB db = null;
@@ -72,13 +76,18 @@ namespace AnyTagNet
         List<GObj> gBrotherList = new List<GObj>();
         double XPadding = GConfig.XPadding;
         double YPadding = GConfig.YPadding;
-
         
+
         IRectLayoutCalc calc = new RectlayoutCalcImpl();
+        IGLayoutResult result = null;
 
+        public bool OverlayWith(GObj other)
+        {
+            return (this.OuterBox.IntersectsWith(other.OuterBox));
+        }
 
-
-        private void MeasureTextWidth(string text, double fontSize, string fontFamily)
+        //计算自身内容所占区域的大小
+        private void CalcContentSize(string text, double fontSize, string fontFamily)
         {
             
             FormattedText formattedText = new FormattedText(
@@ -94,8 +103,8 @@ namespace AnyTagNet
             
         }
         
-        
-        public void CalcSize()
+        //计算InnerBox（自身内容+Padding）的大小
+        public void CalcInnerBoxSize()
         {
             for(int i = 0;i<Distance;i++)
             {
@@ -110,11 +119,12 @@ namespace AnyTagNet
             XPadding = Math.Max(XPadding, GConfig.MinXPadding);
             YPadding = Math.Max(YPadding, GConfig.MinYPadding);
             FontSize = Math.Max(FontSize, GConfig.MinFontSize);
-            MeasureTextWidth(Tag, FontSize, GConfig.GFontName);
+            CalcContentSize(Tag, FontSize, GConfig.GFontName);
             InnerBox.Width = Content.Width + XPadding ;
             InnerBox.Height = Content.Height + YPadding;
         }
-        
+        //返回所有对象，包括自己，父节点和子节点(以及递归的所有父子节点)
+        //TODO：该函数可以优化，实际上并不需要所有节点，只需要指导当前整个图中有多少个节点（以便在节点太多的时候，停止继续遍历）
         public IEnumerable<GObj> GetAll()
         {
             List<GObj> all = new List<GObj>();//include self and p,c,b
@@ -130,16 +140,23 @@ namespace AnyTagNet
             return all;
 
         }
-        public int Distance;
-        public static GObj ParseOut(string tag, string fromParent, string fromChild, ITagDB db, IGLayoutResult result, int level, int distance)
+        
+        public static GObj LayoutTag(string tag, ITagDB db)
         {
+            IGLayoutResult result = new GLayoutResult();
             GObj g = null;
             for(int curLevel =GConfig.MinLevel;curLevel<=GConfig.MaxLevel;curLevel++)
             {
                 GConfig.CurLevel = curLevel;
                 result.Clear();
-                g = Parse_in(tag, fromParent, fromChild, db, result, level, distance);
-                if (g.GetAll().Count<GObj>() > GConfig.MinTagCnt) return g;
+                g = Parse_in(tag, null, null, db, result, 0, 0);
+                if (g.GetAll().Count<GObj>() > GConfig.MinTagCnt) break; 
+            }
+
+            if (g != null)
+            {
+                g.CalcAllObjsPos(0, 0);
+                g.result = result;
             }
             return g;
 
@@ -147,6 +164,7 @@ namespace AnyTagNet
         }
         private static GObj Parse_in(string tag,string fromParent,string fromChild,ITagDB db,IGLayoutResult result, int level,int distance)
         {
+            if (!((level==-1 && distance==1) || level==distance)) return null;
             if (distance > GConfig.CurLevel) return null;
             if (result.HasCalc(tag)) return null;
             result.AddCalc(tag);
@@ -202,41 +220,54 @@ namespace AnyTagNet
                 ret.calc.Calc(ref ret.childrenSize, ret.gChildList, LayoutOption.FixRadio);
             }
 
-            ret.CalcSize();
-
+            ret.CalcInnerBoxSize();
+            ret.CalcOutterBoxSize();
+            
+            return ret;
+        }
+        private void CalcOutterBoxSize()
+        {
+            GObj ret = this;
             ret.OuterBox.X = 0;
             ret.OuterBox.Y = 0;
             ret.OuterBox.Width = Math.Max(ret.parentSize.Width, ret.childrenSize.Width);
             ret.OuterBox.Width = Math.Max(ret.OuterBox.Width, ret.InnerBox.Width);
             ret.OuterBox.Height = ret.InnerBox.Height + ret.parentSize.Height + ret.childrenSize.Height;
-            return ret;
         }
-        public void AdjustXY(double x,double y)
+        //计算所有对象的位置信息
+        public void CalcAllObjsPos(double Left,double Top)
         {
             //先确定好自身元素的位置
-            OuterBox.X += x;
-            OuterBox.Y += y;
+            OuterBox.X += Left;
+            OuterBox.Y += Top;
             InnerBox.X = OuterBox.X + (OuterBox.Width - InnerBox.Width) / 2;
             InnerBox.Y = OuterBox.Y + parentSize.Height;
             Content.X = InnerBox.X + XPadding;
             Content.Y = InnerBox.Y + YPadding;
 
-            double parentX, parentY;
-            parentX = OuterBox.X + (OuterBox.Width - parentSize.Width) / 2;
-            parentY = OuterBox.Y;
+            //调整所有父节点的位置
+            double leftParentRange, topParentRange;
+            leftParentRange = OuterBox.X + (OuterBox.Width - parentSize.Width) / 2;
+            topParentRange = OuterBox.Y;
             foreach (GObj p in gParentList)
             {
-                p.AdjustXY(parentX, parentY);
+                p.CalcAllObjsPos(leftParentRange, topParentRange);
             }
 
-            double childX, childY;
-            childX = OuterBox.X + (OuterBox.Width - childrenSize.Width) / 2;
-            childY = OuterBox.Y + parentSize.Height + InnerBox.Height;
+            //调整所有子节点的位置
+            double leftChildRange, topChildRange;
+            leftChildRange = OuterBox.X + (OuterBox.Width - childrenSize.Width) / 2;
+            topChildRange = OuterBox.Y + parentSize.Height + InnerBox.Height;
             foreach (GObj c in gChildList)
             {
-                c.AdjustXY(childX,childY);
+                c.CalcAllObjsPos(leftChildRange,topChildRange);
             }
         }
 
+        internal IEnumerable<PathEdge> GetEdges()
+        {
+            if (result != null) return result.GetEdges();
+            else return new PathEdge[0];
+        }
     }
 }

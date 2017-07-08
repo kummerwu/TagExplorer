@@ -19,7 +19,7 @@
             -->
 
         
-        <TextBlock x:Name="txt" Text="Hello World" >
+        <TextBlock x:Name="txt" Text="Hello World" Foreground="Black">
 
         </TextBlock>
         </Border>

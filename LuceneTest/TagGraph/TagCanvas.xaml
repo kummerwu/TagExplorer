@@ -8,9 +8,9 @@
              d:DesignHeight="300" d:DesignWidth="300">
     <UserControl.Resources>
         <ContextMenu x:Name="tagAreaMenu" x:Key="tagAreaMenu" ContextMenuOpening="tagAreaMenu_ContextMenuOpening">
-            <MenuItem Name="tagAreaNode" Header="打开所在目录" Click="tagAreaNode_Click"/>
-            <MenuItem Name="copyAreaNode" Header="拷贝名称" Click="copyAreaNode_Click"/>
-            <MenuItem Name="copyFullPath" Header="拷贝文件全路径" Click="copyFullPath_Click"/>
+            <MenuItem Name="tagAreaNode"  Header="打开标签目录" Click="tagAreaNode_Click"/>
+            <MenuItem Name="copyAreaNode" Header="拷贝标签名称" Click="copyAreaNode_Click"/>
+            <MenuItem Name="copyFullPath" Header="拷贝标签路径" Click="copyFullPath_Click"/>
             <Separator></Separator>
             <MenuItem Name="miCopy" Header="复制"/>
             <MenuItem Name="miPaste" Header="粘贴" Click="miPaste_Click"/>
@@ -28,8 +28,8 @@
             <RowDefinition Height="*"></RowDefinition>
             <RowDefinition Height="50"></RowDefinition>
         </Grid.RowDefinitions>
-        <ScrollViewer Grid.Row="0" x:Name="scrollViewer" DockPanel.Dock="Bottom" VerticalAlignment="Top"  Background="AliceBlue" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" MouseDoubleClick="scrollViewer_MouseDoubleClick" SizeChanged="scrollViewer_SizeChanged">
-            <Canvas x:Name="canvas" HorizontalAlignment="Left" MenuItem.Click="canvas_Click"  VerticalAlignment="Top"  Background="AliceBlue" MouseLeftButtonDown="canvas_MouseLeftButtonDown" MouseRightButtonDown="canvas_MouseRightButtonDown" >
+        <ScrollViewer Grid.Row="0" x:Name="scrollViewer" DockPanel.Dock="Bottom" VerticalAlignment="Top"  Background="White" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" MouseDoubleClick="scrollViewer_MouseDoubleClick" SizeChanged="scrollViewer_SizeChanged">
+            <Canvas x:Name="canvas" HorizontalAlignment="Left" MenuItem.Click="canvas_Click"  VerticalAlignment="Top"  Background="White" MouseLeftButtonDown="canvas_MouseLeftButtonDown" MouseRightButtonDown="canvas_MouseRightButtonDown" >
             </Canvas>
         </ScrollViewer>
         <TextBlock x:Name="CurrentTagInf" Grid.Row="1"></TextBlock>

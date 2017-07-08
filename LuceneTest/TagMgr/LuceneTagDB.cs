@@ -75,7 +75,9 @@ namespace LuceneTest.TagMgr
         public int AddTag(string parent, string child)
         {
             int ret = R_OK;
-            
+            if (parent == null || child == null) return ret;
+
+
             Document parentDoc = GetDoc(parent);
             if(parentDoc==null)
             {

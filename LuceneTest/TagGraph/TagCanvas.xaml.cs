@@ -14,14 +14,66 @@ using System.Windows.Shapes;
 
 namespace LuceneTest.TagGraph
 {
+    
     /// <summary>
     /// TagCanvas.xaml 的交互逻辑
     /// </summary>
     public partial class TagCanvas : UserControl
     {
+        FileSystemWatcher fileWather = null;
         public TagCanvas()
         {
             InitializeComponent();
+            fileWather = new FileSystemWatcher(MyPath.DocRoot);
+            fileWather.IncludeSubdirectories = true;
+            fileWather.Path = MyPath.DocRoot;
+            fileWather.Renamed += FileWather_Renamed;
+            fileWather.Created += FileWather_Created;
+            fileWather.Deleted += FileWather_Deleted;
+            fileWather.EnableRaisingEvents = true;
+        }
+        private void NotifyList()
+        {
+            UriDB.Notify();
+        }
+        private void FileWather_Deleted(object sender, FileSystemEventArgs e)
+        {
+            while(File.Exists(e.FullPath) || Directory.Exists(e.FullPath))
+            {
+                System.Threading.Thread.Sleep(100);
+            }
+            this.Dispatcher.Invoke(new Action(NotifyList));
+        }
+
+        private void FileWather_Created(object sender, FileSystemEventArgs e)
+        {
+            AddFileInDoc(e.FullPath);
+            //MessageBox.Show("Create");
+        }
+
+       
+
+        private void FileWather_Renamed(object sender, RenamedEventArgs e)
+        {
+            AddFileInDoc(e.FullPath);
+            //MessageBox.Show("rename");
+        }
+        private void AddFileInDoc_Invoke(string uri)
+        {
+            string tag = MyPath.GetTagByPath(uri);
+            if (tag != null)
+            {
+                UriDB.AddUri(uri, new List<string>() { tag });
+            }
+
+        }
+        
+        private void AddFileInDoc(string uri)
+        {
+            if (!MyPath.FileWatcherFilter(uri))
+            {
+                this.Dispatcher.Invoke(new Action<string>(AddFileInDoc_Invoke), uri);
+            }
         }
         public double CanvasMinHeight
         {
@@ -258,6 +310,7 @@ namespace LuceneTest.TagGraph
                 }
             }
         }
+        
         private string  CopyToHouse(string f, string tag)
         {
             System.IO.FileInfo fi = new System.IO.FileInfo(f);

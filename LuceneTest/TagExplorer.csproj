@@ -231,15 +231,15 @@
     <Compile Include="TagGraph\TagCanvas.xaml.cs">
       <DependentUpon>TagCanvas.xaml</DependentUpon>
     </Compile>
-    <Compile Include="TagLayout\GLayout.cs" />
-    <Compile Include="TagLayout\GObj.cs" />
-    <Compile Include="TagLayout\GStyle.cs" />
-    <Compile Include="TagLayout\ICanvas.cs" />
-    <Compile Include="TagLayout\ITagGraphDB.cs" />
+    <Compile Include="TagLayout\TagBoxLayout\GLayout.cs" />
+    <Compile Include="TagLayout\TagBoxLayout\GObj.cs" />
+    <Compile Include="TagLayout\TagBoxLayout\GStyle.cs" />
+    <Compile Include="TagLayout\TagBoxLayout\ICanvas.cs" />
+    <Compile Include="TagLayout\TagBoxLayout\ITagGraphDB.cs" />
     <Compile Include="TagLayout\ITagLayout.cs" />
-    <Compile Include="TagLayout\LayoutSizeAdjustHelper.cs" />
-    <Compile Include="TagLayout\RectlayoutCalcImpl.cs" />
-    <Compile Include="TagLayout\TagLayout.cs" />
+    <Compile Include="TagLayout\TagBoxLayout\LayoutSizeAdjustHelper.cs" />
+    <Compile Include="TagLayout\TagBoxLayout\RectlayoutCalcImpl.cs" />
+    <Compile Include="TagLayout\TagBoxLayout\TagLayout.cs" />
     <Compile Include="TagLayout\TagLayoutFactory.cs" />
     <Compile Include="TagMgr\TagInf.cs" />
     <Compile Include="TagsBar\TagsPanel.xaml.cs">
@@ -248,6 +248,7 @@
     <Compile Include="UriInfList\UriListBox.xaml.cs">
       <DependentUpon>UriListBox.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UriMgr\NtfsFileID.cs" />
     <Compile Include="Utils\Cfg.cs" />
     <Compile Include="Utils\FileOperator.cs" />
     <Compile Include="Utils\GConfig.cs" />

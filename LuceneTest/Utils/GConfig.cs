@@ -19,7 +19,7 @@ namespace AnyTagNet
         public static DoubleCollection StrokeDashArray = new DoubleCollection() { 2, 2 };
 
         //Tag有向图的大致比例关系，边缘空白大小
-        public static Size Radio = new Size(80, 40);
+        public static Size Radio = new Size(40, 40);
         public static double XPadding = 40;
         public static double YPadding = 40;
         public static double MinXPadding = 20;
