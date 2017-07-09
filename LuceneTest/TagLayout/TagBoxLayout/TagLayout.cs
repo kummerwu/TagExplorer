@@ -49,8 +49,8 @@ namespace LuceneTest.TagLayout
         {
             //计算布局信息
             GObj gobj = GObj.LayoutTag(tag, db);
-            layoutSize.Height = gobj.OuterBox.Height + 10;
-            layoutSize.Width = gobj.OuterBox.Width + GConfig.XContentPadding;
+            layoutSize.Height = gobj.OuterBox.Height + GConfig.LayoutYPadding;
+            layoutSize.Width = gobj.OuterBox.Width + GConfig.LayoutXPadding;
             rootPos.X = gobj.Content.X;
             rootPos.Y = gobj.Content.Y;
 

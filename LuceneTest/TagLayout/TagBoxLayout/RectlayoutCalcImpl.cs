@@ -1,4 +1,5 @@
 ﻿using AnyTag.UI;
+using LuceneTest.Core;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -17,22 +18,28 @@ namespace AnyTagNet
             putInObjs.Clear();
         }
         ArrayList putInObjs = new ArrayList();
-        private bool isValidPos(GObj obj,Size rect)
+        private int isValidPos(GObj obj,Size rect)
         {
+            if(obj.OuterBox.Width > rect.Width ||
+                obj.OuterBox.Height>rect.Height)
+            {
+                return -1;//返回负数，大小不够
+            }
+            
             //先检查自己外边缘是否已经超过了rect的范围
             if (obj.OuterBox.X + obj.OuterBox.Width > rect.Width ||
                 obj.OuterBox.Y + obj.OuterBox.Height > rect.Height)
             {
-                return false;
+                return 0;
             }
 
             //再检查与已有的对象是否相交
             foreach(GObj pr in putInObjs)
             {
                 //if (obj.OuterBox.IntersectsWith(pr.OuterBox)) return false;
-                if (obj.OverlayWith(pr)) return false;
+                if (obj.OverlayWith(pr)) return 0; //返回0，表示与已有的相交
             }
-            return true;
+            return 1;//OK，是一个有效位置
         }
 
         /// <summary>
@@ -73,7 +80,7 @@ namespace AnyTagNet
             return true;
 
         }
-
+        
         //尝试将对象r放到指定大小的矩形中
         private bool Put(GObj obj,Size rect)
         {
@@ -81,21 +88,29 @@ namespace AnyTagNet
             double dy = Math.Max(rect.Height / 50, 1);
             double x = 0;
             double y = 0;
-            
+            Logger.Log("try put {0} in {1}", obj.Tag, rect);
             for (y = 0; y < rect.Height; y += dy)
             {
                 for (x = 0; x < rect.Width; x += dx)
                 {
-                    obj.OuterBox.X = x;
-                    obj.OuterBox.Y = y;
-                    if (isValidPos(obj,rect))
+                    //obj.OuterBox.X = x;
+                    //obj.OuterBox.Y = y;
+                    obj.SetOutterBoxPos(x, y);
+                    int ret = isValidPos(obj, rect);
+                    if (ret>0) //OK
                     {
                         putInObjs.Add(obj);
+                        Logger.Log("   Put OK!! {0} # {1}  ##{2}", obj.Tag, obj.InnerBox, obj.OuterBox);
                         return true;
+                    }
+                    else if(ret==0)
+                    {
+                        //obj.OuterBox.X = obj.OuterBox.Y = 0;
+                        obj.SetOutterBoxPos(0, 0);
                     }
                     else
                     {
-                        obj.OuterBox.X = obj.OuterBox.Y = 0;
+                        return false;
                     }
                 }
             }

@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using AnyTagNet;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 
@@ -38,7 +39,23 @@ namespace LuceneTest
         {
             set
             {
-                txt.Background = value;
+                bdr.Background = value;
+            }
+        }
+        public double Width1
+        {
+            set
+            {
+                bdr.Width = value;
+                txt.Width = value - GConfig.XContentPadding/2;
+            }
+        }
+        public double Height1
+        {
+            set
+            {
+                bdr.Height = value;
+                txt.Height = value - GConfig.YContentPadding/2;
             }
         }
     }

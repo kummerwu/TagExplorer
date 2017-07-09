@@ -20,23 +20,26 @@ namespace AnyTagNet
 
         //Tag有向图的大致比例关系，边缘空白大小
         public static Size Radio = new Size(40, 40);
-        public static double XPadding = 40;
-        public static double YPadding = 40;
-        public static double MinXPadding = 20;
-        public static double MinYPadding = 20;
+        public static double InnerBoxXPadding_MAX = 30;
+        public static double InnerBoxYPadding_MAX = 24;
+        public static double InnerBoxXPadding_MIN = 20;
+        public static double InnerBoxYPadding_MIN = 18;
         public static double XContentPadding = 10;
-        public static double YContentPadding = 0;
-
+        public static double YContentPadding = 6;
+        public static double LayoutXPadding = 10;
+        public static double LayoutYPadding = 10;
+        //public static double LayoutInitWidth = 300;
+        //public static double layoutInitHeight = 600;
         //每一层Tag显示大小缩放（底层显示更小一些）
         public static double ScaleInRadio = 1.2;
 
         public static string SpecialChar = "<>《》~?";
 
         //最小显示几层，最多几层，最少显示多少个tag
-        public static int MinLevel = 2;
+        public static int MinLevel = 4;
         public static int CurLevel = MinLevel;
         public static int MaxLevel = 8;
-        public static int MinTagCnt = 40;
+        public static int MinTagCnt = 80;
         
         //最后显示的Tag字符串
         public static string TitleDataFile = "title.dat";

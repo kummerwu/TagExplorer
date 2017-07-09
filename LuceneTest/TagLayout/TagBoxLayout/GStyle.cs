@@ -34,7 +34,7 @@ namespace AnyTagNet
         };
         static Color C(int c) { return Color.FromRgb((byte)((c & 0xFF0000) >> 16), (byte)((c &0xFF00)>>8), (byte)(c &0xFF)); }
         static Color[] colors3 = new Color[] {
-            C(0xFF6666),C(0x99CC00),C(0x99CCFF),C(0xFFFF33)
+            C(0xFF6666),C(0x99CC00),C(0xFFFF33),C(0xFF99CC),C(0x99CCFF),C(0x9933FF),
 
         };
         Color[] colors = colors3;
@@ -54,8 +54,8 @@ namespace AnyTagNet
         {
             b.FontFamily = GConfig.GFontF;
             b.FontSize = g.FontSize;
-            b.Height = g.Content.Height;
-            b.Width = g.Content.Width;
+            b.Height1 = g.Content.Height;
+            b.Width1 = g.Content.Width;
             b.Margin = new Thickness(g.Content.X, g.Content.Y, 0, 0);
             b.TextAlignment = TextAlignment.Center;
             b.Text = g.Tag ;
