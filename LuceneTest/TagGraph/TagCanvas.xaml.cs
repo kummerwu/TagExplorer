@@ -278,11 +278,35 @@ namespace LuceneTest.TagGraph
         public delegate void CurrentTagChanged(string tag);
         public CurrentTagChanged SelectedTagChanged = null;
 
-        private void miPaste_Click(object sender, RoutedEventArgs e)
+        public void miPaste_Click(object sender, RoutedEventArgs e)
         {
-            Paste();
+            ClipOperation opt = ClipOperation.Parse(Clipboard.GetText());
+            if (opt == null)
+            {
+                PasteFiles();
+            }
+            else
+            {
+                PasteTags(opt);
+            }
         }
-        public void Paste()
+
+        private void PasteTags(ClipOperation opt)
+        {
+            UpdateCurrentTagByContextMenu();
+            if (opt.opt == ClipOperation.OPT.Copy)
+            {
+                tagDB.AddTag(currentTag, opt.Tag);
+            }
+            else if(opt.opt == ClipOperation.OPT.Cut)
+            {
+                tagDB.SetRelation(currentTag, opt.Tag);
+            }
+            Update();
+
+        }
+
+        public void PasteFiles()
         {
             UpdateCurrentTagByContextMenu();
             AddUri(FileOperator.GetFileListFromClipboard());
@@ -382,6 +406,63 @@ namespace LuceneTest.TagGraph
                     }
                 }
             }
+        }
+
+        public class ClipOperation
+        {
+            public string Tag;
+            public enum OPT
+            {
+                Cut,Copy,Sel
+            }
+            public OPT opt = OPT.Sel;
+            public static ClipOperation Parse(string txt)
+            {
+                string[] tokens = txt.Split('`');
+                if(tokens.Length==3 && tokens[0]=="KUMMERWU")
+                {
+                    ClipOperation opt = new ClipOperation();
+                    opt.Tag = tokens[1];
+                    opt.opt = (OPT)(int.Parse(tokens[2]));
+                    return opt;
+                }
+                return null;
+            }
+            public override string ToString()
+            {
+                return "KUMMERWU`" + Tag + "`" + ((int)(opt)).ToString();
+            }
+        }
+        public void miCopy_Click(object sender, RoutedEventArgs e)
+        {
+            UpdateCurrentTagByContextMenu();
+            ClipOperation opt = new ClipOperation();
+            opt.Tag = currentTag;
+            opt.opt = ClipOperation.OPT.Copy;
+            Clipboard.SetText(opt.ToString());
+        }
+
+        public void miCut_Click(object sender, RoutedEventArgs e)
+        {
+            UpdateCurrentTagByContextMenu();
+            ClipOperation opt = new ClipOperation();
+            opt.Tag = currentTag;
+            opt.opt = ClipOperation.OPT.Cut;
+            Clipboard.SetText(opt.ToString());
+        }
+
+        private void miDelete_Click(object sender, RoutedEventArgs e)
+        {
+            UpdateCurrentTagByContextMenu();
+            if (tagDB.QueryTagChildren(currentTag).Count==0)
+            {
+                tagDB.RemoveTag(currentTag);
+            }
+            else
+            {
+                MessageBox.Show(string.Format("[{0}]下还有其他子节点，如果确实需要删除该标签，请先删除所有子节点", currentTag), "提示：", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
+            Update("我的大脑");
         }
     }
 }

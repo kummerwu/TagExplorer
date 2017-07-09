@@ -58,7 +58,19 @@ namespace LuceneTest.TagMgr
             reader.Dispose();
             writer.Dispose();
         }
-
+        Document[] GetParentDocs(string child)
+        {
+            Term term = new Term(F_TAGCHILD, child);
+            Query query = new TermQuery(term);
+            ScoreDoc[] docs = search.Search(query, Cfg.Ins.TAG_MAX_RELATION).ScoreDocs;
+            Document []docArray = new Document[docs.Length];
+            //foreach(ScoreDoc doc in docs)
+            for(int i = 0;i<docs.Length;i++)
+            {
+                docArray[i] = search.Doc(docs[i].Doc);
+            }
+            return docArray;
+        }
         Document GetDoc(string tag)
         {
             Term term = new Term(F_TAGNAME, tag);
@@ -70,6 +82,35 @@ namespace LuceneTest.TagMgr
                 doc = search.Doc(docs[0].Doc);
             }
             return doc;
+        }
+
+        //重置child的父节点为parent
+        public int SetRelation(string parent,string child)
+        {
+            RemoveAllRelation( child);
+            AddTag(parent, child);
+            Commit();
+            return 0;
+        }
+
+        private void RemoveAllRelation(string child)
+        {
+            Document[] parents = GetParentDocs(child);
+            foreach (Document doc in parents)
+            {
+                //if (doc.Get(F_TAGNAME) == parent) continue;//这个文档不用修改,前面AddTag已经添加了。
+
+                Document newDoc = new Document();
+                newDoc.Add(doc.GetField(F_TAGNAME));
+                foreach (Field f in doc.GetFields(F_TAGCHILD))
+                {
+                    if (f.StringValue != child)
+                    {
+                        newDoc.Add(f);
+                    }
+                }
+                writer.UpdateDocument(new Term(F_TAGNAME, doc.Get(F_TAGNAME)), newDoc);
+            }
         }
 
         public int AddTag(string parent, string child)
@@ -170,10 +211,12 @@ namespace LuceneTest.TagMgr
             return GetByField(tag, F_TAGCHILD, F_TAGNAME);
         }
 
-        public int RemoveTag(string tag)
+        public int RemoveTag(string tag)//TODO:bug，没有清除该tag所有parent对其的引用
         {
+            RemoveAllRelation(tag);
             List<string> alias = QueryTagAlias(tag);
-            foreach(string n in alias)
+            DelTag(tag);
+            foreach (string n in alias)
             {
                 DelTag(n);
             }

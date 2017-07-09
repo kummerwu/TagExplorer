@@ -9,7 +9,7 @@ namespace UTLT
     [TestClass]
     public class UnitTest1
     {
-        [TestMethod]
+        //[TestMethod]
         public void TestUtil_GetID()
         {
             string f = @"D:\00TagExplorerBase\DocumentBase\Doc\工具集合\dddd";

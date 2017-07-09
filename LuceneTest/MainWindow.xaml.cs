@@ -160,14 +160,15 @@ namespace LuceneTest
             }
         }
 
-        private void CommandBinding_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        private void Paste_CanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
             e.CanExecute = true;
         }
 
-        private void CommandBinding_Executed(object sender, ExecutedRoutedEventArgs e)
+        private void Paste_Executed(object sender, ExecutedRoutedEventArgs e)
         {
-            tagCanvas.Paste();
+            //tagCanvas.PasteFiles();
+            tagCanvas.miPaste_Click(sender, e);
         }
 
         private void Window_Closed(object sender, EventArgs e)
@@ -183,6 +184,27 @@ namespace LuceneTest
 *
 **********************************************************************
 ");
+        }
+
+        private void Cut_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = true;
+            return ;
+        }
+
+        private void Cut_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            tagCanvas.miCut_Click(sender, e);      
+        }
+
+        private void Copy_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = true;
+        }
+
+        private void Copy_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            tagCanvas.miCut_Click(sender, e);
         }
     }
 }

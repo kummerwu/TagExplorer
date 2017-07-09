@@ -37,6 +37,7 @@ namespace UTLT
             Assert.AreEqual("c1", c[0]);
         }
 
+        [TestMethod]
         public void TestTag_AddDel()//添加后删除
         {
             db.AddTag("p", "c1");
@@ -48,6 +49,23 @@ namespace UTLT
             db.RemoveTag("p");
             a = db.QueryTagAlias("p");
             Assert.AreEqual(0, a.Count);
+
+        }
+
+        [TestMethod]
+        public void TestTag_Remove()//添加后删除
+        {
+            db.AddTag("p", "c1");
+
+            List<string> a = db.QueryTagAlias("c1");
+            Assert.AreEqual(1, a.Count);
+            Assert.AreEqual("c1", a[0]);
+
+            db.RemoveTag("c1");
+            a = db.QueryTagAlias("c1");
+            Assert.AreEqual(0, a.Count);
+
+            Assert.AreEqual(0,db.QueryTagParent("c1").Count);
 
         }
 
@@ -196,6 +214,53 @@ namespace UTLT
             Assert.AreEqual(2, child.Count);
             Assert.AreEqual(true, child.Contains("c1"));
             Assert.AreEqual(true, child.Contains("c2"));
+        }
+        public void AssertListEqual(List<string> expect,List<string> real)
+        {
+            Assert.AreEqual(expect.Count, real.Count);
+            foreach(string e in expect)
+            {
+                Assert.AreEqual(true,real.Contains(e));
+            }
+
+        }
+        [TestMethod]
+        public void TestTag_SetRelation()//多个切换到一个(不存在的)
+        {
+            db.AddTag("P1", "C1");
+            db.AddTag("P2", "C1");
+            List<string> parents = db.QueryTagParent("C1");
+            AssertListEqual(parents, new List<string>() { "P1", "P2" });
+
+            db.SetRelation("P3", "C1");
+            parents = db.QueryTagParent("C1");
+            AssertListEqual(parents, new List<string>() { "P3" });
+        }
+
+        [TestMethod]
+        public void TestTag_SetRelation2()//多个切换到一个（已存在的）
+        {
+            db.AddTag("P1", "C1");
+            db.AddTag("P2", "C1");
+            List<string> parents = db.QueryTagParent("C1");
+            AssertListEqual(parents, new List<string>() { "P1", "P2" });
+
+            db.SetRelation("P2", "C1");
+            parents = db.QueryTagParent("C1");
+            AssertListEqual(parents, new List<string>() { "P2" });
+        }
+
+        [TestMethod]
+        public void TestTag_SetRelation3() //添加不存在的节点
+        {
+            db.SetRelation("P1", "C1");
+            List<string> parents = db.QueryTagParent("C1");
+            AssertListEqual(parents, new List<string>() { "P1" });
+
+            db.SetRelation("P1", "C2");
+            parents = db.QueryTagParent("C2");
+            AssertListEqual(parents, new List<string>() { "P1" });
+
         }
     }
 }
