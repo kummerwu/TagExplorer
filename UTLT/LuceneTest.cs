@@ -262,5 +262,21 @@ namespace UTLT
             AssertListEqual(parents, new List<string>() { "P1" });
 
         }
+
+        [TestMethod]
+        public void TestTag_SetRelation4() //添加不存在的节点
+        {
+            db.AddTag("P1", "C1");
+            db.AddTag("P2", "C1");
+            db.AddTag("P3", "C2");
+            List<string> parents = db.QueryTagParent("C1");
+            AssertListEqual(parents, new List<string>() { "P1","P2" });
+
+
+            db.SetRelation("P3", "C1");
+            parents = db.QueryTagParent("C1");
+            AssertListEqual(parents, new List<string>() { "P3" });
+
+        }
     }
 }

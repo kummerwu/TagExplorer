@@ -1,5 +1,6 @@
 ﻿using AnyTag.BL;
 using AnyTagNet;
+using LuceneTest.TagGraph;
 using LuceneTest.TagMgr;
 using LuceneTest.UriMgr;
 using System;
@@ -110,6 +111,25 @@ namespace LuceneTest.UriInfList
         private void lst_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             UpdateCurrentUriByContextMenu();
+        }
+
+        private void miCopy_Click(object sender, RoutedEventArgs e)
+        {
+            UpdateCurrentUriByContextMenu();
+            Clipboard.SetText(TagCanvas.KUMMERWU_URI_COPY+"`" + GetSelUriList());
+        }
+        private string GetSelUriList()
+        {
+            string uris = "";
+            foreach(SearchItemInf it in lst.SelectedItems)
+            {
+                uris += it.Detail + "?";
+            }
+            return uris.Trim('?');
+        }
+        private void miCut_Click(object sender, RoutedEventArgs e)
+        {
+            Clipboard.SetText(TagCanvas.KUMMERWU_URI_CUT+"`" + GetSelUriList());
         }
     }
 

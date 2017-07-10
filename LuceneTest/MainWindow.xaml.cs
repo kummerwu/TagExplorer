@@ -204,7 +204,7 @@ namespace LuceneTest
 
         private void Copy_Executed(object sender, ExecutedRoutedEventArgs e)
         {
-            tagCanvas.miCut_Click(sender, e);
+            tagCanvas.miCopy_Click(sender, e);
         }
     }
 }

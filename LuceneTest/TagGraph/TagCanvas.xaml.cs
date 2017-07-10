@@ -7,6 +7,7 @@ using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -20,6 +21,13 @@ namespace LuceneTest.TagGraph
     /// </summary>
     public partial class TagCanvas : UserControl
     {
+        public const string KUMMERWU_TAG_COPY = "KUMMERWU_TAG_COPY";
+        public const string KUMMERWU_TAG_CUT = "KUMMERWU_TAG_CUT";
+
+        public const string KUMMERWU_URI_COPY = "KUMMERWU_URI_COPY";
+        public const string KUMMERWU_URI_CUT = "KUMMERWU_URI_CUT";
+
+
         FileSystemWatcher fileWather = null;
         public TagCanvas()
         {
@@ -267,45 +275,80 @@ namespace LuceneTest.TagGraph
             string oldTag = currentTag;
             currentTag = tag;
 
-            
-            CurrentTagInf.Text = currentTag;
+
+            ShowCurrentTagInf();
             if(SelectedTagChanged!=null)
             {
                 SelectedTagChanged(tag);
             }
         }
+        private void ShowCurrentTagInf()
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.Append(currentTag);
+            
+            List<string> parents = tagDB.QueryTagParent(currentTag);
+            if(parents.Count>0)
+            {
+                sb.Append(" Parent::= ");
+                foreach (string s in parents) sb.Append(" " + s);
+            }
 
+
+            List<string> children = tagDB.QueryTagChildren(currentTag);
+            if (children.Count > 0)
+            {
+                sb.Append(" Children::= ");
+                foreach (string s in children) sb.Append(" " + s);
+            }
+
+            CurrentTagInf.Text = sb.ToString().Trim();
+        }
         public delegate void CurrentTagChanged(string tag);
         public CurrentTagChanged SelectedTagChanged = null;
 
         public void miPaste_Click(object sender, RoutedEventArgs e)
         {
-            ClipOperation opt = ClipOperation.Parse(Clipboard.GetText());
-            if (opt == null)
+            UpdateCurrentTagByContextMenu();
+            string[] token = Clipboard.GetText().Split(new char[] { '`' }, StringSplitOptions.RemoveEmptyEntries);
+            
+            if(token.Length==2)
             {
-                PasteFiles();
+                string arg = token[1];
+                string[] args = arg.Split(new char[] { '?' }, StringSplitOptions.RemoveEmptyEntries);
+                switch (token[0])
+                {
+                    case KUMMERWU_TAG_COPY:
+                        tagDB.AddTag(currentTag, arg); 
+                        Update();
+                        break;
+                    case KUMMERWU_TAG_CUT:
+                        tagDB.SetRelation(currentTag, arg); 
+                        Update();
+                        break;
+                    case KUMMERWU_URI_CUT:
+                        foreach (string uri in args)
+                        {
+                            UriDB.DelUri(uri, false); UriDB.AddUri(uri, new List<string>() { currentTag }); 
+                        }
+                        break;
+                    case KUMMERWU_URI_COPY:
+                        foreach (string uri in args)
+                        {
+                            UriDB.AddUri(uri, new List<string>() { currentTag });
+                        }
+                        break;
+                    default:PasteFiles();break;
+                }
             }
             else
             {
-                PasteTags(opt);
+                PasteFiles();
             }
+            
         }
 
-        private void PasteTags(ClipOperation opt)
-        {
-            UpdateCurrentTagByContextMenu();
-            if (opt.opt == ClipOperation.OPT.Copy)
-            {
-                tagDB.AddTag(currentTag, opt.Tag);
-            }
-            else if(opt.opt == ClipOperation.OPT.Cut)
-            {
-                tagDB.SetRelation(currentTag, opt.Tag);
-            }
-            Update();
-
-        }
-
+        
         public void PasteFiles()
         {
             UpdateCurrentTagByContextMenu();
@@ -408,47 +451,41 @@ namespace LuceneTest.TagGraph
             }
         }
 
-        public class ClipOperation
-        {
-            public string Tag;
-            public enum OPT
-            {
-                Cut,Copy,Sel
-            }
-            public OPT opt = OPT.Sel;
-            public static ClipOperation Parse(string txt)
-            {
-                string[] tokens = txt.Split('`');
-                if(tokens.Length==3 && tokens[0]=="KUMMERWU")
-                {
-                    ClipOperation opt = new ClipOperation();
-                    opt.Tag = tokens[1];
-                    opt.opt = (OPT)(int.Parse(tokens[2]));
-                    return opt;
-                }
-                return null;
-            }
-            public override string ToString()
-            {
-                return "KUMMERWU`" + Tag + "`" + ((int)(opt)).ToString();
-            }
-        }
+        //public class ClipOperation
+        //{
+        //    public string Tag;
+        //    public enum OPT
+        //    {
+        //        Cut,Copy,Sel
+        //    }
+        //    public OPT opt = OPT.Sel;
+        //    public static ClipOperation Parse(string txt)
+        //    {
+        //        string[] tokens = txt.Split('`');
+        //        if(tokens.Length==3 && tokens[0]=="KUMMERWU")
+        //        {
+        //            ClipOperation opt = new ClipOperation();
+        //            opt.Tag = tokens[1];
+        //            opt.opt = (OPT)(int.Parse(tokens[2]));
+        //            return opt;
+        //        }
+        //        return null;
+        //    }
+        //    public override string ToString()
+        //    {
+        //        return "KUMMERWU`" + Tag + "`" + ((int)(opt)).ToString();
+        //    }
+        //}
         public void miCopy_Click(object sender, RoutedEventArgs e)
         {
             UpdateCurrentTagByContextMenu();
-            ClipOperation opt = new ClipOperation();
-            opt.Tag = currentTag;
-            opt.opt = ClipOperation.OPT.Copy;
-            Clipboard.SetText(opt.ToString());
+            Clipboard.SetText(KUMMERWU_TAG_COPY + "`" + currentTag);
         }
 
         public void miCut_Click(object sender, RoutedEventArgs e)
         {
             UpdateCurrentTagByContextMenu();
-            ClipOperation opt = new ClipOperation();
-            opt.Tag = currentTag;
-            opt.opt = ClipOperation.OPT.Cut;
-            Clipboard.SetText(opt.ToString());
+            Clipboard.SetText(KUMMERWU_TAG_CUT+"`" + currentTag);
         }
 
         private void miDelete_Click(object sender, RoutedEventArgs e)

@@ -243,3 +243,13 @@ ModelManifest.xml
 
 # FAKE - F# Make
 .fake/
+/SourceInsight/TagExplorer.WK3
+/SourceInsight/TagExplorer.PS
+/SourceInsight/TagExplorer.PRI
+/SourceInsight/TagExplorer.PR
+/SourceInsight/TagExplorer.PO
+/SourceInsight/TagExplorer.PFI
+/SourceInsight/TagExplorer.IMD
+/SourceInsight/TagExplorer.IMB
+/SourceInsight/TagExplorer.IAD
+/SourceInsight/TagExplorer.IAB

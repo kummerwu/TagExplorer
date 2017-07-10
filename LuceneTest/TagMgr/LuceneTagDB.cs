@@ -90,6 +90,8 @@ namespace LuceneTest.TagMgr
             RemoveAllRelation( child);
             AddTag(parent, child);
             Commit();
+            System.Diagnostics.Debug.Assert(QueryTagParent(child).Count == 1);
+            System.Diagnostics.Debug.Assert(QueryTagChildren(parent).Contains(child));
             return 0;
         }
 

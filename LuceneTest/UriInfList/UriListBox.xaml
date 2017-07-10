@@ -25,6 +25,9 @@
                 <ContextMenu>
                     <MenuItem Name="miOpen" Header="打开文件" Click="miOpen_Click"/>
                     <MenuItem Name="miOpenPath" Header="打开所在路径" Click="miOpenPath_Click" />
+                    <MenuItem Name="miCut" Header="剪切文件" Click="miCut_Click"/>
+                    <MenuItem Name="miCopy" Header="复制文件" Click="miCopy_Click"/>
+                    
                 </ContextMenu>
             </ListView.ContextMenu>
             <ListView.View>
