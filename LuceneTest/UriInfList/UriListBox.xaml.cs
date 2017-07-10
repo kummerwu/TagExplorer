@@ -1,5 +1,6 @@
 ﻿using AnyTag.BL;
 using AnyTagNet;
+using LuceneTest.Core;
 using LuceneTest.TagGraph;
 using LuceneTest.TagMgr;
 using LuceneTest.UriMgr;
@@ -29,7 +30,9 @@ namespace LuceneTest.UriInfList
         {
             this.uriDB = uriDB;
             this.tagsDB = tagsDB;
-            lst.ItemsSource = SearchItemInf.GetFilesByTag(query, uriDB);
+            var datasource = SearchItemInf.GetFilesByTag(query, uriDB);
+            lst.ItemsSource = datasource;
+            TipsCenter.Ins.ListInf ="文件列表统计:"+ query +" Found Files:" + datasource.Count;
             if (lst.Items.Count > 0)
             {
                 lst.SelectedIndex = 0;
@@ -62,6 +65,7 @@ namespace LuceneTest.UriInfList
                 CurrentUri = uri;
                 
             }
+            
             //List<string> tags = uriDB.GetTags(CurrentUri);
             tagsBar.UpdateUri(uri,uriDB,tagsDB);
         }
@@ -123,13 +127,13 @@ namespace LuceneTest.UriInfList
             string uris = "";
             foreach(SearchItemInf it in lst.SelectedItems)
             {
-                uris += it.Detail + "?";
+                uris += it.Detail + TagCanvas.ArgsSplitToken;
             }
-            return uris.Trim('?');
+            return uris.Trim(TagCanvas.ArgsSplitToken);
         }
         private void miCut_Click(object sender, RoutedEventArgs e)
         {
-            Clipboard.SetText(TagCanvas.KUMMERWU_URI_CUT+"`" + GetSelUriList());
+            Clipboard.SetText(TagCanvas.KUMMERWU_URI_CUT+TagCanvas.CommandSplitToken + GetSelUriList());
         }
     }
 

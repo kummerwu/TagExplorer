@@ -49,6 +49,7 @@ namespace LuceneTest.TagMgr
 
             reader = writer.GetReader();
             search = new IndexSearcher(reader);
+            DBChanged();
             
         }
 
@@ -85,7 +86,7 @@ namespace LuceneTest.TagMgr
         }
 
         //重置child的父节点为parent
-        public int SetRelation(string parent,string child)
+        public int ResetRelationOfChild(string parent,string child)
         {
             RemoveAllRelation( child);
             AddTag(parent, child);
@@ -114,7 +115,10 @@ namespace LuceneTest.TagMgr
                 writer.UpdateDocument(new Term(F_TAGNAME, doc.Get(F_TAGNAME)), newDoc);
             }
         }
-
+        private void DBChanged()
+        {
+            TipsCenter.Ins.TagDBInf = "当前标签数据库中存在 ： "+ reader.MaxDoc +" 已删除："+reader.NumDeletedDocs;
+        }
         public int AddTag(string parent, string child)
         {
             int ret = R_OK;
@@ -163,7 +167,7 @@ namespace LuceneTest.TagMgr
             reader = writer.GetReader();
             //Logger.Log("newSearch");
             search = new IndexSearcher(reader);
-            
+            DBChanged();
             
             //Logger.Log("FinishedCommit");
 

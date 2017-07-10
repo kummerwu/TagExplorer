@@ -232,7 +232,7 @@ namespace UTLT
             List<string> parents = db.QueryTagParent("C1");
             AssertListEqual(parents, new List<string>() { "P1", "P2" });
 
-            db.SetRelation("P3", "C1");
+            db.ResetRelationOfChild("P3", "C1");
             parents = db.QueryTagParent("C1");
             AssertListEqual(parents, new List<string>() { "P3" });
         }
@@ -245,7 +245,7 @@ namespace UTLT
             List<string> parents = db.QueryTagParent("C1");
             AssertListEqual(parents, new List<string>() { "P1", "P2" });
 
-            db.SetRelation("P2", "C1");
+            db.ResetRelationOfChild("P2", "C1");
             parents = db.QueryTagParent("C1");
             AssertListEqual(parents, new List<string>() { "P2" });
         }
@@ -253,11 +253,11 @@ namespace UTLT
         [TestMethod]
         public void TestTag_SetRelation3() //添加不存在的节点
         {
-            db.SetRelation("P1", "C1");
+            db.ResetRelationOfChild("P1", "C1");
             List<string> parents = db.QueryTagParent("C1");
             AssertListEqual(parents, new List<string>() { "P1" });
 
-            db.SetRelation("P1", "C2");
+            db.ResetRelationOfChild("P1", "C2");
             parents = db.QueryTagParent("C2");
             AssertListEqual(parents, new List<string>() { "P1" });
 
@@ -273,7 +273,7 @@ namespace UTLT
             AssertListEqual(parents, new List<string>() { "P1","P2" });
 
 
-            db.SetRelation("P3", "C1");
+            db.ResetRelationOfChild("P3", "C1");
             parents = db.QueryTagParent("C1");
             AssertListEqual(parents, new List<string>() { "P3" });
 

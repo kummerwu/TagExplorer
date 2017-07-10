@@ -9,6 +9,7 @@
         xmlns:uriPanel ="clr-namespace:LuceneTest.UriInfList"
         xmlns:tagGraph ="clr-namespace:LuceneTest.TagGraph"
         xmlns:local="clr-namespace:LuceneTest"
+        xmlns:tips="clr-namespace:LuceneTest"
         mc:Ignorable="d"
         Title="TagExplorer" Height="350" Width="525" SizeChanged="Window_SizeChanged" WindowState="Maximized" WindowStartupLocation="CenterScreen" Closed="Window_Closed">
     <Window.CommandBindings>
@@ -42,9 +43,15 @@
                 </Button.Content>
             </Button>
             <autoTextbox:AutoTextbox x:Name="autoTextBox"    Background="White" Width="200" KeyUp="autoTextBox_KeyUp" ></autoTextbox:AutoTextbox>
-            <Button Width="40">
+            <Button Width="40" >
+                <Button.ToolTip>
+                    <ToolTip>
+                        <TextBlock Text="{Binding Path=Tips,Source={x:Static tips:TipsCenter.Ins}}"></TextBlock>
+                    </ToolTip>
+                </Button.ToolTip>
                 <Button.Content>
                     <Image Source="pack://siteoforigin:,,,/Resources/ICON_Search.ico"></Image>
+                    
                 </Button.Content>
             </Button>
         </ToolBar>
@@ -81,7 +88,6 @@
                 </avalonDock:LayoutPanel>
             </avalonDock:LayoutRoot>
         </avalonDock:DockingManager>
-
 
 
 

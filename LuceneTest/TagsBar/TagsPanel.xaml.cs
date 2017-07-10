@@ -1,4 +1,5 @@
-﻿using LuceneTest.TagMgr;
+﻿using LuceneTest.Core;
+using LuceneTest.TagMgr;
 using LuceneTest.UriMgr;
 using System.Collections.Generic;
 using System.Windows;
@@ -21,6 +22,7 @@ namespace LuceneTest.TagsBar
         private string curUri = null;
         public void UpdateUri(string uri,IUriDB db,ITagDB tagsDB)
         {
+            string tips = "当前选中文件："+uri+" ";
             this.db = db;
             this.tagsDB = tagsDB;
             autoTextBox.SearchDataProvider = tagsDB;
@@ -30,7 +32,10 @@ namespace LuceneTest.TagsBar
             foreach (string tag in tags)
             {
                 AddTag(tag);
+                tips += tag + " ";
             }
+
+            TipsCenter.Ins.UriInf = tips;
         }
         private void AddTag(string tag)
         {

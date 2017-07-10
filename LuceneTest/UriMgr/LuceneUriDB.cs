@@ -77,7 +77,7 @@ namespace LuceneTest.UriMgr
                 new string[] { F_URI, F_URI_TAGS, F_URI_TITLE },
                 new UriQueryAnalyser());
 
-
+            DBChanged();
             
         }
         public void test()
@@ -128,12 +128,17 @@ namespace LuceneTest.UriMgr
             }
             return doc;
         }
+        private void DBChanged()
+        {
+            TipsCenter.Ins.UriDBInf = "当前文件数据库中存在 ： " + reader.MaxDoc + " 已删除：" + reader.NumDeletedDocs;
+        }
         private void Commit()
         {
             writer.Flush(true, true, true);
             reader = writer.GetReader();
             search = new IndexSearcher(reader);
             dbChangedHandler?.Invoke();
+            DBChanged();
         }
         private Document GetDocEx(string Uri,out bool needUpdate,out Guid id)
         {
@@ -296,6 +301,7 @@ namespace LuceneTest.UriMgr
                     Document doc = search.Doc(docs[i].Doc);
                     ret.Add(doc.GetField(F_URI).StringValue);
                 }
+                TipsCenter.Ins.MainInf = "当前查询： "+querystr + " has found: " + docs.Length +" files";
             }catch(Exception e)
             {
 

@@ -6,7 +6,7 @@ using System.Windows.Media;
 namespace LuceneTest
 {
     /// <summary>
-    /// TagBox.xaml 的交互逻辑
+    /// 在标签有向图中，显示一个标签的空间（封装了一个textblock和一个border，border是为了显示状态信息）
     /// </summary>
     public partial class TagBox : UserControl
     {
@@ -42,6 +42,7 @@ namespace LuceneTest
                 bdr.Background = value;
             }
         }
+        
         public double Width1
         {
             set

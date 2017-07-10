@@ -101,7 +101,7 @@ namespace LuceneTest
         {
             CalcCanvasHeight();
             tagCanvas.UriDB = uriDB;
-            tagCanvas.Update(tagDB, root);
+            tagCanvas.ShowGraph(tagDB, root);
         }
         ITagDB tagDB = TagDBFactory.CreateTagDB();
         IUriDB uriDB = UriDBFactory.CreateUriDB();
