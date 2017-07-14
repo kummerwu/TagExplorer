@@ -91,6 +91,10 @@ namespace LuceneTest.TagMgr
             RemoveAllRelation( child);
             AddTag(parent, child);
             Commit();
+            foreach (string p in QueryTagParent(child))
+            {
+                System.Diagnostics.Debug.WriteLine(QueryTagParent(child));
+            }
             System.Diagnostics.Debug.Assert(QueryTagParent(child).Count == 1);
             System.Diagnostics.Debug.Assert(QueryTagChildren(parent).Contains(child));
             return 0;
@@ -114,6 +118,7 @@ namespace LuceneTest.TagMgr
                 }
                 writer.UpdateDocument(new Term(F_TAGNAME, doc.Get(F_TAGNAME)), newDoc);
             }
+            Commit();
         }
         private void DBChanged()
         {

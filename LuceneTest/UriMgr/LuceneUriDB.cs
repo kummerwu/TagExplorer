@@ -78,7 +78,7 @@ namespace LuceneTest.UriMgr
                 new UriQueryAnalyser());
 
             DBChanged();
-            
+            Dbg();
         }
         public void test()
         {
@@ -290,7 +290,7 @@ namespace LuceneTest.UriMgr
 
         public List<string> Query(string querystr)
         {
-
+            int delete = 0;
             List<string> ret = new List<string>();
             try
             {
@@ -299,9 +299,16 @@ namespace LuceneTest.UriMgr
                 for (int i = 0; i < docs.Length; i++)
                 {
                     Document doc = search.Doc(docs[i].Doc);
-                    ret.Add(doc.GetField(F_URI).StringValue);
+                    if (!reader.IsDeleted(docs[i].Doc))
+                    {
+                        ret.Add(doc.GetField(F_URI).StringValue);
+                    }
+                    else
+                    {
+                        delete++;
+                    }
                 }
-                TipsCenter.Ins.MainInf = "当前查询： "+querystr + " has found: " + docs.Length +" files";
+                TipsCenter.Ins.MainInf = "当前查询： "+querystr + " has found: " + docs.Length +" files,has Deleted "+delete;
             }catch(Exception e)
             {
 
@@ -358,6 +365,7 @@ namespace LuceneTest.UriMgr
             if (doc != null)
             {
                 Field[] fields = doc.GetFields(F_URI_TAGS);
+
                 foreach(Field f in fields)
                 {
                     ret.Add(f.StringValue);
@@ -380,27 +388,37 @@ namespace LuceneTest.UriMgr
         }
         public void Dbg()
         {
+            return;
+            System.IO.TextWriter w = new System.IO.StreamWriter(@"c:\dbg.csv");
             int max = search.MaxDoc;
+            w.WriteLine(@"IDX,F_ID,F_KEY,F_URI,DEL,TAGS");
             for (int i = 0; i < max; i++)
             {
                 Document doc = search.Doc(i);
-                if(doc!=null)
+                if(doc!=null )
                 {
                     
-                    Console.WriteLine(string.Format(@"
-==============={0}
-{1}={2}
-{3}={4}
-{5}={6}
-
-", i, F_ID, doc.Get(F_ID), F_KEY, doc.Get(F_KEY), F_URI, doc.Get(F_URI)));
-
+                    w.Write(string.Format("{0},{1},{2},{3},{4}",
+                                            i,  
+                                            doc.Get(F_ID), 
+                                            doc.Get(F_KEY), 
+                                            doc.Get(F_URI),
+                                            reader.IsDeleted(i)?"DEL":"OK"
+                                            )
+                                );
+                    if(doc.Get(F_KEY)?.IndexOf("python")>0)
+                    {
+                        foreach (Field f in doc.GetFields(F_URI_TAGS))
+                        {
+                            w.Write("," + f.StringValue);
+                        }
+                    }
                     foreach (Field f in doc.GetFields(F_URI_TAGS))
                     {
-                        Console.Write("tag="+f.StringValue);
+                        w.Write(","+f.StringValue);
                     }
-                    Console.Write("########################");
                 }
+                w.WriteLine();
             }
         }
     }

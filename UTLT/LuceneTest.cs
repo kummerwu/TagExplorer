@@ -72,7 +72,7 @@ namespace UTLT
         [TestMethod]
         public void TestTag_AddMultiChildren()//父节点，有多个子节点
         {
-            Logger.Log("0");
+            Logger.D("0");
             db.AddTag("p", "c1");
             List<string> c = db.QueryTagChildren("p");
             Assert.AreEqual(1, c.Count);
@@ -89,7 +89,7 @@ namespace UTLT
         [TestMethod]
         public void TestTag_AddMultiParent()//子节点，有多个父节点
         {
-            Logger.Log("0");
+            Logger.D("0");
             db.AddTag("p1", "c");
             List<string> p = db.QueryTagParent("c");
             Assert.AreEqual(1, p.Count);
@@ -157,16 +157,16 @@ namespace UTLT
         [TestMethod]
         public void TestTag_Reopen()//关闭后重新打开
         {
-            Logger.Log("begin test reopen");
+            Logger.D("begin test reopen");
             db.AddTag("p1", "c1");
             List<string> alias = db.QueryTagAlias("p1");
             foreach(string a in alias)
             {
-                Logger.Log(a);
+                Logger.D(a);
             }
             Assert.AreEqual(1, alias.Count);
             Assert.AreEqual("p1", alias[0]);
-            Logger.Log("end test reopen");
+            Logger.D("end test reopen");
 
             //db = TagDBFactory.CreateTagDB();
             //alias = db.QueryTagAlias("p1");

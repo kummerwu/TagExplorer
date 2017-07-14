@@ -7,11 +7,15 @@
              xmlns:tagsbar ="clr-namespace:LuceneTest.TagsBar"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
-
+    <UserControl.CommandBindings>
+        <CommandBinding Command="Cut" CanExecute="Cut_CanExecute" Executed="Cut_Executed"/>
+        <CommandBinding Command="Copy" CanExecute="Copy_CanExecute" Executed="Copy_Executed"/>
+    </UserControl.CommandBindings>
     <UserControl.Resources>
         <Style x:Key="itemstyle" TargetType="{x:Type ListViewItem}">
             <EventSetter Event="MouseDoubleClick" Handler="lstItem_MouseDoubleClick" />
         </Style>
+        
     </UserControl.Resources>
 
     <Grid x:Name="rGrid">
@@ -30,18 +34,69 @@
                     
                 </ContextMenu>
             </ListView.ContextMenu>
+            
+            
+            
             <ListView.View>
                 <GridView>
+                    
                     <GridViewColumn Header="类型"  Width="50">
 
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <Image Source="{Binding Path=icon}"  Stretch="None"/>
+                                <DataTemplate.Triggers>
+                                    <DataTrigger Binding="{Binding Path=Status}" Value="1">
+                                        <Setter Property="Image.Opacity" Value="0.5"></Setter>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding Path=Status}" Value="2">
+                                        <Setter Property="Image.Opacity" Value="1"></Setter>
+                                    </DataTrigger>
+                                </DataTemplate.Triggers>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                        
+                    </GridViewColumn>
+                    
+                    
+                    
+                    <GridViewColumn Header="名称" >
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock  Text="{Binding Path=Name}">
+                                    
+                                </TextBlock>
+                                <DataTemplate.Triggers>
+                                    <DataTrigger Binding="{Binding Path=Status}" Value="1">
+                                        <Setter Property="TextBlock.Foreground" Value="Gray"></Setter>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding Path=Status}" Value="2">
+                                        <Setter Property="TextBlock.Foreground" Value="Red"></Setter>
+                                    </DataTrigger>
+                                </DataTemplate.Triggers>
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Header="名称" DisplayMemberBinding="{Binding Path=Name}" Width="100"/>
-                    <GridViewColumn Header="路径" DisplayMemberBinding="{Binding Path=Dir}" Width="100"/>
+
+
+                    <GridViewColumn Header="路径" Width="100">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock  Text="{Binding Path=Dir}">
+
+                                </TextBlock>
+                                <DataTemplate.Triggers>
+                                    <DataTrigger Binding="{Binding Path=Status}" Value="1">
+                                        <Setter Property="TextBlock.Foreground" Value="Gray"></Setter>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding Path=Status}" Value="2">
+                                        <Setter Property="TextBlock.Foreground" Value="Red"></Setter>
+                                    </DataTrigger>
+                                </DataTemplate.Triggers>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    
                 </GridView>
             </ListView.View>
         </ListView>

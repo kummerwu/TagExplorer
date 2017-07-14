@@ -44,7 +44,7 @@ namespace LuceneTest
             uriDB.UriDBChanged += UpdateUriList;
             autoTextBox.SearchDataProvider = tagDB;
             Update("我的大脑");
-            Logger.Log(@"
+            Logger.D(@"
 ////////////////////////////////////////////////////////////////////
 //
 //init main window
@@ -177,7 +177,7 @@ namespace LuceneTest
             uriDB.Dispose();
             tagDB = null;
             uriDB = null;
-            Logger.Log(@"
+            Logger.D(@"
 **********************************************************************
 *
 *Close main window
@@ -205,6 +205,12 @@ namespace LuceneTest
         private void Copy_Executed(object sender, ExecutedRoutedEventArgs e)
         {
             tagCanvas.miCopy_Click(sender, e);
+        }
+
+        private void BtForward_Click(object sender, RoutedEventArgs e)
+        {
+            System.Diagnostics.Process.Start(@"C:\Program Files\Internet Explorer\iexplore.exe",
+                @"D:\00TagExplorerBase\DocumentBase\Doc\分布式架构\Raft 为什么是更易理解的分布式一致性算法 - mindwind - 博客园.mht");
         }
     }
 }

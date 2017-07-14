@@ -250,6 +250,7 @@
     </Compile>
     <Compile Include="UriMgr\NtfsFileID.cs" />
     <Compile Include="Utils\Cfg.cs" />
+    <Compile Include="Utils\ClipboardOperator.cs" />
     <Compile Include="Utils\FileOperator.cs" />
     <Compile Include="Utils\GConfig.cs" />
     <Compile Include="Utils\GIconHelper.cs" />
@@ -362,6 +363,11 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\ICON_Search.ico">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Labels.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
   </ItemGroup>

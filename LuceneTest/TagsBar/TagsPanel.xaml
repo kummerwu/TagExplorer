@@ -8,10 +8,12 @@
              xmlns:autoTextbox="clr-namespace:LuceneTest.AutoComplete"
              d:DesignHeight="300" d:DesignWidth="300">
     <UserControl.Resources>
-        <Style x:Key="tagMouseOver">
+        <Style  TargetType="{x:Type TextBlock}">
+            <Setter Property="Margin" Value="10"/>
+            <Setter Property="Background" Value="#CCFFFF"/>
             <Style.Triggers >
-                <Trigger Property="Control.IsMouseOver" Value="True">
-                    <Setter Property="Control.Background" Value="Red"></Setter>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="Red"/>
                 </Trigger>
             </Style.Triggers>
         </Style>
@@ -19,7 +21,8 @@
 
     <ScrollViewer >
         <WrapPanel>
-            <autoTextbox:AutoTextbox x:Name="autoTextBox"    Background="White" Width="150" Height="30" KeyUp="autoTextBox_KeyUp" ></autoTextbox:AutoTextbox>
+            <Image Source="pack://siteoforigin:,,,/Resources/Labels.png" Stretch="Uniform" Height="25"></Image>
+            <autoTextbox:AutoTextbox x:Name="autoTextBox"    Background="White" Width="0" Height="30" KeyUp="autoTextBox_KeyUp" ></autoTextbox:AutoTextbox>
             <WrapPanel x:Name="parent" > </WrapPanel>
         </WrapPanel>
     </ScrollViewer>

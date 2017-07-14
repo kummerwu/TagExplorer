@@ -30,18 +30,18 @@ namespace LuceneTest.UriMgr
             {
                 if(FileSystem.AlternateDataStreamExists(uri,TID))
                 {
-                    Logger.Log("{0} begin reader", uri);
+                    Logger.D("{0} begin reader", uri);
                     AlternateDataStreamInfo adfs = FileSystem.GetAlternateDataStream(uri, TID);
 
                     FileStream fs = adfs.OpenRead();
                     StreamReader sr = new StreamReader(fs);
                     string guid = sr.ReadToEnd();
-                    Logger.Log("{0} begin close", uri);
+                    Logger.D("{0} begin close", uri);
                     sr.Close();
                     fs.Close();
                     sr.Dispose();
                     fs.Dispose();
-                    Logger.Log("{0} close reader", uri);
+                    Logger.D("{0} close reader", uri);
                     return Guid.Parse(guid);
                     
                 }

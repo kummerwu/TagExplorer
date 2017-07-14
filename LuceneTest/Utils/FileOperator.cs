@@ -1,5 +1,6 @@
 ﻿using AnyTags.Net;
 using LuceneTest.Core;
+using LuceneTest.Utils;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -10,7 +11,7 @@ using System.Windows;
 
 namespace AnyTag.BL
 {
-    class FileOperator
+    public class FileOperator
     {
         //const int FO_COPY = 0x2;
         //const int FOF_ALLOWUNDO = 0x44;
@@ -105,14 +106,48 @@ namespace AnyTag.BL
         [DllImport("shell32.dll", CharSet = CharSet.Unicode)]
         static extern int SHFileOperation([In] ref SHFILEOPSTRUCT lpFileOp);
 
-        public static bool CopyFile(string src,string dst)
+        public static bool MoveFiles(string[] srcList, string[] dstList)
         {
-            Logger.Log(string.Format("CopyFile: {0} => {1}", src, dst));
+            string src = "", dst = "";
+            if(srcList.Length!=dstList.Length)
+            {
+                Logger.E("FileOperate scrList dstList 参数个数不匹配");
+                return false;
+            }
+            
+            int i = 0;
+            for(i = 0;i<srcList.Length;i++)
+            {
+                if (srcList[i] != dstList[i])
+                {
+                    src = src + srcList[i] + '\0';
+                    dst = dst + dstList[i] + '\0';
+                }
+            }
+            //最后需要以_T0，双0结尾。
+            src += '\0';
+            dst += '\0';
+
+            Logger.D(string.Format("moveFile: {0} => {1}", src, dst));
+
+            SHFILEOPSTRUCT fileop = new SHFILEOPSTRUCT();
+            fileop.hwnd = IntPtr.Zero;
+            fileop.hNameMappings = IntPtr.Zero;
+            fileop.wFunc = FileFuncFlags.FO_MOVE;
+            fileop.pFrom = src + '\0' + '\0';
+            fileop.pTo = dst + '\0' + '\0';
+            fileop.lpszProgressTitle = "文件拷贝" + '\0' + '\0';
+            fileop.fFlags = FILEOP_FLAGS.FOF_SIMPLEPROGRESS| FILEOP_FLAGS.FOF_MULTIDESTFILES;
+            return SHFileOperation(ref fileop) == 0;
+        }
+        public static bool CopyFile(string src, string dst)
+        {
+            Logger.D(string.Format("CopyFile: {0} => {1}", src, dst));
             SHFILEOPSTRUCT fileop = new SHFILEOPSTRUCT();
             fileop.hwnd = IntPtr.Zero;
             fileop.hNameMappings = IntPtr.Zero;
             fileop.wFunc = FileFuncFlags.FO_COPY;
-            fileop.pFrom = src+'\0'+'\0';
+            fileop.pFrom = src + '\0' + '\0';
             fileop.pTo = dst + '\0' + '\0';
             fileop.lpszProgressTitle = "文件拷贝" + '\0' + '\0';
             fileop.fFlags = FILEOP_FLAGS.FOF_SIMPLEPROGRESS;
@@ -125,12 +160,12 @@ namespace AnyTag.BL
             {
                 f = '"' + f + '"';
                 string cmd = "/select," + f;
-                Logger.Log("LocateFile: [{0}]", cmd);
+                Logger.D("LocateFile: [{0}]", cmd);
                 System.Diagnostics.Process.Start("explorer.exe", "/select," + f);
             }
             else
             {
-                Logger.Log(string.Format("LocateFile not validFileUrl: [{0}]", f));
+                Logger.D(string.Format("LocateFile not validFileUrl: [{0}]", f));
             }
         }
         public static void OpenTagDir(string title)
@@ -139,17 +174,17 @@ namespace AnyTag.BL
             {
                 string tag = title;
                 string dir = MyPath.GetDirPath(tag);
-                Logger.Log("OpenTagDir {0} {1}", tag, dir);
+                Logger.D("OpenTagDir {0} {1}", tag, dir);
                 Process.Start(dir);
             }
         }
         public static void StartFile(string file)
         {
-            Logger.Log("StartFile {0} ", file);
+            Logger.D("StartFile {0} ", file);
             if (isValidFileUrl(file))
             {
                 
-                Logger.Log("StartFile {0} is valid", file);
+                Logger.D("StartFile {0} is valid", file);
                 Process.Start(file);
             }
         }

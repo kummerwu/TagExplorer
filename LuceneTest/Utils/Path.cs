@@ -65,6 +65,19 @@ namespace AnyTags.Net
                 return Path.Combine(MyPath.Root, "tags.db");
             }
         }
+
+        public static string[] FilesRelocation(string [] srcs,string currentTag)
+        {
+            string[] dsts = new string[srcs.Length];
+            for (int i = 0; i < srcs.Length; i++)
+            {
+                string s = srcs[i];
+                string n = System.IO.Path.GetFileName(s);
+                string d = System.IO.Path.Combine(MyPath.GetDirPath(currentTag), n);
+                dsts[i] = d;
+            }
+            return dsts;
+        }
         //路径规划
         //根路径
         //    --Doc      文档所在路径

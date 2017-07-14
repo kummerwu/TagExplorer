@@ -4,8 +4,10 @@ using LuceneTest.Core;
 using LuceneTest.TagGraph;
 using LuceneTest.TagMgr;
 using LuceneTest.UriMgr;
+using LuceneTest.Utils;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
@@ -120,25 +122,47 @@ namespace LuceneTest.UriInfList
         private void miCopy_Click(object sender, RoutedEventArgs e)
         {
             UpdateCurrentUriByContextMenu();
-            Clipboard.SetText(TagCanvas.KUMMERWU_URI_COPY+"`" + GetSelUriList());
+            Clipboard.SetText(ClipboardOperator.KUMMERWU_URI_COPY+"`" + GetSelUriList(ClipboardOperator.CO_COPY));
         }
-        private string GetSelUriList()
+        private string GetSelUriList(int status)
         {
             string uris = "";
             foreach(SearchItemInf it in lst.SelectedItems)
             {
-                uris += it.Detail + TagCanvas.ArgsSplitToken;
+                uris += it.Detail + ClipboardOperator.ArgsSplitToken;
+                it.Status = status;
             }
-            return uris.Trim(TagCanvas.ArgsSplitToken);
+            return uris.Trim(ClipboardOperator.ArgsSplitToken);
         }
         private void miCut_Click(object sender, RoutedEventArgs e)
         {
-            Clipboard.SetText(TagCanvas.KUMMERWU_URI_CUT+TagCanvas.CommandSplitToken + GetSelUriList());
+            Clipboard.SetText(ClipboardOperator.KUMMERWU_URI_CUT + ClipboardOperator.CommandSplitToken + GetSelUriList(ClipboardOperator.CO_CUT));
+        }
+
+        private void Cut_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            miCut_Click(sender, e);
+        }
+
+        private void Cut_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = true;
+        }
+
+        private void Copy_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = true;
+        }
+
+        private void Copy_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            miCopy_Click(sender, e);
         }
     }
 
-    public class SearchItemInf
+    public class SearchItemInf : INotifyPropertyChanged
     {
+        public event PropertyChangedEventHandler PropertyChanged;
         public string _Detail
         {
             set
@@ -179,7 +203,19 @@ namespace LuceneTest.UriInfList
                 return dir;
             }
         }
-
+        private int status = 0;
+        public int Status
+        {
+            get
+            {
+                return status;
+            }
+            set
+            {
+                status = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Status"));
+            }
+        }
         public static List<SearchItemInf> GetFilesByTag(string tag,IUriDB db)
         {
             List<string> files = db.Query(tag);

@@ -32,7 +32,7 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <ToolBar Grid.Row="0" >
-            <Button Width="40">
+            <Button Width="40" Name="BtForward" Click="BtForward_Click">
                     <Button.Content>
                     <Image Source="pack://siteoforigin:,,,/Resources/ICON_BACKWARD.ico"> </Image>
                     </Button.Content>

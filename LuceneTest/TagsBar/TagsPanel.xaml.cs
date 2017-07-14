@@ -40,9 +40,7 @@ namespace LuceneTest.TagsBar
         private void AddTag(string tag)
         {
             TextBlock t = new TextBlock();
-            t.Width = 60;
             t.Text = tag;
-            t.Style = Resources["tagMouseOver"] as Style;
             
             parent.Children.Add(t);
         }

@@ -168,7 +168,7 @@ namespace AnyTagNet
         
         public static GObj LayoutTag(string tag, ITagDB db)
         {
-            Logger.Log("+++Begin Layout Tag from {0}", tag);
+            Logger.D("+++Begin Layout Tag from {0}", tag);
             IGLayoutResult result = new GLayoutResult();
             GObj g = null;
             for(int curLevel =GConfig.MinLevel;curLevel<=GConfig.MaxLevel;curLevel++)
@@ -184,7 +184,7 @@ namespace AnyTagNet
                 g.CalcAllObjsPos(0, 0);
                 g.result = result;
             }
-            Logger.Log("---End Layout Tag from {0}", tag);
+            Logger.D("---End Layout Tag from {0}", tag);
             return g;
 
 
@@ -192,33 +192,33 @@ namespace AnyTagNet
         private void ShowAll()
         {
             Logger.IN(Tag);
-            Logger.Log("   ShowAll@!! {0} # {1}  ##{2}", Tag, InnerBox, OuterBox);
+            Logger.D("   ShowAll@!! {0} # {1}  ##{2}", Tag, InnerBox, OuterBox);
             foreach (GObj o in GetAll())
             {
-                Logger.Log("   ShowAll!! {0} # {1}  ##{2}", o.Tag, o.InnerBox, o.OuterBox);
+                Logger.D("   ShowAll!! {0} # {1}  ##{2}", o.Tag, o.InnerBox, o.OuterBox);
             }
             Logger.OUT();
         }
         private static GObj Parse_in(string tag,string fromParent,string fromChild,ITagDB db,IGLayoutResult result, int level,int distance)
         {
             Logger.IN(tag);
-            Logger.Log(@"Parse In Tag {0} from {1},level={2},distance = {3}", tag, fromParent, level, distance);
+            Logger.D(@"Parse In Tag {0} from {1},level={2},distance = {3}", tag, fromParent, level, distance);
             
             if (!((level == -1 && distance == 1) || level == distance))
             {
-                Logger.Log("     !level distance not match,Skip!");
+                Logger.D("     !level distance not match,Skip!");
                 Logger.OUT();
                 return null;
             }
             if (distance > GConfig.CurLevel)
             {
-                Logger.Log("     !distance out,Skip!");
+                Logger.D("     !distance out,Skip!");
                 Logger.OUT();
                 return null;
             }
             if (result.HasCalc(tag))
             {
-                Logger.Log("     !not first visit,Skip!");
+                Logger.D("     !not first visit,Skip!");
                 Logger.OUT();
                 return null;
             }
@@ -241,7 +241,7 @@ namespace AnyTagNet
             List<string> parent = db.QueryTagParent(tag);
 
 
-            Logger.Log("Begin Visit All Parent:{0}===>",tag);
+            Logger.D("Begin Visit All Parent:{0}===>",tag);
             //递归计算Parent区域 
             foreach (string pTag in parent)
             {
@@ -260,12 +260,12 @@ namespace AnyTagNet
                 ret.ParentBox = GConfig.Radio;
                 ret.calc.Calc(ref ret.ParentBox, ret.gParentList, LayoutOption.FixRadio);
             }
-            Logger.Log("End Visit All Parent :{0}<===", tag);
+            Logger.D("End Visit All Parent :{0}<===", tag);
 
 
 
             //递归计算Child区域
-            Logger.Log("Begin Visit All children:{0}===>", tag);
+            Logger.D("Begin Visit All children:{0}===>", tag);
             foreach (string cTag in children)
             {
                 if (cTag != tag)
@@ -283,7 +283,7 @@ namespace AnyTagNet
                 ret.ChildBox = GConfig.Radio;
                 ret.calc.Calc(ref ret.ChildBox, ret.gChildList, LayoutOption.FixRadio);
             }
-            Logger.Log("End Visit All children :{0}<===", tag);
+            Logger.D("End Visit All children :{0}<===", tag);
             ret.CalcInnerBoxSize();
             ret.CalcOutterBoxSize();
             ret.CalcInnerBoxPos();

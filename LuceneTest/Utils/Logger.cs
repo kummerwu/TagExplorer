@@ -62,11 +62,11 @@ namespace LuceneTest.Core
     {
         
         private static log4net.ILog log = log4net.LogManager.GetLogger("fileLog");
-        public static void Log(string s)
+        public static void D(string s)
         {
-            log.Debug(PREFIX+s);
+            //log.Debug(PREFIX+s);
         }
-        public static void Log(string fmt ,params object[] par)
+        public static void D(string fmt ,params object[] par)
         {
             //string s = string.Format(PREFIX+fmt, par);
             //log.Debug(s);

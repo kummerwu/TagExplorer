@@ -4,6 +4,7 @@ using LuceneTest.Core;
 using LuceneTest.TagLayout;
 using LuceneTest.TagMgr;
 using LuceneTest.UriMgr;
+using LuceneTest.Utils;
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
@@ -23,11 +24,7 @@ namespace LuceneTest.TagGraph
     /// </summary>
     public partial class TagCanvas : UserControl
     {
-        public const string KUMMERWU_TAG_COPY = "KUMMERWU_TAG_COPY";
-        public const string KUMMERWU_TAG_CUT = "KUMMERWU_TAG_CUT";
-
-        public const string KUMMERWU_URI_COPY = "KUMMERWU_URI_COPY";
-        public const string KUMMERWU_URI_CUT = "KUMMERWU_URI_CUT";
+        
 
 
         FileSystemWatcher fileWather = null;
@@ -294,37 +291,35 @@ namespace LuceneTest.TagGraph
         }
         public delegate void CurrentTagChanged(string tag);
         public CurrentTagChanged SelectedTagChanged = null;
-        public static char CommandSplitToken = '`';
-        public static char ArgsSplitToken = '?';
+        
+
+
         public void miPaste_Click(object sender, RoutedEventArgs e)
         {
             UpdateCurrentTagByContextMenu();
             
 
-            string[] token = Clipboard.GetText().Split(new char[] { CommandSplitToken}, StringSplitOptions.RemoveEmptyEntries);
+            string[] token = Clipboard.GetText().Split(new char[] { ClipboardOperator.CommandSplitToken}, StringSplitOptions.RemoveEmptyEntries);
             
             if(token.Length==2)
             {
                 string arg = token[1];
                 
-                string[] args = arg.Split(new char[] { ArgsSplitToken}, StringSplitOptions.RemoveEmptyEntries);
+                string[] args = arg.Split(new char[] { ClipboardOperator.ArgsSplitToken }, StringSplitOptions.RemoveEmptyEntries);
                 switch (token[0])
                 {
-                    case KUMMERWU_TAG_COPY:
+                    case ClipboardOperator.KUMMERWU_TAG_COPY:
                         tagDB.AddTag(currentTag, arg); 
                         Refresh();
                         break;
-                    case KUMMERWU_TAG_CUT:
+                    case ClipboardOperator.KUMMERWU_TAG_CUT:
                         tagDB.ResetRelationOfChild(currentTag, arg); 
                         Refresh();
                         break;
-                    case KUMMERWU_URI_CUT:
-                        foreach (string uri in args)
-                        {
-                            UriDB.DelUri(uri, false); UriDB.AddUri(uri, new List<string>() { currentTag }); 
-                        }
+                    case ClipboardOperator.KUMMERWU_URI_CUT:
+                        MoveUris(args);
                         break;
-                    case KUMMERWU_URI_COPY:
+                    case ClipboardOperator.KUMMERWU_URI_COPY:
                         foreach (string uri in args)
                         {
                             UriDB.AddUri(uri, new List<string>() { currentTag });
@@ -340,7 +335,21 @@ namespace LuceneTest.TagGraph
             
         }
 
-        
+        private void MoveUris(string[] args)
+        {
+            string[] src = args;
+            string[] dst = MyPath.FilesRelocation(src, currentTag);
+            FileOperator.MoveFiles(src, dst);
+            foreach (string uri in src)
+            {
+                UriDB.DelUri(uri, false); 
+            }
+            foreach(string uri in dst)
+            {
+                UriDB.AddUri(uri, new List<string>() { currentTag });
+            }
+        }
+
         public void PasteFiles()
         {
             UpdateCurrentTagByContextMenu();
@@ -446,13 +455,13 @@ namespace LuceneTest.TagGraph
         public void miCopy_Click(object sender, RoutedEventArgs e)
         {
             UpdateCurrentTagByContextMenu();
-            Clipboard.SetText(KUMMERWU_TAG_COPY + CommandSplitToken+ currentTag);
+            Clipboard.SetText(ClipboardOperator.KUMMERWU_TAG_COPY + ClipboardOperator.CommandSplitToken + currentTag);
         }
 
         public void miCut_Click(object sender, RoutedEventArgs e)
         {
             UpdateCurrentTagByContextMenu();
-            Clipboard.SetText(KUMMERWU_TAG_CUT+CommandSplitToken + currentTag);
+            Clipboard.SetText(ClipboardOperator.KUMMERWU_TAG_CUT + ClipboardOperator.CommandSplitToken + currentTag);
         }
 
         private void miDelete_Click(object sender, RoutedEventArgs e)

@@ -88,7 +88,7 @@ namespace AnyTagNet
             double dy = Math.Max(rect.Height / 50, 1);
             double x = 0;
             double y = 0;
-            Logger.Log("try put {0} in {1}", obj.Tag, rect);
+            Logger.D("try put {0} in {1}", obj.Tag, rect);
             for (y = 0; y < rect.Height; y += dy)
             {
                 for (x = 0; x < rect.Width; x += dx)
@@ -100,7 +100,7 @@ namespace AnyTagNet
                     if (ret>0) //OK
                     {
                         putInObjs.Add(obj);
-                        Logger.Log("   Put OK!! {0} # {1}  ##{2}", obj.Tag, obj.InnerBox, obj.OuterBox);
+                        Logger.D("   Put OK!! {0} # {1}  ##{2}", obj.Tag, obj.InnerBox, obj.OuterBox);
                         return true;
                     }
                     else if(ret==0)
