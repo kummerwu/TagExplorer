@@ -100,7 +100,7 @@ namespace TagExplorer
         }
 
         private double canvasMinHeight = 0;
-        private double realHeight = 0;
+        private double layoutHeight = 0;
         public double CanvasMinHeight
         {
             set
@@ -116,7 +116,7 @@ namespace TagExplorer
             {
                 canvasMinHeight = 0;
             }
-            canvas.Height = Math.Max(realHeight, canvasMinHeight);
+            canvas.Height = Math.Max(layoutHeight, canvasMinHeight);
         }
         private ITagDB tagDB = null;
         public IUriDB UriDB = null;
@@ -156,7 +156,7 @@ namespace TagExplorer
             IEnumerable<UIElement> lines = tagLayout.Lines;
             IEnumerable<UIElement> allTxt = tagLayout.TagArea;
             canvas.Width = tagLayout.Size.Width;
-            realHeight = tagLayout.Size.Height;
+            layoutHeight = tagLayout.Size.Height;
             SetHeight();
             
             foreach (Line l in lines)
@@ -425,7 +425,7 @@ namespace TagExplorer
             double h = e.NewSize.Height;
             Grid p = scrollViewer.Parent as Grid;
 
-            canvasMinHeight = p.ActualHeight;
+            canvasMinHeight = p.ActualHeight-60;
             SetHeight();
         }
 

@@ -211,7 +211,7 @@
       <DependentUpon>SearchResultListBox.xaml</DependentUpon>
     </Compile>
     <Compile Include="UriMgr\IDisposableFactory.cs" />
-    <Compile Include="UriMgr\NtfsFileID.cs" />
+    <Compile Include="Utils\NtfsFileID.cs" />
     <Compile Include="UriMgr\UriQueryAnalyser.cs" />
     <Compile Include="Utils\Cfg.cs" />
     <Compile Include="Utils\ClipboardConst.cs" />

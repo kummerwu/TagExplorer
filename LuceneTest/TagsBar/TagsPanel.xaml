@@ -19,7 +19,7 @@
         </Style>
     </UserControl.Resources>
 
-    <ScrollViewer >
+    <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
         <WrapPanel>
             <Image Source="pack://siteoforigin:,,,/Resources/Labels.png" Stretch="Uniform" Height="25"></Image>
             <autoTextbox:AutoTextbox x:Name="autoTextBox"    Background="White" Width="0" Height="30" KeyUp="autoTextBox_KeyUp" ></autoTextbox:AutoTextbox>

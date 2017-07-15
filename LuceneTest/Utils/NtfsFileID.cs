@@ -3,7 +3,7 @@ using System.IO;
 using TagExplorer.Utils;
 using Trinet.Core.IO.Ntfs;
 
-namespace TagExplorer.UriMgr
+namespace TagExplorer.Utils
 {
     public class NtfsFileID
     {
