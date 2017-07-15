@@ -1,12 +1,12 @@
-﻿using LuceneTest.Core;
-using LuceneTest.UriMgr;
+﻿using TagExplorer.UriMgr;
 using System;
 using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Windows;
+using TagExplorer.Utils;
 
-namespace LuceneTest
+namespace TagExplorer
 {
     /// <summary>
     /// App.xaml 的交互逻辑

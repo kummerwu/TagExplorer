@@ -1,4 +1,4 @@
-﻿namespace LuceneTest.Core
+﻿namespace TagExplorer.Utils
 {
     public class Cfg
     {
@@ -10,17 +10,14 @@
                 if(_ins==null)
                 {
                     _ins = new Cfg();
-                    _ins.CalcPath();
-
                 }
                 return _ins;
             }
         }
-        public string Root = @"J:\00TagExplorerBase";
-        public string TagDB;
-        public string UriDB;
-        public string DocBase;
+        
         public int TAG_MAX_RELATION = 1000;
+
+        //如果是单元测试，将文件系统使用一个内存文件系统做临时测试，创建删除文件
         public bool isUTest = false;
         public bool IsUTest
         {
@@ -30,17 +27,13 @@
                 isUTest = value;
                 if(isUTest)
                 {
-                    Root = @"B:\00TagExplorerBase";
-                    CalcPath();
+                    PathHelper.RootDir = @"B:\00TagExplorerBase";
+                    
                 }
             }
         }
+        public string DefaultTag { get { return "我的大脑"; } }
 
-        private void CalcPath()
-        {
-            TagDB = Root + @"\TagDB";
-            UriDB = Root + @"\UriDB";
-            DocBase = Root + @"\DocumentBase";
-        }
+
     }
 }

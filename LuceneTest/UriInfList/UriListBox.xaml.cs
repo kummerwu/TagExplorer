@@ -1,10 +1,5 @@
-﻿using AnyTag.BL;
-using AnyTagNet;
-using LuceneTest.Core;
-using LuceneTest.TagGraph;
-using LuceneTest.TagMgr;
-using LuceneTest.UriMgr;
-using LuceneTest.Utils;
+﻿using TagExplorer.TagMgr;
+using TagExplorer.UriMgr;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -13,8 +8,9 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
+using TagExplorer.Utils;
 
-namespace LuceneTest.UriInfList
+namespace TagExplorer.UriInfList
 {
     /// <summary>
     /// UriInfoPanel.xaml 的交互逻辑
@@ -110,7 +106,7 @@ namespace LuceneTest.UriInfList
             UpdateCurrentUriByContextMenu();
             if (FileShell.isValidFileUrl(CurrentUri))
             {
-                FileShell.LocateFile(CurrentUri);
+                FileShell.OpenExplorerByFile(CurrentUri);
             }
         }
 
@@ -122,21 +118,21 @@ namespace LuceneTest.UriInfList
         private void miCopy_Click(object sender, RoutedEventArgs e)
         {
             UpdateCurrentUriByContextMenu();
-            Clipboard.SetText(ClipboardOperator.KUMMERWU_URI_COPY+"`" + GetSelUriList(ClipboardOperator.CO_COPY));
+            Clipboard.SetText(ClipboardConst.KUMMERWU_URI_COPY+"`" + GetSelUriList(ClipboardConst.CO_COPY));
         }
         private string GetSelUriList(int status)
         {
             string uris = "";
             foreach(SearchItemInf it in lst.SelectedItems)
             {
-                uris += it.Detail + ClipboardOperator.ArgsSplitToken;
+                uris += it.Detail + ClipboardConst.ArgsSplitToken;
                 it.Status = status;
             }
-            return uris.Trim(ClipboardOperator.ArgsSplitToken);
+            return uris.Trim(ClipboardConst.ArgsSplitToken);
         }
         private void miCut_Click(object sender, RoutedEventArgs e)
         {
-            Clipboard.SetText(ClipboardOperator.KUMMERWU_URI_CUT + ClipboardOperator.CommandSplitToken + GetSelUriList(ClipboardOperator.CO_CUT));
+            Clipboard.SetText(ClipboardConst.KUMMERWU_URI_CUT + ClipboardConst.CommandSplitToken + GetSelUriList(ClipboardConst.CO_CUT));
         }
 
         private void Cut_Executed(object sender, ExecutedRoutedEventArgs e)

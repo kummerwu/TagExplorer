@@ -1,8 +1,8 @@
-﻿using LuceneTest.AutoComplete;
+﻿using TagExplorer.AutoComplete;
 using System;
 using System.Collections.Generic;
 
-namespace LuceneTest.TagMgr
+namespace TagExplorer.TagMgr
 {
 
     public interface ITagDB:IDisposable, ISearchDataProvider

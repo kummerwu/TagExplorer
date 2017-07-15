@@ -4,12 +4,12 @@ using Lucene.Net.Index;
 using Lucene.Net.QueryParsers;
 using Lucene.Net.Search;
 using Lucene.Net.Store;
-using LuceneTest.Core;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using TagExplorer.Utils;
 
-namespace LuceneTest.UriMgr
+namespace TagExplorer.UriMgr
 {
     class LuceneUriDB : IUriDB
     {
@@ -55,12 +55,12 @@ namespace LuceneTest.UriMgr
             }
             else
             {
-                create = !System.IO.Directory.Exists(Cfg.Ins.UriDB);
+                create = !System.IO.Directory.Exists(PathHelper.UriDBDir);
                 if (create)
                 {
-                    System.IO.Directory.CreateDirectory(Cfg.Ins.UriDB);
+                    System.IO.Directory.CreateDirectory(PathHelper.UriDBDir);
                 }
-                dir = FSDirectory.Open(Cfg.Ins.UriDB);
+                dir = FSDirectory.Open(PathHelper.UriDBDir);
                 
             }
             
@@ -311,7 +311,7 @@ namespace LuceneTest.UriMgr
                 TipsCenter.Ins.MainInf = "当前查询： "+querystr + " has found: " + docs.Length +" files,has Deleted "+delete;
             }catch(Exception e)
             {
-
+                Logger.E(e);
             }
             return ret;
         }

@@ -1,8 +1,8 @@
-﻿using LuceneTest.Core;
-using LuceneTest.TagLayout;
-using LuceneTest.TagMgr;
+﻿using TagExplorer.TagLayout;
+using TagExplorer.TagMgr;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Linq;
+using TagExplorer.Utils;
 
 namespace UTLT
 {

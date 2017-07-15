@@ -2,7 +2,7 @@
 using Lucene.Net.Analysis.NGram;
 using System.IO;
 
-namespace LuceneTest.UriMgr
+namespace TagExplorer.UriMgr
 {
 
     class UriQueryAnalyser:Analyzer

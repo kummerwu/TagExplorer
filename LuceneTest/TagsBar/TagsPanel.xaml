@@ -1,11 +1,11 @@
-﻿<UserControl x:Class="LuceneTest.TagsBar.TagsPanel"
+﻿<UserControl x:Class="TagExplorer.TagsBar.TagsPanel"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:LuceneTest.TagsBar"
+             xmlns:local="clr-namespace:TagExplorer.TagsBar"
              mc:Ignorable="d" 
-             xmlns:autoTextbox="clr-namespace:LuceneTest.AutoComplete"
+             xmlns:autoTextbox="clr-namespace:TagExplorer.AutoComplete"
              d:DesignHeight="300" d:DesignWidth="300">
     <UserControl.Resources>
         <Style  TargetType="{x:Type TextBlock}">

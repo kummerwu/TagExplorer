@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace LuceneTest.UriMgr
+namespace TagExplorer.UriMgr
 {
     public interface IUriDB:IDisposable
     {

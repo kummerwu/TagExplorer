@@ -1,13 +1,10 @@
 ﻿using AnyTag.UI;
-using AnyTagNet.BL;
-using LuceneTest;
-using System;
+using TagExplorer;
 using System.Collections;
 using System.Collections.Generic;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Media;
 using System.Windows.Shapes;
+using TagExplorer.Utils;
 
 namespace AnyTagNet
 {

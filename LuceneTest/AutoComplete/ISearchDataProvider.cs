@@ -1,9 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
-namespace LuceneTest.AutoComplete
+namespace TagExplorer.AutoComplete
 {
-   
+
 
     public interface ISearchDataProvider
     {

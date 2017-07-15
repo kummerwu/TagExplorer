@@ -1,15 +1,14 @@
-﻿using AnyTagNet.BL;
-using Contrib.Regex;
+﻿using Contrib.Regex;
 using Lucene.Net.Analysis;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Search;
 using Lucene.Net.Store;
-using LuceneTest.Core;
 using System;
 using System.Collections.Generic;
+using TagExplorer.Utils;
 
-namespace LuceneTest.TagMgr
+namespace TagExplorer.TagMgr
 {
     class LuceneTagDB : ITagDB, IDisposable
     {
@@ -31,12 +30,12 @@ namespace LuceneTest.TagMgr
             }
             else
             {
-                create = !System.IO.Directory.Exists(Cfg.Ins.TagDB);
+                create = !System.IO.Directory.Exists(PathHelper.TagDBDir);
                 if (create)
                 {
-                    System.IO.Directory.CreateDirectory(Cfg.Ins.TagDB);
+                    System.IO.Directory.CreateDirectory(PathHelper.TagDBDir);
                 }
-                dir = FSDirectory.Open(Cfg.Ins.TagDB);
+                dir = FSDirectory.Open(PathHelper.TagDBDir);
                 
             }
             

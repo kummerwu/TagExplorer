@@ -1,7 +1,7 @@
 ﻿using System.Windows;
 using System.Windows.Media;
 
-namespace AnyTagNet
+namespace TagExplorer.Utils
 {
     class GConfig
     {
@@ -44,6 +44,6 @@ namespace AnyTagNet
         //最后显示的Tag字符串
         public static string TitleDataFile = "title.dat";
         
-        public static string DefaultTag = "Brain";
+        
     }
 }

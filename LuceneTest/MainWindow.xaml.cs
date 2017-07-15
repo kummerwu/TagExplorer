@@ -1,23 +1,12 @@
-﻿using Lucene.Net.Analysis;
-using Lucene.Net.Analysis.NGram;
-using Lucene.Net.Documents;
-using Lucene.Net.Index;
-using Lucene.Net.QueryParsers;
-using Lucene.Net.Search;
-using Lucene.Net.Store;
-using System;
-using System.Text;
+﻿using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.IO;
-using LuceneTest.TagMgr;
-using LuceneTest.UriMgr;
-using LuceneTest.Core;
-using AnyTags.Net;
+using TagExplorer.TagMgr;
+using TagExplorer.UriMgr;
+using TagExplorer.Utils;
 
-namespace LuceneTest
+namespace TagExplorer
 {
     /// <summary>
     /// MainWindow.xaml 的交互逻辑
@@ -43,7 +32,7 @@ namespace LuceneTest
             autoTextBox.textBox.TextChanged += TextBox_TextChanged;
             uriDB.UriDBChanged += UpdateUriList;
             autoTextBox.SearchDataProvider = tagDB;
-            Update("我的大脑");
+            Update(Cfg.Ins.DefaultTag);
             Logger.I(@"
 ////////////////////////////////////////////////////////////////////
 //

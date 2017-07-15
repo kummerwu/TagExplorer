@@ -1,13 +1,8 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using AnyTags.Net;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.IO;
-using AnyTag.BL;
-using LuceneTest.UriMgr;
+using TagExplorer.UriMgr;
+using TagExplorer.Utils;
 
 namespace AnyTags.Net.Tests
 {
@@ -36,7 +31,7 @@ namespace AnyTags.Net.Tests
         [TestMethod]
         public void TestFS_FilesRelocationTest()
         {
-            FilesRelocationTest(new string[] { MyPath.GetDirPath("test") + "\\hello" },
+            FilesRelocationTest(new string[] { PathHelper.GetDirByTag("test") + "\\hello" },
                                 new string[] { @"c:\hello"},
                                 "test");
         }
@@ -44,7 +39,7 @@ namespace AnyTags.Net.Tests
 
         public void FilesRelocationTest(string[] dst,string[] src,string tag)
         {
-            string[] rel = MyPath.FilesRelocation(src,tag);
+            string[] rel = PathHelper.MapFilesToTagDir(src,tag);
             string[] exp = dst;
             Assert.AreEqual(exp.Length , rel.Length);
             for(int i = 0;i<rel.Length;i++)
@@ -151,9 +146,9 @@ namespace AnyTags.Net.Tests
             string file = Path.Combine(dir, "1.txt");
             FileStream fs = new FileStream(file, FileMode.CreateNew);
             fs.WriteByte(1);
-            Assert.IsTrue( MyPath.NeedSkipThisUri(file));
+            Assert.IsTrue( PathHelper.NeedSkipThisUri(file));
             fs.Close();
-            Assert.IsFalse(MyPath.NeedSkipThisUri(file));
+            Assert.IsFalse(PathHelper.NeedSkipThisUri(file));
 
         }
 

@@ -1,5 +1,4 @@
 ﻿using AnyTagNet;
-using AnyTagNet.BL;
 using System.Collections.Generic;
 using System.Windows;
 

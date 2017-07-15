@@ -1,9 +1,9 @@
-﻿using AnyTagNet;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using TagExplorer.Utils;
 
-namespace LuceneTest
+namespace TagExplorer
 {
     /// <summary>
     /// 在标签有向图中，显示一个标签的空间（封装了一个textblock和一个border，border是为了显示状态信息）

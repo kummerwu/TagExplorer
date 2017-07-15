@@ -1,4 +1,4 @@
-﻿namespace AnyTagNet.BL
+﻿namespace AnyTagNet
 {
     public class PathEdge
     {

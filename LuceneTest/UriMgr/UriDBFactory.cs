@@ -1,8 +1,8 @@
-﻿using LuceneTest.Core;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using TagExplorer.Utils;
 
-namespace LuceneTest.UriMgr
+namespace TagExplorer.UriMgr
 {
     public class IDisposableFactory
     {

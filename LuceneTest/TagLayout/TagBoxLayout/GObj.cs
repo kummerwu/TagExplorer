@@ -1,13 +1,12 @@
 ﻿using AnyTag.UI;
-using AnyTagNet.BL;
-using LuceneTest.Core;
-using LuceneTest.TagMgr;
+using TagExplorer.TagMgr;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Media;
+using TagExplorer.Utils;
 
 namespace AnyTagNet
 {

@@ -1,12 +1,11 @@
-﻿using LuceneTest.Core;
-using LuceneTest.TagMgr;
-using LuceneTest.UriMgr;
+﻿using TagExplorer.TagMgr;
+using TagExplorer.UriMgr;
 using System.Collections.Generic;
-using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using TagExplorer.Utils;
 
-namespace LuceneTest.TagsBar
+namespace TagExplorer.TagsBar
 {
     /// <summary>
     /// TagsPanel.xaml 的交互逻辑

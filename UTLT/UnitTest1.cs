@@ -1,9 +1,6 @@
-﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using AnyTags.Net;
-using LuceneTest.UriMgr;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.IO;
-using LuceneTest.Core;
+using TagExplorer.Utils;
 
 namespace UTLT
 {
@@ -31,7 +28,7 @@ namespace UTLT
         }
         private static void AssertFilter(bool r,string s)
         {
-            Assert.AreEqual(r, MyPath.NeedSkipThisUri(s));
+            Assert.AreEqual(r, PathHelper.NeedSkipThisUri(s));
         }
         [TestMethod]
         public void TestUtil_FileWatcherFilter()
@@ -76,7 +73,7 @@ namespace UTLT
         private static  void AssertTag(string file,string tag)
         {
             //createdir(file);
-            Assert.AreEqual(tag, MyPath.GetTagByPath(file));
+            Assert.AreEqual(tag, PathHelper.GetTagByPath(file));
 
         }
 

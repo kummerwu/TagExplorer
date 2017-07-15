@@ -179,7 +179,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="AutoComplete\AutoCompleteEntry.cs" />
     <Compile Include="AutoComplete\AutoTextbox.xaml.cs">
       <DependentUpon>AutoTextbox.xaml</DependentUpon>
     </Compile>
@@ -212,8 +211,8 @@
     </Compile>
     <Compile Include="UriMgr\NtfsFileID.cs" />
     <Compile Include="Utils\Cfg.cs" />
-    <Compile Include="Utils\ClipboardOperator.cs" />
-    <Compile Include="Utils\FileOperator.cs" />
+    <Compile Include="Utils\ClipboardConst.cs" />
+    <Compile Include="Utils\FileShell.cs" />
     <Compile Include="Utils\GConfig.cs" />
     <Compile Include="Utils\GIconHelper.cs" />
     <Compile Include="Utils\Logger.cs" />
@@ -224,7 +223,9 @@
     <Compile Include="UriMgr\LuceneUriDB.cs" />
     <Compile Include="UriMgr\UriAnalyser.cs" />
     <Compile Include="UriMgr\UriDBFactory.cs" />
-    <Compile Include="Utils\Path.cs" />
+    <Compile Include="Utils\PathHelper.cs" />
+    <Compile Include="Utils\TemplateHelper.cs" />
+    <Compile Include="Utils\TipsCenter.cs" />
     <Page Include="AutoComplete\AutoTextbox.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

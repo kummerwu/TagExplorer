@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 
-namespace LuceneTest.AutoComplete
+namespace TagExplorer.AutoComplete
 {
     /// <summary>
     /// AutoTextbox.xaml 的交互逻辑

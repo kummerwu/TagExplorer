@@ -1,7 +1,7 @@
-﻿<Application x:Class="LuceneTest.App"
+﻿<Application x:Class="TagExplorer.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="clr-namespace:LuceneTest"
+             xmlns:local="clr-namespace:TagExplorer"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
         <Style x:Key="BKC">

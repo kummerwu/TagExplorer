@@ -1,10 +1,6 @@
-﻿using AnyTag.BL;
-using AnyTags.Net;
-using LuceneTest.Core;
-using LuceneTest.TagLayout;
-using LuceneTest.TagMgr;
-using LuceneTest.UriMgr;
-using LuceneTest.Utils;
+﻿using TagExplorer.TagLayout;
+using TagExplorer.TagMgr;
+using TagExplorer.UriMgr;
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
@@ -12,13 +8,13 @@ using System.IO;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Shapes;
+using TagExplorer.Utils;
 
-namespace LuceneTest.TagGraph
+namespace TagExplorer.TagGraph
 {
-    
+
     /// <summary>
     /// 有向图的显示与文件的添加操作
     /// </summary>
@@ -31,9 +27,9 @@ namespace LuceneTest.TagGraph
         public TagCanvas()
         {
             InitializeComponent();
-            fileWather = new FileSystemWatcher(MyPath.DocRoot);
+            fileWather = new FileSystemWatcher(PathHelper.DocDir);
             fileWather.IncludeSubdirectories = true;
-            fileWather.Path = MyPath.DocRoot;
+            fileWather.Path = PathHelper.DocDir;
             fileWather.Renamed += FileWather_Renamed;
             fileWather.Created += FileWather_Created;
             fileWather.Deleted += FileWather_Deleted;
@@ -81,7 +77,7 @@ namespace LuceneTest.TagGraph
         //由于文件变更通知是在一个后台线程中进行的，所以需要通过Invoke机制调用UI主线程中的函数
         private void AddFileInDoc_BackThread(string uri)
         {
-            if (!MyPath.NeedSkipThisUri(uri))//过滤一些不需要观察的文件
+            if (!PathHelper.NeedSkipThisUri(uri))//过滤一些不需要观察的文件
             {
                 this.Dispatcher.Invoke(new Action<string>(AddFileInDoc), uri);
             }
@@ -91,7 +87,7 @@ namespace LuceneTest.TagGraph
         private void AddFileInDoc(string uri)
         {
             Logger.I("AddFileInDoc={0}", uri);
-            string tag = MyPath.GetTagByPath(uri);
+            string tag = PathHelper.GetTagByPath(uri);
             if (tag != null)
             {
                 UriDB.AddUri(uri, new List<string>() { tag });
@@ -226,7 +222,7 @@ namespace LuceneTest.TagGraph
         private void tagAreaNode_Click(object sender, RoutedEventArgs e)
         {
             UpdateCurrentTagByContextMenu();
-            FileShell.OpenTagDir(currentTag);
+            FileShell.OpenExplorerByTag(currentTag);
             
         }
         private void UpdateSelectedStatus(string tag)
@@ -303,27 +299,27 @@ namespace LuceneTest.TagGraph
             UpdateCurrentTagByContextMenu();
             
 
-            string[] token = Clipboard.GetText().Split(new char[] { ClipboardOperator.CommandSplitToken}, StringSplitOptions.RemoveEmptyEntries);
+            string[] token = Clipboard.GetText().Split(new char[] { ClipboardConst.CommandSplitToken}, StringSplitOptions.RemoveEmptyEntries);
             
             if(token.Length==2)
             {
                 string arg = token[1];
                 
-                string[] args = arg.Split(new char[] { ClipboardOperator.ArgsSplitToken }, StringSplitOptions.RemoveEmptyEntries);
+                string[] args = arg.Split(new char[] { ClipboardConst.ArgsSplitToken }, StringSplitOptions.RemoveEmptyEntries);
                 switch (token[0])
                 {
-                    case ClipboardOperator.KUMMERWU_TAG_COPY:
+                    case ClipboardConst.KUMMERWU_TAG_COPY:
                         tagDB.AddTag(currentTag, arg); 
                         Refresh();
                         break;
-                    case ClipboardOperator.KUMMERWU_TAG_CUT:
+                    case ClipboardConst.KUMMERWU_TAG_CUT:
                         tagDB.ResetRelationOfChild(currentTag, arg); 
                         Refresh();
                         break;
-                    case ClipboardOperator.KUMMERWU_URI_CUT:
+                    case ClipboardConst.KUMMERWU_URI_CUT:
                         MoveUris(args);
                         break;
-                    case ClipboardOperator.KUMMERWU_URI_COPY:
+                    case ClipboardConst.KUMMERWU_URI_COPY:
                         foreach (string uri in args)
                         {
                             UriDB.AddUri(uri, new List<string>() { currentTag });
@@ -342,7 +338,7 @@ namespace LuceneTest.TagGraph
         private void MoveUris(string[] args)
         {
             string[] src = args;
-            string[] dst = MyPath.FilesRelocation(src, currentTag);
+            string[] dst = PathHelper.MapFilesToTagDir(src, currentTag);
             FileShell.MoveFiles(src, dst);
             foreach (string uri in src)
             {
@@ -392,7 +388,7 @@ namespace LuceneTest.TagGraph
         private string  CopyToHouse(string f, string tag)
         {
             System.IO.FileInfo fi = new System.IO.FileInfo(f);
-            string dstDir = MyPath.GetDirPath(tag);
+            string dstDir = PathHelper.GetDirByTag(tag);
             string dstFile = System.IO.Path.Combine(dstDir, fi.Name);
             if(dstFile==f)
             {
@@ -416,7 +412,7 @@ namespace LuceneTest.TagGraph
         private void copyFullPath_Click(object sender, RoutedEventArgs e)
         {
             UpdateCurrentTagByContextMenu();
-            Clipboard.SetText(MyPath.GetDirPath(currentTag));
+            Clipboard.SetText(PathHelper.GetDirByTag(currentTag));
         }
 
         private void tagAreaMenu_ContextMenuOpening(object sender, ContextMenuEventArgs e)
@@ -436,11 +432,11 @@ namespace LuceneTest.TagGraph
         private void miNew_Click(object sender, RoutedEventArgs e)
         {
             UpdateCurrentTagByContextMenu();
-            string initDir = MyPath.GetDirPath(currentTag);
+            string initDir = PathHelper.GetDirByTag(currentTag);
             SaveFileDialog sf = new SaveFileDialog();
             sf.InitialDirectory = initDir;
 
-            sf.Filter = MyTemplate.GetTemplateFileFilter();//"One文件(*.one)|*.one|Mind文件(*.xmind)|*.xmind";
+            sf.Filter = TemplateHelper.GetTemplateFileFilter();//"One文件(*.one)|*.one|Mind文件(*.xmind)|*.xmind";
             if(sf.ShowDialog()==true)
             {
                 if(File.Exists(sf.FileName))
@@ -451,7 +447,7 @@ namespace LuceneTest.TagGraph
                 else
                 {
                     FileInfo fi = new FileInfo(sf.FileName);
-                    string tmplateFile = MyTemplate.DefaultDocTemplate(fi.Extension);
+                    string tmplateFile = TemplateHelper.GetTemplateByExtension(fi.Extension);
                     if (tmplateFile != null &&  File.Exists(tmplateFile))
                     {
                         File.Copy(tmplateFile, sf.FileName);
@@ -465,13 +461,13 @@ namespace LuceneTest.TagGraph
         public void miCopy_Click(object sender, RoutedEventArgs e)
         {
             UpdateCurrentTagByContextMenu();
-            Clipboard.SetText(ClipboardOperator.KUMMERWU_TAG_COPY + ClipboardOperator.CommandSplitToken + currentTag);
+            Clipboard.SetText(ClipboardConst.KUMMERWU_TAG_COPY + ClipboardConst.CommandSplitToken + currentTag);
         }
 
         public void miCut_Click(object sender, RoutedEventArgs e)
         {
             UpdateCurrentTagByContextMenu();
-            Clipboard.SetText(ClipboardOperator.KUMMERWU_TAG_CUT + ClipboardOperator.CommandSplitToken + currentTag);
+            Clipboard.SetText(ClipboardConst.KUMMERWU_TAG_CUT + ClipboardConst.CommandSplitToken + currentTag);
         }
 
         private void miDelete_Click(object sender, RoutedEventArgs e)
@@ -485,7 +481,7 @@ namespace LuceneTest.TagGraph
             {
                 MessageBox.Show(string.Format("[{0}]下还有其他子节点，如果确实需要删除该标签，请先删除所有子节点", currentTag), "提示：", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
-            ShowGraph("我的大脑");
+            ShowGraph(Cfg.Ins.DefaultTag);
         }
 
         private void miLinkIn_Click(object sender, RoutedEventArgs e)

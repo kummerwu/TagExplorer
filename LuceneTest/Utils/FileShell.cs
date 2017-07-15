@@ -1,6 +1,4 @@
-﻿using AnyTags.Net;
-using LuceneTest.Core;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Diagnostics;
@@ -8,7 +6,7 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Windows;
 
-namespace AnyTag.BL
+namespace TagExplorer.Utils
 {
     public class FileShell
     {
@@ -21,7 +19,7 @@ namespace AnyTag.BL
         //If you use the above you may encounter an invalid memory access exception (when using ANSI
         //or see nothing (when using unicode) when you use FOF_SIMPLEPROGRESS flag.
         [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-        struct SHFILEOPSTRUCT
+        private struct SHFILEOPSTRUCT
         {
             public IntPtr hwnd;
             public FileFuncFlags wFunc;
@@ -37,7 +35,7 @@ namespace AnyTag.BL
             public string lpszProgressTitle;
         }
         [Flags]
-        public enum FILEOP_FLAGS : ushort
+        private enum FILEOP_FLAGS : ushort
         {
             FOF_MULTIDESTFILES = 0x1,
             FOF_CONFIRMMOUSE = 0x2,
@@ -94,7 +92,7 @@ namespace AnyTag.BL
             /// </summary>
             FOF_NORECURSEREPARSE = 0x8000
         }
-        public enum FileFuncFlags : uint
+        private enum FileFuncFlags : uint
         {
             FO_MOVE = 0x1,
             FO_COPY = 0x2,
@@ -152,7 +150,7 @@ namespace AnyTag.BL
             fileop.fFlags = FILEOP_FLAGS.FOF_SIMPLEPROGRESS;
             return SHFileOperation(ref fileop) == 0;
         }
-        public static void LocateFile(string f)
+        public static void OpenExplorerByFile(string f)
         {
 
             if(isValidFileUrl(f))
@@ -167,12 +165,12 @@ namespace AnyTag.BL
                 Logger.D(string.Format("LocateFile not validFileUrl: [{0}]", f));
             }
         }
-        public static void OpenTagDir(string title)
+        public static void OpenExplorerByTag(string title)
         {
             if (title != null)
             {
                 string tag = title;
-                string dir = MyPath.GetDirPath(tag);
+                string dir = PathHelper.GetDirByTag(tag);
                 Logger.D("OpenTagDir {0} {1}", tag, dir);
                 Process.Start(dir);
             }
@@ -226,7 +224,7 @@ namespace AnyTag.BL
             if (title != null && postfix != null)
             {
                 string tag = title;
-                string file = MyPath.GetFilePath(tag, postfix);
+                string file = PathHelper.GetFileByTag(tag, postfix);
                 //string file = System.IO.Path.Combine(MyPath.DocRoot, tag + GConfig.DefaultPostfix);
 
                 //如果文件已经存在，直接打开
@@ -237,8 +235,8 @@ namespace AnyTag.BL
                 else
                 {
                     //如果文件不存在，尝试在其他路径上查找
-                    string[] files = Directory.GetFiles(MyPath.DocRoot, tag + "." + postfix);
-                    string[] files2 = Directory.GetFiles(MyPath.GetDirPath(tag), tag + "." + postfix);
+                    string[] files = Directory.GetFiles(PathHelper.DocDir, tag + "." + postfix);
+                    string[] files2 = Directory.GetFiles(PathHelper.GetDirByTag(tag), tag + "." + postfix);
 
                     if (files.Length > 0)
                     {
@@ -252,9 +250,9 @@ namespace AnyTag.BL
                     }
                     else // 否则新建一个文件
                     {
-                        if (File.Exists(MyTemplate.DefaultDocTemplate(postfix)))
+                        if (File.Exists(TemplateHelper.GetTemplateByExtension(postfix)))
                         {
-                            File.Copy(MyTemplate.DefaultDocTemplate(postfix), file);
+                            File.Copy(TemplateHelper.GetTemplateByExtension(postfix), file);
                         }
                         else
                         {

@@ -1,5 +1,4 @@
-﻿using AnyTags.Net;
-using System;
+﻿using System;
 using System.Collections;
 using System.Drawing;
 using System.IO;
@@ -8,7 +7,7 @@ using System.Windows;
 using System.Windows.Interop;
 using System.Windows.Media.Imaging;
 
-namespace AnyTagNet
+namespace TagExplorer.Utils
 {
     class GIconHelper
     {
@@ -89,7 +88,7 @@ namespace AnyTagNet
         {
             if(fileName.StartsWith("http:") || fileName.StartsWith("https:"))
             {
-                fileName = Path.Combine(MyPath.Root,"icon.html");
+                fileName = Path.Combine(PathHelper.DocBaseDir,"icon.html");
             }
             SHFILEINFO info = new SHFILEINFO(true);
             int cbFileInfo = Marshal.SizeOf(info);

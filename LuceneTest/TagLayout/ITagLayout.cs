@@ -1,8 +1,8 @@
-﻿using LuceneTest.TagMgr;
+﻿using TagExplorer.TagMgr;
 using System.Collections.Generic;
 using System.Windows;
 
-namespace LuceneTest.TagLayout
+namespace TagExplorer.TagLayout
 {
     public interface ITagLayout
     {

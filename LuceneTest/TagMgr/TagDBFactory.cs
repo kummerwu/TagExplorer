@@ -1,7 +1,6 @@
-﻿using LuceneTest.UriMgr;
-using System.Collections.Generic;
+﻿using TagExplorer.UriMgr;
 
-namespace LuceneTest.TagMgr
+namespace TagExplorer.TagMgr
 {
     public class TagDBFactory
     {

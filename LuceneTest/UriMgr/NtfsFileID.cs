@@ -1,9 +1,9 @@
-﻿using LuceneTest.Core;
-using System;
+﻿using System;
 using System.IO;
+using TagExplorer.Utils;
 using Trinet.Core.IO.Ntfs;
 
-namespace LuceneTest.UriMgr
+namespace TagExplorer.UriMgr
 {
     public class NtfsFileID
     {

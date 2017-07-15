@@ -1,10 +1,10 @@
-﻿namespace LuceneTest.TagLayout
+﻿namespace TagExplorer.TagLayout
 {
     public class TagLayoutFactory
     {
         public static ITagLayout CreateLayout()
         {
-            return new TagLayout();
+            return new AnyTagNet.TagLayout();
         }
     }
 }

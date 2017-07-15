@@ -1,15 +1,12 @@
-﻿<Window x:Class="LuceneTest.MainWindow"
+﻿<Window x:Class="TagExplorer.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:autoTextbox="clr-namespace:LuceneTest.AutoComplete"
-        xmlns:tagsbar ="clr-namespace:LuceneTest.TagsBar"
-        xmlns:uriPanel ="clr-namespace:LuceneTest.UriInfList"
-        xmlns:tagGraph ="clr-namespace:LuceneTest.TagGraph"
-        xmlns:local="clr-namespace:LuceneTest"
-        xmlns:tips="clr-namespace:LuceneTest"
-        xmlns:ad="http://schemas.xceed.com/wpf/xaml/avalondock"
+        xmlns:autoTextbox="clr-namespace:TagExplorer.AutoComplete"
+        xmlns:uriPanel="clr-namespace:TagExplorer.UriInfList"
+        xmlns:tagGraph="clr-namespace:TagExplorer.TagGraph"
+        xmlns:utils="clr-namespace:TagExplorer.Utils"
         xmlns:avalonDock="http://schemas.xceed.com/wpf/xaml/avalondock"
         mc:Ignorable="d"
         Title="TagExplorer" Height="350" Width="525" SizeChanged="Window_SizeChanged" WindowState="Maximized" WindowStartupLocation="CenterScreen" Closed="Window_Closed">
@@ -47,7 +44,7 @@
             <Button Width="40" >
                 <Button.ToolTip>
                     <ToolTip>
-                        <TextBlock Text="{Binding Path=Tips,Source={x:Static tips:TipsCenter.Ins}}"></TextBlock>
+                        <TextBlock Text="{Binding Path=Tips,Source={x:Static utils:TipsCenter.Ins}}"></TextBlock>
                     </ToolTip>
                 </Button.ToolTip>
                 <Button.Content>

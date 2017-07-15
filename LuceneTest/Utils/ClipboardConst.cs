@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace LuceneTest.Utils
+﻿namespace TagExplorer.Utils
 {
-    class ClipboardOperator
+    class ClipboardConst
     {
         public static char CommandSplitToken = '`';
         public static char ArgsSplitToken = '?';

@@ -1,10 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Windows;
-using LuceneTest.TagMgr;
+using TagExplorer.TagMgr;
 using AnyTag.UI;
-using AnyTagNet;
+using TagExplorer.Utils;
+using TagExplorer.TagLayout;
 
-namespace LuceneTest.TagLayout
+namespace AnyTagNet
 {
     class TagLayout : ITagLayout
     {
