@@ -46,9 +46,10 @@ namespace LuceneTest.TagGraph
             UriDB.Notify();
         }
 
-        //观察文件变化==删除处理
+        //观察文件变化==删除处理(TODO 真正的删除）
         private void FileWather_Deleted(object sender, FileSystemEventArgs e)
         {
+            Logger.I("file watch delete : {0}", e.FullPath);
             int tryTimes = 0;
             while(File.Exists(e.FullPath) || Directory.Exists(e.FullPath))
             {
@@ -65,6 +66,7 @@ namespace LuceneTest.TagGraph
         //观察文件变化==添加处理
         private void FileWather_Created(object sender, FileSystemEventArgs e)
         {
+            Logger.I("file watch create : {0}", e.FullPath);
             AddFileInDoc_BackThread(e.FullPath);
         }
 
@@ -72,13 +74,14 @@ namespace LuceneTest.TagGraph
         //观察文件变化==重命名处理   TODO：重命名后，实际上需要删除原来老的doc，暂时没有处理
         private void FileWather_Renamed(object sender, RenamedEventArgs e)
         {
+            Logger.I("file watch rename : {1}=>{0}", e.FullPath,e.OldFullPath);
             AddFileInDoc_BackThread(e.FullPath);
         }
 
         //由于文件变更通知是在一个后台线程中进行的，所以需要通过Invoke机制调用UI主线程中的函数
         private void AddFileInDoc_BackThread(string uri)
         {
-            if (!MyPath.FileWatcherFilter(uri))//过滤一些不需要观察的文件
+            if (!MyPath.NeedSkipThisUri(uri))//过滤一些不需要观察的文件
             {
                 this.Dispatcher.Invoke(new Action<string>(AddFileInDoc), uri);
             }
@@ -87,6 +90,7 @@ namespace LuceneTest.TagGraph
         //UI主线程中的方法调用
         private void AddFileInDoc(string uri)
         {
+            Logger.I("AddFileInDoc={0}", uri);
             string tag = MyPath.GetTagByPath(uri);
             if (tag != null)
             {
@@ -222,7 +226,7 @@ namespace LuceneTest.TagGraph
         private void tagAreaNode_Click(object sender, RoutedEventArgs e)
         {
             UpdateCurrentTagByContextMenu();
-            FileOperator.OpenTagDir(currentTag);
+            FileShell.OpenTagDir(currentTag);
             
         }
         private void UpdateSelectedStatus(string tag)
@@ -339,7 +343,7 @@ namespace LuceneTest.TagGraph
         {
             string[] src = args;
             string[] dst = MyPath.FilesRelocation(src, currentTag);
-            FileOperator.MoveFiles(src, dst);
+            FileShell.MoveFiles(src, dst);
             foreach (string uri in src)
             {
                 UriDB.DelUri(uri, false); 
@@ -349,12 +353,13 @@ namespace LuceneTest.TagGraph
                 UriDB.AddUri(uri, new List<string>() { currentTag });
             }
         }
-
-        public void PasteFiles()
+        public void PasteFiles() { PasteFiles(true); }
+        public void PasteFiles(bool NeedCopy)
         {
             UpdateCurrentTagByContextMenu();
-            AddUri(FileOperator.GetFileListFromClipboard());
+            AddUri(FileShell.GetFileListFromClipboard(),NeedCopy);
         }
+        
         private void UpdateCurrentTagByContextMenu()
         {
             TagBox t = TagAreaMenu.PlacementTarget as TagBox;
@@ -363,15 +368,20 @@ namespace LuceneTest.TagGraph
                 SetCurrentTag(t.Text);
             }
         }
-
-        private void AddUri(List<string> files)
+        private void AddUri(List<string> files) { AddUri(files, true); }
+        private void AddUri(List<string> files,bool NeedCopy)
         {
             if (UriDB == null || currentTag==null || currentTag.Length==0) return;
 
             List<string> tags = new List<string>() { currentTag };
             foreach(string f in files)
             {
-                string dstFile = CopyToHouse(f, currentTag);
+                string dstFile = f;
+                if (NeedCopy)
+                {
+                    dstFile = CopyToHouse(f, currentTag);
+                }
+                
                 if (dstFile != null)
                 {
                     UriDB.AddUri(dstFile, tags);
@@ -390,7 +400,7 @@ namespace LuceneTest.TagGraph
             }
             if (!System.IO.File.Exists(dstFile) && !System.IO.Directory.Exists(dstFile))//TODO 已经存在的需要提示覆盖、放弃、重命名
             {
-                if(FileOperator.CopyFile(f, dstFile))
+                if(FileShell.CopyFile(f, dstFile))
                 {
                     return dstFile;
                 }
@@ -446,7 +456,7 @@ namespace LuceneTest.TagGraph
                     {
                         File.Copy(tmplateFile, sf.FileName);
                         AddUri(new List<string>() { sf.FileName });
-                        FileOperator.StartFile(sf.FileName);
+                        FileShell.StartFile(sf.FileName);
                     }
                 }
             }
@@ -476,6 +486,11 @@ namespace LuceneTest.TagGraph
                 MessageBox.Show(string.Format("[{0}]下还有其他子节点，如果确实需要删除该标签，请先删除所有子节点", currentTag), "提示：", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
             ShowGraph("我的大脑");
+        }
+
+        private void miLinkIn_Click(object sender, RoutedEventArgs e)
+        {
+            PasteFiles(false);
         }
     }
 }

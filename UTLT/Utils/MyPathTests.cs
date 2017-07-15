@@ -7,15 +7,16 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 using AnyTag.BL;
+using LuceneTest.UriMgr;
 
 namespace AnyTags.Net.Tests
 {
     [TestClass()]
-    public class MyPathTests
+    public class FileSytemTest
     {
-        string dir = @"d:\utest";
-        string dir1 = @"d:\utest\tag1";
-        string dir2 = @"d:\utest\tag2";
+        string dir = @"B:\utest";
+        string dir1 = @"B:\utest\tag1";
+        string dir2 = @"B:\utest\tag2";
 
 
         [TestInitialize]
@@ -33,7 +34,7 @@ namespace AnyTags.Net.Tests
             Directory.Delete(dir, true);
         }
         [TestMethod]
-        public void FilesRelocationTest()
+        public void TestFS_FilesRelocationTest()
         {
             FilesRelocationTest(new string[] { MyPath.GetDirPath("test") + "\\hello" },
                                 new string[] { @"c:\hello"},
@@ -52,7 +53,7 @@ namespace AnyTags.Net.Tests
             }
         }
 
-        public void testMoveFiles(string [] names)
+        public void TestFS_testMoveFiles(string [] names)
         {
 
             string[] filesSrc = new string[names.Length];
@@ -89,7 +90,7 @@ namespace AnyTags.Net.Tests
                 }
             }
 
-            FileOperator.MoveFiles(filesSrc, filesDst);
+            FileShell.MoveFiles(filesSrc, filesDst);
             //检查文件和目录是否已经全部移到目的地
             for (int i = 0; i < filesSrc.Length; i++)
             {
@@ -107,42 +108,70 @@ namespace AnyTags.Net.Tests
 
         }
         [TestMethod]
-        public void MoveFilesTest1()
+        public void TestFS_MoveFilesTest1()
         {
-            testMoveFiles(new string[]{"1.txt" });
+            TestFS_testMoveFiles(new string[]{"1.txt" });
             
         }
 
 
         [TestMethod]
-        public void MoveFilesTest2()
+        public void TestFS_MoveFilesTest2()
         {
-            testMoveFiles(new string[] { "1.txt","2.txt" });
+            TestFS_testMoveFiles(new string[] { "1.txt","2.txt" });
         }
 
         [TestMethod]
-        public void MoveDirsTest3()
+        public void TestFS_MoveDirsTest3()
         {
-            testMoveFiles(new string[] { "1" });
+            TestFS_testMoveFiles(new string[] { "1" });
         }
 
         [TestMethod]
-        public void MoveDirsTest4()
+        public void TestFS_MoveDirsTest4()
         {
-            testMoveFiles(new string[] { "1" ,"2"});
+            TestFS_testMoveFiles(new string[] { "1" ,"2"});
         }
 
         [TestMethod]
-        public void MoveDirsTest5()
+        public void TestFS_MoveDirsTest5()
         {
-            testMoveFiles(new string[] { "1", "2.txt" });
+            TestFS_testMoveFiles(new string[] { "1", "2.txt" });
         }
 
         [TestMethod]
-        public void MoveDirsTest6()
+        public void TestFS_MoveDirsTest6()
         {
-            testMoveFiles(new string[] { "1", "2.txt","3","4.txt" });
+            TestFS_testMoveFiles(new string[] { "1", "2.txt","3","4.txt" });
         }
 
+        [TestMethod]
+        public void TestFS_TestFileFilter()
+        {
+            string file = Path.Combine(dir, "1.txt");
+            FileStream fs = new FileStream(file, FileMode.CreateNew);
+            fs.WriteByte(1);
+            Assert.IsTrue( MyPath.NeedSkipThisUri(file));
+            fs.Close();
+            Assert.IsFalse(MyPath.NeedSkipThisUri(file));
+
+        }
+
+
+        [TestMethod]
+        public void TestFS_GetID()
+        {
+            string f = Path.Combine(dir, "TestDir");
+            Directory.CreateDirectory(f);
+            string lastF = f;
+            Guid id = NtfsFileID.GetID(f);
+            for (int i = 0; i < 100; i++)
+            {
+                lastF = f + i;
+                Directory.Move(f, lastF);
+                Assert.AreEqual(id, NtfsFileID.GetID(lastF));
+                f = lastF;
+            }
+        }
     }
 }

@@ -13,28 +13,35 @@ namespace LuceneTest.AutoComplete
     /// </summary>
     public partial class AutoTextbox : Canvas
     {
-        #region Members
+        #region 私有变量
         private VisualCollection controls;
         public TextBox textBox;
         private ComboBox comboBox;
-        private ObservableCollection<AutoCompleteEntry> autoCompletionList;
+        //private ObservableCollection<AutoCompleteEntry> autoCompletionList;
         private System.Timers.Timer keypressTimer;
         private delegate void TextChangedCallback();
         private bool insertText;
         private int delayTime = 100;        //延迟提示的时延（100ms）
         private int searchThreshold;        //至少输入几个字符后，开始自动提示
+        ISearchDataProvider search;
+        public ISearchDataProvider SearchDataProvider
+        {
+            set { search = value; }
+        }
         #endregion
 
-        #region Constructor
+        #region 构造函数
         public AutoTextbox()
         {
 
             //InitializeComponent();
 
-            autoCompletionList = new ObservableCollection<AutoCompleteEntry>();
+            //autoCompletionList = new ObservableCollection<AutoCompleteEntry>();
+            
+            //最小输入提示，小于2个字符，不给出提示
             searchThreshold = 2;        // default threshold to 2 char
 
-            // set up the key press timer
+            // 提示延时定时器
             keypressTimer = new System.Timers.Timer();
             keypressTimer.Elapsed += new System.Timers.ElapsedEventHandler(OnTimedEvent);
 
@@ -56,7 +63,7 @@ namespace LuceneTest.AutoComplete
             controls.Add(textBox);
 
         }
-
+        #endregion
         //键盘操作的劫持，在ComboBox处于Open状态时，需要对键盘做一些特殊的相应
         //主要是UP、Down键盘操作转换为ComboBox不同项的选择操作
         protected override void OnPreviewKeyDown(KeyEventArgs e)
@@ -69,7 +76,8 @@ namespace LuceneTest.AutoComplete
         {
             TextBox_KeyDown(sender, e);
         }
-
+        
+            
         private void ComboBox_KeyDown(object sender, KeyEventArgs e)
         {
             TextBox_KeyDown(sender, e);
@@ -84,7 +92,10 @@ namespace LuceneTest.AutoComplete
             if (e.Key == Key.Down)
             {
                 System.Diagnostics.Debug.WriteLine(DateTime.Now.ToLongTimeString() + " DOWN");
-                if (comboBox.SelectedIndex < 0) comboBox.SelectedIndex = 0;
+                if (comboBox.SelectedIndex < 0)
+                {
+                    comboBox.SelectedIndex = 0;
+                }
                 else if (comboBox.SelectedIndex < comboBox.Items.Count - 1)
                 {
                     comboBox.SelectedIndex++;
@@ -161,7 +172,7 @@ namespace LuceneTest.AutoComplete
         }
 
 
-        #endregion
+        
 
         #region Methods
         public string Text
@@ -186,10 +197,10 @@ namespace LuceneTest.AutoComplete
             set { searchThreshold = value; }
         }
 
-        public void AddItem(AutoCompleteEntry entry)
-        {
-            autoCompletionList.Add(entry);
-        }
+        //public void AddItem(AutoCompleteEntry entry)
+        //{
+        //    autoCompletionList.Add(entry);
+        //}
 
         private void comboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -201,11 +212,7 @@ namespace LuceneTest.AutoComplete
                 SetCurrentToken(cbItem.Content.ToString());
             }
         }
-        ISearchDataProvider search;
-        public ISearchDataProvider SearchDataProvider
-        {
-            set { search = value; }
-        }
+        
         //在文本发生变化时，及时显示ComboBox提示信息
         private void TextChanged()
         {

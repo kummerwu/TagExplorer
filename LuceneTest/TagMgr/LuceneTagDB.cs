@@ -24,7 +24,7 @@ namespace LuceneTest.TagMgr
         public LuceneTagDB()
         {
             bool create = true;
-            if (Cfg.Ins.IsDbg)
+            if (Cfg.Ins.IsUTest)
             {
                 dir = new RAMDirectory();
                 create = true;

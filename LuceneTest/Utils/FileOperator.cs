@@ -1,6 +1,5 @@
 ﻿using AnyTags.Net;
 using LuceneTest.Core;
-using LuceneTest.Utils;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -11,7 +10,7 @@ using System.Windows;
 
 namespace AnyTag.BL
 {
-    public class FileOperator
+    public class FileShell
     {
         //const int FO_COPY = 0x2;
         //const int FOF_ALLOWUNDO = 0x44;
@@ -105,7 +104,7 @@ namespace AnyTag.BL
 
         [DllImport("shell32.dll", CharSet = CharSet.Unicode)]
         static extern int SHFileOperation([In] ref SHFILEOPSTRUCT lpFileOp);
-
+        
         public static bool MoveFiles(string[] srcList, string[] dstList)
         {
             string src = "", dst = "";
@@ -195,17 +194,18 @@ namespace AnyTag.BL
             string txt = Clipboard.GetText();
             txt = txt.Trim('"');
             txt = txt.Trim();
-            if (FileOperator.isValidFileUrl(txt) && !files.Contains(txt))
+            if (FileShell.isValidFileUrl(txt) && !files.Contains(txt))
             {
                 files.Add(txt);
             }
             StringCollection sc = Clipboard.GetFileDropList();
+            
             foreach (string f in sc)
             {
 
                 txt = f.Trim('"');
 
-                if (FileOperator.isValidFileUrl(txt) && !files.Contains(txt))
+                if (FileShell.isValidFileUrl(txt) && !files.Contains(txt))
                 {
                     files.Add(txt);
                 }
@@ -215,12 +215,13 @@ namespace AnyTag.BL
         }
         public static bool isValidFileUrl(string txt)
         {
+            if (txt == null) return false;
             return File.Exists(txt) || Directory.Exists(txt) ||
                             (txt.StartsWith("http://", StringComparison.CurrentCultureIgnoreCase) ||
                             txt.StartsWith("https://", StringComparison.CurrentCultureIgnoreCase));
         }
 
-        public static void TryOpenTagFile(string title, string postfix)
+        private static void TryOpenTagFile(string title, string postfix)
         {
             if (title != null && postfix != null)
             {

@@ -28,10 +28,15 @@ namespace LuceneTest
             }
         }
 
-        public string Text { get {return txt.Text; } internal set {txt.Text = value; } }
+        public string Text
+        {
+            get {return txt.Text; }
+            internal set {txt.Text = value; }
+        }
 
         public TextAlignment TextAlignment
-        { get { return txt.TextAlignment; }
+        {
+            get { return txt.TextAlignment; }
             internal set { txt.TextAlignment = value; }
         }
 

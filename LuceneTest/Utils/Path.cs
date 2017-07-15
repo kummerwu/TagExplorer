@@ -1,5 +1,6 @@
 ﻿using AnyTagNet;
 using LuceneTest.Core;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -122,13 +123,25 @@ namespace AnyTags.Net
         }
         public static string GetTagByPath(string path)
         {
-            if (!path.Contains(DocRoot)) return null; //根本不在doc目录中
-            if (!File.Exists(path) && !Directory.Exists(path)) return null;
+            if (!path.Contains(DocRoot))
+            {
+                Logger.I("GetTagByPath Failed,File(Dir) !pathContains: {0}", path);
+                return null; //根本不在doc目录中
+            }
+            //if (!File.Exists(path) && !Directory.Exists(path))
+            //{
+            //    Logger.I("GetTagByPath Failed,File(Dir) not Exist: {0}", path);
+            //    return null;
+            //}
 
             string[] dirs= path.Substring(DocRoot.Length).Split(
                 new char[] { Path.DirectorySeparatorChar }, 
                 System.StringSplitOptions.RemoveEmptyEntries);
-            if (dirs.Length !=2) return null;
+            if (dirs.Length != 2)
+            {
+                Logger.I("GetTagByPath Failed,File(Dir) dirs!=2: {0}", path);
+                return null;
+            }
             else return dirs[0];
         }
         public static string GetFilePath(string tag, string postfix)
@@ -145,10 +158,24 @@ namespace AnyTags.Net
             return dir;
         }
 
-        public static bool FileWatcherFilter(string uri)
+        public static bool NeedSkipThisUri(string uri)
         {
             string name = Path.GetFileName(uri);
-            return Regex.IsMatch(name, @"(_files$)|(^~)",RegexOptions.IgnoreCase);
+            bool canAccess = true;
+            if (File.Exists(uri)) //如果是文件的话，检测一下该文件是否被锁住？
+            {
+                try
+                {
+                    FileStream fs = new FileStream(uri, FileMode.Open, FileAccess.Read, FileShare.None);
+                    fs.Close();
+                }
+                catch
+                {
+                    canAccess = false;
+                }
+            }
+            return Regex.IsMatch(name, @"(_files$)|(^~)|(.tmp$)",RegexOptions.IgnoreCase) || 
+                !canAccess;
         }
 
     }

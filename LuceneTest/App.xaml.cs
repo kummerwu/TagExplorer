@@ -1,4 +1,6 @@
-﻿using System;
+﻿using LuceneTest.Core;
+using LuceneTest.UriMgr;
+using System;
 using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.InteropServices;
@@ -29,15 +31,32 @@ namespace LuceneTest
         public App()
         {
             DispatcherUnhandledException += App_DispatcherUnhandledException;
+            Current.DispatcherUnhandledException += Current_DispatcherUnhandledException;
+            AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
             Startup += App_Startup;
         }
+
+        private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+        {
+            Logger.E(e.ExceptionObject.ToString());
+            IDisposableFactory.DisposeAll();
+            
+        }
+
+        private void Current_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
+        {
+            Logger.E(e.Exception);
+            IDisposableFactory.DisposeAll();
+            
+        }
+
         private const int SW_SHOWNOMAL = 1;
-        private static void HandleRunningInstance(Process instance)
+        private static void BringToForeground(Process instance)
         {
             //ShowWindowAsync(instance.MainWindowHandle, SW_SHOWNOMAL);//显示
             SetForegroundWindow(instance.MainWindowHandle);//当到最前端
         }
-        private static Process RuningInstance()
+        private static Process GetRuningInstance()
         {
             Process currentProcess = Process.GetCurrentProcess();
             Process[] Processes = Process.GetProcessesByName(currentProcess.ProcessName);
@@ -56,19 +75,22 @@ namespace LuceneTest
 
         private void App_Startup(object sender, StartupEventArgs e)
         {
-            Process process = RuningInstance();
+            Process process = GetRuningInstance();
             if(process!=null)
             {
-                //MessageBox.Show("应用程序已经在运行中。。。");
-
-                HandleRunningInstance(process);
+                BringToForeground(process);
                 Environment.Exit(0);
             }
         }
 
         private void App_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
         {
-            MessageBox.Show(e.Exception.Message+"\r\n===============\r\n"+e.Exception.StackTrace);
+            Logger.E(e.Exception);
+            
+            
+            IDisposableFactory.DisposeAll();
+            //MessageBox.Show(e.Exception.Message+"\r\n===============\r\n"+e.Exception.StackTrace);
+           
         }
 
     }

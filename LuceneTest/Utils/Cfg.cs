@@ -10,16 +10,37 @@
                 if(_ins==null)
                 {
                     _ins = new Cfg();
+                    _ins.CalcPath();
 
                 }
                 return _ins;
             }
         }
-        private const string Root = @"D:\00TagExplorerBase";
-        public string TagDB = Root+@"\TagDB";
-        public string UriDB = Root+@"\UriDB";
-        public string DocBase = Root+@"\DocumentBase";
+        public string Root = @"J:\00TagExplorerBase";
+        public string TagDB;
+        public string UriDB;
+        public string DocBase;
         public int TAG_MAX_RELATION = 1000;
-        public bool IsDbg = false;
+        public bool isUTest = false;
+        public bool IsUTest
+        {
+            get { return isUTest; }
+            set
+            {
+                isUTest = value;
+                if(isUTest)
+                {
+                    Root = @"B:\00TagExplorerBase";
+                    CalcPath();
+                }
+            }
+        }
+
+        private void CalcPath()
+        {
+            TagDB = Root + @"\TagDB";
+            UriDB = Root + @"\UriDB";
+            DocBase = Root + @"\DocumentBase";
+        }
     }
 }

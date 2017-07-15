@@ -44,7 +44,7 @@ namespace LuceneTest
             uriDB.UriDBChanged += UpdateUriList;
             autoTextBox.SearchDataProvider = tagDB;
             Update("我的大脑");
-            Logger.D(@"
+            Logger.I(@"
 ////////////////////////////////////////////////////////////////////
 //
 //init main window
@@ -173,11 +173,13 @@ namespace LuceneTest
 
         private void Window_Closed(object sender, EventArgs e)
         {
-            tagDB.Dispose();
-            uriDB.Dispose();
+            IDisposableFactory.Dispose(tagDB);
+            IDisposableFactory.Dispose(uriDB);
+            //tagDB.Dispose();
+            //uriDB.Dispose();
             tagDB = null;
             uriDB = null;
-            Logger.D(@"
+            Logger.I(@"
 **********************************************************************
 *
 *Close main window

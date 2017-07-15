@@ -12,7 +12,7 @@ namespace UTLT
         [TestInitialize]
         public void setup()
         {
-            Cfg.Ins.IsDbg = true;
+            Cfg.Ins.IsUTest = true;
             
         }
         [TestMethod]

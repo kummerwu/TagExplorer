@@ -48,7 +48,7 @@ namespace LuceneTest.UriMgr
         public LuceneUriDB()
         {
             bool create = true;
-            if (Cfg.Ins.IsDbg)
+            if (Cfg.Ins.IsUTest)
             {
                 dir = new RAMDirectory();
                 create = true;
@@ -389,7 +389,7 @@ namespace LuceneTest.UriMgr
         public void Dbg()
         {
             return;
-            System.IO.TextWriter w = new System.IO.StreamWriter(@"c:\dbg.csv");
+            System.IO.TextWriter w = new System.IO.StreamWriter(@".\dbg.csv");
             int max = search.MaxDoc;
             w.WriteLine(@"IDX,F_ID,F_KEY,F_URI,DEL,TAGS");
             for (int i = 0; i < max; i++)
@@ -406,20 +406,23 @@ namespace LuceneTest.UriMgr
                                             reader.IsDeleted(i)?"DEL":"OK"
                                             )
                                 );
-                    if(doc.Get(F_KEY)?.IndexOf("python")>0)
-                    {
-                        foreach (Field f in doc.GetFields(F_URI_TAGS))
-                        {
-                            w.Write("," + f.StringValue);
-                        }
-                    }
+                    
                     foreach (Field f in doc.GetFields(F_URI_TAGS))
                     {
                         w.Write(","+f.StringValue);
                     }
+
+                    string path = doc.Get(F_URI);
+                    if(!System.IO.File.Exists(path) && !System.IO.Directory.Exists(path))
+                    {
+                        reader.DeleteDocument(i);
+                        
+                    }
                 }
                 w.WriteLine();
+
             }
+            
         }
     }
 }

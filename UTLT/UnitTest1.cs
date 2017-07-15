@@ -3,46 +3,51 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using AnyTags.Net;
 using LuceneTest.UriMgr;
 using System.IO;
+using LuceneTest.Core;
 
 namespace UTLT
 {
     [TestClass]
     public class UnitTest1
     {
-        //[TestMethod]
-        public void TestUtil_GetID()
+        [AssemblyInitialize()]
+        public static void AssemblyInit(TestContext context)
         {
-            string f = @"D:\00TagExplorerBase\DocumentBase\Doc\工具集合\dddd";
-            string lastF = f;
-            Guid id = NtfsFileID.GetID(f);
-            for(int i = 0;i<100;i++)
+            Cfg.Ins.IsUTest = true;
+        }
+        [TestInitialize]
+        public void setup()
+        {
+            
+        }
+        [TestCleanup]
+        public void teardown()
+        {
+            //Directory.Delete(Cfg.Ins.Root,true)
+            if (Directory.Exists(@"B:\00TagExplorerBase"))
             {
-                lastF = f + i;
-                Directory.Move(f, lastF);
-                Assert.AreEqual(id, NtfsFileID.GetID(lastF));
-                f = lastF;
+                Directory.Delete(@"B:\00TagExplorerBase", true);//这边写死是防止危险，单元测试不能把正事的文档删除了
             }
         }
-
         private static void AssertFilter(bool r,string s)
         {
-            Assert.AreEqual(r, MyPath.FileWatcherFilter(s));
+            Assert.AreEqual(r, MyPath.NeedSkipThisUri(s));
         }
         [TestMethod]
         public void TestUtil_FileWatcherFilter()
         {
-            AssertFilter(true, @"D:\00TagExplorerBase\DocumentBase\Doc\PAAS\20160108-Paas和组件化\参考资料\cloudfoundry\Cloud Foundry技术全貌及核心组件分析_files");
-            AssertFilter(true, @"D:\00TagExplorerBase\DocumentBase\Doc\架构设计\微服务设计\~$BGP微服务v1.2.pptx");
-            AssertFilter(false, @"D:\00TagExplorerBase\DocumentBase\Doc\架构设计\微服务设计\BGP微服务v1.2.pptx");
-            AssertFilter(false, @"D:\00TagExplorerBase\DocumentBase\Doc\PAAS\20160108-Paas和组件化\参考资料\cloudfoundry\Cloud Foundry技术全貌及核心组件分析_files.pdf");
+            AssertFilter(true, @"B:\00TagExplorerBase\DocumentBase\Doc\PAAS\20160108-Paas和组件化\参考资料\cloudfoundry\Cloud Foundry技术全貌及核心组件分析_files");
+            AssertFilter(true, @"B:\00TagExplorerBase\DocumentBase\Doc\架构设计\微服务设计\~$BGP微服务v1.2.pptx");
+            AssertFilter(false, @"B:\00TagExplorerBase\DocumentBase\Doc\架构设计\微服务设计\BGP微服务v1.2.pptx");
+            AssertFilter(false, @"B:\00TagExplorerBase\DocumentBase\Doc\PAAS\20160108-Paas和组件化\参考资料\cloudfoundry\Cloud Foundry技术全貌及核心组件分析_files.pdf");
         }
         [TestMethod]
         public void TestUtil_GetTag()
         {
-            AssertTag(@"D:\00TagExplorerBase\DocumentBase\Doc\编程技术\[C语言标准]ansi_c.pdf", "编程技术");
-            AssertTag(@"D:\00TagExplorerBase\DocumentBase\Doc\二层协议\基于EAPS技术的以太网单环路保护技术要求.pdf", "二层协议");
-            AssertTag(@"D:\00TagExplorerBase\DocumentBase\Doc\汇报素材\代码月走查", "汇报素材");
-            AssertTag(@"D:\00TagExplorerBase\DocumentBase\Doc\汇报素材\代码月走查\", "汇报素材");
+            AssertTag(@"B:\00TagExplorerBase\DocumentBase\Doc\编程技术\[C语言标准]ansi_c.pdf", "编程技术");
+            AssertTag(@"B:\00TagExplorerBase\DocumentBase\Doc\二层协议\基于EAPS技术的以太网单环路保护技术要求.pdf", "二层协议");
+            AssertTag(@"B:\00TagExplorerBase\DocumentBase\Doc\汇报素材\代码月走查", "汇报素材");
+            AssertTag(@"B:\00TagExplorerBase\DocumentBase\Doc\汇报素材\代码月走查\", "汇报素材");
 
         }
 
@@ -50,19 +55,31 @@ namespace UTLT
         public void TestUtil_GetTag2()
         {
             AssertTag(@"c:\00TagExplorerBase", null);
-            AssertTag(@"D:\00TagExplorerBase", null);
-            AssertTag(@"D:\00TagExplorerBase\", null);
-            AssertTag(@"D:\00TagExplorerBase\DocumentBase", null);
-            AssertTag(@"D:\00TagExplorerBase\DocumentBase\", null);
-            AssertTag(@"D:\00TagExplorerBase\DocumentBase\Doc", null);
-            AssertTag(@"D:\00TagExplorerBase\DocumentBase\Doc\", null);
-            AssertTag(@"D:\00TagExplorerBase\DocumentBase\Doc\汇报素材\代码月走查\test", null);
-            AssertTag(@"D:\00TagExplorerBase\DocumentBase\Doc\汇报素材\代码月走查\test.pdf", null);
+            AssertTag(@"B:\00TagExplorerBase", null);
+            AssertTag(@"B:\00TagExplorerBase\", null);
+            AssertTag(@"B:\00TagExplorerBase\DocumentBase", null);
+            AssertTag(@"B:\00TagExplorerBase\DocumentBase\", null);
+            AssertTag(@"B:\00TagExplorerBase\DocumentBase\Doc", null);
+            AssertTag(@"B:\00TagExplorerBase\DocumentBase\Doc\", null);
+            AssertTag(@"B:\00TagExplorerBase\DocumentBase\Doc\汇报素材\代码月走查\test", null);
+            AssertTag(@"B:\00TagExplorerBase\DocumentBase\Doc\汇报素材\代码月走查\test.pdf", null);
 
+            
+
+        }
+
+        [TestMethod]
+        public void TestUtil_GetTag3()
+        {
+            AssertTag(@"B:\00TagExplorerBase\DocumentBase\Doc\ROSng微服务\20170714 - 吴道揆 - ROSng微服务相关工作~3AC25E.tmp", "ROSng微服务");
         }
         private static  void AssertTag(string file,string tag)
         {
+            //createdir(file);
             Assert.AreEqual(tag, MyPath.GetTagByPath(file));
+
         }
+
+        
     }
 }

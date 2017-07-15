@@ -77,7 +77,7 @@ namespace LuceneTest.UriInfList
             if(lst.SelectedItem as SearchItemInf!=null)
             {
                 SearchItemInf it = lst.SelectedItem as SearchItemInf;
-                if(FileOperator.isValidFileUrl(it.Detail))
+                if(FileShell.isValidFileUrl(it.Detail))
                 {
                     ChangeCurrentUri(it.Detail);
                 }
@@ -99,18 +99,18 @@ namespace LuceneTest.UriInfList
         private void OpenSelectedUri()
         {
             UpdateCurrentUriByContextMenu();
-            if (FileOperator.isValidFileUrl(CurrentUri))
+            if (FileShell.isValidFileUrl(CurrentUri))
             {
-                FileOperator.StartFile(CurrentUri);
+                FileShell.StartFile(CurrentUri);
             }
         }
 
         private void miOpenPath_Click(object sender, RoutedEventArgs e)
         {
             UpdateCurrentUriByContextMenu();
-            if (FileOperator.isValidFileUrl(CurrentUri))
+            if (FileShell.isValidFileUrl(CurrentUri))
             {
-                FileOperator.LocateFile(CurrentUri);
+                FileShell.LocateFile(CurrentUri);
             }
         }
 
@@ -222,7 +222,7 @@ namespace LuceneTest.UriInfList
             List<SearchItemInf> ret = new List<SearchItemInf>();
             foreach (string key in files)
             {
-                if (FileOperator.isValidFileUrl(key))
+                if (FileShell.isValidFileUrl(key))
                 {
                     SearchItemInf it = new SearchItemInf();
                     it._Detail = key;

@@ -17,27 +17,32 @@ namespace LuceneTest.TagsBar
         {
             InitializeComponent();
         }
-        private IUriDB db = null;
-        private ITagDB tagsDB = null;
-        private string curUri = null;
-        public void UpdateUri(string uri,IUriDB db,ITagDB tagsDB)
+        //私有变量///////////////////////////////////////////////
+        private IUriDB uriDB = null;
+        private ITagDB tagDB = null;
+        private string currentUri = null;
+
+        //公有方法///////////////////////////////////////////////
+        public void UpdateUri(string uri,IUriDB uriDB,ITagDB tagDB)
         {
             string tips = "当前选中文件："+uri+" ";
-            this.db = db;
-            this.tagsDB = tagsDB;
-            autoTextBox.SearchDataProvider = tagsDB;
-            curUri = uri;
-            List<string> tags = db.GetTags(uri);
+            this.uriDB = uriDB;
+            this.tagDB = tagDB;
+            autoTextBox.SearchDataProvider = tagDB;
+            currentUri = uri;
+            List<string> tags = uriDB.GetTags(uri);
             parent.Children.Clear();
             foreach (string tag in tags)
             {
-                AddTag(tag);
+                ShowTagsList(tag);
                 tips += tag + " ";
             }
 
             TipsCenter.Ins.UriInf = tips;
         }
-        private void AddTag(string tag)
+
+        //私有方法///////////////////////////////////////////////
+        private void ShowTagsList(string tag)
         {
             TextBlock t = new TextBlock();
             t.Text = tag;
@@ -48,10 +53,10 @@ namespace LuceneTest.TagsBar
 
         private void autoTextBox_KeyUp(object sender, KeyEventArgs e)
         {
-            if(e.Key == Key.Enter && curUri!=null && db!=null && tagsDB!=null)
+            if(e.Key == Key.Enter && currentUri!=null && uriDB!=null && tagDB!=null)
             {
-                db.AddUri(curUri, new List<string>() { autoTextBox.Text.Trim() });
-                UpdateUri(curUri, db, tagsDB);
+                uriDB.AddUri(currentUri, new List<string>() { autoTextBox.Text.Trim() });
+                UpdateUri(currentUri, uriDB, tagDB);
                 autoTextBox.Text = "";
             }
         }

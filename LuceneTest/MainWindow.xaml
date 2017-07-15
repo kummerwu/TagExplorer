@@ -3,13 +3,14 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:avalonDock="http://schemas.xceed.com/wpf/xaml/avalondock"
         xmlns:autoTextbox="clr-namespace:LuceneTest.AutoComplete"
         xmlns:tagsbar ="clr-namespace:LuceneTest.TagsBar"
         xmlns:uriPanel ="clr-namespace:LuceneTest.UriInfList"
         xmlns:tagGraph ="clr-namespace:LuceneTest.TagGraph"
         xmlns:local="clr-namespace:LuceneTest"
         xmlns:tips="clr-namespace:LuceneTest"
+        xmlns:ad="http://schemas.xceed.com/wpf/xaml/avalondock"
+        xmlns:avalonDock="http://schemas.xceed.com/wpf/xaml/avalondock"
         mc:Ignorable="d"
         Title="TagExplorer" Height="350" Width="525" SizeChanged="Window_SizeChanged" WindowState="Maximized" WindowStartupLocation="CenterScreen" Closed="Window_Closed">
     <Window.CommandBindings>
@@ -65,33 +66,36 @@
             <uriPanel:UriListBox x:Name="uriList" Grid.Column="1"></uriPanel:UriListBox>
         </Grid>
         -->
+
+
         <avalonDock:DockingManager x:Name="dockingManager" Grid.Row="1">
-
-            <avalonDock:LayoutRoot x:Name="dockRoot">
-                <avalonDock:LayoutPanel x:Name="layoutPanel" Orientation="Horizontal">
-
-                    <avalonDock:LayoutDocumentPaneGroup >
-                        <avalonDock:LayoutDocumentPane >
-                            <avalonDock:LayoutDocument Title="Tag视图" CanClose="False" x:Name="ldock">
-                                <tagGraph:TagCanvas x:Name="tagCanvas" Grid.Column="0"></tagGraph:TagCanvas>
-                            </avalonDock:LayoutDocument>
-                        </avalonDock:LayoutDocumentPane>
-                    </avalonDock:LayoutDocumentPaneGroup>
-
-                    <avalonDock:LayoutAnchorablePaneGroup x:Name="pg1" DockWidth="550" Orientation="Vertical">
-                        <avalonDock:LayoutAnchorablePane >
-                            <avalonDock:LayoutAnchorable x:Name="searchPane"  Title="搜索" CanClose="False" >
-                                <uriPanel:UriListBox x:Name="uriList" Grid.Column="1"></uriPanel:UriListBox>
-                            </avalonDock:LayoutAnchorable>
-                        </avalonDock:LayoutAnchorablePane>
-                    </avalonDock:LayoutAnchorablePaneGroup>
+            <avalonDock:LayoutRoot>
+                
+                <avalonDock:LayoutPanel Orientation="Horizontal">
+                    
+                    
+                    <avalonDock:LayoutAnchorablePane DockWidth="150">
+                        <avalonDock:LayoutAnchorable Title="标签图" CanClose="False" CanHide="False">
+                            <tagGraph:TagCanvas x:Name="tagCanvas"  Grid.Column="0" ></tagGraph:TagCanvas>
+                        </avalonDock:LayoutAnchorable>
+                    </avalonDock:LayoutAnchorablePane>
+                    
+                    <avalonDock:LayoutAnchorablePane DockWidth="150">
+                        <avalonDock:LayoutAnchorable Title="查找结果" CanClose="False" CanHide="False">
+                            <uriPanel:UriListBox x:Name="uriList" Grid.Column="1"></uriPanel:UriListBox>
+                        </avalonDock:LayoutAnchorable>
+                    </avalonDock:LayoutAnchorablePane>
+                    
+                    
+                    
+                    
                 </avalonDock:LayoutPanel>
+
+
+
+
             </avalonDock:LayoutRoot>
         </avalonDock:DockingManager>
-
-
-
-
 
 
     </Grid>

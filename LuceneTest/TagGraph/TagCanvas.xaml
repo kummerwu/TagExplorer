@@ -18,6 +18,7 @@
             <MenuItem Name="miPasteTag" Header="粘贴"/>
             <Separator></Separator>
             <MenuItem Name="miPaste" Header="粘贴文件" Click="miPaste_Click"/>
+            <MenuItem Name="miLinkIn" Header="粘贴链接" Click="miLinkIn_Click"/>
             <MenuItem Name="miNew" Header="新建" Click="miNew_Click"></MenuItem>
             <MenuItem Name="miEdit" Header="编辑">
                 <MenuItem Name="miEditOne" Header="编辑.One"></MenuItem>
