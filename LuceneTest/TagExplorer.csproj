@@ -186,7 +186,7 @@
     <Compile Include="TagBox\TagBox.xaml.cs">
       <DependentUpon>TagBox.xaml</DependentUpon>
     </Compile>
-    <Compile Include="TagGraph\TagCanvas.xaml.cs">
+    <Compile Include="TagCanvas\TagCanvas.xaml.cs">
       <DependentUpon>TagCanvas.xaml</DependentUpon>
     </Compile>
     <Compile Include="TagLayout\TagBoxLayout\GLayout.cs" />
@@ -206,10 +206,13 @@
     <Compile Include="testAvalon.xaml.cs">
       <DependentUpon>testAvalon.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UriInfList\UriListBox.xaml.cs">
-      <DependentUpon>UriListBox.xaml</DependentUpon>
+    <Compile Include="SearchResultListBox\SearchResultItem.cs" />
+    <Compile Include="SearchResultListBox\SearchResultListBox.xaml.cs">
+      <DependentUpon>SearchResultListBox.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UriMgr\IDisposableFactory.cs" />
     <Compile Include="UriMgr\NtfsFileID.cs" />
+    <Compile Include="UriMgr\UriQueryAnalyser.cs" />
     <Compile Include="Utils\Cfg.cs" />
     <Compile Include="Utils\ClipboardConst.cs" />
     <Compile Include="Utils\FileShell.cs" />
@@ -246,7 +249,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="TagGraph\TagCanvas.xaml">
+    <Page Include="TagCanvas\TagCanvas.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -258,7 +261,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="UriInfList\UriListBox.xaml">
+    <Page Include="SearchResultListBox\SearchResultListBox.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

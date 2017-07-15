@@ -15,7 +15,6 @@ namespace TagExplorer.UriMgr
         DataChanged UriDBChanged { get; set; }
         string GetTitle(string Uri);
         List<string> GetTags(string Uri);
-        void AutoUpdate(string root,int deepth);
         void Notify();
         
     }

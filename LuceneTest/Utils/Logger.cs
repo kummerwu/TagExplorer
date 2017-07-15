@@ -6,8 +6,8 @@ namespace TagExplorer.Utils
 
     public class Logger
     {
-        
-        private static log4net.ILog log = log4net.LogManager.GetLogger("fileLog");
+
+        #region 公有方法
         public static void D(string s)
         {
             //log.Debug(PREFIX+s);
@@ -31,20 +31,27 @@ namespace TagExplorer.Utils
         {
             log.Error("\r\n"+e.StackTrace +"\r\n"+ e.Source + "\r\n" + e.Message+"\r\n");
         }
-        private static int deep = 0;
-        static string PREFIX = "        ";
-        static Stack<string> stack = new Stack<string>();
-        public static void IN(string INF) {
+        public static void IN(string INF)
+        {
             deep++;
             stack.Push(INF);
             PREFIX = INF.PadRight(8) + new string(' ', deep * 8);
 
         }
-        public static void OUT() {
+        public static void OUT()
+        {
             deep--;
             stack.Pop();
             string tag = stack.Count == 0 ? "        " : stack.Peek().PadRight(8);
-            PREFIX =tag+ new string(' ', deep * 8);
+            PREFIX = tag + new string(' ', deep * 8);
         }
+        #endregion
+
+        #region 私有方法
+        private static int deep = 0;
+        static string PREFIX = "        ";
+        private static log4net.ILog log = log4net.LogManager.GetLogger("fileLog");
+        static Stack<string> stack = new Stack<string>();
+        #endregion
     }
 }

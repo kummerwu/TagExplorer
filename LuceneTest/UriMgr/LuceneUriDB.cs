@@ -13,25 +13,7 @@ namespace TagExplorer.UriMgr
 {
     class LuceneUriDB : IUriDB
     {
-        const string F_URI = "furi";
-        const string F_KEY = "key";
-        const string F_ID = "guid";
-        const string F_URI_TITLE = "ftitle";
-        const string F_URI_TAGS = "ftags";
-        const string F_CREATE_TIME = "fctime";
-        const string F_ACCESS_TIME = "fatime";
-
-        IndexWriter writer = null;
-        IndexReader reader = null;
-        IndexSearcher search = null;
-        QueryParser parser;
-        Query query;
-
-        
-        
-
-        Directory dir = null;
-        DataChanged dbChangedHandler;
+        #region 公有方法和接口实现
         public DataChanged UriDBChanged
         {
             get
@@ -44,7 +26,6 @@ namespace TagExplorer.UriMgr
                 dbChangedHandler += value;
             }
         }
-
         public LuceneUriDB()
         {
             bool create = true;
@@ -61,15 +42,15 @@ namespace TagExplorer.UriMgr
                     System.IO.Directory.CreateDirectory(PathHelper.UriDBDir);
                 }
                 dir = FSDirectory.Open(PathHelper.UriDBDir);
-                
+
             }
-            
+
             writer = new IndexWriter(dir,
                                     new UriAnalyser(),
                                     create,
                                     IndexWriter.MaxFieldLength.UNLIMITED);
 
-            
+
             reader = writer.GetReader();
             search = new IndexSearcher(reader);
 
@@ -80,14 +61,160 @@ namespace TagExplorer.UriMgr
             DBChanged();
             Dbg();
         }
-        public void test()
+        public int AddUri(string Uri, List<string> tags)
+        {
+            lock (this)
+            {
+                Document doc = AddUriDocument(Uri, tags);
+                Commit(Uri, doc);
+                return 0;
+            }
+        }
+        public int AddUri(string Uri, List<string> tags, string Title)
+        {
+            lock (this)
+            {
+                Document doc = AddUriDocument(Uri, tags, Title);
+                Commit(Uri, doc);
+                return 0;
+            }
+        }
+        public int AddUri(string Uri)
+        {
+            lock (this)
+            {
+                Document doc = AddUriDocument(Uri);
+                Commit(Uri, doc);
+                return 0;
+            }
+        }
+        public int DelUri(string Uri, bool Delete)
+        {
+            writer.DeleteDocuments(new Term(F_KEY, Uri.ToLower()));
+            Commit();
+            if (Delete)
+            {
+                //TODO  删除文件
+            }
+            return 0;
+        }
+        public void Dispose()
+        {
+            search.Dispose();
+            reader.Dispose();
+            writer.Dispose();
+        }
+        public List<string> Query(string querystr)
+        {
+            int delete = 0;
+            List<string> ret = new List<string>();
+            try
+            {
+                query = parser.Parse(querystr);
+                ScoreDoc[] docs = search.Search(query, Cfg.Ins.TAG_MAX_RELATION).ScoreDocs;
+                for (int i = 0; i < docs.Length; i++)
+                {
+                    Document doc = search.Doc(docs[i].Doc);
+                    if (!reader.IsDeleted(docs[i].Doc))
+                    {
+                        ret.Add(doc.GetField(F_URI).StringValue);
+                    }
+                    else
+                    {
+                        delete++;
+                    }
+                }
+                TipsCenter.Ins.MainInf = "当前查询： " + querystr + " has found: " + docs.Length + " files,has Deleted " + delete;
+            }
+            catch (Exception e)
+            {
+                Logger.E(e);
+            }
+            return ret;
+        }
+        public int DelUri(string Uri, List<string> tags)
+        {
+            Document doc = GetDoc(Uri);
+            Field[] fs = doc.GetFields(F_URI_TAGS);
+            doc.RemoveFields(F_URI_TAGS);
+            foreach (Field f in fs)
+            {
+                if (!tags.Contains(f.StringValue))
+                {
+                    doc.Add(f);
+                }
+            }
+
+            Commit(Uri, doc);
+
+            return 0;
+        }
+        public int UpdateUri(string Uri, string Title)
+        {
+            Document doc = GetDoc(Uri);
+            doc.RemoveFields(F_URI_TITLE);
+            doc.Add(new Field(F_URI_TITLE, Title, Field.Store.YES, Field.Index.ANALYZED));
+            Commit(Uri, doc);
+            return 0;
+        }
+        public string GetTitle(string Uri)
+        {
+            string ret = "";
+            Document doc = GetDoc(Uri);
+            if (doc != null)
+            {
+                ret = doc.GetField(F_URI_TITLE).StringValue;
+            }
+            return ret;
+        }
+        public List<string> GetTags(string Uri)
+        {
+            List<string> ret = new List<string>();
+            if (Uri == null) return ret;
+
+            Document doc = GetDoc(Uri);
+            if (doc != null)
+            {
+                Field[] fields = doc.GetFields(F_URI_TAGS);
+
+                foreach (Field f in fields)
+                {
+                    ret.Add(f.StringValue);
+                }
+            }
+            return ret;
+        }
+        public void Notify()
+        {
+            dbChangedHandler?.Invoke();
+        }
+        #endregion
+
+
+        #region 私有方法
+        const string F_URI = "furi";
+        const string F_KEY = "key";
+        const string F_ID = "guid";
+        const string F_URI_TITLE = "ftitle";
+        const string F_URI_TAGS = "ftags";
+        const string F_CREATE_TIME = "fctime";
+        const string F_ACCESS_TIME = "fatime";
+
+        IndexWriter writer = null;
+        IndexReader reader = null;
+        IndexSearcher search = null;
+        QueryParser parser;
+        Query query;
+        Directory dir = null;
+        DataChanged dbChangedHandler;
+        private void test()
         {
             //TEST
             AddUri(@"c:\a.txt");
             Document doc = GetDoc(@"c:\a.txt");
             List<string> ret = Query("a");
         }
-        public static string dbg(string text,Analyzer analyzer)
+        private static string dbg(string text,Analyzer analyzer)
         {
             //Analyzer analyzer = new UriAnalyser();
             System.IO.StringReader reader = new System.IO.StringReader(text);
@@ -103,7 +230,7 @@ namespace TagExplorer.UriMgr
             Console.Write(sb.ToString());
             return sb.ToString();
         }
-        Document GetDoc(string uri)
+        private Document GetDoc(string uri)
         {
             Term term = new Term(F_KEY, uri.ToLower()); //kummer:能用分词器吗，这儿暂时没有找到方法，只好手工将uri转换为小写
             Query query = new TermQuery(term);
@@ -115,7 +242,7 @@ namespace TagExplorer.UriMgr
             }
             return doc;
         }
-        Document GetDoc(Guid id)
+        private Document GetDoc(Guid id)
         {
             Term term = new Term(F_ID, id.ToString()); //kummer:能用分词器吗，这儿暂时没有找到方法，只好手工将uri转换为小写
             Query query = new TermQuery(term);
@@ -164,7 +291,7 @@ namespace TagExplorer.UriMgr
             }
             return doc;
         }
-        public Document AddUriDocument(string Uri)
+        private Document AddUriDocument(string Uri)
         {
             Guid id;
             bool needUpdate;
@@ -192,34 +319,6 @@ namespace TagExplorer.UriMgr
             writer.AddDocument(doc);
             return doc;
         }
-
-        public int AddUri(string Uri, List<string> tags)
-        {
-            lock (this)
-            {
-                Document doc = AddUriDocument(Uri, tags);
-                Commit(Uri, doc);
-                return 0;
-            }
-        }
-        public int AddUri(string Uri, List<string> tags, string Title)
-        {
-            lock (this)
-            {
-                Document doc = AddUriDocument(Uri, tags, Title);
-                Commit(Uri, doc);
-                return 0;
-            }
-        }
-        public int AddUri(string Uri)
-        {
-            lock (this)
-            {
-                Document doc = AddUriDocument(Uri);
-                Commit(Uri, doc);
-                return 0;
-            }
-        }
         private void Commit(string Uri, Document doc)
         {
             if (doc != null)
@@ -231,7 +330,6 @@ namespace TagExplorer.UriMgr
                 Commit();
             }
         }
-
         private Document AddUriDocument(string Uri, List<string> tags)
         {
             Document doc = AddUriDocument(Uri);
@@ -255,8 +353,6 @@ namespace TagExplorer.UriMgr
             
             return doc;
         }
-
-        
         private Document AddUriDocument(string Uri, List<string> tags, string Title)
         {
             Document doc = AddUriDocument(Uri, tags);
@@ -270,123 +366,7 @@ namespace TagExplorer.UriMgr
             return doc;
 
         }
-        public int DelUri(string Uri, bool Delete)
-        {
-            writer.DeleteDocuments(new Term(F_KEY, Uri.ToLower()));
-            Commit();
-            if(Delete)
-            {
-                //TODO  删除文件
-            }
-            return 0;
-        }
-
-        public void Dispose()
-        {
-            search.Dispose();
-            reader.Dispose();
-            writer.Dispose();
-        }
-
-        public List<string> Query(string querystr)
-        {
-            int delete = 0;
-            List<string> ret = new List<string>();
-            try
-            {
-                query = parser.Parse(querystr);
-                ScoreDoc[] docs = search.Search(query, Cfg.Ins.TAG_MAX_RELATION).ScoreDocs;
-                for (int i = 0; i < docs.Length; i++)
-                {
-                    Document doc = search.Doc(docs[i].Doc);
-                    if (!reader.IsDeleted(docs[i].Doc))
-                    {
-                        ret.Add(doc.GetField(F_URI).StringValue);
-                    }
-                    else
-                    {
-                        delete++;
-                    }
-                }
-                TipsCenter.Ins.MainInf = "当前查询： "+querystr + " has found: " + docs.Length +" files,has Deleted "+delete;
-            }catch(Exception e)
-            {
-                Logger.E(e);
-            }
-            return ret;
-        }
-
-        
-
-        public int DelUri(string Uri, List<string> tags)
-        {
-            Document doc = GetDoc(Uri);
-            Field[] fs = doc.GetFields(F_URI_TAGS);
-            doc.RemoveFields(F_URI_TAGS);
-            foreach(Field f in fs)
-            {
-                if (!tags.Contains(f.StringValue))
-                {
-                    doc.Add(f);
-                }
-            }
-
-            Commit(Uri,doc);
-
-            return 0;
-        }
-
-        public int UpdateUri(string Uri, string Title)
-        {
-            Document doc = GetDoc(Uri);
-            doc.RemoveFields(F_URI_TITLE);
-            doc.Add(new Field(F_URI_TITLE, Title, Field.Store.YES, Field.Index.ANALYZED));
-            Commit(Uri, doc);
-            return 0;
-        }
-
-        public string GetTitle(string Uri)
-        {
-            string ret = "";
-            Document doc = GetDoc(Uri);
-            if(doc!=null)
-            {
-                ret = doc.GetField(F_URI_TITLE).StringValue;
-            }
-            return ret;
-        }
-
-        public List<string> GetTags(string Uri)
-        {
-            List<string> ret = new List<string>();
-            if (Uri == null) return ret;
-
-            Document doc = GetDoc(Uri);
-            if (doc != null)
-            {
-                Field[] fields = doc.GetFields(F_URI_TAGS);
-
-                foreach(Field f in fields)
-                {
-                    ret.Add(f.StringValue);
-                }
-            }
-            return ret;
-        }
-        //自动检查某个路径是否有文件发生变化,
-        //root可以是一个文件，也可以是一个目录
-        //如果是文件,deepth为0（检查一下）
-        //如果是目录，deepth表示需要搜索的深度。
-        public void AutoUpdate(string root,int deepth)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Notify()
-        {
-            dbChangedHandler?.Invoke();
-        }
-        public void Dbg()
+        private void Dbg()
         {
             return;
             System.IO.TextWriter w = new System.IO.StreamWriter(@".\dbg.csv");
@@ -424,5 +404,6 @@ namespace TagExplorer.UriMgr
             }
             
         }
+        #endregion
     }
 }

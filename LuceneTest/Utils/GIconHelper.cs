@@ -11,7 +11,30 @@ namespace TagExplorer.Utils
 {
     class GIconHelper
     {
-        private Icon GetIconByFile(string full)
+        #region 公有方法
+        //TODO 如果获取失败，返回一个默认未知图标
+        public static BitmapSource GetBitmapFromFile(string f)
+        {
+            if (iconCache.Count > 1000) iconCache.Clear();
+
+            string type = FileToType(f);
+            if (iconCache[type] == null)
+            {
+                BitmapSource s = GetBitmapFromFileNoCache(f);
+                if (s != null)
+                {
+                    if (type == null) return s;
+                    else iconCache.Add(type, s);
+                }
+            }
+            return iconCache[type] as BitmapSource;
+
+
+        }
+        #endregion
+
+        #region 私有方法
+        private Icon GetIconByFile(string full) 
         {
             return Icon.ExtractAssociatedIcon(full);
         }
@@ -47,26 +70,10 @@ namespace TagExplorer.Utils
             }
         }
 
-        static Hashtable iconCache = new Hashtable();
-        public static BitmapSource GetBitmapFromFile(string f)
-        {
-            if (iconCache.Count > 1000) iconCache.Clear();
+        private static Hashtable iconCache = new Hashtable();
 
-            string type = FileToType(f);
-            if (iconCache[type] == null)
-            {
-                BitmapSource s = GetBitmapFromFileNoCache(f);
-                if (s != null)
-                {
-                    if (type == null) return s;
-                    else iconCache.Add(type, s);
-                }
-            }
-            return iconCache[type] as BitmapSource;
-            
-
-        }
-        public static BitmapSource GetBitmapFromFileNoCache(string f)
+        
+        private static BitmapSource GetBitmapFromFileNoCache(string f)
         {
             var icon = GIconHelper.GetFileIcon(f, false).ToBitmap();
             IntPtr hBitmap = icon.GetHbitmap();
@@ -141,5 +148,6 @@ namespace TagExplorer.Utils
             }
             return txt;
         }
+        #endregion
     }
 }

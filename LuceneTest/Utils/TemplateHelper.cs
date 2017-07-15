@@ -28,8 +28,6 @@ namespace TagExplorer.Utils
             }
             return ret;
         }
-        
-        
         public static string GetTemplateFileFilter()
         {
             string ret = "";

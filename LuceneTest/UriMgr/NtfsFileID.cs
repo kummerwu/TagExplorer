@@ -14,16 +14,19 @@ namespace TagExplorer.UriMgr
                 try
                 {
                     return _GetID(uri);
-                }catch
+                }catch(Exception e)
                 {
                     System.Threading.Thread.Sleep(100);
+                    Logger.E(e);
+                    Logger.E("GetID  failed retry {0}", uri);
                 }
             }
             System.Diagnostics.Debug.Assert(false);//word产生的临时文件，是没有权限修改的。导致了该断言。
+            Logger.E("GetID failed!,return now~! {0}", uri);
             return Guid.NewGuid();
             
         }
-        public static Guid _GetID(string uri)
+        private static Guid _GetID(string uri)
         {
             const string TID = "lguid";
             if(File.Exists(uri) || Directory.Exists(uri))

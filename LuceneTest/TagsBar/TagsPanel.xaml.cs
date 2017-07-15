@@ -22,7 +22,7 @@ namespace TagExplorer.TagsBar
         private string currentUri = null;
 
         //公有方法///////////////////////////////////////////////
-        public void UpdateUri(string uri,IUriDB uriDB,ITagDB tagDB)
+        public void ChangeCurrentUri(string uri,IUriDB uriDB,ITagDB tagDB)
         {
             string tips = "当前选中文件："+uri+" ";
             this.uriDB = uriDB;
@@ -55,7 +55,7 @@ namespace TagExplorer.TagsBar
             if(e.Key == Key.Enter && currentUri!=null && uriDB!=null && tagDB!=null)
             {
                 uriDB.AddUri(currentUri, new List<string>() { autoTextBox.Text.Trim() });
-                UpdateUri(currentUri, uriDB, tagDB);
+                ChangeCurrentUri(currentUri, uriDB, tagDB);
                 autoTextBox.Text = "";
             }
         }

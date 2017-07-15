@@ -12,7 +12,7 @@ using System.Windows.Input;
 using System.Windows.Shapes;
 using TagExplorer.Utils;
 
-namespace TagExplorer.TagGraph
+namespace TagExplorer
 {
 
     /// <summary>

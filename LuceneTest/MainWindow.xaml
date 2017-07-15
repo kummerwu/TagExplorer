@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:autoTextbox="clr-namespace:TagExplorer.AutoComplete"
         xmlns:uriPanel="clr-namespace:TagExplorer.UriInfList"
-        xmlns:tagGraph="clr-namespace:TagExplorer.TagGraph"
+        xmlns:tagGraph="clr-namespace:TagExplorer"
         xmlns:utils="clr-namespace:TagExplorer.Utils"
         xmlns:avalonDock="http://schemas.xceed.com/wpf/xaml/avalondock"
         mc:Ignorable="d"
@@ -79,7 +79,7 @@
                     
                     <avalonDock:LayoutAnchorablePane DockWidth="150">
                         <avalonDock:LayoutAnchorable Title="查找结果" CanClose="False" CanHide="False">
-                            <uriPanel:UriListBox x:Name="uriList" Grid.Column="1"></uriPanel:UriListBox>
+                            <uriPanel:SearchResultListBox x:Name="uriList" Grid.Column="1"></uriPanel:SearchResultListBox>
                         </avalonDock:LayoutAnchorable>
                     </avalonDock:LayoutAnchorablePane>
                     

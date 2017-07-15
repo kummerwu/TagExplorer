@@ -6,7 +6,7 @@ namespace TagExplorer.Utils
 {
     public class PathHelper
     {
-        
+        #region 公有方法
         public static string[] MapFilesToTagDir(string [] srcs,string currentTag)
         {
             string[] dsts = new string[srcs.Length];
@@ -23,7 +23,7 @@ namespace TagExplorer.Utils
         public static string RootDir = @"J:\00TagExplorerBase";
         public static string TagDBDir { get { return Path.Combine(RootDir , @"TagDB"); } }
         public static string UriDBDir { get { return Path.Combine(RootDir, @"UriDB"); } }
-        private static string _DocBaseDir { get { return Path.Combine(RootDir, @"DocumentBase"); } }
+        
 
 
         /*路径规划
@@ -37,7 +37,7 @@ namespace TagExplorer.Utils
      UriDB
 
         */
-        private static string docBase;
+        
         public static string DocBaseDir
         {
             get {
@@ -55,7 +55,7 @@ namespace TagExplorer.Utils
                 return docBase;
             }
         }
-        private static string doc = null;
+        
         //获得文档存放根路径（TODO，后面可能需要支持文档根路径有多个，类似于编译器的-I选项）
         public static string DocDir
         {
@@ -132,5 +132,12 @@ namespace TagExplorer.Utils
                 !canAccess;
         }
 
+        #endregion
+
+        #region 私有方法
+        private static string _DocBaseDir { get { return Path.Combine(RootDir, @"DocumentBase"); } }
+        private static string docBase;
+        private static string doc = null;
+        #endregion
     }
 }

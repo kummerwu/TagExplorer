@@ -46,7 +46,7 @@ namespace TagExplorer
 
         public void UpdateUriList()
         {
-            uriList.UpdateResult(autoTextBox.Text, uriDB,tagDB);
+            uriList.ShowQueryResult(autoTextBox.Text, uriDB,tagDB);
         }
         private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
