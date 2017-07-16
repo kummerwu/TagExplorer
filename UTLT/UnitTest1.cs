@@ -11,6 +11,8 @@ namespace UTLT
         public static void AssemblyInit(TestContext context)
         {
             Cfg.Ins.IsUTest = true;
+            string d1 = PathHelper.DocBaseDir;
+            d1 = PathHelper.DocDir;
         }
         [TestInitialize]
         public void setup()

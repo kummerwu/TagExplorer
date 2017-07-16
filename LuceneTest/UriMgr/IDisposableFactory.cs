@@ -11,6 +11,7 @@ namespace TagExplorer.UriMgr
     public class IDisposableFactory
     {
         static HashSet<IDisposable>  all = new HashSet<IDisposable>();
+       
         public static T New<T>(T newObj) where T:IDisposable
         {
             all.Add(newObj);

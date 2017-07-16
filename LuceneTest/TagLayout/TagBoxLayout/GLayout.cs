@@ -11,7 +11,7 @@ namespace AnyTagNet
     class GObjCollection : IGObjCollection
     {
         GStyle style = new GStyle();
-        List<TagBox> allTxt = new List<TagBox>();
+        List<UIElement> allTxt = new List<UIElement>();
         List<UIElement> allEdge = new List<UIElement>();
         Hashtable gobjMaps = new Hashtable();
         public GObjCollection()
@@ -54,12 +54,12 @@ namespace AnyTagNet
         }
 
 
-        public IEnumerable<UIElement> GetAllTextBlocks()
+        public List<UIElement> GetAllTextBlocks()
         {
             return allTxt;
         }
 
-        public IEnumerable<UIElement> GetAllLines()
+        public List<UIElement> GetAllLines()
         {
             return allEdge;
         }

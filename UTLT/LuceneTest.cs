@@ -215,7 +215,7 @@ namespace UTLT
             Assert.AreEqual(true, child.Contains("c1"));
             Assert.AreEqual(true, child.Contains("c2"));
         }
-        public void AssertListEqual(List<string> expect,List<string> real)
+        public static void AssertListEqual(List<string> expect,List<string> real)
         {
             Assert.AreEqual(expect.Count, real.Count);
             foreach(string e in expect)

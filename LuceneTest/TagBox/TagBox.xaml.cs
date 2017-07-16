@@ -47,13 +47,23 @@ namespace TagExplorer
                 bdr.Background = value;
             }
         }
-        
+        public SolidColorBrush Foreground1
+        {
+            set
+            {
+                txt.Foreground= value;
+            }
+        }
         public double Width1
         {
             set
             {
                 bdr.Width = value;
                 txt.Width = value - GConfig.XContentPadding/2;
+            }
+            get
+            {
+                return bdr.Width;
             }
         }
         public double Height1

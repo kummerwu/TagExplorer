@@ -9,8 +9,8 @@ namespace AnyTag.UI
     {
         void AddGObjs(IEnumerable<GObj> all);
         void AddEdge(IEnumerable<PathEdge> edge);
-        IEnumerable<UIElement> GetAllTextBlocks();
-        IEnumerable<UIElement> GetAllLines();
+        List<UIElement> GetAllTextBlocks();
+        List<UIElement> GetAllLines();
     }
     interface IRectLayoutCalc
     {

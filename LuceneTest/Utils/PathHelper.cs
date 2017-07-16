@@ -20,10 +20,10 @@ namespace TagExplorer.Utils
             return dsts;
         }
 
-        public static string RootDir = @"J:\00TagExplorerBase";
-        public static string TagDBDir { get { return Path.Combine(RootDir , @"TagDB"); } }
-        public static string UriDBDir { get { return Path.Combine(RootDir, @"UriDB"); } }
-        
+        public static string RootPath = @"J:\00TagExplorerBase";
+        public static string TagDBPath { get { return Path.Combine(RootPath , @"TagDB"); } }
+        public static string UriDBPath { get { return Path.Combine(RootPath, @"UriDB"); } }
+        public static string IniFilePath { get { return Path.Combine(RootPath, "TagExplorer.ini"); } }
 
 
         /*路径规划
@@ -135,7 +135,7 @@ namespace TagExplorer.Utils
         #endregion
 
         #region 私有方法
-        private static string _DocBaseDir { get { return Path.Combine(RootDir, @"DocumentBase"); } }
+        private static string _DocBaseDir { get { return Path.Combine(RootPath, @"DocumentBase"); } }
         private static string docBase;
         private static string doc = null;
         #endregion

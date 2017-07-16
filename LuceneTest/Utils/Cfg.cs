@@ -27,13 +27,13 @@
                 isUTest = value;
                 if(isUTest)
                 {
-                    PathHelper.RootDir = @"B:\00TagExplorerBase";
+                    PathHelper.RootPath = @"B:\00TagExplorerBase";
                     
                 }
             }
         }
         public string DefaultTag { get { return "我的大脑"; } }
-
+        public int LRU_MAX_CNT = 6;
 
     }
 }

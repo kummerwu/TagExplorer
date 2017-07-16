@@ -34,6 +34,13 @@ namespace TagExplorer
             Current.DispatcherUnhandledException += Current_DispatcherUnhandledException;
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
             Startup += App_Startup;
+            Exit += App_Exit;
+        }
+
+        private void App_Exit(object sender, ExitEventArgs e)
+        {
+            IDisposableFactory.DisposeAll();
+            Logger.E("App Exit:"+e.ApplicationExitCode);
         }
 
         private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)

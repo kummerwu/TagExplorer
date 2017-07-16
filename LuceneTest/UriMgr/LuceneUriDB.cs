@@ -36,12 +36,12 @@ namespace TagExplorer.UriMgr
             }
             else
             {
-                create = !System.IO.Directory.Exists(PathHelper.UriDBDir);
+                create = !System.IO.Directory.Exists(PathHelper.UriDBPath);
                 if (create)
                 {
-                    System.IO.Directory.CreateDirectory(PathHelper.UriDBDir);
+                    System.IO.Directory.CreateDirectory(PathHelper.UriDBPath);
                 }
-                dir = FSDirectory.Open(PathHelper.UriDBDir);
+                dir = FSDirectory.Open(PathHelper.UriDBPath);
 
             }
 

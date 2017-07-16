@@ -165,7 +165,7 @@ namespace AnyTagNet
 
         }
         
-        public static GObj LayoutTag(string tag, ITagDB db)
+        public static GObj LayoutTag(string tag, ITagDB db,double Top,double Left)
         {
             Logger.D("+++Begin Layout Tag from {0}", tag);
             IGLayoutResult result = new GLayoutResult();
@@ -180,7 +180,7 @@ namespace AnyTagNet
 
             if (g != null)
             {
-                g.CalcAllObjsPos(0, 0);
+                g.CalcAllObjsPos(Left, Top);
                 g.result = result;
             }
             Logger.D("---End Layout Tag from {0}", tag);

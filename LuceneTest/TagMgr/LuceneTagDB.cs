@@ -30,12 +30,12 @@ namespace TagExplorer.TagMgr
             }
             else
             {
-                create = !System.IO.Directory.Exists(PathHelper.TagDBDir);
+                create = !System.IO.Directory.Exists(PathHelper.TagDBPath);
                 if (create)
                 {
-                    System.IO.Directory.CreateDirectory(PathHelper.TagDBDir);
+                    System.IO.Directory.CreateDirectory(PathHelper.TagDBPath);
                 }
-                dir = FSDirectory.Open(PathHelper.TagDBDir);
+                dir = FSDirectory.Open(PathHelper.TagDBPath);
                 
             }
             

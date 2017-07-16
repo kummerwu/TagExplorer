@@ -1,5 +1,7 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using LuceneTest.TagCanvas;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using TagExplorer.UriMgr;
 using TagExplorer.Utils;
@@ -12,7 +14,7 @@ namespace AnyTags.Net.Tests
         string dir = @"B:\utest";
         string dir1 = @"B:\utest\tag1";
         string dir2 = @"B:\utest\tag2";
-
+        string docBase = @"B:\00TagExplorerBase";
 
         [TestInitialize]
         public void setup()
@@ -20,6 +22,7 @@ namespace AnyTags.Net.Tests
             Directory.CreateDirectory(dir);
             Directory.CreateDirectory(dir1);
             Directory.CreateDirectory(dir2);
+            string docBase = PathHelper.DocBaseDir;
 
         }
 
@@ -27,6 +30,8 @@ namespace AnyTags.Net.Tests
         public void teardown()
         {
             Directory.Delete(dir, true);
+            Directory.Delete(docBase,true);//删除B目录下的文件，用于单元测试
+
         }
         [TestMethod]
         public void TestFS_FilesRelocationTest()
@@ -167,6 +172,99 @@ namespace AnyTags.Net.Tests
                 Assert.AreEqual(id, NtfsFileID.GetID(lastF));
                 f = lastF;
             }
+        }
+
+        [TestMethod]
+        public void TestFS_LRUTag1()
+        {
+            Cfg.Ins.LRU_MAX_CNT = 4;
+            UTLT.LuceneTest.AssertListEqual(LRUTag.Ins.GetTags(),new List<string>());
+            LRUTag.Ins.Add("tag1");
+            UTLT.LuceneTest.AssertListEqual(LRUTag.Ins.GetTags(), 
+                new List<string>() { "tag1" });
+
+
+            LRUTag.Ins.Add("tag2");
+            UTLT.LuceneTest.AssertListEqual(LRUTag.Ins.GetTags(),
+                new List<string>() { "tag1", "tag2", });
+
+            LRUTag.Ins.Add("tag3");
+            UTLT.LuceneTest.AssertListEqual(LRUTag.Ins.GetTags(),
+                new List<string>() { "tag1", "tag2", "tag3", });
+
+
+            LRUTag.Ins.Add("tag4");
+            UTLT.LuceneTest.AssertListEqual(LRUTag.Ins.GetTags(),
+                new List<string>() { "tag1", "tag2", "tag3", "tag4", });
+
+            LRUTag.Ins.Add("tag5");
+            UTLT.LuceneTest.AssertListEqual(LRUTag.Ins.GetTags(),
+                new List<string>() { "tag2", "tag3", "tag4", "tag5", });
+        }
+        [TestMethod]
+        public void TestFS_LRUTag2()
+        {
+            Cfg.Ins.LRU_MAX_CNT = 4;
+            TestFS_LRUTag1();
+            LRUTag.Ins.Dispose();
+            UTLT.LuceneTest.AssertListEqual(LRUTag.Ins.GetTags(),
+                new List<string>() { "tag2", "tag3", "tag4", "tag5", });
+
+            LRUTag.Ins.Add("tag1");
+            UTLT.LuceneTest.AssertListEqual(LRUTag.Ins.GetTags(),
+                new List<string>() { "tag3", "tag4", "tag5", "tag1" });
+        }
+
+        [TestMethod]
+        public void TestFS_LRUTag3()
+        {
+            Cfg.Ins.LRU_MAX_CNT = 4;
+            UTLT.LuceneTest.AssertListEqual(LRUTag.Ins.GetTags(), new List<string>());
+            LRUTag.Ins.Add("tag1");
+            UTLT.LuceneTest.AssertListEqual(LRUTag.Ins.GetTags(),
+                new List<string>() { "tag1" });
+
+
+            LRUTag.Ins.Add("tag1");
+            UTLT.LuceneTest.AssertListEqual(LRUTag.Ins.GetTags(),
+                new List<string>() { "tag1" });
+
+
+            LRUTag.Ins.Add("tag2");
+            UTLT.LuceneTest.AssertListEqual(LRUTag.Ins.GetTags(),
+                new List<string>() { "tag1", "tag2", });
+
+            LRUTag.Ins.Add("tag2");
+            UTLT.LuceneTest.AssertListEqual(LRUTag.Ins.GetTags(),
+                new List<string>() { "tag1", "tag2", });
+
+
+            LRUTag.Ins.Add("tag3");
+            UTLT.LuceneTest.AssertListEqual(LRUTag.Ins.GetTags(),
+                new List<string>() { "tag1", "tag2", "tag3", });
+
+            LRUTag.Ins.Add("tag3");
+            UTLT.LuceneTest.AssertListEqual(LRUTag.Ins.GetTags(),
+                new List<string>() { "tag1", "tag2", "tag3", });
+
+            LRUTag.Ins.Add("tag4");
+            UTLT.LuceneTest.AssertListEqual(LRUTag.Ins.GetTags(),
+                new List<string>() { "tag1", "tag2", "tag3", "tag4", });
+
+
+            LRUTag.Ins.Add("tag4");
+            UTLT.LuceneTest.AssertListEqual(LRUTag.Ins.GetTags(),
+                new List<string>() { "tag1", "tag2", "tag3", "tag4", });
+
+
+            LRUTag.Ins.Add("tag5");
+            UTLT.LuceneTest.AssertListEqual(LRUTag.Ins.GetTags(),
+                new List<string>() { "tag2", "tag3", "tag4", "tag5", });
+
+
+            LRUTag.Ins.Add("tag5");
+            UTLT.LuceneTest.AssertListEqual(LRUTag.Ins.GetTags(),
+                new List<string>() { "tag2", "tag3", "tag4", "tag5", });
         }
     }
 }
