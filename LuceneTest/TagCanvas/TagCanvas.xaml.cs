@@ -11,6 +11,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Shapes;
 using TagExplorer.Utils;
+using AnyTagNet;
 
 namespace TagExplorer
 {
@@ -141,6 +142,31 @@ namespace TagExplorer
                 ShowGraph(tagDB, root);
             }
         }
+
+        private void UpdateRecentTags(string tag)
+        {
+            List<UIElement> recentTags = new List<UIElement>();
+            LRUTag.Ins.Add(tag);
+            List<string> tags = LRUTag.Ins.GetTags();
+            double top = 0, left = 0;
+            for (int i = 0; i < tags.Count; i++)
+            {
+                TagBox box = GStyle.Apply(left, top, tags[i]);
+                recentTags.Add(box);
+                left += box.Width1;
+                left += 10;
+            }
+            canvasRecentTags.Children.Clear();
+            foreach (TagBox t in recentTags)
+            {
+                //设置每一个tag的上下文菜单和事件响应钩子
+                t.ContextMenu = TagAreaMenu;
+                t.MouseLeftButtonDown += Tag_MouseLeftButtonDown;
+                t.MouseDoubleClick += Tag_MouseDoubleClick;
+                canvasRecentTags.Children.Add(t);
+            }
+        }
+
         public void ShowGraph(ITagDB tagDB,string root)
         {
             Logger.I("ShowGraph at " + root);
@@ -148,6 +174,7 @@ namespace TagExplorer
             this.root = root;
             
             canvas.Children.Clear();
+            canvasRecentTags.Children.Clear();
 
             //计算有向图布局
             ITagLayout tagLayout = TagLayoutFactory.CreateLayout();
@@ -156,6 +183,7 @@ namespace TagExplorer
             //将有向图中的元素显示在界面上
             IEnumerable<UIElement> lines = tagLayout.Lines;
             IEnumerable<UIElement> allTxt = tagLayout.TagArea;
+            
             canvas.Width = tagLayout.Size.Width;
             layoutHeight = tagLayout.Size.Height;
             SetHeight();
@@ -172,6 +200,7 @@ namespace TagExplorer
                 t.MouseDoubleClick += Tag_MouseDoubleClick;
                 canvas.Children.Add(t);
             }
+            UpdateRecentTags(root);
             SetCurrentTag(root);
         }
         //双击tag，以该tag为根显示有向图

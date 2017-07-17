@@ -17,7 +17,20 @@ namespace AnyTagNet
                 return lines;
             }
         }
-
+        public IEnumerable<UIElement> TagArea
+        {
+            get
+            {
+                return allTxt;
+            }
+        }
+        public IEnumerable<UIElement> RecentTagBox
+        {
+            get
+            {
+                return recentTags;
+            }
+        }
         public Point RootPos
         {
             get
@@ -34,26 +47,20 @@ namespace AnyTagNet
             }
         }
 
-        public IEnumerable<UIElement> TagArea
-        {
-            get
-            {
-                return allTxt;
-            }
-        }
+        
 
 
         private Size layoutSize = new Size();
         private Point rootPos = new Point();
-        private List<UIElement> lines = null, allTxt = null;
+        private List<UIElement> lines = null, allTxt = null,recentTags = null;
 
         public void Layout(ITagDB db, string tag)
         {
-            double Top = GConfig.FontSize ;
+            double Top = 0;// GConfig.FontSize;
             double Left = 0;
-            
+
             //计算布局信息
-            GObj gobj = GObj.LayoutTag(tag, db,Top,Left);
+            GObj gobj = GObj.LayoutTag(tag, db, Top, Left);
             layoutSize.Height = gobj.OuterBox.Height + GConfig.LayoutYPadding + Top;
             layoutSize.Width = gobj.OuterBox.Width + GConfig.LayoutXPadding + Left;
             rootPos.X = gobj.Content.X;
@@ -63,22 +70,14 @@ namespace AnyTagNet
             IGObjCollection gcanvas = new GObjCollection();
             gcanvas.AddGObjs(gobj.GetAll());
             gcanvas.AddEdge(gobj.GetEdges());
-            
+
             lines = gcanvas.GetAllLines();
             allTxt = gcanvas.GetAllTextBlocks();
 
-            LRUTag.Ins.Add(tag);
-            List<string> tags = LRUTag.Ins.GetTags();
-            double top = 0, left = 0;
-            for(int i = 0;i<tags.Count;i++)
-            {
-                TagBox box = GStyle.Apply(left, top, tags[i]);
-                allTxt.Add(box);
-                left += box.Width1;
-                left += 10;
-            }
             
 
         }
+
+        
     }
 }
