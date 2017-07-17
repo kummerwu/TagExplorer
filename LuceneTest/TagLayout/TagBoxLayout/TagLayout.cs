@@ -5,7 +5,6 @@ using AnyTag.UI;
 using TagExplorer.Utils;
 using TagExplorer.TagLayout;
 using TagExplorer;
-using LuceneTest.TagCanvas;
 
 namespace AnyTagNet
 {
@@ -50,13 +49,13 @@ namespace AnyTagNet
 
         public void Layout(ITagDB db, string tag)
         {
-            double Top = GConfig.FontSize * 1.5;
+            double Top = GConfig.FontSize ;
             double Left = 0;
             
             //计算布局信息
             GObj gobj = GObj.LayoutTag(tag, db,Top,Left);
-            layoutSize.Height = gobj.OuterBox.Height + GConfig.LayoutYPadding;
-            layoutSize.Width = gobj.OuterBox.Width + GConfig.LayoutXPadding;
+            layoutSize.Height = gobj.OuterBox.Height + GConfig.LayoutYPadding + Top;
+            layoutSize.Width = gobj.OuterBox.Width + GConfig.LayoutXPadding + Left;
             rootPos.X = gobj.Content.X;
             rootPos.Y = gobj.Content.Y;
 

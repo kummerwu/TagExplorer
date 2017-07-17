@@ -27,12 +27,6 @@ namespace TagExplorer
         
         public MainWindow()
         {
-            InitializeComponent();
-            tagCanvas.SelectedTagChanged += selectedTagChanged;
-            autoTextBox.textBox.TextChanged += TextBox_TextChanged;
-            uriDB.UriDBChanged += UpdateUriList;
-            autoTextBox.SearchDataProvider = tagDB;
-            Update(Cfg.Ins.DefaultTag);
             Logger.I(@"
 ////////////////////////////////////////////////////////////////////
 //
@@ -40,6 +34,15 @@ namespace TagExplorer
 //
 ///////////////////////////////////////////////////////////////////
 ");
+
+            InitializeComponent();
+            Logger.I("InitializeComponent Finished!");
+            tagCanvas.SelectedTagChanged += selectedTagChanged;
+            autoTextBox.textBox.TextChanged += TextBox_TextChanged;
+            uriDB.UriDBChanged += UpdateUriList;
+            autoTextBox.SearchDataProvider = tagDB;
+            Update(Cfg.Ins.DefaultTag);
+            
             
         }
 
@@ -88,6 +91,7 @@ namespace TagExplorer
 
         public void Update(string root)
         {
+            Logger.I("Show Tag " + root);
             CalcCanvasHeight();
             tagCanvas.UriDB = uriDB;
             tagCanvas.ShowGraph(tagDB, root);

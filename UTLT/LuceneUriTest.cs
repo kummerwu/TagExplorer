@@ -134,7 +134,7 @@ namespace UTLT
         public void TestUriMgr_AddSameUri2()//发现同一个文件连续添加两次会有两个文档在db中，
             //最终定位不是这个原因，是因为某个字段长度超过了50个字符，我们的解析器有问题（1-50 Ngram）
         {
-            //string dir = @"D:\02-个人目录\LuceneTest\TagExplorer\DocumentBase\Doc\child4";
+            
             string dir = @"D:\00_工作备份\Work\ROSng软件架构及应用V1.1.pptx\Doc\child4";
             string tag = "child4";
             db.AddUri(dir, new List<string>() { tag });

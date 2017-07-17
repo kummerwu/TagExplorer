@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using TagExplorer.UriMgr;
 using TagExplorer.Utils;
 
-namespace LuceneTest.TagCanvas
+namespace TagExplorer
 {
     public class LRUTag : IDisposable
     {

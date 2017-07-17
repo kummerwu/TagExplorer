@@ -28,6 +28,7 @@ namespace TagExplorer.UriMgr
         }
         public LuceneUriDB()
         {
+            Logger.I("Create LuceneUriDB Instance!");
             bool create = true;
             if (Cfg.Ins.IsUTest)
             {
@@ -36,9 +37,11 @@ namespace TagExplorer.UriMgr
             }
             else
             {
+                Logger.I("DBPath = " + PathHelper.UriDBPath);
                 create = !System.IO.Directory.Exists(PathHelper.UriDBPath);
                 if (create)
                 {
+                    Logger.I("First Create !DBPath = " + PathHelper.UriDBPath);
                     System.IO.Directory.CreateDirectory(PathHelper.UriDBPath);
                 }
                 dir = FSDirectory.Open(PathHelper.UriDBPath);

@@ -6,7 +6,7 @@ using TagExplorer.Utils;
 namespace UTLT
 {
     [TestClass]
-    public class LuceneTest
+    public class UTest_Tag
     {
         ITagDB db = null;
         [TestInitialize]

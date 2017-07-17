@@ -53,7 +53,7 @@
   </Choose>
   <ItemGroup>
     <Compile Include="LayoutTest.cs" />
-    <Compile Include="LuceneTest.cs" />
+    <Compile Include="UTest_Tag.cs" />
     <Compile Include="LuceneUriTest.cs" />
     <Compile Include="UnitTest1.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

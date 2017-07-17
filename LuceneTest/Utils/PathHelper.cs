@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System.Configuration;
+using System.Diagnostics;
 using System.IO;
 using System.Text.RegularExpressions;
 
@@ -20,7 +21,21 @@ namespace TagExplorer.Utils
             return dsts;
         }
 
-        public static string RootPath = @"J:\00TagExplorerBase";
+        //public static string RootPath = @"J:\00TagExplorerBase";
+        private static string rootPath = null;
+        public static string RootPath
+        {
+            get
+            {
+                if (rootPath == null)
+                    return ConfigurationManager.AppSettings["RootDir"];
+                else return rootPath;
+            }
+            set
+            {
+                rootPath = value;
+            }
+        }
         public static string TagDBPath { get { return Path.Combine(RootPath , @"TagDB"); } }
         public static string UriDBPath { get { return Path.Combine(RootPath, @"UriDB"); } }
         public static string IniFilePath { get { return Path.Combine(RootPath, "TagExplorer.ini"); } }

@@ -22,6 +22,7 @@ namespace TagExplorer.TagMgr
         Directory dir = null;
         public LuceneTagDB()
         {
+            Logger.I("Create TagDB Instance!");
             bool create = true;
             if (Cfg.Ins.IsUTest)
             {
@@ -30,9 +31,11 @@ namespace TagExplorer.TagMgr
             }
             else
             {
+                Logger.I("DBPath = " + PathHelper.TagDBPath);
                 create = !System.IO.Directory.Exists(PathHelper.TagDBPath);
                 if (create)
                 {
+                    Logger.I("First Create !DBPath = " + PathHelper.TagDBPath);
                     System.IO.Directory.CreateDirectory(PathHelper.TagDBPath);
                 }
                 dir = FSDirectory.Open(PathHelper.TagDBPath);

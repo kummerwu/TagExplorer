@@ -143,6 +143,7 @@ namespace TagExplorer
         }
         public void ShowGraph(ITagDB tagDB,string root)
         {
+            Logger.I("ShowGraph at " + root);
             this.tagDB = tagDB;
             this.root = root;
             
