@@ -62,12 +62,16 @@ namespace TagExplorer.Utils
         public static void OpenExplorerByFile(string f)
         {
 
-            if (IsValidUri(f))
+            if (IsValidFS(f))
             {
                 f = '"' + f + '"';
                 string cmd = "/select," + f;
                 Logger.D("LocateFile: [{0}]", cmd);
                 System.Diagnostics.Process.Start("explorer.exe", "/select," + f);
+            }
+            else if(IsValidHttps(f))
+            {
+                StartFile(f);
             }
             else
             {
@@ -123,10 +127,21 @@ namespace TagExplorer.Utils
         public static bool IsValidUri(string txt)
         {
             if (txt == null) return false;
-            return File.Exists(txt) || Directory.Exists(txt) ||
-                            (txt.StartsWith("http://", StringComparison.CurrentCultureIgnoreCase) ||
-                            txt.StartsWith("https://", StringComparison.CurrentCultureIgnoreCase));
+            return IsValidFS(txt) || IsValidHttps(txt);
         }
+        public static bool IsValidFS(string txt)
+        {
+            if (txt == null) return false;
+            return File.Exists(txt) || Directory.Exists(txt);
+        }
+        public static bool IsValidHttps(string txt)
+        {
+            if (txt == null) return false;
+            return (txt.StartsWith("http://", StringComparison.CurrentCultureIgnoreCase) ||
+                    txt.StartsWith("https://", StringComparison.CurrentCultureIgnoreCase));
+        }
+
+        
         #endregion
 
 

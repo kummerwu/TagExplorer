@@ -436,13 +436,13 @@ namespace TagExplorer
         private void copyAreaNode_Click(object sender, RoutedEventArgs e)
         {
             UpdateCurrentTagByContextMenu();
-            Clipboard.SetText(currentTag);
+            ClipBoardSafe.SetText(currentTag);
         }
 
         private void copyFullPath_Click(object sender, RoutedEventArgs e)
         {
             UpdateCurrentTagByContextMenu();
-            Clipboard.SetText(PathHelper.GetDirByTag(currentTag));
+            ClipBoardSafe.SetText(PathHelper.GetDirByTag(currentTag));
         }
 
         private void tagAreaMenu_ContextMenuOpening(object sender, ContextMenuEventArgs e)
@@ -491,13 +491,13 @@ namespace TagExplorer
         public void miCopy_Click(object sender, RoutedEventArgs e)
         {
             UpdateCurrentTagByContextMenu();
-            Clipboard.SetText(ClipboardConst.KUMMERWU_TAG_COPY + ClipboardConst.CommandSplitToken + currentTag);
+            ClipBoardSafe.SetText(ClipboardConst.KUMMERWU_TAG_COPY + ClipboardConst.CommandSplitToken + currentTag);
         }
 
         public void miCut_Click(object sender, RoutedEventArgs e)
         {
             UpdateCurrentTagByContextMenu();
-            Clipboard.SetText(ClipboardConst.KUMMERWU_TAG_CUT + ClipboardConst.CommandSplitToken + currentTag);
+            ClipBoardSafe.SetText(ClipboardConst.KUMMERWU_TAG_CUT + ClipboardConst.CommandSplitToken + currentTag);
         }
 
         private void miDelete_Click(object sender, RoutedEventArgs e)

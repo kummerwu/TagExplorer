@@ -88,18 +88,14 @@ namespace TagExplorer.UriInfList
         private void OpenSelectedUri()
         {
             UpdateCurrentUriByContextMenu();
-            if (FileShell.IsValidUri(CurrentUri))
-            {
-                FileShell.StartFile(CurrentUri);
-            }
+            FileShell.StartFile(CurrentUri);
+            
         }
         private void miOpenPath_Click(object sender, RoutedEventArgs e)
         {
             UpdateCurrentUriByContextMenu();
-            if (FileShell.IsValidUri(CurrentUri))
-            {
-                FileShell.OpenExplorerByFile(CurrentUri);
-            }
+            FileShell.OpenExplorerByFile(CurrentUri);
+            
         }
 
         private void lst_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -110,7 +106,7 @@ namespace TagExplorer.UriInfList
         private void miCopy_Click(object sender, RoutedEventArgs e)
         {
             UpdateCurrentUriByContextMenu();
-            Clipboard.SetText(ClipboardConst.KUMMERWU_URI_COPY+"`" + GetSelUriList(ClipboardConst.CO_COPY));
+            ClipBoardSafe.SetText(ClipboardConst.KUMMERWU_URI_COPY+"`" + GetSelUriList(ClipboardConst.CO_COPY));
         }
         private string GetSelUriList(int status)
         {
@@ -124,7 +120,7 @@ namespace TagExplorer.UriInfList
         }
         private void miCut_Click(object sender, RoutedEventArgs e)
         {
-            Clipboard.SetText(ClipboardConst.KUMMERWU_URI_CUT + ClipboardConst.CommandSplitToken + GetSelUriList(ClipboardConst.CO_CUT));
+            ClipBoardSafe.SetText(ClipboardConst.KUMMERWU_URI_CUT + ClipboardConst.CommandSplitToken + GetSelUriList(ClipboardConst.CO_CUT));
         }
 
         private void Cut_Executed(object sender, ExecutedRoutedEventArgs e)

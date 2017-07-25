@@ -13,6 +13,7 @@ namespace TagExplorer.Utils
     {
         #region 公有方法
         //TODO 如果获取失败，返回一个默认未知图标
+        //TODO  支持http协议图标
         public static BitmapSource GetBitmapFromFile(string f)
         {
             if (iconCache.Count > 1000) iconCache.Clear();
@@ -23,8 +24,11 @@ namespace TagExplorer.Utils
                 BitmapSource s = GetBitmapFromFileNoCache(f);
                 if (s != null)
                 {
-                    if (type == null) return s;
-                    else iconCache.Add(type, s);
+                    iconCache.Add(type, s);
+                }
+                else
+                {
+                    //TODO 获取失败怎么处理
                 }
             }
             return iconCache[type] as BitmapSource;
@@ -52,13 +56,13 @@ namespace TagExplorer.Utils
 
         private static string FileToType(string f)
         {
-            if (f.StartsWith("http:") || f.StartsWith("https:"))
+            if (FileShell.IsValidHttps(f))
             {
-                return ".http";
+                return ".http_icon";
             }
             else if (Directory.Exists(f))
             {
-                return ".directory";
+                return ".directory_icon";
             }
             else if(File.Exists(f))
             {
@@ -66,7 +70,7 @@ namespace TagExplorer.Utils
             }
             else
             {
-                return null;
+                return ".unknow_icon";
             }
         }
 
@@ -75,13 +79,24 @@ namespace TagExplorer.Utils
         
         private static BitmapSource GetBitmapFromFileNoCache(string f)
         {
-            var icon = GIconHelper.GetFileIcon(f, false).ToBitmap();
-            IntPtr hBitmap = icon.GetHbitmap();
-            BitmapSource bitmapSource = Imaging.CreateBitmapSourceFromHBitmap(hBitmap, IntPtr.Zero, Int32Rect.Empty,
-            BitmapSizeOptions.FromEmptyOptions());
-            bitmapSource.Freeze();
-            icon.Dispose();
-            return bitmapSource;
+            if (FileShell.IsValidHttps(f))
+            {
+                return GetBitmapFromFileNoCache(PathHelper.Res_HTTP_Path);
+            }
+            else if(FileShell.IsValidFS(f))
+            {
+                var icon = GIconHelper.GetFileIcon(f, false).ToBitmap();
+                IntPtr hBitmap = icon.GetHbitmap();
+                BitmapSource bitmapSource = Imaging.CreateBitmapSourceFromHBitmap(hBitmap, IntPtr.Zero, Int32Rect.Empty,
+                BitmapSizeOptions.FromEmptyOptions());
+                bitmapSource.Freeze();
+                icon.Dispose();
+                return bitmapSource;
+            }
+            else
+            {
+                return GetBitmapFromFileNoCache(PathHelper.Res_UNKNOW_Path);
+            }
         }
 
 
@@ -93,9 +108,9 @@ namespace TagExplorer.Utils
         /// /// 文件的默认图标 
         private static Icon GetFileIcon(string fileName, bool largeIcon)
         {
-            if(fileName.StartsWith("http:") || fileName.StartsWith("https:"))
+            if(FileShell.IsValidHttps(fileName))
             {
-                fileName = Path.Combine(PathHelper.DocBaseDir,"icon.html");
+                fileName = PathHelper.Res_HTTP_Path;
             }
             SHFILEINFO info = new SHFILEINFO(true);
             int cbFileInfo = Marshal.SizeOf(info);

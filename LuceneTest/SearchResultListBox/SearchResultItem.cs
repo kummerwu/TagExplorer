@@ -10,13 +10,34 @@ namespace TagExplorer.UriInfList
     public class SearchResultItem : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
-        public string _Detail
+        public string _Detail //TODO 支持http图标
         {
             set
             {
-                name = Path.GetFileName(value);
-                dir = Path.GetDirectoryName(value);
-                all = value;
+                if (FileShell.IsValidHttps(value))
+                {
+                    System.Uri uri = new System.Uri(value); //TODO 获取http文档的名称和路径
+                    int lastIdx = value.LastIndexOf('/');
+                    if(lastIdx<1) lastIdx = value.LastIndexOf('\\');
+
+                    if (lastIdx > 1)
+                    {
+                        name = value.Substring(lastIdx+1); //TODO 更好的获得http文档标题的方法
+                        dir = value.Substring(0, lastIdx);
+                    }
+                    else
+                    {
+                        name = value;
+                        dir = value;
+                    }
+                    all = value;
+                }
+                else 
+                {
+                    name = Path.GetFileName(value);
+                    dir = Path.GetDirectoryName(value);
+                    all = value;
+                }
             }
         }
 
