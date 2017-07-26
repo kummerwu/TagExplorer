@@ -161,7 +161,7 @@ namespace TagExplorer
         private void Paste_Executed(object sender, ExecutedRoutedEventArgs e)
         {
             //tagCanvas.PasteFiles();
-            tagCanvas.miPaste_Click(sender, e);
+            tagCanvas.miPasteFile_Click(sender, e);
         }
 
         private void Window_Closed(object sender, EventArgs e)
@@ -189,7 +189,7 @@ namespace TagExplorer
 
         private void Cut_Executed(object sender, ExecutedRoutedEventArgs e)
         {
-            tagCanvas.miCut_Click(sender, e);      
+            tagCanvas.miCutTag_Click(sender, e);      
         }
 
         private void Copy_CanExecute(object sender, CanExecuteRoutedEventArgs e)
@@ -199,7 +199,7 @@ namespace TagExplorer
 
         private void Copy_Executed(object sender, ExecutedRoutedEventArgs e)
         {
-            tagCanvas.miCopy_Click(sender, e);
+            tagCanvas.miCopyTag_Click(sender, e);
         }
 
         private void BtForward_Click(object sender, RoutedEventArgs e)

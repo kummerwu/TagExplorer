@@ -12,6 +12,7 @@ using System.Windows.Input;
 using System.Windows.Shapes;
 using TagExplorer.Utils;
 using AnyTagNet;
+using TagExplorer.TagCanvas;
 
 namespace TagExplorer
 {
@@ -19,13 +20,13 @@ namespace TagExplorer
     /// <summary>
     /// 有向图的显示与文件的添加操作
     /// </summary>
-    public partial class TagCanvas : UserControl
+    public partial class TagGraphCanvas : UserControl
     {
         
 
 
         FileSystemWatcher fileWather = null;
-        public TagCanvas()
+        public TagGraphCanvas()
         {
             InitializeComponent();
             fileWather = new FileSystemWatcher(PathHelper.DocDir);
@@ -249,7 +250,7 @@ namespace TagExplorer
                 return Resources["tagAreaMenu"] as ContextMenu;
             }
         }
-        private void tagAreaNode_Click(object sender, RoutedEventArgs e)
+        private void miOpenTagDir_Click(object sender, RoutedEventArgs e)
         {
             UpdateCurrentTagByContextMenu();
             FileShell.OpenExplorerByTag(currentTag);
@@ -324,7 +325,7 @@ namespace TagExplorer
         
 
 
-        public void miPaste_Click(object sender, RoutedEventArgs e)
+        public void miPasteFile_Click(object sender, RoutedEventArgs e)
         {
             UpdateCurrentTagByContextMenu();
             
@@ -403,7 +404,7 @@ namespace TagExplorer
             foreach(string f in files)
             {
                 string dstFile = f;
-                if (NeedCopy)
+                if (NeedCopy )
                 {
                     dstFile = CopyToHouse(f, currentTag);
                 }
@@ -417,7 +418,13 @@ namespace TagExplorer
         
         private string  CopyToHouse(string f, string tag)
         {
-            System.IO.FileInfo fi = new System.IO.FileInfo(f);
+            if (FileShell.IsValidHttps(f)) return f;
+            if(!FileShell.IsValidFS(f))
+            {
+                Logger.E("Copy To House: File not Exist " + f);
+                return f;
+            }
+            FileInfo fi = new FileInfo(f);
             string dstDir = PathHelper.GetDirByTag(tag);
             string dstFile = System.IO.Path.Combine(dstDir, fi.Name);
             if(dstFile==f)
@@ -433,13 +440,13 @@ namespace TagExplorer
             }
             return null;
         }
-        private void copyAreaNode_Click(object sender, RoutedEventArgs e)
+        private void miCopyTagName_Click(object sender, RoutedEventArgs e)
         {
             UpdateCurrentTagByContextMenu();
             ClipBoardSafe.SetText(currentTag);
         }
 
-        private void copyFullPath_Click(object sender, RoutedEventArgs e)
+        private void miCopyTagFullPath_Click(object sender, RoutedEventArgs e)
         {
             UpdateCurrentTagByContextMenu();
             ClipBoardSafe.SetText(PathHelper.GetDirByTag(currentTag));
@@ -459,7 +466,7 @@ namespace TagExplorer
             SetHeight();
         }
 
-        private void miNew_Click(object sender, RoutedEventArgs e)
+        private void miNewFile_Click(object sender, RoutedEventArgs e)
         {
             UpdateCurrentTagByContextMenu();
             string initDir = PathHelper.GetDirByTag(currentTag);
@@ -488,19 +495,19 @@ namespace TagExplorer
             }
         }
 
-        public void miCopy_Click(object sender, RoutedEventArgs e)
+        public void miCopyTag_Click(object sender, RoutedEventArgs e)
         {
             UpdateCurrentTagByContextMenu();
             ClipBoardSafe.SetText(ClipboardConst.KUMMERWU_TAG_COPY + ClipboardConst.CommandSplitToken + currentTag);
         }
 
-        public void miCut_Click(object sender, RoutedEventArgs e)
+        public void miCutTag_Click(object sender, RoutedEventArgs e)
         {
             UpdateCurrentTagByContextMenu();
             ClipBoardSafe.SetText(ClipboardConst.KUMMERWU_TAG_CUT + ClipboardConst.CommandSplitToken + currentTag);
         }
 
-        private void miDelete_Click(object sender, RoutedEventArgs e)
+        private void miDeleteTag_Click(object sender, RoutedEventArgs e)
         {
             UpdateCurrentTagByContextMenu();
             if (tagDB.QueryTagChildren(currentTag).Count==0)
@@ -514,9 +521,62 @@ namespace TagExplorer
             ShowGraph(Cfg.Ins.DefaultTag);
         }
 
-        private void miLinkIn_Click(object sender, RoutedEventArgs e)
+        private void miLinkInFile_Click(object sender, RoutedEventArgs e)
         {
             PasteFiles(false);
+        }
+        public string[] ParseTags(string input)
+        {
+            return input.Split(new char[] {' ',',','，' }, StringSplitOptions.RemoveEmptyEntries);
+        }
+        private void miNewTag_Click(object sender, RoutedEventArgs e)
+        {
+            UpdateCurrentTagByContextMenu();
+            if (currentTag == null || currentTag.Trim() == "") return;
+
+            NewTagWindow w = new NewTagWindow();
+            w.Title = "创建子标签";
+            w.Tips = string.Format("创建{0}子标签，多个子标签可以用空格隔开", currentTag);
+            w.ShowDialog();
+            string input = w.Inputs;
+            if(input!=null && input.Trim().Length>0)
+            {
+                string[] tags = ParseTags(input);
+                foreach (string tag in tags)
+                {
+                    tagDB.AddTag(currentTag, tag);
+                }
+                Refresh();
+            }
+            
+
+        }
+
+        private void miPasteTag_Click(object sender, RoutedEventArgs e)
+        {
+            UpdateCurrentTagByContextMenu();
+
+
+            string[] token = Clipboard.GetText().Split(new char[] { ClipboardConst.CommandSplitToken }, StringSplitOptions.RemoveEmptyEntries);
+
+            if (token.Length == 2)
+            {
+                string arg = token[1];
+
+                string[] args = arg.Split(new char[] { ClipboardConst.ArgsSplitToken }, StringSplitOptions.RemoveEmptyEntries);
+                switch (token[0])
+                {
+                    case ClipboardConst.KUMMERWU_TAG_COPY:
+                        tagDB.AddTag(currentTag, arg);
+                        Refresh();
+                        break;
+                    case ClipboardConst.KUMMERWU_TAG_CUT:
+                        tagDB.ResetRelationOfChild(currentTag, arg);
+                        Refresh();
+                        break;
+                }
+            }
+            
         }
     }
 }

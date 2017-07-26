@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="TagExplorer.TagCanvas"
+﻿<UserControl x:Class="TagExplorer.TagGraphCanvas"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -9,22 +9,24 @@
              d:DesignHeight="300" d:DesignWidth="300">
     <UserControl.Resources>
         <ContextMenu x:Name="tagAreaMenu" x:Key="tagAreaMenu" ContextMenuOpening="tagAreaMenu_ContextMenuOpening">
-            <MenuItem Name="tagAreaNode"  Header="打开标签目录" Click="tagAreaNode_Click"/>
-            <MenuItem Name="copyAreaNode" Header="拷贝标签名称" Click="copyAreaNode_Click"/>
-            <MenuItem Name="copyFullPath" Header="拷贝标签路径" Click="copyFullPath_Click"/>
+            <MenuItem Name="miOpenTagDir"       Header="打开标签目录" Click="miOpenTagDir_Click"/>
+            <MenuItem Name="miCopyTagFullPath"  Header="拷贝标签路径" Click="miCopyTagFullPath_Click"/>
+            <MenuItem Name="miCopyTagName"      Header="拷贝标签名称" Click="miCopyTagName_Click"/>
             <Separator></Separator>
-            <MenuItem Name="miCopy" Header="复制" Click="miCopy_Click"/>
-            <MenuItem Name="miCut" Header="剪切" Click="miCut_Click"/>
-            <MenuItem Name="miPasteTag" Header="粘贴"/>
+            <MenuItem Name="miNewTag"       Header="新建标签" Click="miNewTag_Click"/>
+            <MenuItem Name="miCopyTag"      Header="复制标签" Click="miCopyTag_Click"/>
+            <MenuItem Name="miCutTag"       Header="剪切标签" Click="miCutTag_Click"/>
+            <MenuItem Name="miPasteTag"     Header="粘贴标签" Click="miPasteTag_Click"/>
+            <MenuItem Name="miDeleteTag"    Header="删除标签" Click="miDeleteTag_Click"/>
             <Separator></Separator>
-            <MenuItem Name="miPaste" Header="粘贴文件" Click="miPaste_Click"/>
-            <MenuItem Name="miLinkIn" Header="粘贴链接" Click="miLinkIn_Click"/>
-            <MenuItem Name="miNew" Header="新建" Click="miNew_Click"></MenuItem>
-            <MenuItem Name="miEdit" Header="编辑">
-                <MenuItem Name="miEditOne" Header="编辑.One"></MenuItem>
+            <MenuItem Name="miNew"          Header="新建文件" Click="miNewFile_Click"></MenuItem>
+            <MenuItem Name="miPaste"        Header="粘贴文件" Click="miPasteFile_Click"/>
+            <MenuItem Name="miLinkIn"       Header="链接文件" Click="miLinkInFile_Click"/>
+            <MenuItem Name="miEdit"         Header="编辑文件">
+                <MenuItem Name="miEditOne"  Header="编辑.One"></MenuItem>
             </MenuItem>
             <Separator></Separator>
-            <MenuItem Name="miDelete" Header="删除" Click="miDelete_Click"/>
+            
         </ContextMenu>
     </UserControl.Resources>
     <Grid >

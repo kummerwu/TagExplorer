@@ -192,6 +192,9 @@
       <DependentUpon>TagBox.xaml</DependentUpon>
     </Compile>
     <Compile Include="TagCanvas\LRUTag.cs" />
+    <Compile Include="TagCanvas\NewTagWindow.xaml.cs">
+      <DependentUpon>NewTagWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="TagCanvas\TagCanvas.xaml.cs">
       <DependentUpon>TagCanvas.xaml</DependentUpon>
     </Compile>
@@ -253,6 +256,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="TagBox\TagBox.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="TagCanvas\NewTagWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

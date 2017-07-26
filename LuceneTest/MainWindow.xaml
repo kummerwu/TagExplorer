@@ -73,7 +73,7 @@
                     
                     <avalonDock:LayoutAnchorablePane DockWidth="150">
                         <avalonDock:LayoutAnchorable Title="最近访问标签" CanClose="False" CanHide="False">
-                            <tagGraph:TagCanvas x:Name="tagCanvas"  Grid.Column="0" ></tagGraph:TagCanvas>
+                            <tagGraph:TagGraphCanvas x:Name="tagCanvas"  Grid.Column="0" ></tagGraph:TagGraphCanvas>
                         </avalonDock:LayoutAnchorable>
                     </avalonDock:LayoutAnchorablePane>
                     
