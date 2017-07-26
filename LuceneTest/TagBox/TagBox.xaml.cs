@@ -14,17 +14,43 @@ namespace TagExplorer
         {
             InitializeComponent();
         }
-        bool sel = false;
-        public bool Selected
+        public enum Status
+        {
+            None,Selected,Copy,Cut
+        }
+        Status stat = Status.None;
+        public Status Stat
         {
             get
             {
-                return sel;
+                return stat;
             }
             set
             {
-                sel = value;
-                bdr.BorderThickness = new Thickness(sel?2:0);
+                stat = value;
+                switch(stat)
+                {
+                    case Status.None:
+                        bdr.BorderThickness = new Thickness(0);
+                        txt.Opacity = 1;
+                        break;
+                    case Status.Selected:
+                        bdr.BorderThickness = new Thickness(2);
+                        bdr.BorderBrush = new SolidColorBrush(Colors.Black);
+                        txt.Opacity = 1;
+                        break;
+                    case Status.Cut:
+                        bdr.BorderThickness = new Thickness(2);
+                        bdr.BorderBrush = new SolidColorBrush(Colors.Green);
+                        txt.Opacity = 0.3;
+                        break;
+                    case Status.Copy:
+                        bdr.BorderThickness = new Thickness(2);
+                        bdr.BorderBrush = new SolidColorBrush(Colors.Red);
+                        txt.Opacity = 1;
+                        break;
+                }
+                
             }
         }
 

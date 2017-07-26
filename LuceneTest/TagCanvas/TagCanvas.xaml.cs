@@ -256,7 +256,7 @@ namespace TagExplorer
             FileShell.OpenExplorerByTag(currentTag);
             
         }
-        private void UpdateSelectedStatus(string tag)
+        private void UpdateSelectedStatus(string tag,TagBox.Status stat)
         {
             foreach(UIElement u in canvas.Children)
             {
@@ -264,13 +264,14 @@ namespace TagExplorer
 
                 if(tb!=null)
                 {
-                    if (tb.Selected)
-                    {
-                        tb.Selected = false;
-                    }
+                    //if (tb.Selected)
+                    //{
+                    //    tb.Selected = false;
+                    //}
+                    tb.Stat = TagBox.Status.None;
                     if (tb.Text == tag)
                     {
-                        tb.Selected = true;
+                        tb.Stat = stat;
                     }
                 }
             }
@@ -279,7 +280,7 @@ namespace TagExplorer
         
         public void SetCurrentTag(string tag)
         {
-            UpdateSelectedStatus(tag); //这一句必须放在下面检查并return之前，
+            UpdateSelectedStatus(tag,TagBox.Status.Selected); //这一句必须放在下面检查并return之前，
                             //即无论currentTag是否变化，都需要更新一下border，否则会有bug；
                             //bug现象：在curtag没有变化的时候，重新绘制整个graph，
                             //会出现所有的tag都不显示边框（包括curtag），因为直接返回了。
@@ -444,6 +445,7 @@ namespace TagExplorer
         {
             UpdateCurrentTagByContextMenu();
             ClipBoardSafe.SetText(currentTag);
+            
         }
 
         private void miCopyTagFullPath_Click(object sender, RoutedEventArgs e)
@@ -499,12 +501,14 @@ namespace TagExplorer
         {
             UpdateCurrentTagByContextMenu();
             ClipBoardSafe.SetText(ClipboardConst.KUMMERWU_TAG_COPY + ClipboardConst.CommandSplitToken + currentTag);
+            UpdateSelectedStatus(currentTag, TagBox.Status.Copy);
         }
 
         public void miCutTag_Click(object sender, RoutedEventArgs e)
         {
             UpdateCurrentTagByContextMenu();
             ClipBoardSafe.SetText(ClipboardConst.KUMMERWU_TAG_CUT + ClipboardConst.CommandSplitToken + currentTag);
+            UpdateSelectedStatus(currentTag, TagBox.Status.Cut);
         }
 
         private void miDeleteTag_Click(object sender, RoutedEventArgs e)
@@ -548,8 +552,6 @@ namespace TagExplorer
                 }
                 Refresh();
             }
-            
-
         }
 
         private void miPasteTag_Click(object sender, RoutedEventArgs e)
