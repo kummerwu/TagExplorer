@@ -30,28 +30,31 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <ToolBar Grid.Row="0" >
-            <Button Width="40" Name="BtForward" Click="BtForward_Click">
+            <Button Width="30" Name="BtForward" Click="BtForward_Click">
                     <Button.Content>
-                    <Image Source="pack://siteoforigin:,,,/Resources/ICON_BACKWARD.ico"> </Image>
+                    <Image Source="pack://siteoforigin:,,,/Resources/left.png" > </Image>
                     </Button.Content>
             </Button>
-            <Button Width="40">
+            <Button Width="30">
                 <Button.Content>
-                    <Image Source="pack://siteoforigin:,,,/Resources/ICON_FORWARD.ico"></Image>
+                    <Image Source="pack://siteoforigin:,,,/Resources/right.png" ></Image>
                 </Button.Content>
             </Button>
-            <autoTextbox:AutoTextbox x:Name="autoTextBox"    Background="White" Width="200" KeyUp="autoTextBox_KeyUp" ></autoTextbox:AutoTextbox>
-            <Button Width="40" >
-                <Button.ToolTip>
-                    <ToolTip>
-                        <TextBlock Text="{Binding Path=Tips,Source={x:Static utils:TipsCenter.Ins}}"></TextBlock>
-                    </ToolTip>
-                </Button.ToolTip>
-                <Button.Content>
-                    <Image Source="pack://siteoforigin:,,,/Resources/ICON_Search.ico"></Image>
-                    
-                </Button.Content>
-            </Button>
+            <Border>
+                <StackPanel Orientation="Horizontal">
+                    <autoTextbox:AutoTextbox x:Name="autoTextBox"    Background="Transparent" Width="200" KeyUp="autoTextBox_KeyUp" ></autoTextbox:AutoTextbox>
+                    <Button Width="30" Background="White" >
+                        <Button.ToolTip>
+                            <ToolTip>
+                                <TextBlock Text="{Binding Path=Tips,Source={x:Static utils:TipsCenter.Ins}}"></TextBlock>
+                            </ToolTip>
+                        </Button.ToolTip>
+                        <Button.Content>
+                            <Image Source="pack://siteoforigin:,,,/Resources/search.png" ></Image>
+                        </Button.Content>
+                    </Button>
+                </StackPanel>
+            </Border>
         </ToolBar>
         <!--
         <Grid Grid.Row="1">

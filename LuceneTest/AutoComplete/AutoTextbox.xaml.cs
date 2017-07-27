@@ -58,6 +58,7 @@ namespace TagExplorer.AutoComplete
             textBox.KeyDown += TextBox_KeyDown;
             textBox.VerticalContentAlignment = VerticalAlignment.Center;
             textBox.PreviewKeyDown += TextBox_PreviewKeyDown;
+            
             controls.Add(comboBox);
             controls.Add(textBox);
 
