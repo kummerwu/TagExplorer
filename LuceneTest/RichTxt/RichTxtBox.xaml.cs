@@ -37,12 +37,8 @@ namespace TagExplorer.RichTxt
         private string file;
         private void ChangeFile(string f)
         {
-            if (file != f)
-            {
-                file = f;
-                richTxt.IsEnabled = (file != null);
-
-            }
+            file = f;
+            richTxt.IsEnabled = (file != null);
         }
         public void Load(string f)
         {

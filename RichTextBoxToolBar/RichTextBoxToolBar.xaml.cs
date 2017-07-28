@@ -156,7 +156,7 @@ namespace RichTextBoxToolBar
             try 
             {
                 // Disable circular updates by the recall tool bar items commands
-                this.IsEnabledToolBarItems = false;
+                this.IsEnabledToolBarItems = true;
 
                 RichTextBoxToolBarHelper.UpdateSelectionFontFamily(
                     this._cbFontFamily, selection);
@@ -213,7 +213,7 @@ namespace RichTextBoxToolBar
             }
             finally
             {
-                this.IsEnabledToolBarItems = selection != null;
+                this.IsEnabledToolBarItems = true;
             }
         }
 

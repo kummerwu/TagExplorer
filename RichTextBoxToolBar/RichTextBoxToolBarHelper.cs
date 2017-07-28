@@ -71,10 +71,16 @@ namespace RichTextBoxToolBar
 
             if (propertyValue == null
                 || propertyValue == DependencyProperty.UnsetValue)
-                fontFamilyItems.Text = String.Empty;
+            {
+                //fontFamilyItems.Text = String.Empty;
+                if(fontFamilyItems.Items.Count>0)
+                    fontFamilyItems.SelectedIndex = 0;
+            }
             else
+            {
                 fontFamilyItems.SelectedIndex =
                     fontFamilyItems.Items.IndexOf(propertyValue);
+            }
         }
 
         internal static void UpdateSelectionFontSize(
@@ -85,7 +91,7 @@ namespace RichTextBoxToolBar
 
             fontSizeItems.Text = (propertyValue == null
                 || propertyValue == DependencyProperty.UnsetValue)
-                ? String.Empty
+                ? "8"
                 : propertyValue.ToString();
         }
 
@@ -111,7 +117,7 @@ namespace RichTextBoxToolBar
                 : GetSelectionColor(
                 GetSelectionPropertyValue(selection, property),
                 defaultColor);
-
+            if (currentColor == null) currentColor = Colors.White;
             if (currentColor != null)
             {
                 PropertyInfo selectedColor = source.ItemsSource
