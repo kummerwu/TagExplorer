@@ -13,11 +13,13 @@ namespace TagExplorer.UriInfList
     /// </summary>
     public partial class SearchResultListBox : UserControl
     {
+        public delegate void CurrentUriChanged(string uri);
+        public CurrentUriChanged CurrentUriChangedCallback;
         public SearchResultListBox()
         {
             InitializeComponent();
-            
         }
+
         public void ShowQueryResult(string query, IUriDB uriDB, ITagDB tagsDB)
         {
             this.uriDB = uriDB;
@@ -60,6 +62,7 @@ namespace TagExplorer.UriInfList
             if (CurrentUri != uri)
             {
                 CurrentUri = uri;
+                CurrentUriChangedCallback?.Invoke(uri);
             }            
             tagsBar.ChangeCurrentUri(uri,uriDB,tagsDB);
         }

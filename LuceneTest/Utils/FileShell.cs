@@ -90,6 +90,7 @@ namespace TagExplorer.Utils
         }
         public static void StartFile(string file)
         {
+            if (file.EndsWith(".rtf")) return;
             Logger.D("StartFile {0} ", file);
             if (IsValidUri(file))
             {

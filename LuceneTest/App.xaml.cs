@@ -41,22 +41,34 @@ namespace TagExplorer
         {
             IDisposableFactory.DisposeAll();
             Logger.E("App Exit:"+e.ApplicationExitCode);
+
         }
 
         private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
-            Logger.E(e.ExceptionObject.ToString());
             IDisposableFactory.DisposeAll();
-            
+            Logger.E(e.ExceptionObject.ToString());
+            MessageBox.Show("发生内部异常，程序即将关闭，如需分析，请查看相关日志！");
+
         }
 
         private void Current_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
         {
-            Logger.E(e.Exception);
             IDisposableFactory.DisposeAll();
-            
-        }
+            Logger.E(e.Exception);
+            //e.Handled = true;
+            //MessageBox.Show("发生内部异常，程序即将关闭，如需分析，请查看相关日志！");
 
+        }
+        private void App_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
+        {
+            IDisposableFactory.DisposeAll();
+            Logger.E(e.Exception);
+            //e.Handled = true;
+            //MessageBox.Show("发生内部异常，程序即将关闭，如需分析，请查看相关日志！");
+            //MessageBox.Show(e.Exception.Message+"\r\n===============\r\n"+e.Exception.StackTrace);
+
+        }
         private const int SW_SHOWNOMAL = 1;
         private static void BringToForeground(Process instance)
         {
@@ -90,15 +102,7 @@ namespace TagExplorer
             }
         }
 
-        private void App_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
-        {
-            Logger.E(e.Exception);
-            
-            
-            IDisposableFactory.DisposeAll();
-            //MessageBox.Show(e.Exception.Message+"\r\n===============\r\n"+e.Exception.StackTrace);
-           
-        }
+        
 
     }
 }

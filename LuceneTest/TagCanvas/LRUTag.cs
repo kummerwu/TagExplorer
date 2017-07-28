@@ -45,6 +45,20 @@ namespace TagExplorer
             }
         }
         private List<string> tags = new List<string>();
+        public string DefaultTag
+        {
+            get
+            {
+                if (tags.Count > 0)
+                {
+                    return tags[tags.Count - 1];
+                }
+                else
+                {
+                    return Cfg.Ins.DefaultTag;
+                }
+            }
+        }
         public void Load()
         {
             if (File.Exists(PathHelper.IniFilePath))

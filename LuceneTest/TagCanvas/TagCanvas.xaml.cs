@@ -83,6 +83,10 @@ namespace TagExplorer
             {
                 this.Dispatcher.Invoke(new Action<string>(AddFileInDoc), uri);
             }
+            else
+            {
+                this.Dispatcher.Invoke(new Action(NotifyList));//有一个bug，当ie保存一个文件时，总是先create，然后delete，然后再次create。
+            }
         }
 
         //UI主线程中的方法调用
@@ -95,7 +99,7 @@ namespace TagExplorer
                 UriDB.AddUri(uri, new List<string>() { tag });
             }
             else
-            {
+            { 
                 Logger.E("观察到文件变化，但该文件不在文件仓库中=={0}", uri);
             }
 
@@ -493,6 +497,10 @@ namespace TagExplorer
                         AddUri(new List<string>() { sf.FileName });
                         FileShell.StartFile(sf.FileName);
                     }
+                    else
+                    {
+                        File.Create(sf.FileName).Close();
+                    }
                 }
             }
         }
@@ -522,7 +530,7 @@ namespace TagExplorer
             {
                 MessageBox.Show(string.Format("[{0}]下还有其他子节点，如果确实需要删除该标签，请先删除所有子节点", currentTag), "提示：", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
-            ShowGraph(Cfg.Ins.DefaultTag);
+            ShowGraph(LRUTag.Ins.DefaultTag);
         }
 
         private void miLinkInFile_Click(object sender, RoutedEventArgs e)

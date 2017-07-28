@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -41,11 +42,16 @@ namespace TagExplorer
             autoTextBox.textBox.TextChanged += TextBox_TextChanged;
             uriDB.UriDBChanged += UpdateUriList;
             autoTextBox.SearchDataProvider = tagDB;
-            Update(Cfg.Ins.DefaultTag);
-            
+            Update(LRUTag.Ins.DefaultTag);
+            uriList.CurrentUriChangedCallback += CurrentUriChanged;
+            richTxt.Focus();
+
+        }
+        public void CurrentUriChanged(string uri)
+        {
+            richTxt.Load(uri);
             
         }
-
 
         public void UpdateUriList()
         {
@@ -201,11 +207,21 @@ namespace TagExplorer
         {
             tagCanvas.miCopyTag_Click(sender, e);
         }
-
+        private void Dead(string x)
+        {
+            Dead(x);
+        }
         private void BtForward_Click(object sender, RoutedEventArgs e)
         {
-            System.Diagnostics.Process.Start(@"C:\Program Files\Internet Explorer\iexplore.exe",
-                @"D:\00TagExplorerBase\DocumentBase\Doc\分布式架构\Raft 为什么是更易理解的分布式一致性算法 - mindwind - 博客园.mht");
+            //System.Diagnostics.Process.Start(@"C:\Program Files\Internet Explorer\iexplore.exe",
+            //    @"D:\00TagExplorerBase\DocumentBase\Doc\分布式架构\Raft 为什么是更易理解的分布式一致性算法 - mindwind - 博客园.mht");
+            if (MessageBox.Show("导出所有Uri信息？","",MessageBoxButton.OKCancel) == MessageBoxResult.OK)
+            {
+                Dead("导出完成！");
+                //throw new Exception("mock“）");
+                (uriDB as LuceneUriDB)?.Dbg();
+                MessageBox.Show("导出完成！");
+            }
         }
     }
 }

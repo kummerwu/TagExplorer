@@ -62,7 +62,7 @@ namespace TagExplorer.UriMgr
                 new UriQueryAnalyser());
 
             DBChanged();
-            Dbg();
+            //Dbg();
         }
         public int AddUri(string Uri, List<string> tags)
         {
@@ -264,7 +264,7 @@ namespace TagExplorer.UriMgr
         }
         private void Commit()
         {
-            writer.Flush(true, true, true);
+            writer.Commit();
             reader = writer.GetReader();
             search = new IndexSearcher(reader);
             dbChangedHandler?.Invoke();
@@ -369,9 +369,9 @@ namespace TagExplorer.UriMgr
             return doc;
 
         }
-        private void Dbg()
+        public void Dbg()
         {
-            return;
+            //return;
             System.IO.TextWriter w = new System.IO.StreamWriter(@".\dbg.csv");
             int max = search.MaxDoc;
             w.WriteLine(@"IDX,F_ID,F_KEY,F_URI,DEL,TAGS");
@@ -396,15 +396,16 @@ namespace TagExplorer.UriMgr
                     }
 
                     string path = doc.Get(F_URI);
-                    if(!System.IO.File.Exists(path) && !System.IO.Directory.Exists(path))
-                    {
-                        reader.DeleteDocument(i);
+                    //if(!System.IO.File.Exists(path) && !System.IO.Directory.Exists(path))
+                    //{
+                    //    reader.DeleteDocument(i);
                         
-                    }
+                    //}
                 }
                 w.WriteLine();
 
             }
+            w.Close();
             
         }
         #endregion

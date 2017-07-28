@@ -40,9 +40,44 @@ namespace TagExplorer.Utils
         public static string UriDBPath { get { return Path.Combine(RootPath, @"UriDB"); } }
         public static string IniFilePath { get { return Path.Combine(RootPath, "TagExplorer.ini"); } }
         public static string TemplatePath { get { return Path.Combine(PathHelper.DocBaseDir, "Template"); } }
-        public static string ResPath { get { return Path.Combine(PathHelper.DocBaseDir, "Res"); } }
-        public static string Res_HTTP_Path { get { return Path.Combine(PathHelper.DocBaseDir, "Res", "http.html"); } }
-        public static string Res_UNKNOW_Path { get { return Path.Combine(PathHelper.DocBaseDir, "Res", "Unknown"); } }
+        //public static string ResPath { get { return Path.Combine(PathHelper.DocBaseDir, "Res"); } }
+        public static string Res_HTTP_Path
+        {
+            get
+            {
+                return GetResFile("http.html");
+            }
+        }
+        private static string GetResFile(string name)
+        {
+            string d = Res_Path;
+            string f = Path.Combine(d, name);
+            if (!File.Exists(f))
+            {
+                File.Create(f).Close();
+            }
+            return f;
+        }
+        public static string Res_Path
+        {
+            get
+            {
+                string d = Path.Combine(PathHelper.DocBaseDir, "Res");
+                if(!Directory.Exists(d))
+                {
+                    Directory.CreateDirectory(d);
+                }
+                return d;
+            }
+        }
+        public static string Res_UNKNOW_Path
+        {
+            get
+            {
+                return GetResFile("Unknown");
+                
+            }
+        }
 
         /*路径规划
   J:\00TagExplorerBase
@@ -136,15 +171,30 @@ namespace TagExplorer.Utils
             bool canAccess = true;
             if (File.Exists(uri)) //如果是文件的话，检测一下该文件是否被锁住？
             {
-                try
+                for (int i = 0; i < 5; i++)
                 {
-                    FileStream fs = new FileStream(uri, FileMode.Open, FileAccess.Read, FileShare.None);
-                    fs.Close();
+                    try
+                    {
+                        FileStream fs = new FileStream(uri, FileMode.Open, FileAccess.Read, FileShare.None);
+                        fs.Close();
+                        canAccess = true;
+                        break;
+                    }
+                    catch
+                    {
+                        canAccess = false;
+                        Logger.I("file exist,but can't access! TRY AGAIN！{0}",uri);
+                        System.Threading.Thread.Sleep(20);
+                    }
                 }
-                catch
-                {
-                    canAccess = false;
-                }
+            }
+            if(Regex.IsMatch(name, @"(_files$)|(^~)|(.tmp$)", RegexOptions.IgnoreCase))
+            {
+                Logger.I("name match reg: {0}", uri);
+            }
+            if(!canAccess)
+            {
+                Logger.I("file exist,but can't access!：{0}",uri);
             }
             return Regex.IsMatch(name, @"(_files$)|(^~)|(.tmp$)",RegexOptions.IgnoreCase) || 
                 !canAccess;

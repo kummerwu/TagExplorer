@@ -188,6 +188,9 @@
       <DependentUpon>AutoTextbox.xaml</DependentUpon>
     </Compile>
     <Compile Include="AutoComplete\ISearchDataProvider.cs" />
+    <Compile Include="RichTxt\RichTxtBox.xaml.cs">
+      <DependentUpon>RichTxtBox.xaml</DependentUpon>
+    </Compile>
     <Compile Include="TagBox\TagBox.xaml.cs">
       <DependentUpon>TagBox.xaml</DependentUpon>
     </Compile>
@@ -255,6 +258,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="RichTxt\RichTxtBox.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="TagBox\TagBox.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -371,6 +378,12 @@
     <None Include="Resources\search.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\RichTextBoxToolBar\RichTextBoxToolBar.csproj">
+      <Project>{356b108d-e06b-4f21-9422-e89cf740e61f}</Project>
+      <Name>RichTextBoxToolBar</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

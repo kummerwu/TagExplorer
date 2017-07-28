@@ -21,7 +21,7 @@ namespace TagExplorer.Utils
             string type = FileToType(f);
             if (iconCache[type] == null)
             {
-                BitmapSource s = GetBitmapFromFileNoCache(f);
+                BitmapSource s = GetBitmapFromFileNoCache(f,0);
                 if (s != null)
                 {
                     iconCache.Add(type, s);
@@ -77,11 +77,12 @@ namespace TagExplorer.Utils
         private static Hashtable iconCache = new Hashtable();
 
         
-        private static BitmapSource GetBitmapFromFileNoCache(string f)
+        private static BitmapSource GetBitmapFromFileNoCache(string f,int level)
         {
+            if (level > 5) return null; //防止递归调用死循环，将堆栈耗尽
             if (FileShell.IsValidHttps(f))
             {
-                return GetBitmapFromFileNoCache(PathHelper.Res_HTTP_Path);
+                return GetBitmapFromFileNoCache(PathHelper.Res_HTTP_Path,level+1);
             }
             else if(FileShell.IsValidFS(f))
             {
@@ -95,7 +96,7 @@ namespace TagExplorer.Utils
             }
             else
             {
-                return GetBitmapFromFileNoCache(PathHelper.Res_UNKNOW_Path);
+                return GetBitmapFromFileNoCache(PathHelper.Res_UNKNOW_Path,level+1);
             }
         }
 
