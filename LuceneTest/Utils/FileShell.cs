@@ -88,14 +88,92 @@ namespace TagExplorer.Utils
                 Process.Start(dir);
             }
         }
+        public static void StartWithFile(string file)
+        {
+            if(File.Exists(file))
+            {
+                Process.Start("rundll32.exe", " shell32.dll,OpenAs_RunDLL " + file);
+            }
+            else
+            {
+                MessageBox.Show("目前仅支持文件选择打开方式!");
+            }
+        }
         public static void StartFile(string file)
         {
             if (file.EndsWith(".rtf")) return;
             Logger.D("StartFile {0} ", file);
-            if (IsValidUri(file))
+            if (!IsValidUri(file))
             {
+                Logger.E("Start File ERROR,File isn't valid!~");
+                return;
+            }
 
+
+            if (File.Exists(file))
+            {
+                //之所以搞下面这么复杂的流程，是因为zte的一个文档安全软件导致Process.Start(file);报错
                 Logger.D("StartFile {0} is valid", file);
+                //Process.Start(file);
+                string ext = Path.GetExtension(file);
+                if(ext==null && ext.Length==0)
+                {
+                    Logger.I("start file {0} has no extension! return;", file);
+                    return;
+                }
+
+
+                ProcessStart.OpenWith openW = new ProcessStart.OpenWith(ext);
+                if (openW != null)
+                {
+                    foreach (ProcessStart.cApplicationData data in openW.Applicationlist.Values)
+                    {
+                        if (data.Havefilelinks)
+                        {
+
+                            string strStartPath; //= data.OpenFilenameLink.Filelocation;
+                            string strStartVerb; //= data.OpenFilenameLink.Params;
+                            string strStartPreParam;// = data.OpenFilenameLink.PreParams;
+
+
+                            //DataRow newRow = dtAppslist.NewRow();
+                            //newRow["Icon"] = data.ApplicationIcon;
+                            //newRow["Name"] = data.Productname;
+                            //newRow["Path"] = data.Filenamelink;
+                            //newRow["Company"] = data.Company;
+                            //newRow["regname"] = data.RegistryName;
+
+                            if (data.OpenFilenameLink != null)
+                            {
+                                strStartPath = data.OpenFilenameLink.Filelocation;
+                                strStartVerb = data.OpenFilenameLink.Params;
+                                strStartPreParam = data.OpenFilenameLink.PreParams;
+                            }
+                            else if (data.EditFilenameLink != null)
+                            {
+                                strStartPath = data.EditFilenameLink.Filelocation;
+                                strStartVerb = data.EditFilenameLink.Params;
+                                strStartPreParam = data.EditFilenameLink.PreParams;
+                            }
+                            else
+                            {
+                                strStartPath = data.Filenamelink;
+                                strStartVerb = "";
+                                strStartPreParam = "";
+                            }
+
+                            if (strStartPath != null)
+                            {
+                                ProcessStart.ProcessOpen.Start(strStartPreParam, strStartPath, strStartVerb, file);
+                                return;
+                            }
+                            //dtAppslist.Rows.Add(newRow);
+                        }
+                    }
+                }
+            }
+            else
+            {
                 Process.Start(file);
             }
         }

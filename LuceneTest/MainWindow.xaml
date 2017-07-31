@@ -36,7 +36,7 @@
                     <Image Source="pack://siteoforigin:,,,/Resources/left.png" > </Image>
                     </Button.Content>
             </Button>
-            <Button Width="30">
+            <Button Width="30" Click="Button_Click">
                 <Button.Content>
                     <Image Source="pack://siteoforigin:,,,/Resources/right.png" ></Image>
                 </Button.Content>

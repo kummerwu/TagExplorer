@@ -145,5 +145,12 @@ namespace TagExplorer.UriInfList
         {
             miCopy_Click(sender, e);
         }
+
+        private void miOpenWith_Click(object sender, RoutedEventArgs e)
+        {
+            UpdateCurrentUriByContextMenu();
+
+            FileShell.StartWithFile(CurrentUri);
+        }
     }
 }

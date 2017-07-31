@@ -175,9 +175,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\AvalonDock_2_0_2000\Xceed.Wpf.AvalonDock.dll</HintPath>
     </Reference>
-    <Reference Include="Xceed.Wpf.AvalonDock.Themes.VS2010">
-      <HintPath>..\..\..\..\01待整理\AvalonDock.Themes.VS2010\Xceed.Wpf.AvalonDock.Themes.VS2010.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
@@ -239,6 +236,7 @@
     <Compile Include="UriMgr\LuceneUriDB.cs" />
     <Compile Include="UriMgr\UriAnalyser.cs" />
     <Compile Include="UriMgr\UriDBFactory.cs" />
+    <Compile Include="Utils\OpenWithList.cs" />
     <Compile Include="Utils\PathHelper.cs" />
     <Compile Include="Utils\TemplateHelper.cs" />
     <Compile Include="Utils\TipsCenter.cs" />
@@ -383,6 +381,10 @@
     <ProjectReference Include="..\RichTextBoxToolBar\RichTextBoxToolBar.csproj">
       <Project>{356b108d-e06b-4f21-9422-e89cf740e61f}</Project>
       <Name>RichTextBoxToolBar</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\StartWithControl\OpenWithControl.csproj">
+      <Project>{dd17b1ff-1be6-4143-960b-2401a660bc6c}</Project>
+      <Name>OpenWithControl</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
