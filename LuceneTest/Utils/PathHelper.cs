@@ -39,6 +39,7 @@ namespace TagExplorer.Utils
         public static string TagDBPath { get { return Path.Combine(RootPath , @"TagDB"); } }
         public static string UriDBPath { get { return Path.Combine(RootPath, @"UriDB"); } }
         public static string IniFilePath { get { return Path.Combine(RootPath, "TagExplorer.ini"); } }
+        public static string LayoutCfgFilePath { get { return Path.Combine(RootPath, "TagExplorerLayout.xml"); } }
         public static string TemplatePath { get { return Path.Combine(PathHelper.DocBaseDir, "Template"); } }
         //public static string ResPath { get { return Path.Combine(PathHelper.DocBaseDir, "Res"); } }
         public static string Res_HTTP_Path

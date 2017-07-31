@@ -6,13 +6,14 @@ using System.Windows.Input;
 using TagExplorer.TagMgr;
 using TagExplorer.UriMgr;
 using TagExplorer.Utils;
+using Xceed.Wpf.AvalonDock.Layout.Serialization;
 
 namespace TagExplorer
 {
     /// <summary>
     /// MainWindow.xaml 的交互逻辑
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow : Window,IDisposable
     {
         public class LuceneConstants
         {
@@ -37,6 +38,7 @@ namespace TagExplorer
 ");
 
             InitializeComponent();
+            
             Logger.I("InitializeComponent Finished!");
             tagCanvas.SelectedTagChanged += selectedTagChanged;
             autoTextBox.textBox.TextChanged += TextBox_TextChanged;
@@ -45,6 +47,8 @@ namespace TagExplorer
             Update(LRUTag.Ins.DefaultTag);
             uriList.CurrentUriChangedCallback += CurrentUriChanged;
             richTxt.Focus();
+            
+            IDisposableFactory.New<MainWindow>(this);
 
         }
         public void CurrentUriChanged(string uri)
@@ -226,7 +230,34 @@ namespace TagExplorer
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            
+            LoadLayout();
+        }
+
+        public void Dispose()
+        {
+            SaveLayout();
+        }
+        private void LoadLayout()
+        {
+            if (File.Exists(PathHelper.LayoutCfgFilePath))
+            {
+                var serializer = new XmlLayoutSerializer(dockingManager);
+                using (var stream = new StreamReader(PathHelper.LayoutCfgFilePath))
+                    serializer.Deserialize(stream);
+                
+            }
+
+        }
+        private void SaveLayout()
+        {
+            var serializer = new XmlLayoutSerializer(dockingManager);
+            using (var stream = new StreamWriter(PathHelper.LayoutCfgFilePath))
+                serializer.Serialize(stream);
+        }
+
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            LoadLayout();
         }
     }
 }

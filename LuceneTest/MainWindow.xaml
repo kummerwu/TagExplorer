@@ -10,7 +10,7 @@
         xmlns:avalonDock="http://schemas.xceed.com/wpf/xaml/avalondock"
         xmlns:richtxt="clr-namespace:TagExplorer.RichTxt"
         mc:Ignorable="d"
-        Title="TagExplorer" Height="350" Width="525" SizeChanged="Window_SizeChanged" WindowState="Maximized" WindowStartupLocation="CenterScreen" Closed="Window_Closed">
+        Title="TagExplorer" Height="350" Width="525" SizeChanged="Window_SizeChanged" WindowState="Maximized" WindowStartupLocation="CenterScreen" Closed="Window_Closed" Loaded="Window_Loaded" >
     <Window.CommandBindings>
         <CommandBinding Command="Paste" CanExecute="Paste_CanExecute" Executed="Paste_Executed"/>
         <CommandBinding Command="Cut" CanExecute="Cut_CanExecute" Executed="Cut_Executed"/>
@@ -72,28 +72,32 @@
         <avalonDock:DockingManager x:Name="dockingManager" Grid.Row="1">
             <avalonDock:LayoutRoot>
                 
-                <avalonDock:LayoutPanel Orientation="Horizontal">
+                <avalonDock:LayoutPanel Orientation="Horizontal" x:Name="panel">
                     
                     
-                    <avalonDock:LayoutAnchorablePane DockWidth="150">
-                        <avalonDock:LayoutAnchorable Title="最近访问标签" CanClose="False" CanHide="False">
+                    <avalonDock:LayoutAnchorablePane DockWidth="150" x:Name="apane1">
+                        <avalonDock:LayoutAnchorable Title="最近访问标签" CanClose="False" CanHide="False" x:Name="ID_TagCanvas">
                             <tagGraph:TagGraphCanvas x:Name="tagCanvas"  Grid.Column="0" ></tagGraph:TagGraphCanvas>
                         </avalonDock:LayoutAnchorable>
                     </avalonDock:LayoutAnchorablePane>
-                    
-                    <avalonDock:LayoutAnchorablePane DockWidth="150">
-                        <avalonDock:LayoutAnchorable Title="查找结果" CanClose="False" CanHide="False">
-                            <uriPanel:SearchResultListBox x:Name="uriList" Grid.Column="1"></uriPanel:SearchResultListBox>
-                        </avalonDock:LayoutAnchorable>
-                    </avalonDock:LayoutAnchorablePane>
-
-                    <avalonDock:LayoutAnchorablePane DockWidth="150">
-                        <avalonDock:LayoutAnchorable Title="文档编辑" CanClose="False" CanHide="False">
-                            <richtxt:RichTxtBox x:Name="richTxt"></richtxt:RichTxtBox>
-                        </avalonDock:LayoutAnchorable>
-                    </avalonDock:LayoutAnchorablePane>
 
 
+                    <avalonDock:LayoutAnchorablePaneGroup DockWidth="150" Orientation="Vertical" x:Name="apaneGroup">
+
+
+                        <avalonDock:LayoutAnchorablePane DockWidth="150" x:Name="apane2">
+                            <avalonDock:LayoutAnchorable Title="查找结果" CanClose="False" CanHide="False" x:Name="ID_SearchResult">
+                                <uriPanel:SearchResultListBox x:Name="uriList" Grid.Column="1"></uriPanel:SearchResultListBox>
+                            </avalonDock:LayoutAnchorable>
+                        </avalonDock:LayoutAnchorablePane>
+
+                        <avalonDock:LayoutAnchorablePane DockWidth="50" x:Name="apane3">
+                            <avalonDock:LayoutAnchorable Title="文档编辑" CanClose="False" CanHide="False" x:Name="ID_EditDocument">
+                                <richtxt:RichTxtBox x:Name="richTxt"></richtxt:RichTxtBox>
+                            </avalonDock:LayoutAnchorable>
+                        </avalonDock:LayoutAnchorablePane>
+
+                    </avalonDock:LayoutAnchorablePaneGroup>
                 </avalonDock:LayoutPanel>
 
 
