@@ -152,5 +152,23 @@ namespace TagExplorer.UriInfList
 
             FileShell.StartWithFile(CurrentUri);
         }
+
+        private void miCopyPath_Click(object sender, RoutedEventArgs e)
+        {
+            UpdateCurrentUriByContextMenu();
+            ClipBoardSafe.SetText(CurrentUri);
+        }
+
+        private void miCopyName_Click(object sender, RoutedEventArgs e)
+        {
+            UpdateCurrentUriByContextMenu();
+            string name = "";
+            if(FileShell.IsValidFS(CurrentUri))
+            {
+                name = System.IO.Path.GetFileName(CurrentUri);
+            }
+            
+            ClipBoardSafe.SetText(name);
+        }
     }
 }

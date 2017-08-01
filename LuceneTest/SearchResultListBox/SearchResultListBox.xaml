@@ -30,6 +30,10 @@
                     <MenuItem Name="miOpen" Header="打开文件" Click="miOpen_Click"/>
                     <MenuItem Name="miOpenWith" Header="打开方式..." Click="miOpenWith_Click"/>
                     <MenuItem Name="miOpenPath" Header="打开所在路径" Click="miOpenPath_Click" />
+                    <Separator></Separator>
+                    <MenuItem Name="miCopyPath" Header="复制文件路径" Click="miCopyPath_Click"/>
+                    <MenuItem Name="miCopyName" Header="复制文件名" Click="miCopyName_Click"/>
+                    <Separator></Separator>
                     <MenuItem Name="miCut" Header="剪切文件" Click="miCut_Click"/>
                     <MenuItem Name="miCopy" Header="复制文件" Click="miCopy_Click"/>
                     

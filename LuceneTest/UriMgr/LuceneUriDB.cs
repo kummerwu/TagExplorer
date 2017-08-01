@@ -64,12 +64,20 @@ namespace TagExplorer.UriMgr
             DBChanged();
             //Dbg();
         }
-        public int AddUri(string Uri, List<string> tags)
+        public int AddUri(IEnumerable< string> Uris, List<string> tags)
         {
             lock (this)
             {
-                Document doc = AddUriDocument(Uri, tags);
-                Commit(Uri, doc);
+                foreach (string Uri in Uris)
+                {
+                    Document doc = AddUriDocument(Uri, tags);
+                    if (doc != null)
+                    {
+                        writer.UpdateDocument(new Term(F_KEY, Uri.ToLower()), doc); //没有指定分析器，导致大小写有bug，相同的Uri会存在两个
+                    }
+                }
+                //Commit(Uri, doc);
+                Commit();
                 return 0;
             }
         }
@@ -91,9 +99,12 @@ namespace TagExplorer.UriMgr
                 return 0;
             }
         }
-        public int DelUri(string Uri, bool Delete)
+        public int DelUri(IEnumerable<string> Uris, bool Delete)
         {
-            writer.DeleteDocuments(new Term(F_KEY, Uri.ToLower()));
+            foreach (string Uri in Uris)
+            {
+                writer.DeleteDocuments(new Term(F_KEY, Uri.ToLower()));
+            }
             Commit();
             if (Delete)
             {

@@ -96,7 +96,7 @@ namespace TagExplorer
             string tag = PathHelper.GetTagByPath(uri);
             if (tag != null)
             {
-                UriDB.AddUri(uri, new List<string>() { tag });
+                UriDB.AddUri(new List<string>() { uri }, new List<string>() { tag });
             }
             else
             { 
@@ -356,10 +356,11 @@ namespace TagExplorer
                         MoveUris(args);
                         break;
                     case ClipboardConst.KUMMERWU_URI_COPY:
-                        foreach (string uri in args)
-                        {
-                            UriDB.AddUri(uri, new List<string>() { currentTag });
-                        }
+                        UriDB.AddUri(args, new List<string>() { currentTag });
+                        //foreach (string uri in args)
+                        //{
+                        //    UriDB.AddUri(uri, new List<string>() { currentTag });
+                        //}
                         break;
                     default:PasteFiles();break;
                 }
@@ -376,14 +377,16 @@ namespace TagExplorer
             string[] src = args;
             string[] dst = PathHelper.MapFilesToTagDir(src, currentTag);
             FileShell.MoveFiles(src, dst);
-            foreach (string uri in src)
-            {
-                UriDB.DelUri(uri, false); 
-            }
-            foreach(string uri in dst)
-            {
-                UriDB.AddUri(uri, new List<string>() { currentTag });
-            }
+            UriDB.DelUri(src, false);
+            //foreach (string uri in src)
+            //{
+            //    UriDB.DelUri(uri, false); 
+            //}
+            UriDB.AddUri(dst, new List<string>() { currentTag });
+            //foreach(string uri in dst)
+            //{
+            //    UriDB.AddUri(uri, new List<string>() { currentTag });
+            //}
         }
         public void PasteFiles() { PasteFiles(true); }
         public void PasteFiles(bool NeedCopy)
@@ -406,32 +409,70 @@ namespace TagExplorer
             if (UriDB == null || currentTag==null || currentTag.Length==0) return;
 
             List<string> tags = new List<string>() { currentTag };
-            foreach(string f in files)
+            IEnumerable<string> dst = null;
+            if(NeedCopy)
             {
-                string dstFile = f;
-                if (NeedCopy )
-                {
-                    dstFile = CopyToHouse(f, currentTag);
-                }
-                
-                if (dstFile != null)
-                {
-                    UriDB.AddUri(dstFile, tags);
-                }
+                dst = CopyToHouse(files.ToArray(), currentTag);
             }
+            else
+            {
+                dst = files;
+            }
+
+            //TODO,这个动作时间很长，整个过程中界面没有响应。
+            UriDB.AddUri(dst, tags);
+            //foreach(string f in dst)
+            //{
+            //    string dstFile = f;
+            //    if (dstFile != null)
+            //    {
+            //        UriDB.AddUri(dstFile, tags);
+            //    }
+            //}
         }
         
-        private string  CopyToHouse(string f, string tag)
+        private string[]  CopyToHouse(string[] list, string tag)
         {
-            if (FileShell.IsValidHttps(f)) return f;
-            if(!FileShell.IsValidFS(f))
+            List<string> ret = new List<string>();
+            List<string> scrList = new List<string>();
+            List<string> dstList = new List<string>();
+            foreach(string f in list)
             {
-                Logger.E("Copy To House: File not Exist " + f);
-                return f;
+                if (FileShell.IsValidHttps(f))
+                {
+                    ret.Add(f);
+                }
+                else if (!FileShell.IsValidFS(f))
+                {
+                    Logger.E("Copy To House: File not Exist " + f);
+                    ret.Add(f);
+                }
+                else
+                {
+                    System.Diagnostics.Debug.Assert(FileShell.IsValidFS(f));
+                    FileInfo fi = new FileInfo(f);
+                    string dstDir = PathHelper.GetDirByTag(tag);
+                    string dstFile = System.IO.Path.Combine(dstDir, fi.Name);
+                    if(dstFile==f)
+                    {
+                        ret.Add(f);
+                    }
+                    else
+                    {
+                        ret.Add(dstFile);
+                        if (!System.IO.File.Exists(dstFile) && !System.IO.Directory.Exists(dstFile))
+                        {
+                            scrList.Add(f);
+                            dstList.Add(dstFile);
+                        }
+                    }
+                }
             }
-            FileInfo fi = new FileInfo(f);
-            string dstDir = PathHelper.GetDirByTag(tag);
-            string dstFile = System.IO.Path.Combine(dstDir, fi.Name);
+
+            FileShell.CopyFile(scrList.ToArray(), dstList.ToArray());
+            return ret.ToArray();
+            
+            /*
             if(dstFile==f)
             {
                 return f;
@@ -443,7 +484,7 @@ namespace TagExplorer
                     return dstFile;
                 }
             }
-            return null;
+            return null;*/
         }
         private void miCopyTagName_Click(object sender, RoutedEventArgs e)
         {

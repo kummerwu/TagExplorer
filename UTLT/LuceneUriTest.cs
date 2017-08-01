@@ -28,14 +28,14 @@ namespace UTLT
             //if (System.IO.Directory.Exists(Cfg.Ins.TagDB))
             //    System.IO.Directory.Delete(Cfg.Ins.TagDB,true);
         }
-
+        public static List<string> L(string s) { return new List<string>() { s }; }
         //两个URI之间有匹配关系，一个是另外一个的子串
         //先增加父串，再增加子串
         [TestMethod]
         public void TestUriMgr_PrefixSame1()
         {
-            db.AddUri(@"c:\aaaa", new List<string>() { "tag1", "tag2" });
-            db.AddUri(@"c:\a",new List<string>() { "tag1", "tag2" });
+            db.AddUri(new List<string>() { @"c:\aaaa" }, new List<string>() { "tag1", "tag2" });
+            db.AddUri(L(@"c:\a"),new List<string>() { "tag1", "tag2" });
             Assert.AreEqual(2, db.Query("a").Count);
         }
         //两个URI之间有匹配关系，一个是另外一个的子串
@@ -43,8 +43,8 @@ namespace UTLT
         [TestMethod]
         public void TestUriMgr_PrefixSame2()
         {
-            db.AddUri(@"c:\a", new List<string>() { "tag1", "tag2" });
-            db.AddUri(@"c:\aaaa", new List<string>() { "tag1", "tag2" });
+            db.AddUri(L(@"c:\a"), new List<string>() { "tag1", "tag2" });
+            db.AddUri(L(@"c:\aaaa"), new List<string>() { "tag1", "tag2" });
             
             Assert.AreEqual(2, db.Query("a").Count);
         }
@@ -69,11 +69,11 @@ namespace UTLT
         [TestMethod]
         public void TestUriMgr_Base2()
         {
-            db.AddUri(@"c:\a.txt",new List<string>() { "tag1","tag2"});
+            db.AddUri(L(@"c:\a.txt"),new List<string>() { "tag1","tag2"});
             AssertIn(@"c:\a.txt", "tag1", "tag2", "TAG1", "TAG2","a.txt","tag");
             AssertNotIn("tag3");
 
-            db.AddUri(@"c:\a.txt", new List<string>() { "tag1", "tag2" });
+            db.AddUri(L(@"c:\a.txt"), new List<string>() { "tag1", "tag2" });
             AssertIn(@"c:\a.txt", "tag1", "tag2", "TAG1", "TAG2", "a.txt", "tag");
             AssertNotIn("tag3");
 
@@ -82,14 +82,14 @@ namespace UTLT
         [TestMethod]
         public void TestUriMgr_Base3()
         {
-            db.AddUri(@"c:\a.txt", new List<string>() { "tag1"});
+            db.AddUri(new List<string>() { @"c:\a.txt" }, new List<string>() { "tag1"});
             AssertIn(@"c:\a.txt", "tag1");
 
         }
         [TestMethod]
         public void TestUriMgr_Base4()//URI中有大小写的情况
         {
-            db.AddUri(@"c:\a.Txt", new List<string>() { "tag1" });
+            db.AddUri(new List<string>() { @"c:\a.Txt" }, new List<string>() { "tag1" });
             AssertIn(@"c:\a.txt", "tag1");
 
         }
@@ -97,15 +97,15 @@ namespace UTLT
         [TestMethod]
         public void TestUriMgr_LongURI1()//一个失败的案例，Uri字符串超长
         {
-            db.AddUri(@"D:\00_工作备份\Work\ROSng软件架构及应用V1.1.pptx", new List<string>() { "parent1" });
+            db.AddUri(new List<string>() { @"D:\00_工作备份\Work\ROSng软件架构及应用V1.1.pptx" }, new List<string>() { "parent1" });
             AssertIn(@"D:\00_工作备份\Work\ROSng软件架构及应用V1.1.pptx", "1");
 
         }
         [TestMethod]
         public void TestUriMgr_LongURI2()//一个失败的案例,Uri字符串超长
         {
-            db.AddUri(@"D:\00_工作备份\Work\ROSng软件架构及应用V1.1.pptx", new List<string>() { "parent1" });
-            db.AddUri(@"D:\00_工作备份\Work\ROSng软件架构及应用V1.1.pptx", new List<string>() { "parent1" });
+            db.AddUri(new List<string>() { @"D:\00_工作备份\Work\ROSng软件架构及应用V1.1.pptx" }, new List<string>() { "parent1" });
+            db.AddUri(new List<string>() { @"D:\00_工作备份\Work\ROSng软件架构及应用V1.1.pptx" }, new List<string>() { "parent1" });
             AssertIn(@"D:\00_工作备份\Work\ROSng软件架构及应用V1.1.pptx", "1");
 
         }
@@ -113,20 +113,20 @@ namespace UTLT
         [TestMethod]
         public void TestUriMgr_Del()//测试删除文件，好像案例3测试不通过的原因就是删除失败了。
         {
-            db.AddUri(@"D:\00_工作备份\Work\ROSng软件架构及应用V1.1.pptx", new List<string>() { "parent1" });
+            db.AddUri(new List<string>() { @"D:\00_工作备份\Work\ROSng软件架构及应用V1.1.pptx" }, new List<string>() { "parent1" });
             AssertIn(@"D:\00_工作备份\Work\ROSng软件架构及应用V1.1.pptx", "parent1");
-            db.DelUri(@"D:\00_工作备份\Work\ROSng软件架构及应用V1.1.pptx", false);
+            db.DelUri(new List<string>() { @"D:\00_工作备份\Work\ROSng软件架构及应用V1.1.pptx" }, false);
             AssertNotIn(@"D:\00_工作备份\Work\ROSng软件架构及应用V1.1.pptx", "parent1");
         }
 
         [TestMethod]
         public void TestUriMgr_AddSameUri()//发现同一个文件连续添加两次会有两个文档在db中
         {
-            db.AddUri(@"D:\00_工作备份\Work\ROSng软件架构及应用V1.1.pptx", new List<string>() { "parent1" });
+            db.AddUri(new List<string>() { @"D:\00_工作备份\Work\ROSng软件架构及应用V1.1.pptx" }, new List<string>() { "parent1" });
             AssertIn(@"D:\00_工作备份\Work\ROSng软件架构及应用V1.1.pptx", "parent1");
-            db.AddUri(@"D:\00_工作备份\Work\ROSng软件架构及应用V1.1.pptx", new List<string>() { "parent1" });
+            db.AddUri(new List<string>() { @"D:\00_工作备份\Work\ROSng软件架构及应用V1.1.pptx" }, new List<string>() { "parent1" });
             AssertIn(@"D:\00_工作备份\Work\ROSng软件架构及应用V1.1.pptx", "parent1");
-            db.AddUri(@"D:\00_工作备份\Work\ROSng软件架构及应用V1.1.pptx", new List<string>() { "parent1" });
+            db.AddUri(new List<string>() { @"D:\00_工作备份\Work\ROSng软件架构及应用V1.1.pptx" }, new List<string>() { "parent1" });
             AssertIn(@"D:\00_工作备份\Work\ROSng软件架构及应用V1.1.pptx", "parent1");
         }
 
@@ -137,9 +137,9 @@ namespace UTLT
             
             string dir = @"D:\00_工作备份\Work\ROSng软件架构及应用V1.1.pptx\Doc\child4";
             string tag = "child4";
-            db.AddUri(dir, new List<string>() { tag });
+            db.AddUri(new List<string>() { dir }, new List<string>() { tag });
             AssertIn(dir, tag);
-            db.AddUri(dir, new List<string>() { tag });
+            db.AddUri(new List<string>() { dir }, new List<string>() { tag });
             AssertIn(dir, tag);
         }
 

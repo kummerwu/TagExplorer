@@ -48,13 +48,13 @@ namespace TagExplorer.TagsBar
             
             parent.Children.Add(t);
         }
-       
+
 
         private void autoTextBox_KeyUp(object sender, KeyEventArgs e)
         {
-            if(e.Key == Key.Enter && currentUri!=null && uriDB!=null && tagDB!=null)
+            if (e.Key == Key.Enter && currentUri != null && uriDB != null && tagDB != null)
             {
-                uriDB.AddUri(currentUri, new List<string>() { autoTextBox.Text.Trim() });
+                uriDB.AddUri(new List<string>(){ currentUri}, new List<string>() { autoTextBox.Text.Trim() });
                 ChangeCurrentUri(currentUri, uriDB, tagDB);
                 autoTextBox.Text = "";
             }

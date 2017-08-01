@@ -6,9 +6,9 @@ namespace TagExplorer.UriMgr
     public interface IUriDB:IDisposable
     {
         int AddUri(string Uri);
-        int AddUri(string Uri, List<string> tags);
+        int AddUri(IEnumerable<string> Uris, List<string> tags);
         int AddUri(string Uri, List<string> tags,string Title);
-        int DelUri(string Uri,bool Delete);
+        int DelUri(IEnumerable<string> Uri,bool Delete);
         int DelUri(string Uri, List<string> tags);
         int UpdateUri(string Uri, string Title);
         List<string> Query(string query);
