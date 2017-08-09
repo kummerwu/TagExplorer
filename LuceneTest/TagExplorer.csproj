@@ -221,6 +221,7 @@
     </Compile>
     <Compile Include="UriMgr\IDisposableFactory.cs" />
     <Compile Include="Utils\ClipBoardSafe.cs" />
+    <Compile Include="Utils\FileWatcherSafe.cs" />
     <Compile Include="Utils\NtfsFileID.cs" />
     <Compile Include="UriMgr\UriQueryAnalyser.cs" />
     <Compile Include="Utils\Cfg.cs" />

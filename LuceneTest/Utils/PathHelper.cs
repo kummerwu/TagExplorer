@@ -169,6 +169,21 @@ namespace TagExplorer.Utils
         public static bool NeedSkipThisUri(string uri)
         {
             string name = Path.GetFileName(uri);
+            bool canAccess = CheckAccess(uri);
+            if (Regex.IsMatch(name, @"(_files$)|(^~)|(.tmp$)", RegexOptions.IgnoreCase))
+            {
+                Logger.I("name match reg: {0}", uri);
+            }
+            if (!canAccess)
+            {
+                Logger.I("file exist,but can't access!：{0}", uri);
+            }
+            return Regex.IsMatch(name, @"(_files$)|(^~)|(.tmp$)", RegexOptions.IgnoreCase) ||
+                !canAccess;
+        }
+
+        public static bool CheckAccess(string uri)
+        {
             bool canAccess = true;
             if (File.Exists(uri)) //如果是文件的话，检测一下该文件是否被锁住？
             {
@@ -184,21 +199,13 @@ namespace TagExplorer.Utils
                     catch
                     {
                         canAccess = false;
-                        Logger.I("file exist,but can't access! TRY AGAIN！{0}",uri);
+                        Logger.I("file exist,but can't access! TRY AGAIN！{0}", uri);
                         System.Threading.Thread.Sleep(20);
                     }
                 }
             }
-            if(Regex.IsMatch(name, @"(_files$)|(^~)|(.tmp$)", RegexOptions.IgnoreCase))
-            {
-                Logger.I("name match reg: {0}", uri);
-            }
-            if(!canAccess)
-            {
-                Logger.I("file exist,but can't access!：{0}",uri);
-            }
-            return Regex.IsMatch(name, @"(_files$)|(^~)|(.tmp$)",RegexOptions.IgnoreCase) || 
-                !canAccess;
+
+            return canAccess;
         }
 
         #endregion

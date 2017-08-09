@@ -22,20 +22,21 @@ namespace TagExplorer
     /// </summary>
     public partial class TagGraphCanvas : UserControl
     {
-        
 
 
-        FileSystemWatcher fileWather = null;
+        FileWatcherSafe fileWather;
+        //FileSystemWatcher fileWather = null;
         public TagGraphCanvas()
         {
             InitializeComponent();
-            fileWather = new FileSystemWatcher(PathHelper.DocDir);
-            fileWather.IncludeSubdirectories = true;
-            fileWather.Path = PathHelper.DocDir;
-            fileWather.Renamed += FileWather_Renamed;
-            fileWather.Created += FileWather_Created;
-            fileWather.Deleted += FileWather_Deleted;
-            fileWather.EnableRaisingEvents = true;
+            fileWather = new FileWatcherSafe(FileWather_Changed);
+            //fileWather = new FileSystemWatcher(PathHelper.DocDir);
+            //fileWather.IncludeSubdirectories = true;
+            //fileWather.Path = PathHelper.DocDir;
+            //fileWather.Renamed += FileWather_Renamed;
+            //fileWather.Created += FileWather_Created;
+            //fileWather.Deleted += FileWather_Deleted;
+            //fileWather.EnableRaisingEvents = true;
 
             //CurrentTagInf.SetBinding(TextBlock.TextProperty, new Binding("Tips") { Source = TipsCenter.Ins });
         }
@@ -47,6 +48,7 @@ namespace TagExplorer
         //观察文件变化==删除处理(TODO 真正的删除）
         private void FileWather_Deleted(object sender, FileSystemEventArgs e)
         {
+            
             Logger.I("file watch delete : {0}", e.FullPath);
             int tryTimes = 0;
             while(File.Exists(e.FullPath) || Directory.Exists(e.FullPath))
@@ -67,8 +69,18 @@ namespace TagExplorer
             Logger.I("file watch create : {0}", e.FullPath);
             AddFileInDoc_BackThread(e.FullPath);
         }
+        private bool FileWather_Changed( FileSystemEventArgs e)
+        {
+            switch(e.ChangeType)
+            {
+                case WatcherChangeTypes.Created: FileWather_Created(null, e);break;
+                case WatcherChangeTypes.Deleted: FileWather_Deleted(null, e); break;
+                case WatcherChangeTypes.Renamed: FileWather_Created(null, e); break;
+            }
 
-       
+            return true;
+        }
+
         //观察文件变化==重命名处理   TODO：重命名后，实际上需要删除原来老的doc，暂时没有处理
         private void FileWather_Renamed(object sender, RenamedEventArgs e)
         {

@@ -221,7 +221,7 @@ namespace TagExplorer
             //    @"D:\00TagExplorerBase\DocumentBase\Doc\分布式架构\Raft 为什么是更易理解的分布式一致性算法 - mindwind - 博客园.mht");
             if (MessageBox.Show("导出所有Uri信息？","",MessageBoxButton.OKCancel) == MessageBoxResult.OK)
             {
-                Dead("导出完成！");
+                //Dead("导出完成！");
                 //throw new Exception("mock“）");
                 (uriDB as LuceneUriDB)?.Dbg();
                 MessageBox.Show("导出完成！");

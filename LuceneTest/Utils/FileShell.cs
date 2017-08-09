@@ -130,7 +130,10 @@ namespace TagExplorer.Utils
             {
                 //之所以搞下面这么复杂的流程，是因为zte的一个文档安全软件导致Process.Start(file);报错
                 Logger.D("StartFile {0} is valid", file);
-                //Process.Start(file);
+                Process p = Process.Start(file);
+                //MessageBox.Show(p?.MainModule.FileName);
+                return;
+
                 string ext = Path.GetExtension(file);
                 if(ext==null && ext.Length==0)
                 {
