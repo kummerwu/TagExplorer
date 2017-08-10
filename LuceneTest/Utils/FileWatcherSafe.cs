@@ -16,8 +16,9 @@ namespace TagExplorer.Utils
         System.IO.FileSystemWatcher fsw = null;
         System.Threading.Timer m_timer = null;
         List<FileSystemEventArgs> files = new List<FileSystemEventArgs>();
+        List<FileSystemEventArgs> files_retry = new List<FileSystemEventArgs>();
         FileChangedHandler fswHandler = null;
-
+        int retryTimes = 0;
         public FileWatcherSafe(FileChangedHandler watchHandler)
         {
 
@@ -68,7 +69,10 @@ namespace TagExplorer.Utils
         public void OnFileChanged(object sender, FileSystemEventArgs e)
         {
             Logger.I("OnFileChanged {0} - {1}",e.FullPath,e.ChangeType);
-            Push(e);
+            if (!PathHelper.NeedSkipByUri(e.FullPath))
+            {
+                Push(e);
+            }
             //lock (this)
             //{
             //    Push(e);
@@ -125,6 +129,42 @@ namespace TagExplorer.Utils
                 {
                     Logger.I("push-Add {0} - {1}", e.FullPath, e.ChangeType);
                     files.Add(e);
+                    retryTimes = 0;
+                }
+            }
+        }
+        private void PushRetry()
+        {
+            lock (this)
+            {
+                if (files.Count == 0 && files_retry.Count>0)
+                {
+                    foreach(FileSystemEventArgs e in files_retry)
+                    {
+                        if (retryTimes > 10)
+                        {
+                            if (//文件已经删除，却还一直存在
+                                ( (e.ChangeType & WatcherChangeTypes.Deleted)!=0 && 
+                                   File.Exists(e.FullPath) 
+                                ) 
+                                        
+                                        || 
+
+                                  //或者文件被创建出来了，但一直不存在
+                                 ( (e.ChangeType & WatcherChangeTypes.Created|WatcherChangeTypes.Renamed | WatcherChangeTypes.Changed )!=0 && 
+                                    !File.Exists(e.FullPath) 
+                                 )
+                                )
+                            {
+                                Logger.E("the File Delete,but Exist（Create Not Exist）,Try 10 Times,Drop It Now! {0} - {1}", e.FullPath,e.ChangeType);
+                                continue;
+                            }
+
+                        }
+                        files.Add(e);
+                    }
+                    files_retry.Clear();
+                    retryTimes++;
                 }
             }
         }
@@ -148,15 +188,16 @@ namespace TagExplorer.Utils
                 if (!ret) //处理失败(或暂时还不能处理)，将其移到最后等待下次处理
                 {
                     Logger.E("处理文件失败，将其放到队列尾，等待下次处理 - {0}：{1}", f.FullPath,f.ChangeType);
-                    Push(f);
-                    return;
+                    files_retry.Add(f);
                 }
 
                 if ((DateTime.Now - start).TotalMilliseconds >500)
                 {
-                    return;
+                    break;
                 }
             }
+
+            PushRetry();
             
         }
 

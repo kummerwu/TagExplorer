@@ -30,7 +30,7 @@ namespace UTLT
         }
         private static void AssertFilter(bool r,string s)
         {
-            Assert.AreEqual(r, PathHelper.NeedSkipThisUri(s));
+            Assert.AreEqual(r, PathHelper.NeedSkip(s));
         }
         [TestMethod]
         public void TestUtil_FileWatcherFilter()

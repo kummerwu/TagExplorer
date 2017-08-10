@@ -166,22 +166,27 @@ namespace TagExplorer.Utils
             return dir;
         }
 
-        public static bool NeedSkipThisUri(string uri)
+        public static bool NeedSkip(string uri)
         {
             string name = Path.GetFileName(uri);
             bool canAccess = CheckAccess(uri);
-            if (Regex.IsMatch(name, @"(_files$)|(^~)|(.tmp$)", RegexOptions.IgnoreCase))
-            {
-                Logger.I("name match reg: {0}", uri);
-            }
+            
             if (!canAccess)
             {
                 Logger.I("file exist,but can't access!：{0}", uri);
             }
-            return Regex.IsMatch(name, @"(_files$)|(^~)|(.tmp$)", RegexOptions.IgnoreCase) ||
-                !canAccess;
+            return NeedSkipByUri(uri) || !canAccess;
         }
-
+        public static bool NeedSkipByUri(string uri)
+        {
+            string name = Path.GetFileName(uri);
+            bool ret = Regex.IsMatch(name, @"(_files$)|(^~)|(.tmp$)", RegexOptions.IgnoreCase);
+            if(ret)
+            {
+                Logger.I("name match reg: {0}", uri);
+            }
+            return ret;
+        }
         public static bool CheckAccess(string uri)
         {
             bool canAccess = true;

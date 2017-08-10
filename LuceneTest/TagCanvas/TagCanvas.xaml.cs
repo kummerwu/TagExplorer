@@ -91,7 +91,7 @@ namespace TagExplorer
         //由于文件变更通知是在一个后台线程中进行的，所以需要通过Invoke机制调用UI主线程中的函数
         private void AddFileInDoc_BackThread(string uri)
         {
-            if (!PathHelper.NeedSkipThisUri(uri))//过滤一些不需要观察的文件
+            if (!PathHelper.NeedSkip(uri))//过滤一些不需要观察的文件
             {
                 this.Dispatcher.Invoke(new Action<string>(AddFileInDoc), uri);
             }

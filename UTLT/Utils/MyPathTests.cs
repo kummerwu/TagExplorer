@@ -150,9 +150,9 @@ namespace AnyTags.Net.Tests
             string file = Path.Combine(dir, "1.txt");
             FileStream fs = new FileStream(file, FileMode.CreateNew);
             fs.WriteByte(1);
-            Assert.IsTrue( PathHelper.NeedSkipThisUri(file));
+            Assert.IsTrue( PathHelper.NeedSkip(file));
             fs.Close();
-            Assert.IsFalse(PathHelper.NeedSkipThisUri(file));
+            Assert.IsFalse(PathHelper.NeedSkip(file));
 
         }
 
