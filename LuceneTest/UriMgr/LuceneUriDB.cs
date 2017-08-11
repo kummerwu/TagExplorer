@@ -208,7 +208,7 @@ namespace TagExplorer.UriMgr
         #region 私有方法
         const string F_URI = "furi";
         const string F_KEY = "key";
-        const string F_ID = "guid";
+        //const string F_ID = "guid";
         const string F_URI_TITLE = "ftitle";
         const string F_URI_TAGS = "ftags";
         const string F_CREATE_TIME = "fctime";
@@ -256,19 +256,19 @@ namespace TagExplorer.UriMgr
             }
             return doc;
         }
-        private Document GetDoc(Guid id)
-        {
-            Term term = new Term(F_ID, id.ToString()); //kummer:能用分词器吗，这儿暂时没有找到方法，只好手工将uri转换为小写
-            Query query = new TermQuery(term);
-            ScoreDoc[] docs = search.Search(query, 1).ScoreDocs;
+        //private Document GetDoc(Guid id)
+        //{
+        //    Term term = new Term(F_ID, id.ToString()); //kummer:能用分词器吗，这儿暂时没有找到方法，只好手工将uri转换为小写
+        //    Query query = new TermQuery(term);
+        //    ScoreDoc[] docs = search.Search(query, 1).ScoreDocs;
             
-            Document doc = null;
-            if (docs.Length == 1)
-            {
-                doc = search.Doc(docs[0].Doc);
-            }
-            return doc;
-        }
+        //    Document doc = null;
+        //    if (docs.Length == 1)
+        //    {
+        //        doc = search.Doc(docs[0].Doc);
+        //    }
+        //    return doc;
+        //}
         private void DBChanged()
         {
             TipsCenter.Ins.UriDBInf = "当前文件数据库中存在 ： " + reader.MaxDoc + " 已删除：" + reader.NumDeletedDocs;
@@ -281,35 +281,30 @@ namespace TagExplorer.UriMgr
             dbChangedHandler?.Invoke();
             DBChanged();
         }
-        private Document GetDocEx(string Uri,out bool needUpdate,out Guid id)
+        private Document GetDocEx(string Uri,out bool needUpdate)
         {
             Document doc = null;
-            id = NtfsFileID.GetID(Uri);
-            doc = GetDoc(id);
-            if(doc==null)
-            {
-                doc = GetDoc(Uri);
-            }
+            //id = NtfsFileID.GetID(Uri);
+            doc = GetDoc(Uri);
+            
             if(doc==null)
             {
                 needUpdate = true;
             }
             else
             {
-                Field fid = doc.GetField(F_ID);
+                //Field fid = doc.GetField(F_ID);
                 Field fkey = doc.GetField(F_KEY);
                 System.Diagnostics.Debug.Assert(fkey != null);
-                needUpdate = ((fid == null || fid.StringValue != id.ToString())
-                    || (fkey == null || fkey.StringValue != Uri.ToLower())
-                    );
+                needUpdate = (fkey == null || fkey.StringValue != Uri.ToLower());
             }
             return doc;
         }
         private Document AddUriDocument(string Uri)
         {
-            Guid id;
+            //Guid id;
             bool needUpdate;
-            Document doc = GetDocEx(Uri, out needUpdate, out id);
+            Document doc = GetDocEx(Uri, out needUpdate);
             if (!needUpdate) return doc;
            
             //doc确实不存在，说明是一个新的文件
@@ -321,15 +316,15 @@ namespace TagExplorer.UriMgr
             else //doc已经存在，需要更新
             {
                 writer.DeleteDocuments(new Term(F_KEY, Uri.ToLower()));
-                writer.DeleteDocuments(new Term(F_ID, id.ToString()));
-                doc.RemoveField(F_ID);
+                //writer.DeleteDocuments(new Term(F_ID, id.ToString()));
+                //doc.RemoveField(F_ID);
                 doc.RemoveField(F_KEY);
                 doc.RemoveField(F_URI);
                 
             }
             doc.Add(new Field(F_URI, Uri, Field.Store.YES, Field.Index.ANALYZED));
             doc.Add(new Field(F_KEY, Uri.ToLower(), Field.Store.YES, Field.Index.NOT_ANALYZED));
-            doc.Add(new Field(F_ID, id.ToString(), Field.Store.YES, Field.Index.NOT_ANALYZED));
+            //doc.Add(new Field(F_ID, id.ToString(), Field.Store.YES, Field.Index.NOT_ANALYZED));
             writer.AddDocument(doc);
             return doc;
         }
@@ -392,9 +387,8 @@ namespace TagExplorer.UriMgr
                 if(doc!=null )
                 {
                     
-                    w.Write(string.Format("{0},{1},{2},{3},{4}",
+                    w.Write(string.Format("{0},{1},{2},{3}",
                                             i,  
-                                            doc.Get(F_ID), 
                                             doc.Get(F_KEY), 
                                             doc.Get(F_URI),
                                             reader.IsDeleted(i)?"DEL":"OK"
