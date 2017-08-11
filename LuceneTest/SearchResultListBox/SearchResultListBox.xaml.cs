@@ -28,6 +28,7 @@ namespace TagExplorer.UriInfList
             dataList = SearchResultItem.GetFilesByTag(query, uriDB);
             TipsCenter.Ins.ListInf = "文件列表统计:" + query + " Found Files:" + dataList.Count;
             UpdateCurrentList();
+            AdjustGridColumnWidth();
         }
 
         private void UpdateCurrentList()
@@ -41,7 +42,7 @@ namespace TagExplorer.UriInfList
 
             }
             UpdateCurrentUriByContextMenu();
-            AdjustGridColumnWidth();
+            
         }
 
         private void AdjustGridColumnWidth()

@@ -62,6 +62,10 @@ namespace TagExplorer.UriInfList
         {
             get
             {
+                if(name.Length>64)
+                {
+                    name = name.Substring(0, 64)+"...";
+                }
                 return name;
             }
         }
