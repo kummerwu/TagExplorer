@@ -5,6 +5,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using TagExplorer.Utils;
+using System.Collections.Generic;
 
 namespace TagExplorer.UriInfList
 {
@@ -19,14 +20,21 @@ namespace TagExplorer.UriInfList
         {
             InitializeComponent();
         }
-
+        List<SearchResultItem> dataList = null;
         public void ShowQueryResult(string query, IUriDB uriDB, ITagDB tagsDB)
         {
             this.uriDB = uriDB;
             this.tagsDB = tagsDB;
-            var datasource = SearchResultItem.GetFilesByTag(query, uriDB);
-            lst.ItemsSource = datasource;
-            TipsCenter.Ins.ListInf = "文件列表统计:" + query + " Found Files:" + datasource.Count;
+            dataList = SearchResultItem.GetFilesByTag(query, uriDB);
+            TipsCenter.Ins.ListInf = "文件列表统计:" + query + " Found Files:" + dataList.Count;
+            UpdateCurrentList();
+        }
+
+        private void UpdateCurrentList()
+        {
+            lst.ItemsSource = null;
+            lst.ItemsSource = dataList;
+            
             if (lst.Items.Count > 0)
             {
                 lst.SelectedIndex = 0;
@@ -169,6 +177,36 @@ namespace TagExplorer.UriInfList
             }
             
             ClipBoardSafe.SetText(name);
+        }
+        private int SortType = 1;
+        private void lst_Click(object sender, RoutedEventArgs e)
+        {
+            var header = e.OriginalSource as GridViewColumnHeader;
+            if (header == null) return;
+            GridViewColumn col = header.Column;
+            if(col!=null)
+            {
+                
+                switch(col.Header.ToString())
+                {
+                    case "名称":
+                        dataList.Sort(delegate (SearchResultItem x, SearchResultItem y) { return SortType*x.Name.CompareTo(y.Name); });
+                        break;
+                    case "路径":
+                        dataList.Sort(delegate (SearchResultItem x, SearchResultItem y) { return SortType * x.Dir.CompareTo(y.Dir); });
+                        break;
+                    case "创建时间":
+                        dataList.Sort(delegate (SearchResultItem x, SearchResultItem y) { return SortType * x.CreateTime.CompareTo(y.CreateTime); });
+                        break;
+                    case "修改时间":
+                        dataList.Sort(delegate (SearchResultItem x, SearchResultItem y) { return SortType * x.AccessTime.CompareTo(y.AccessTime); });
+                        break;
+                }
+                SortType *= -1;
+                UpdateCurrentList();
+            }
+
+
         }
     }
 }

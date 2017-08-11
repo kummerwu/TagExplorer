@@ -24,7 +24,8 @@
             <RowDefinition Height="50" />
         </Grid.RowDefinitions>
 
-        <ListView Grid.Row="0" Name="lst" ItemContainerStyle="{StaticResource itemstyle}"  Background="White" SelectionChanged="lst_SelectionChanged">
+        <ListView Grid.Row="0" Name="lst" ItemContainerStyle="{StaticResource itemstyle}"  Background="White" SelectionChanged="lst_SelectionChanged"
+                  GridViewColumnHeader.Click ="lst_Click">
             <ListView.ContextMenu>
                 <ContextMenu>
                     <MenuItem Name="miOpen" Header="打开文件" Click="miOpen_Click"/>
@@ -70,6 +71,43 @@
                             <DataTemplate>
                                 <TextBlock  Text="{Binding Path=Name}">
                                     
+                                </TextBlock>
+                                <DataTemplate.Triggers>
+                                    <DataTrigger Binding="{Binding Path=Status}" Value="1">
+                                        <Setter Property="TextBlock.Foreground" Value="Gray"></Setter>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding Path=Status}" Value="2">
+                                        <Setter Property="TextBlock.Foreground" Value="Red"></Setter>
+                                    </DataTrigger>
+                                </DataTemplate.Triggers>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+
+
+                    <GridViewColumn Header="创建时间" >
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock  Text="{Binding Path=CreateTime,StringFormat='MM/dd-hh:mm'}">
+
+                                </TextBlock>
+                                <DataTemplate.Triggers>
+                                    <DataTrigger Binding="{Binding Path=Status}" Value="1">
+                                        <Setter Property="TextBlock.Foreground" Value="Gray"></Setter>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding Path=Status}" Value="2">
+                                        <Setter Property="TextBlock.Foreground" Value="Red"></Setter>
+                                    </DataTrigger>
+                                </DataTemplate.Triggers>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+
+                    <GridViewColumn Header="修改时间" >
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock  Text="{Binding Path=AccessTime,StringFormat='MM/dd-hh:mm'}">
+
                                 </TextBlock>
                                 <DataTemplate.Triggers>
                                     <DataTrigger Binding="{Binding Path=Status}" Value="1">

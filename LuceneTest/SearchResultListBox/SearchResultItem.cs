@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Windows.Media.Imaging;
 using TagExplorer.Utils;
+using System;
 
 namespace TagExplorer.UriInfList
 {
@@ -84,6 +85,32 @@ namespace TagExplorer.UriInfList
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Status"));
             }
         }
+        private DateTime createTime = DateTime.MinValue;
+        private DateTime accessTime = DateTime.MinValue;
+        public DateTime CreateTime
+        {
+            get
+            {
+                if(createTime == DateTime.MinValue)
+                {
+                    createTime = File.GetCreationTime(all);
+                }
+                return createTime;
+            }
+        }
+
+        public DateTime AccessTime
+        {
+            get
+            {
+                if (accessTime == DateTime.MinValue)
+                {
+                    accessTime = File.GetLastWriteTime(all);
+                }
+                return accessTime;
+            }
+        }
+
         public static List<SearchResultItem> GetFilesByTag(string tag,IUriDB db)
         {
             List<string> files = db.Query(tag);
