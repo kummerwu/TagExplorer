@@ -87,13 +87,21 @@ namespace TagExplorer.UriInfList
         }
         private DateTime createTime = DateTime.MinValue;
         private DateTime accessTime = DateTime.MinValue;
+        private DateTime InvalidTime = new DateTime(1);
         public DateTime CreateTime
         {
             get
             {
                 if(createTime == DateTime.MinValue)
                 {
-                    createTime = File.GetCreationTime(all);
+                    if (FileShell.IsValidFS(all))
+                    {
+                        createTime = File.GetCreationTime(all);
+                    }
+                    else
+                    {
+                        createTime = InvalidTime;
+                    }
                 }
                 return createTime;
             }
@@ -105,7 +113,14 @@ namespace TagExplorer.UriInfList
             {
                 if (accessTime == DateTime.MinValue)
                 {
-                    accessTime = File.GetLastWriteTime(all);
+                    if (FileShell.IsValidFS(all))
+                    {
+                        accessTime = File.GetLastWriteTime(all);
+                    }
+                    else
+                    {
+                        accessTime = InvalidTime;
+                    }
                 }
                 return accessTime;
             }
