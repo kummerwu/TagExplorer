@@ -189,28 +189,30 @@ namespace TagExplorer.Utils
         }
         public static bool CheckAccess(string uri)
         {
-            bool canAccess = true;
-            if (File.Exists(uri)) //如果是文件的话，检测一下该文件是否被锁住？
-            {
-                for (int i = 0; i < 5; i++)
-                {
-                    try
-                    {
-                        FileStream fs = new FileStream(uri, FileMode.Open, FileAccess.Read, FileShare.None);
-                        fs.Close();
-                        canAccess = true;
-                        break;
-                    }
-                    catch
-                    {
-                        canAccess = false;
-                        Logger.I("file exist,but can't access! TRY AGAIN！{0}", uri);
-                        System.Threading.Thread.Sleep(20);
-                    }
-                }
-            }
+            return true;//不再检查是否可写，因为我已经不再使用guid来标识文件了。
 
-            return canAccess;
+            //bool canAccess = true;
+            //if (File.Exists(uri)) //如果是文件的话，检测一下该文件是否被锁住？
+            //{
+            //    for (int i = 0; i < 5; i++)
+            //    {
+            //        try
+            //        {
+            //            FileStream fs = new FileStream(uri, FileMode.Open, FileAccess.Read, FileShare.None);
+            //            fs.Close();
+            //            canAccess = true;
+            //            break;
+            //        }
+            //        catch
+            //        {
+            //            canAccess = false;
+            //            Logger.I("file exist,but can't access! TRY AGAIN！{0}", uri);
+            //            System.Threading.Thread.Sleep(20);
+            //        }
+            //    }
+            //}
+
+            //return canAccess;
         }
 
         #endregion
