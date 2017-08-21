@@ -35,5 +35,7 @@
         public string DefaultTag { get { return "我的大脑"; } }
         public int LRU_MAX_CNT = 8;
 
+        public int MAX_TAG_VDIR = 6;
+
     }
 }

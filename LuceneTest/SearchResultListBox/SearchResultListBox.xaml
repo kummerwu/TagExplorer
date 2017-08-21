@@ -87,7 +87,7 @@
                     <GridViewColumn Header="修改时间" >
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
-                                <TextBlock  Text="{Binding Path=AccessTime,StringFormat='yy/MM/dd-hh:mm'}">
+                                <TextBlock  Text="{Binding Path=LastWriteTime,StringFormat='yy/MM/dd-HH:mm'}">
 
                                 </TextBlock>
                                 <DataTemplate.Triggers>
@@ -103,10 +103,10 @@
                     </GridViewColumn>
                     
 
-                    <GridViewColumn Header="创建时间" >
+                    <GridViewColumn Header="访问时间" >
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
-                                <TextBlock  Text="{Binding Path=CreateTime,StringFormat='yy/MM/dd-hh:mm'}">
+                                <TextBlock  Text="{Binding Path=LastAccessTime,StringFormat='yy/MM/dd-HH:mm'}">
 
                                 </TextBlock>
                                 <DataTemplate.Triggers>

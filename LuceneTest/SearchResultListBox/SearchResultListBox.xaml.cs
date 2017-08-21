@@ -26,6 +26,8 @@ namespace TagExplorer.UriInfList
             this.uriDB = uriDB;
             this.tagsDB = tagsDB;
             dataList = SearchResultItem.GetFilesByTag(query, uriDB);
+            SortType = -1;
+            SortBy("访问时间");
             TipsCenter.Ins.ListInf = "文件列表统计:" + query + " Found Files:" + dataList.Count;
             UpdateCurrentList();
             AdjustGridColumnWidth();
@@ -187,27 +189,31 @@ namespace TagExplorer.UriInfList
             GridViewColumn col = header.Column;
             if(col!=null)
             {
-                
-                switch(col.Header.ToString())
-                {
-                    case "名称":
-                        dataList.Sort(delegate (SearchResultItem x, SearchResultItem y) { return SortType*x.Name.CompareTo(y.Name); });
-                        break;
-                    case "路径":
-                        dataList.Sort(delegate (SearchResultItem x, SearchResultItem y) { return SortType * x.Dir.CompareTo(y.Dir); });
-                        break;
-                    case "创建时间":
-                        dataList.Sort(delegate (SearchResultItem x, SearchResultItem y) { return SortType * x.CreateTime.CompareTo(y.CreateTime); });
-                        break;
-                    case "修改时间":
-                        dataList.Sort(delegate (SearchResultItem x, SearchResultItem y) { return SortType * x.AccessTime.CompareTo(y.AccessTime); });
-                        break;
-                }
-                SortType *= -1;
+                SortBy(col.Header.ToString());
                 UpdateCurrentList();
             }
 
 
+        }
+
+        private void SortBy(string colName)
+        {
+            switch (colName)
+            {
+                case "名称":
+                    dataList.Sort(delegate (SearchResultItem x, SearchResultItem y) { return SortType * x.Name.CompareTo(y.Name); });
+                    break;
+                case "路径":
+                    dataList.Sort(delegate (SearchResultItem x, SearchResultItem y) { return SortType * x.Dir.CompareTo(y.Dir); });
+                    break;
+                case "访问时间":
+                    dataList.Sort(delegate (SearchResultItem x, SearchResultItem y) { return SortType * x.LastAccessTime.CompareTo(y.LastAccessTime); });
+                    break;
+                case "修改时间":
+                    dataList.Sort(delegate (SearchResultItem x, SearchResultItem y) { return SortType * x.LastWriteTime.CompareTo(y.LastWriteTime); });
+                    break;
+            }
+            SortType *= -1;
         }
     }
 }

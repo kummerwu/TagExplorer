@@ -89,44 +89,44 @@ namespace TagExplorer.UriInfList
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Status"));
             }
         }
-        private DateTime createTime = DateTime.MinValue;
-        private DateTime accessTime = DateTime.MinValue;
+        private DateTime lastAccessTime = DateTime.MinValue;
+        private DateTime lastWriteTime = DateTime.MinValue;
         private DateTime InvalidTime = new DateTime(1);
-        public DateTime CreateTime
+        public DateTime LastAccessTime
         {
             get
             {
-                if(createTime == DateTime.MinValue)
+                if(lastAccessTime == DateTime.MinValue)
                 {
                     if (FileShell.IsValidFS(all))
                     {
-                        createTime = File.GetCreationTime(all);
+                        lastAccessTime = File.GetLastAccessTime(all);
                     }
                     else
                     {
-                        createTime = InvalidTime;
+                        lastAccessTime = InvalidTime;
                     }
                 }
-                return createTime;
+                return lastAccessTime;
             }
         }
 
-        public DateTime AccessTime
+        public DateTime LastWriteTime
         {
             get
             {
-                if (accessTime == DateTime.MinValue)
+                if (lastWriteTime == DateTime.MinValue)
                 {
                     if (FileShell.IsValidFS(all))
                     {
-                        accessTime = File.GetLastWriteTime(all);
+                        lastWriteTime = File.GetLastWriteTime(all);
                     }
                     else
                     {
-                        accessTime = InvalidTime;
+                        lastWriteTime = InvalidTime;
                     }
                 }
-                return accessTime;
+                return lastWriteTime;
             }
         }
 

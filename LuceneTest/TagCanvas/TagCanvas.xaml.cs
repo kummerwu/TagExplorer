@@ -293,7 +293,51 @@ namespace TagExplorer
             }
             
         }
+        private List<string> lastTags = new List<string>();
         
+        private void KeepVDir(string tag)
+        {
+            if (!lastTags.Contains(tag))
+            {
+                while (lastTags.Count >= Cfg.Ins.MAX_TAG_VDIR)
+                {
+                    lastTags.RemoveAt(0);
+                }
+                lastTags.Add(tag);
+            }
+            else
+            {
+                lastTags.Remove(tag);
+                lastTags.Add(tag);
+            }
+            string[] oldVDirs = Directory.GetDirectories(PathHelper.VDir);
+            
+            foreach(string t in lastTags)
+            {
+                string tagVDir = PathHelper.GetVDirByTag(t);
+                string tagDir = PathHelper.GetDirByTag(t);
+                PathHelper.LinkDir(tagVDir, tagDir);
+            }
+
+            DirectoryInfo vroot = new DirectoryInfo(PathHelper.VDir);
+            DirectoryInfo[] vdirs = vroot.GetDirectories();
+            if (vdirs.Length > Cfg.Ins.MAX_TAG_VDIR)
+            {
+                foreach (DirectoryInfo v in vdirs)
+                {
+                    if (!lastTags.Contains(v.Name))
+                    {
+                        v.Delete();
+                        //System.Diagnostics.Process.Start("cmd.exe",
+                        //    string.Format(@" /c rd ""{0}"" ", v.FullName));
+                    }
+                }
+            }
+
+        }
+
+        
+
         public void SetCurrentTag(string tag)
         {
             UpdateSelectedStatus(tag,TagBox.Status.Selected); //这一句必须放在下面检查并return之前，
@@ -308,6 +352,8 @@ namespace TagExplorer
 
             ShowCurrentTagInf();
             SelectedTagChanged?.Invoke(tag);
+            KeepVDir(tag);
+            
         }
 
         private string GetTagInf(string tag,ITagDB db)
@@ -640,6 +686,14 @@ namespace TagExplorer
                 }
             }
             
+        }
+
+        private void miCopyTagFullPathEx_Click(object sender, RoutedEventArgs e)
+        {
+            UpdateCurrentTagByContextMenu();
+            string dir = PathHelper.GetDirByTag(currentTag);
+            dir = System.IO.Path.Combine(dir, DateTime.Now.ToString("yyyyMMdd") + "-");
+            ClipBoardSafe.SetText(dir);
         }
     }
 }

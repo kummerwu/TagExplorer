@@ -11,6 +11,7 @@
         <ContextMenu x:Name="tagAreaMenu" x:Key="tagAreaMenu" ContextMenuOpening="tagAreaMenu_ContextMenuOpening">
             <MenuItem Name="miOpenTagDir"       Header="打开标签目录" Click="miOpenTagDir_Click"/>
             <MenuItem Name="miCopyTagFullPath"  Header="拷贝标签路径" Click="miCopyTagFullPath_Click"/>
+            <MenuItem Name="miCopyTagFullPathEx"  Header="拷贝标签路径+日期" Click="miCopyTagFullPathEx_Click"/>
             <MenuItem Name="miCopyTagName"      Header="拷贝标签名称" Click="miCopyTagName_Click"/>
             <Separator></Separator>
             <MenuItem Name="miNewTag"       Header="新建标签" Click="miNewTag_Click"/>

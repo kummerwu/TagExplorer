@@ -104,10 +104,29 @@ namespace TagExplorer.Utils
                 Process.Start(dir);
             }
         }
+        private static void UpdateAccessTime(string file)
+        {
+            try
+            {
+                if (File.Exists(file))
+                {
+                    File.SetLastAccessTime(file, DateTime.Now);
+                }
+                if (Directory.Exists(file))
+                {
+                    Directory.SetLastAccessTime(file, DateTime.Now);
+                }
+            }
+            catch (Exception e)
+            {
+                Logger.E(e);
+            }
+        }
         public static void StartWithFile(string file)
         {
             if(File.Exists(file))
             {
+                UpdateAccessTime(file);
                 Process.Start("rundll32.exe", " shell32.dll,OpenAs_RunDLL " + file);
             }
             else
@@ -125,11 +144,12 @@ namespace TagExplorer.Utils
                 return;
             }
 
-
+            UpdateAccessTime(file);
             if (File.Exists(file))
             {
                 //之所以搞下面这么复杂的流程，是因为zte的一个文档安全软件导致Process.Start(file);报错
                 Logger.D("StartFile {0} is valid", file);
+                
                 Process p = Process.Start(file);
                 //MessageBox.Show(p?.MainModule.FileName);
                 return;
