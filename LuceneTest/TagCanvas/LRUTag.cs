@@ -28,7 +28,7 @@ namespace TagExplorer
             {
                 sb.AppendLine(tag);
             }
-            File.WriteAllText(PathHelper.IniFilePath, sb.ToString().Trim());
+            File.WriteAllText(CfgPath.IniFilePath, sb.ToString().Trim());
         }
 
         private static LRUTag _ins = null;
@@ -61,9 +61,9 @@ namespace TagExplorer
         }
         public void Load()
         {
-            if (File.Exists(PathHelper.IniFilePath))
+            if (File.Exists(CfgPath.IniFilePath))
             {
-                tags.AddRange(File.ReadAllLines(PathHelper.IniFilePath));
+                tags.AddRange(File.ReadAllLines(CfgPath.IniFilePath));
             }
         }
         public void Add(string tag)
@@ -72,7 +72,7 @@ namespace TagExplorer
             {
                 tags.Remove(tag);
             }
-            else if(tags.Count>=Cfg.Ins.LRU_MAX_CNT)
+            else if(tags.Count>=CfgPerformance.LRU_MAX_CNT)
             {
                 tags.RemoveAt(0);
             }

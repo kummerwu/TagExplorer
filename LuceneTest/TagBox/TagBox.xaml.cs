@@ -85,7 +85,7 @@ namespace TagExplorer
             set
             {
                 bdr.Width = value;
-                txt.Width = value - GConfig.XContentPadding/2;
+                txt.Width = value - CfgTagGraph.XContentPadding/2;
             }
             get
             {
@@ -97,7 +97,7 @@ namespace TagExplorer
             set
             {
                 bdr.Height = value;
-                txt.Height = value - GConfig.YContentPadding/2;
+                txt.Height = value - CfgTagGraph.YContentPadding/2;
             }
         }
     }

@@ -299,7 +299,7 @@ namespace TagExplorer
         {
             if (!lastTags.Contains(tag))
             {
-                while (lastTags.Count >= Cfg.Ins.MAX_TAG_VDIR)
+                while (lastTags.Count >= CfgPerformance.MAX_TAG_VDIR)
                 {
                     lastTags.RemoveAt(0);
                 }
@@ -310,7 +310,7 @@ namespace TagExplorer
                 lastTags.Remove(tag);
                 lastTags.Add(tag);
             }
-            string[] oldVDirs = Directory.GetDirectories(PathHelper.VDir);
+            //string[] oldVDirs = Directory.GetDirectories(PathHelper.VDir);
             
             foreach(string t in lastTags)
             {
@@ -319,20 +319,21 @@ namespace TagExplorer
                 PathHelper.LinkDir(tagVDir, tagDir);
             }
 
-            DirectoryInfo vroot = new DirectoryInfo(PathHelper.VDir);
+            DirectoryInfo vroot = new DirectoryInfo(CfgPath.VDir);
             DirectoryInfo[] vdirs = vroot.GetDirectories();
-            if (vdirs.Length > Cfg.Ins.MAX_TAG_VDIR)
+            int vDirCount = vdirs.Length;
+            
+            foreach (DirectoryInfo v in vdirs)
             {
-                foreach (DirectoryInfo v in vdirs)
+                if (!lastTags.Contains(v.Name) && vDirCount>CfgPerformance.MAX_TAG_VDIR)
                 {
-                    if (!lastTags.Contains(v.Name))
-                    {
-                        v.Delete();
-                        //System.Diagnostics.Process.Start("cmd.exe",
-                        //    string.Format(@" /c rd ""{0}"" ", v.FullName));
-                    }
+                    v.Delete();
+                    vDirCount--;
+                    //System.Diagnostics.Process.Start("cmd.exe",
+                    //    string.Format(@" /c rd ""{0}"" ", v.FullName));
                 }
             }
+            
 
         }
 
@@ -434,7 +435,7 @@ namespace TagExplorer
         {
             string[] src = args;
             string[] dst = PathHelper.MapFilesToTagDir(src, currentTag);
-            FileShell.MoveFiles(src, dst);
+            FileShell.SHMoveFiles(src, dst);
             UriDB.DelUri(src, false);
             //foreach (string uri in src)
             //{
@@ -496,18 +497,18 @@ namespace TagExplorer
             List<string> dstList = new List<string>();
             foreach(string f in list)
             {
-                if (FileShell.IsValidHttps(f))
+                if (PathHelper.IsValidHttps(f))
                 {
                     ret.Add(f);
                 }
-                else if (!FileShell.IsValidFS(f))
+                else if (!PathHelper.IsValidFS(f))
                 {
                     Logger.E("Copy To House: File not Exist " + f);
                     ret.Add(f);
                 }
                 else
                 {
-                    System.Diagnostics.Debug.Assert(FileShell.IsValidFS(f));
+                    System.Diagnostics.Debug.Assert(PathHelper.IsValidFS(f));
                     FileInfo fi = new FileInfo(f);
                     string dstDir = PathHelper.GetDirByTag(tag);
                     string dstFile = System.IO.Path.Combine(dstDir, fi.Name);
@@ -527,7 +528,7 @@ namespace TagExplorer
                 }
             }
 
-            FileShell.CopyFile(scrList.ToArray(), dstList.ToArray());
+            FileShell.SHCopyFile(scrList.ToArray(), dstList.ToArray());
             return ret.ToArray();
             
             /*

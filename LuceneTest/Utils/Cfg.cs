@@ -15,7 +15,7 @@
             }
         }
         
-        public int TAG_MAX_RELATION = 1000;
+        
 
         //如果是单元测试，将文件系统使用一个内存文件系统做临时测试，创建删除文件
         public bool isUTest = false;
@@ -27,15 +27,13 @@
                 isUTest = value;
                 if(isUTest)
                 {
-                    PathHelper.RootPath = @"B:\00TagExplorerBase";
+                    CfgPath.RootPath = @"B:\00TagExplorerBase";
                     
                 }
             }
         }
         public string DefaultTag { get { return "我的大脑"; } }
-        public int LRU_MAX_CNT = 8;
-
-        public int MAX_TAG_VDIR = 6;
+        
 
     }
 }

@@ -38,7 +38,7 @@ namespace TagExplorer.Utils
         }
 
         #region 公有方法
-        public static bool MoveFiles(string[] srcList, string[] dstList)
+        public static bool SHMoveFiles(string[] srcList, string[] dstList)
         {
 
             string src, dst;
@@ -57,7 +57,7 @@ namespace TagExplorer.Utils
             fileop.fFlags = FILEOP_FLAGS.FOF_SIMPLEPROGRESS | FILEOP_FLAGS.FOF_MULTIDESTFILES;
             return SHFileOperation(ref fileop) == 0;
         }
-        public static bool CopyFile(string[] srcList, string[] dstList)
+        public static bool SHCopyFile(string[] srcList, string[] dstList)
         {
             string src, dst;
             if (!FormatSHFile(srcList, dstList, out src, out dst))
@@ -78,14 +78,14 @@ namespace TagExplorer.Utils
         public static void OpenExplorerByFile(string f)
         {
 
-            if (IsValidFS(f))
+            if (PathHelper.IsValidFS(f))
             {
                 f = '"' + f + '"';
                 string cmd = "/select," + f;
                 Logger.D("LocateFile: [{0}]", cmd);
                 System.Diagnostics.Process.Start("explorer.exe", "/select," + f);
             }
-            else if(IsValidHttps(f))
+            else if(PathHelper.IsValidHttps(f))
             {
                 StartFile(f);
             }
@@ -138,7 +138,7 @@ namespace TagExplorer.Utils
         {
             if (file.EndsWith(".rtf")) return;
             Logger.D("StartFile {0} ", file);
-            if (!IsValidUri(file))
+            if (!PathHelper.IsValidUri(file))
             {
                 Logger.E("Start File ERROR,File isn't valid!~");
                 return;
@@ -148,68 +148,12 @@ namespace TagExplorer.Utils
             if (File.Exists(file))
             {
                 //之所以搞下面这么复杂的流程，是因为zte的一个文档安全软件导致Process.Start(file);报错
+                //最终原因貌似与观察文件变更有关系，现在在文件变更过程通过定时器来触发，似乎就没有问题了。
                 Logger.D("StartFile {0} is valid", file);
                 
                 Process p = Process.Start(file);
-                //MessageBox.Show(p?.MainModule.FileName);
+                
                 return;
-
-                string ext = Path.GetExtension(file);
-                if(ext==null && ext.Length==0)
-                {
-                    Logger.I("start file {0} has no extension! return;", file);
-                    return;
-                }
-
-
-                ProcessStart.OpenWith openW = new ProcessStart.OpenWith(ext);
-                if (openW != null)
-                {
-                    foreach (ProcessStart.cApplicationData data in openW.Applicationlist.Values)
-                    {
-                        if (data.Havefilelinks)
-                        {
-
-                            string strStartPath; //= data.OpenFilenameLink.Filelocation;
-                            string strStartVerb; //= data.OpenFilenameLink.Params;
-                            string strStartPreParam;// = data.OpenFilenameLink.PreParams;
-
-
-                            //DataRow newRow = dtAppslist.NewRow();
-                            //newRow["Icon"] = data.ApplicationIcon;
-                            //newRow["Name"] = data.Productname;
-                            //newRow["Path"] = data.Filenamelink;
-                            //newRow["Company"] = data.Company;
-                            //newRow["regname"] = data.RegistryName;
-
-                            if (data.OpenFilenameLink != null)
-                            {
-                                strStartPath = data.OpenFilenameLink.Filelocation;
-                                strStartVerb = data.OpenFilenameLink.Params;
-                                strStartPreParam = data.OpenFilenameLink.PreParams;
-                            }
-                            else if (data.EditFilenameLink != null)
-                            {
-                                strStartPath = data.EditFilenameLink.Filelocation;
-                                strStartVerb = data.EditFilenameLink.Params;
-                                strStartPreParam = data.EditFilenameLink.PreParams;
-                            }
-                            else
-                            {
-                                strStartPath = data.Filenamelink;
-                                strStartVerb = "";
-                                strStartPreParam = "";
-                            }
-
-                            if (strStartPath != null)
-                            {
-                                ProcessStart.ProcessOpen.Start(strStartPreParam, strStartPath, strStartVerb, file);
-                                return;
-                            }
-                            //dtAppslist.Rows.Add(newRow);
-                        }
-                    }
-                }
             }
             else
             {
@@ -223,7 +167,7 @@ namespace TagExplorer.Utils
             string txt = Clipboard.GetText();
             txt = txt.Trim('"');
             txt = txt.Trim();
-            if (FileShell.IsValidUri(txt) && !files.Contains(txt))
+            if (PathHelper.IsValidUri(txt) && !files.Contains(txt))
             {
                 files.Add(txt);
             }
@@ -234,7 +178,7 @@ namespace TagExplorer.Utils
 
                 txt = f.Trim('"');
 
-                if (FileShell.IsValidUri(txt) && !files.Contains(txt))
+                if (PathHelper.IsValidUri(txt) && !files.Contains(txt))
                 {
                     files.Add(txt);
                 }
@@ -242,32 +186,7 @@ namespace TagExplorer.Utils
 
             return files;
         }
-        public static bool IsValidUri(string txt)
-        {
-            if (txt == null) return false;
-            return IsValidFS(txt) || IsValidHttps(txt);
-        }
-        public static bool IsValidFS(string txt)
-        {
-            if (txt == null) return false;
-            return File.Exists(txt) || Directory.Exists(txt);
-        }
-        public static bool IsValidFile(string txt)
-        {
-            if (txt == null) return false;
-            return File.Exists(txt);
-        }
-        public static bool IsValidDir(string txt)
-        {
-            if (txt == null) return false;
-            return Directory.Exists(txt);
-        }
-        public static bool IsValidHttps(string txt)
-        {
-            if (txt == null) return false;
-            return (txt.StartsWith("http://", StringComparison.CurrentCultureIgnoreCase) ||
-                    txt.StartsWith("https://", StringComparison.CurrentCultureIgnoreCase));
-        }
+        
 
         
         #endregion
@@ -385,7 +304,7 @@ namespace TagExplorer.Utils
                 else
                 {
                     //如果文件不存在，尝试在其他路径上查找
-                    string[] files = Directory.GetFiles(PathHelper.DocDir, tag + "." + postfix);
+                    string[] files = Directory.GetFiles(CfgPath.DocDir, tag + "." + postfix);
                     string[] files2 = Directory.GetFiles(PathHelper.GetDirByTag(tag), tag + "." + postfix);
 
                     if (files.Length > 0)

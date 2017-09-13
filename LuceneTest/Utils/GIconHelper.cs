@@ -56,7 +56,7 @@ namespace TagExplorer.Utils
 
         private static string FileToType(string f)
         {
-            if (FileShell.IsValidHttps(f))
+            if (PathHelper.IsValidHttps(f))
             {
                 return ".http_icon";
             }
@@ -79,20 +79,44 @@ namespace TagExplorer.Utils
         
         private static BitmapSource GetBitmapFromFileNoCache(string f,int level)
         {
+            Logger.I("GetBitmapFromFileNoCache for {0} level {1}", f, level);
             if (level > 5) return null; //防止递归调用死循环，将堆栈耗尽
-            if (FileShell.IsValidHttps(f))
+            if (PathHelper.IsValidHttps(f))
             {
                 return GetBitmapFromFileNoCache(PathHelper.Res_HTTP_Path,level+1);
             }
-            else if(FileShell.IsValidFS(f))
+            else if(PathHelper.IsValidFS(f))
             {
-                var icon = GIconHelper.GetFileIcon(f, false).ToBitmap();
-                IntPtr hBitmap = icon.GetHbitmap();
-                BitmapSource bitmapSource = Imaging.CreateBitmapSourceFromHBitmap(hBitmap, IntPtr.Zero, Int32Rect.Empty,
-                BitmapSizeOptions.FromEmptyOptions());
-                bitmapSource.Freeze();
-                icon.Dispose();
-                return bitmapSource;
+                try
+                {
+                    Logger.I(" isvalidfs try GetBitmapFromFileNoCache for {0} level {1}", f, level);
+                    Icon ic = GIconHelper.GetFileIcon(f, false);
+                    if(ic==null)
+                    {
+                        Logger.I("GetBitmapFromFileNoCache failed: ic==null for {0} level {1}", f, level);
+                        return null;
+                    }
+                    var icon = ic.ToBitmap();
+                    IntPtr hBitmap = icon.GetHbitmap();
+                    BitmapSource bitmapSource = Imaging.CreateBitmapSourceFromHBitmap(hBitmap, IntPtr.Zero, Int32Rect.Empty,
+                    BitmapSizeOptions.FromEmptyOptions());
+                    bitmapSource.Freeze();
+                    icon.Dispose();
+                    return bitmapSource;
+                }
+                catch (Exception e)
+                {
+                    Logger.E(e);
+                    Logger.E("get icon failed!======{0}", f);
+                    if (f != PathHelper.Res_UNKNOW_Path)
+                    {
+                        return GetBitmapFromFileNoCache(PathHelper.Res_UNKNOW_Path, level + 1);
+                    }
+                    else
+                    {
+                        return null;
+                    }
+                }
             }
             else
             {
@@ -109,7 +133,7 @@ namespace TagExplorer.Utils
         /// /// 文件的默认图标 
         private static Icon GetFileIcon(string fileName, bool largeIcon)
         {
-            if(FileShell.IsValidHttps(fileName))
+            if(PathHelper.IsValidHttps(fileName))
             {
                 fileName = PathHelper.Res_HTTP_Path;
             }
@@ -119,8 +143,14 @@ namespace TagExplorer.Utils
             if (largeIcon)
                 flags = SHGFI.Icon | SHGFI.LargeIcon ;
             else flags = SHGFI.Icon | SHGFI.SmallIcon ;
+            
             SHGetFileInfo(fileName, 256, out info, (uint)cbFileInfo, flags);
-            return Icon.FromHandle(info.hIcon);
+            if(info.hIcon == IntPtr.Zero)
+            {
+                Logger.E("getfileicon err: {0}", fileName);
+                return null;
+            }
+            else return Icon.FromHandle(info.hIcon);
         }
         [DllImport("Shell32.dll")]
         private static extern int SHGetFileInfo(string pszPath, uint dwFileAttributes, out SHFILEINFO psfi, uint cbfileInfo, SHGFI uFlags);

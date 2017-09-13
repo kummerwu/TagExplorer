@@ -61,8 +61,8 @@ namespace AnyTagNet
 
             //计算布局信息
             GObj gobj = GObj.LayoutTag(tag, db, Top, Left);
-            layoutSize.Height = gobj.OuterBox.Height + GConfig.LayoutYPadding + Top;
-            layoutSize.Width = gobj.OuterBox.Width + GConfig.LayoutXPadding + Left;
+            layoutSize.Height = gobj.OuterBox.Height + CfgTagGraph.LayoutYPadding + Top;
+            layoutSize.Width = gobj.OuterBox.Width + CfgTagGraph.LayoutXPadding + Left;
             rootPos.X = gobj.Content.X;
             rootPos.Y = gobj.Content.Y;
 

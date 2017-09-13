@@ -239,10 +239,10 @@ namespace TagExplorer
         }
         private void LoadLayout()
         {
-            if (File.Exists(PathHelper.LayoutCfgFilePath))
+            if (File.Exists(CfgPath.LayoutCfgFilePath))
             {
                 var serializer = new XmlLayoutSerializer(dockingManager);
-                using (var stream = new StreamReader(PathHelper.LayoutCfgFilePath))
+                using (var stream = new StreamReader(CfgPath.LayoutCfgFilePath))
                     serializer.Deserialize(stream);
                 
             }
@@ -251,7 +251,7 @@ namespace TagExplorer
         private void SaveLayout()
         {
             var serializer = new XmlLayoutSerializer(dockingManager);
-            using (var stream = new StreamWriter(PathHelper.LayoutCfgFilePath))
+            using (var stream = new StreamWriter(CfgPath.LayoutCfgFilePath))
                 serializer.Serialize(stream);
         }
 

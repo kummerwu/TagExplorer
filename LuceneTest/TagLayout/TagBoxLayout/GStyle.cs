@@ -59,7 +59,7 @@ namespace AnyTagNet
         } 
         public void Apply(GObj g,TagBox b)
         {
-            b.FontFamily = GConfig.GFontF;
+            b.FontFamily = CfgTagGraph.GFontF;
             b.FontSize = g.FontSize;
             b.Height1 = g.Content.Height;
             b.Width1 = g.Content.Width;
@@ -79,11 +79,11 @@ namespace AnyTagNet
         public static TagBox Apply(int distance,int level,double x,double y,string text)
         {
             TagBox b = new TagBox();
-            b.FontFamily = GConfig.GFontF;
-            double fontSize = GConfig.FontSize;
+            b.FontFamily = CfgTagGraph.GFontF;
+            double fontSize = CfgTagGraph.FontSize;
             for (int i = 0; i < distance; i++)
             {
-                fontSize /= GConfig.ScaleInRadio;
+                fontSize /= CfgTagGraph.ScaleInRadio;
             }
             b.FontSize = fontSize;
 
@@ -91,13 +91,13 @@ namespace AnyTagNet
                text,
                System.Globalization.CultureInfo.InvariantCulture,
                FlowDirection.LeftToRight,
-               new Typeface(GConfig.GFontName),
+               new Typeface(CfgTagGraph.GFontName),
                fontSize,
                Brushes.Black
            );
 
-            b.Height1 = formattedText.Height + GConfig.YContentPadding; ;
-            b.Width1 = formattedText.WidthIncludingTrailingWhitespace + GConfig.XContentPadding;
+            b.Height1 = formattedText.Height + CfgTagGraph.YContentPadding; ;
+            b.Width1 = formattedText.WidthIncludingTrailingWhitespace + CfgTagGraph.XContentPadding;
             b.Margin = new Thickness(x, y, 0, 0);
             b.TextAlignment = TextAlignment.Center;
             b.Text = text;
@@ -110,14 +110,14 @@ namespace AnyTagNet
             if (Math.Min(parent.Level, child.Level) == 0)
             {
                 l.Stroke = new SolidColorBrush(GetColor(parent.Distance,parent.Level));
-                l.StrokeThickness = GConfig.StrokeThickness*1.5;
-                l.StrokeDashArray = GConfig.StrokeDashArray;
+                l.StrokeThickness = CfgTagGraph.StrokeThickness*1.5;
+                l.StrokeDashArray = CfgTagGraph.StrokeDashArray;
             }
             else
             {
                 l.Stroke = new SolidColorBrush(GetColor(parent.Distance,parent.Level));
-                l.StrokeThickness = GConfig.StrokeThickness;
-                l.StrokeDashArray = GConfig.StrokeDashArray;
+                l.StrokeThickness = CfgTagGraph.StrokeThickness;
+                l.StrokeDashArray = CfgTagGraph.StrokeDashArray;
             }
         }
     }

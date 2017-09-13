@@ -48,7 +48,7 @@ namespace AnyTagNet
                     style.ApplyLine(parent, child, l);
 
                     allEdge.Add(l);
-                    l.Tag = parent.Tag.ToString()+GConfig.ParentChildSplit+child.Tag.ToString();
+                    l.Tag = parent.Tag.ToString()+CfgTagGraph.ParentChildSplit+child.Tag.ToString();
                 }
             }
         }

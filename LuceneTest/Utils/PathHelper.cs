@@ -22,42 +22,10 @@ namespace TagExplorer.Utils
             return dsts;
         }
 
-        //public static string RootPath = @"J:\00TagExplorerBase";
-        private static string rootPath = null;
-        public static string RootPath
-        {
-            get
-            {
-                if (rootPath == null)
-                    return ConfigurationManager.AppSettings["RootDir"];
-                else return rootPath;
-            }
-            set
-            {
-                rootPath = value;
-            }
-        }
-        public static string TagDBPath { get { return Path.Combine(RootPath , @"TagDB"); } }
-        public static string UriDBPath { get { return Path.Combine(RootPath, @"UriDB"); } }
-        public static string IniFilePath { get { return Path.Combine(RootPath, "TagExplorer.ini"); } }
-        public static string LayoutCfgFilePath { get { return Path.Combine(RootPath, "TagExplorerLayout.xml"); } }
-        public static string TemplatePath { get { return Path.Combine(PathHelper.DocBaseDir, "Template"); } }
-        public static string VDir {
-            
         
-            get
-            {
-                string vdir = Path.Combine(RootPath, "VirtualDir");
-                if(!Directory.Exists(vdir))
-                {
-                    Directory.CreateDirectory(vdir);
-                }
-                return vdir;
-            }
-        }
         private static void RunCmd(string str)
         {
-            System.Diagnostics.Process p = new System.Diagnostics.Process();
+            Process p = new Process();
             p.StartInfo.FileName = "cmd.exe";
             p.StartInfo.UseShellExecute = false;    //是否使用操作系统shell启动
             p.StartInfo.RedirectStandardInput = true;//接受来自调用程序的输入信息
@@ -105,7 +73,7 @@ namespace TagExplorer.Utils
         }
         public static string GetVDirByTag(string tag)
         {
-            return Path.Combine(VDir, tag);
+            return Path.Combine(CfgPath.VDir, tag);
         }
         //public static string ResPath { get { return Path.Combine(PathHelper.DocBaseDir, "Res"); } }
         public static string Res_HTTP_Path
@@ -117,7 +85,7 @@ namespace TagExplorer.Utils
         }
         private static string GetResFile(string name)
         {
-            string d = Res_Path;
+            string d = CfgPath.Res_Path;
             string f = Path.Combine(d, name);
             if (!File.Exists(f))
             {
@@ -125,18 +93,7 @@ namespace TagExplorer.Utils
             }
             return f;
         }
-        public static string Res_Path
-        {
-            get
-            {
-                string d = Path.Combine(PathHelper.DocBaseDir, "Res");
-                if(!Directory.Exists(d))
-                {
-                    Directory.CreateDirectory(d);
-                }
-                return d;
-            }
-        }
+        
         public static string Res_UNKNOW_Path
         {
             get
@@ -145,59 +102,38 @@ namespace TagExplorer.Utils
                 
             }
         }
-
-        /*路径规划
-  J:\00TagExplorerBase
-     DocumentBase
-        Doc
-            ....各种tag目录
-        Template
-            ....各种模板文件
-     TagDB
-     UriDB
-
-        */
-
-        public static string DocBaseDir
+        public static bool IsValidUri(string txt)
         {
-            get {
-                if (docBase == null)
-                {
-                    string exe = Process.GetCurrentProcess().MainModule.FileName;
-                    string exePath = Path.GetFileNameWithoutExtension(exe);
-                    exePath =  PathHelper._DocBaseDir;
-                    if(!Directory.Exists(exePath))
-                    {
-                        Directory.CreateDirectory(exePath);
-                    }
-                    docBase = exePath;
-                }
-                return docBase;
-            }
+            if (txt == null) return false;
+            return IsValidFS(txt) || IsValidHttps(txt);
         }
-        
-        //获得文档存放根路径（TODO，后面可能需要支持文档根路径有多个，类似于编译器的-I选项）
-        public static string DocDir
+        public static bool IsValidFS(string txt)
         {
-            get
-            {
-                if (doc != null)
-                    return doc;
-
-
-                string dir = Path.Combine(DocBaseDir, "Doc");
-                if(!Directory.Exists(dir))
-                {
-                    Directory.CreateDirectory(dir);
-                    
-                }
-                doc = dir;
-                return doc;
-            }
+            if (txt == null) return false;
+            return File.Exists(txt) || Directory.Exists(txt);
         }
+        public static bool IsValidFile(string txt)
+        {
+            if (txt == null) return false;
+            return File.Exists(txt);
+        }
+        public static bool IsValidDir(string txt)
+        {
+            if (txt == null) return false;
+            return Directory.Exists(txt);
+        }
+        public static bool IsValidHttps(string txt)
+        {
+            if (txt == null) return false;
+            return (txt.StartsWith("http://", StringComparison.CurrentCultureIgnoreCase) ||
+                    txt.StartsWith("https://", StringComparison.CurrentCultureIgnoreCase));
+        }
+
+
+
         public static string GetTagByPath(string path)
         {
-            if (!path.Contains(DocDir))
+            if (!path.Contains(CfgPath.DocDir))
             {
                 Logger.I("GetTagByPath Failed,File(Dir) !pathContains: {0}", path);
                 return null; //根本不在doc目录中
@@ -208,7 +144,7 @@ namespace TagExplorer.Utils
             //    return null;
             //}
 
-            string[] dirs= path.Substring(DocDir.Length).Split(
+            string[] dirs= path.Substring(CfgPath.DocDir.Length).Split(
                 new char[] { Path.DirectorySeparatorChar }, 
                 System.StringSplitOptions.RemoveEmptyEntries);
             if (dirs.Length != 2)
@@ -224,7 +160,7 @@ namespace TagExplorer.Utils
         }
         public static string GetDirByTag(string tag)
         {
-            string dir = System.IO.Path.Combine(PathHelper.DocDir, tag);
+            string dir = System.IO.Path.Combine(CfgPath.DocDir, tag);
             if (!Directory.Exists(dir))
             {
                 Directory.CreateDirectory(dir);
@@ -283,10 +219,6 @@ namespace TagExplorer.Utils
 
         #endregion
 
-        #region 私有方法
-        private static string _DocBaseDir { get { return Path.Combine(RootPath, @"DocumentBase"); } }
-        private static string docBase;
-        private static string doc = null;
-        #endregion
+        
     }
 }

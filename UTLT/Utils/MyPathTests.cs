@@ -21,7 +21,7 @@ namespace AnyTags.Net.Tests
             Directory.CreateDirectory(dir);
             Directory.CreateDirectory(dir1);
             Directory.CreateDirectory(dir2);
-            string docBase = PathHelper.DocBaseDir;
+            string docBase = CfgPath.DocBasePath;
 
         }
 
@@ -89,7 +89,7 @@ namespace AnyTags.Net.Tests
                 }
             }
 
-            FileShell.MoveFiles(filesSrc, filesDst);
+            FileShell.SHMoveFiles(filesSrc, filesDst);
             //检查文件和目录是否已经全部移到目的地
             for (int i = 0; i < filesSrc.Length; i++)
             {
@@ -176,7 +176,7 @@ namespace AnyTags.Net.Tests
         [TestMethod]
         public void TestFS_LRUTag1()
         {
-            Cfg.Ins.LRU_MAX_CNT = 4;
+            CfgPerformance.LRU_MAX_CNT = 4;
             UTLT.UTest_Tag.AssertListEqual(LRUTag.Ins.GetTags(),new List<string>());
             LRUTag.Ins.Add("tag1");
             UTLT.UTest_Tag.AssertListEqual(LRUTag.Ins.GetTags(), 
@@ -203,7 +203,7 @@ namespace AnyTags.Net.Tests
         [TestMethod]
         public void TestFS_LRUTag2()
         {
-            Cfg.Ins.LRU_MAX_CNT = 4;
+            CfgPerformance.LRU_MAX_CNT = 4;
             TestFS_LRUTag1();
             LRUTag.Ins.Dispose();
             UTLT.UTest_Tag.AssertListEqual(LRUTag.Ins.GetTags(),
@@ -217,7 +217,7 @@ namespace AnyTags.Net.Tests
         [TestMethod]
         public void TestFS_LRUTag3()
         {
-            Cfg.Ins.LRU_MAX_CNT = 4;
+            CfgPerformance.LRU_MAX_CNT = 4;
             UTLT.UTest_Tag.AssertListEqual(LRUTag.Ins.GetTags(), new List<string>());
             LRUTag.Ins.Add("tag1");
             UTLT.UTest_Tag.AssertListEqual(LRUTag.Ins.GetTags(),

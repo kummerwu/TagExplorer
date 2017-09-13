@@ -53,7 +53,7 @@ namespace TagExplorer.Utils
             {
                 try
                 {
-                    string path = PathHelper.TemplatePath;
+                    string path = CfgPath.TemplatePath;
                     if (Directory.Exists(path))
                     {
                         Directory.CreateDirectory(path);

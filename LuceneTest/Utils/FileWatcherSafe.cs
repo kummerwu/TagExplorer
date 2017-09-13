@@ -22,9 +22,9 @@ namespace TagExplorer.Utils
         public FileWatcherSafe(FileChangedHandler watchHandler)
         {
 
-            fsw = new FileSystemWatcher(PathHelper.DocDir);
+            fsw = new FileSystemWatcher(CfgPath.DocDir);
             fsw.IncludeSubdirectories = true;
-            fsw.Path = PathHelper.DocDir;
+            fsw.Path = CfgPath.DocDir;
             fsw.EnableRaisingEvents = true;
             fsw.Renamed += Fsw_Renamed;
             fsw.Created += Fsw_Created;

@@ -62,7 +62,7 @@ namespace AnyTagNet
         public Rect OuterBox = new Rect();  //整个Gobj所占区域，包括三部分（Parent区域，自身区域，Children区域）
 
 
-        public double FontSize = GConfig.FontSize;
+        public double FontSize = CfgTagGraph.FontSize;
         public string Tag;
         public int Level = 0;
         public int Distance; //本节点离当前节点（跟节点的距离）
@@ -120,30 +120,30 @@ namespace AnyTagNet
                 fontSize,
                 Brushes.Black
             );
-            Content.Height = formattedText.Height + GConfig.YContentPadding;
-            Content.Width = formattedText.WidthIncludingTrailingWhitespace+ GConfig.XContentPadding;
+            Content.Height = formattedText.Height + CfgTagGraph.YContentPadding;
+            Content.Width = formattedText.WidthIncludingTrailingWhitespace+ CfgTagGraph.XContentPadding;
             
         }
         
         //计算InnerBox（自身内容+Padding）的大小
         public void CalcInnerBoxSize()
         {
-            InnerBoxXPadding = GConfig.InnerBoxXPadding_MAX;
-            InnerBoxYPadding = GConfig.InnerBoxYPadding_MAX;
+            InnerBoxXPadding = CfgTagGraph.InnerBoxXPadding_MAX;
+            InnerBoxYPadding = CfgTagGraph.InnerBoxYPadding_MAX;
             for (int i = 0;i<Distance;i++)
             {
-                FontSize /= GConfig.ScaleInRadio;
-                InnerBoxXPadding /= GConfig.ScaleInRadio;
-                InnerBoxYPadding /= GConfig.ScaleInRadio;
+                FontSize /= CfgTagGraph.ScaleInRadio;
+                InnerBoxXPadding /= CfgTagGraph.ScaleInRadio;
+                InnerBoxYPadding /= CfgTagGraph.ScaleInRadio;
             }
             if(Distance==0)
             {
                 FontSize*=1.4;
             }
-            InnerBoxXPadding = Math.Max(InnerBoxXPadding, GConfig.InnerBoxXPadding_MIN);
-            InnerBoxYPadding = Math.Max(InnerBoxYPadding, GConfig.InnerBoxYPadding_MIN);
-            FontSize = Math.Max(FontSize, GConfig.MinFontSize);
-            CalcContentSize(Tag, FontSize, GConfig.GFontName);
+            InnerBoxXPadding = Math.Max(InnerBoxXPadding, CfgTagGraph.InnerBoxXPadding_MIN);
+            InnerBoxYPadding = Math.Max(InnerBoxYPadding, CfgTagGraph.InnerBoxYPadding_MIN);
+            FontSize = Math.Max(FontSize, CfgTagGraph.MinFontSize);
+            CalcContentSize(Tag, FontSize, CfgTagGraph.GFontName);
             InnerBox.Width = Content.Width + InnerBoxXPadding ;
             InnerBox.Height = Content.Height + InnerBoxYPadding;
         }
@@ -170,12 +170,12 @@ namespace AnyTagNet
             Logger.D("+++Begin Layout Tag from {0}", tag);
             IGLayoutResult result = new GLayoutResult();
             GObj g = null;
-            for(int curLevel =GConfig.MinLevel;curLevel<=GConfig.MaxLevel;curLevel++)
+            for(int curLevel =CfgTagGraph.MinLevel;curLevel<=CfgTagGraph.MaxLevel;curLevel++)
             {
-                GConfig.CurLevel = curLevel;
+                CfgTagGraph.CurLevel = curLevel;
                 result.Clear();
                 g = Parse_in(tag, null, null, db, result, 0, 0);
-                if (g.GetAll().Count<GObj>() > GConfig.MinTagCnt) break; 
+                if (g.GetAll().Count<GObj>() > CfgTagGraph.MinTagCnt) break; 
             }
 
             if (g != null)
@@ -209,7 +209,7 @@ namespace AnyTagNet
                 Logger.OUT();
                 return null;
             }
-            if (distance > GConfig.CurLevel)
+            if (distance > CfgTagGraph.CurLevel)
             {
                 Logger.D("     !distance out,Skip!");
                 Logger.OUT();
@@ -256,7 +256,7 @@ namespace AnyTagNet
             }
             if(ret.gParentList.Count>0)
             {
-                ret.ParentBox = GConfig.Radio;
+                ret.ParentBox = CfgTagGraph.Radio;
                 ret.calc.Calc(ref ret.ParentBox, ret.gParentList, LayoutOption.FixRadio);
             }
             Logger.D("End Visit All Parent :{0}<===", tag);
@@ -279,7 +279,7 @@ namespace AnyTagNet
             }
             if (ret.gChildList.Count > 0)
             {
-                ret.ChildBox = GConfig.Radio;
+                ret.ChildBox = CfgTagGraph.Radio;
                 ret.calc.Calc(ref ret.ChildBox, ret.gChildList, LayoutOption.FixRadio);
             }
             Logger.D("End Visit All children :{0}<===", tag);

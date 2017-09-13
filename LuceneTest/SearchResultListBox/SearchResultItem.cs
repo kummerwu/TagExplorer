@@ -15,7 +15,7 @@ namespace TagExplorer.UriInfList
         {
             set
             {
-                if (FileShell.IsValidHttps(value))
+                if (PathHelper.IsValidHttps(value))
                 {
                     System.Uri uri = new System.Uri(value); //TODO 获取http文档的名称和路径
                     int lastIdx = value.LastIndexOf('/');
@@ -68,6 +68,10 @@ namespace TagExplorer.UriInfList
                 }
                 return name;
             }
+            set
+            {
+                name = value;
+            }
         }
         public string Dir
         {
@@ -98,7 +102,7 @@ namespace TagExplorer.UriInfList
             {
                 if(lastAccessTime == DateTime.MinValue)
                 {
-                    if (FileShell.IsValidFS(all))
+                    if (PathHelper.IsValidFS(all))
                     {
                         lastAccessTime = File.GetLastAccessTime(all);
                     }
@@ -117,7 +121,7 @@ namespace TagExplorer.UriInfList
             {
                 if (lastWriteTime == DateTime.MinValue)
                 {
-                    if (FileShell.IsValidFS(all))
+                    if (PathHelper.IsValidFS(all))
                     {
                         lastWriteTime = File.GetLastWriteTime(all);
                     }
@@ -134,13 +138,18 @@ namespace TagExplorer.UriInfList
         {
             List<string> files = db.Query(tag);
             List<SearchResultItem> ret = new List<SearchResultItem>();
-            foreach (string key in files)
+            foreach (string uri in files)
             {
-                if (FileShell.IsValidUri(key))
+                if (PathHelper.IsValidUri(uri))
                 {
                     SearchResultItem it = new SearchResultItem();
-                    it._Detail = key;
-                    it._icon = GIconHelper.GetBitmapFromFile(key);
+                    it._Detail = uri;
+                    it._icon = GIconHelper.GetBitmapFromFile(uri);
+                    string title = db.GetTitle(uri);
+                    if(title!=null && title.Length>0)
+                    {
+                        it.Name = title;
+                    }
                     ret.Add(it);
                 }
             }

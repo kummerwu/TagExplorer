@@ -6,6 +6,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using TagExplorer.Utils;
 using System.Collections.Generic;
+using TagExplorer.SearchResultListBox;
 
 namespace TagExplorer.UriInfList
 {
@@ -81,7 +82,7 @@ namespace TagExplorer.UriInfList
         private void UpdateCurrentUriByContextMenu()
         {
             SearchResultItem it = lst.SelectedItem as SearchResultItem;
-            if (it!=null && FileShell.IsValidUri(it.Detail))
+            if (it!=null && PathHelper.IsValidUri(it.Detail))
             {
                 ChangeCurrentUri(it.Detail);
             }
@@ -174,7 +175,7 @@ namespace TagExplorer.UriInfList
         {
             UpdateCurrentUriByContextMenu();
             string name = "";
-            if(FileShell.IsValidFS(CurrentUri))
+            if(PathHelper.IsValidFS(CurrentUri))
             {
                 name = System.IO.Path.GetFileName(CurrentUri);
             }
@@ -214,6 +215,18 @@ namespace TagExplorer.UriInfList
                     break;
             }
             SortType *= -1;
+        }
+
+        private void miRename_Click(object sender, RoutedEventArgs e)
+        {
+            UpdateCurrentUriByContextMenu();
+            InputBox box = new InputBox(CurrentUri,"");
+            string newTitle = box.ShowDialog();
+            if (newTitle != null && newTitle.Length > 0)
+            {
+                uriDB.UpdateUri(CurrentUri, newTitle);
+            }
+            //ClipBoardSafe.SetText(CurrentUri);
         }
     }
 }

@@ -37,14 +37,14 @@ namespace TagExplorer.UriMgr
             }
             else
             {
-                Logger.I("DBPath = " + PathHelper.UriDBPath);
-                create = !System.IO.Directory.Exists(PathHelper.UriDBPath);
+                Logger.I("DBPath = " + CfgPath.UriDBPath);
+                create = !System.IO.Directory.Exists(CfgPath.UriDBPath);
                 if (create)
                 {
-                    Logger.I("First Create !DBPath = " + PathHelper.UriDBPath);
-                    System.IO.Directory.CreateDirectory(PathHelper.UriDBPath);
+                    Logger.I("First Create !DBPath = " + CfgPath.UriDBPath);
+                    System.IO.Directory.CreateDirectory(CfgPath.UriDBPath);
                 }
-                dir = FSDirectory.Open(PathHelper.UriDBPath);
+                dir = FSDirectory.Open(CfgPath.UriDBPath);
 
             }
 
@@ -125,7 +125,7 @@ namespace TagExplorer.UriMgr
             try
             {
                 query = parser.Parse(querystr);
-                ScoreDoc[] docs = search.Search(query, Cfg.Ins.TAG_MAX_RELATION).ScoreDocs;
+                ScoreDoc[] docs = search.Search(query, CfgPerformance.TAG_MAX_RELATION).ScoreDocs;
                 for (int i = 0; i < docs.Length; i++)
                 {
                     Document doc = search.Doc(docs[i].Doc);
@@ -177,7 +177,7 @@ namespace TagExplorer.UriMgr
             Document doc = GetDoc(Uri);
             if (doc != null)
             {
-                ret = doc.GetField(F_URI_TITLE).StringValue;
+                ret = doc.GetField(F_URI_TITLE)?.StringValue;
             }
             return ret;
         }

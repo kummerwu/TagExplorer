@@ -3,10 +3,11 @@ using System.Windows.Media;
 
 namespace TagExplorer.Utils
 {
-    class GConfig
+    class CfgTagGraph
     {
         //在图中显示两个tag之间的边时，使用Split将
         public static char ParentChildSplit = '`';
+        public static string SpecialChar = "<>《》~?";
 
         //显示字体
         public static string GFontName = @"Microsoft YaHei";
@@ -33,7 +34,7 @@ namespace TagExplorer.Utils
         //每一层Tag显示大小缩放（底层显示更小一些）
         public static double ScaleInRadio = 1.2;
 
-        public static string SpecialChar = "<>《》~?";
+        
 
         //最小显示几层，最多几层，最少显示多少个tag
         public static int MinLevel = 4;
@@ -42,7 +43,7 @@ namespace TagExplorer.Utils
         public static int MinTagCnt = 80;
         
         //最后显示的Tag字符串
-        public static string TitleDataFile = "title.dat";
+        //public static string TitleDataFile = "title.dat";
         
         
     }

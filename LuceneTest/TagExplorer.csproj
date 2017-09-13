@@ -188,6 +188,10 @@
     <Compile Include="RichTxt\RichTxtBox.xaml.cs">
       <DependentUpon>RichTxtBox.xaml</DependentUpon>
     </Compile>
+    <Compile Include="SearchResultListBox\InputBox.cs" />
+    <Compile Include="SearchResultListBox\InputBoxWindow.xaml.cs">
+      <DependentUpon>InputBoxWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="TagBox\TagBox.xaml.cs">
       <DependentUpon>TagBox.xaml</DependentUpon>
     </Compile>
@@ -220,6 +224,7 @@
       <DependentUpon>SearchResultListBox.xaml</DependentUpon>
     </Compile>
     <Compile Include="UriMgr\IDisposableFactory.cs" />
+    <Compile Include="Utils\CfgPath.cs" />
     <Compile Include="Utils\ClipBoardSafe.cs" />
     <Compile Include="Utils\FileWatcherSafe.cs" />
     <Compile Include="Utils\NtfsFileID.cs" />
@@ -227,7 +232,7 @@
     <Compile Include="Utils\Cfg.cs" />
     <Compile Include="Utils\ClipboardConst.cs" />
     <Compile Include="Utils\FileShell.cs" />
-    <Compile Include="Utils\GConfig.cs" />
+    <Compile Include="Utils\CfgTagGraph.cs" />
     <Compile Include="Utils\GIconHelper.cs" />
     <Compile Include="Utils\Logger.cs" />
     <Compile Include="TagMgr\ITagDB.cs" />
@@ -239,6 +244,7 @@
     <Compile Include="UriMgr\UriDBFactory.cs" />
     <Compile Include="Utils\OpenWithList.cs" />
     <Compile Include="Utils\PathHelper.cs" />
+    <Compile Include="Utils\CfgPerformance.cs" />
     <Compile Include="Utils\TemplateHelper.cs" />
     <Compile Include="Utils\TipsCenter.cs" />
     <Page Include="AutoComplete\AutoTextbox.xaml">
@@ -258,6 +264,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="RichTxt\RichTxtBox.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="SearchResultListBox\InputBoxWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
