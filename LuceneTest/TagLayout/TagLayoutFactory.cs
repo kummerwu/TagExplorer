@@ -4,7 +4,8 @@
     {
         public static ITagLayout CreateLayout()
         {
-            return new AnyTagNet.TagLayout();
+            return new TagExplorer.BoxLayout.TagLayout();
+            //return new TreeLayout.TreeLayoutImpl(); 
         }
     }
 }

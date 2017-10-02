@@ -1,16 +1,16 @@
-﻿using AnyTag.UI;
-using TagExplorer;
+﻿using TagExplorer;
 using System.Collections;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Shapes;
 using TagExplorer.Utils;
+using AnyTagNet;
 
-namespace AnyTagNet
+namespace TagExplorer.BoxLayout
 {
-    class GObjCollection : IGObjCollection
+    internal class GObjCollection : IGObjCollection
     {
-        GStyle style = new GStyle();
+        //GStyle style = new GStyle();
         List<UIElement> allTxt = new List<UIElement>();
         List<UIElement> allEdge = new List<UIElement>();
         Hashtable gobjMaps = new Hashtable();
@@ -27,7 +27,7 @@ namespace AnyTagNet
                 {
                     gobjMaps.Add(g.Tag, g);
                     TagBox b = new TagBox();
-                    style.Apply(g, b);
+                    GStyle.Apply(g.box, b);
                     allTxt.Add(b);
                 }
             }
@@ -45,7 +45,7 @@ namespace AnyTagNet
                     l.Y1 = parent.Content.Y + parent.Content.Height;
                     l.X2 = child.Content.X + child.Content.Width / 2;
                     l.Y2 = child.Content.Y;
-                    style.ApplyLine(parent, child, l);
+                    GStyle.ApplyLine(parent.box, child.box, l);
 
                     allEdge.Add(l);
                     l.Tag = parent.Tag.ToString()+CfgTagGraph.ParentChildSplit+child.Tag.ToString();

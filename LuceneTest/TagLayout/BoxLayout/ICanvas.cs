@@ -1,8 +1,7 @@
-﻿using AnyTagNet;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Windows;
 
-namespace AnyTag.UI
+namespace TagExplorer.BoxLayout
 {
 
     interface IGObjCollection

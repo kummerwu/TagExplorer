@@ -4,11 +4,13 @@ using System.Windows;
 using System.Windows.Media;
 using System.Windows.Shapes;
 using TagExplorer.Utils;
+using TagExplorer.TagLayout.LayoutCommon;
 
 namespace AnyTagNet
 {
     class GStyle
     {
+        private GStyle() { }
         static  Color[] colors1 = new Color[] {
                // Color.FromRgb(255,0,0      ),
                 Color.FromRgb(255,51,0     ),
@@ -57,13 +59,13 @@ namespace AnyTagNet
             i = i % colors.Length;
             return colors[i];
         } 
-        public void Apply(GObj g,TagBox b)
+        public static void Apply(GTagLable g,TagBox b)
         {
             b.FontFamily = CfgTagGraph.GFontF;
             b.FontSize = g.FontSize;
-            b.Height1 = g.Content.Height;
-            b.Width1 = g.Content.Width;
-            b.Margin = new Thickness(g.Content.X, g.Content.Y, 0, 0);
+            b.Height1 = g.ColorBox.Height;
+            b.Width1 = g.ColorBox.Width;
+            b.Margin = new Thickness(g.ColorBox.X, g.ColorBox.Y, 0, 0);
             b.TextAlignment = TextAlignment.Center;
             b.Text = g.Tag ;
             b.Background1 = new SolidColorBrush(GetColor(g.Distance,g.Level));
@@ -105,7 +107,7 @@ namespace AnyTagNet
             return b;
         }
 
-        public void ApplyLine(GObj parent, GObj child, Line l)
+        public static void ApplyLine(GTagLable parent, GTagLable child, Line l)
         {
             if (Math.Min(parent.Level, child.Level) == 0)
             {

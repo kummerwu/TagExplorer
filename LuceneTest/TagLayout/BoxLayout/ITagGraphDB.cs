@@ -1,4 +1,4 @@
-﻿namespace AnyTagNet
+﻿namespace TagExplorer.BoxLayout
 {
     public class PathEdge
     {

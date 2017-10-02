@@ -21,14 +21,27 @@ namespace TagExplorer.Utils
 
         //Tag有向图的大致比例关系，边缘空白大小
         public static Size Radio = new Size(40, 40);
-        public static double InnerBoxXPadding_MAX = 30;
-        public static double InnerBoxYPadding_MAX = 24;
-        public static double InnerBoxXPadding_MIN = 20;
-        public static double InnerBoxYPadding_MIN = 18;
-        public static double XContentPadding = 10;
-        public static double YContentPadding = 6;
-        public static double LayoutXPadding = 10;
-        public static double LayoutYPadding = 10;
+        //public static double InnerBoxXPadding_MAX = 30;
+        //public static double InnerBoxYPadding_MAX = 24;
+        //public static double InnerBoxXPadding_MIN = 20;
+        //public static double InnerBoxYPadding_MIN = 18;
+        //public static double XContentPadding = 10;
+        //public static double YContentPadding = 6;
+        //public static double LayoutXPadding = 10;
+        //public static double LayoutYPadding = 10;
+
+        public static double InnerBoxXPadding_MAX = 30/2;
+        public static double InnerBoxYPadding_MAX = 24/2;
+        public static double InnerBoxXPadding_MIN = 20/2;
+        public static double InnerBoxYPadding_MIN = 18/2;
+        public static double XContentPadding = 10/2;
+        public static double YContentPadding = 6/2;
+        public static double LayoutXPadding = 10/2;
+        public static double LayoutYPadding = 10/2;
+
+
+
+
         //public static double LayoutInitWidth = 300;
         //public static double layoutInitHeight = 600;
         //每一层Tag显示大小缩放（底层显示更小一些）

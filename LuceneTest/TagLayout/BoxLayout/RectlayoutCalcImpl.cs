@@ -1,11 +1,10 @@
-﻿using AnyTag.UI;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Windows;
 using TagExplorer.Utils;
 
-namespace AnyTagNet
+namespace TagExplorer.BoxLayout
 {
     class RectlayoutCalcImpl : IRectLayoutCalc
     {

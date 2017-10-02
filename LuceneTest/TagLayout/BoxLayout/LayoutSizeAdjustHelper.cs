@@ -1,7 +1,6 @@
-﻿using AnyTag.UI;
-using System.Windows;
+﻿using System.Windows;
 
-namespace AnyTagNet
+namespace TagExplorer.BoxLayout
 {
     class LayoutSizeAdjustHelper
     {

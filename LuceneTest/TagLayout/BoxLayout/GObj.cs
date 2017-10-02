@@ -1,5 +1,4 @@
-﻿using AnyTag.UI;
-using TagExplorer.TagMgr;
+﻿using TagExplorer.TagMgr;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -7,8 +6,9 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Media;
 using TagExplorer.Utils;
+using TagExplorer.TagLayout.LayoutCommon;
 
-namespace AnyTagNet
+namespace TagExplorer.BoxLayout
 {
     class GLayoutResult : IGLayoutResult
     {
@@ -55,27 +55,32 @@ namespace AnyTagNet
     
     class GObj
     {
+        private void InitBox(string tag,int level,int distance)
+        {
+            box = new GTagLable(distance,tag);
+        }
         //公有属性：
-        public Rect Content = new Rect();   //自身文字所占用的矩形大小（加了一个ContentPadding）
-        public Rect InnerBox = new Rect();  //自身文字所占的区域（再加了一个XPadding和YPadding）
+        //public Rect Content = new Rect();   //自身文字所占用的矩形大小（加了一个ContentPadding）
+        //public Rect InnerBox = new Rect();  //自身文字所占的区域（再加了一个XPadding和YPadding）
+        public GTagLable box ;
 
         public Rect OuterBox = new Rect();  //整个Gobj所占区域，包括三部分（Parent区域，自身区域，Children区域）
 
 
-        public double FontSize = CfgTagGraph.FontSize;
-        public string Tag;
-        public int Level = 0;
-        public int Distance; //本节点离当前节点（跟节点的距离）
+        public Rect Content { get { return box.ColorBox; } }
+        public Rect InnerBox { get { return box.InnerBox; } }
+
 
         //私有属性
+
         private ITagDB db = null;
         private Size ChildBox = new Size(0, 0);
         private Size ParentBox = new Size(0, 0);
         List<GObj> gChildList = new List<GObj>();
         List<GObj> gParentList = new List<GObj>();
         List<GObj> gBrotherList = new List<GObj>();
-        double InnerBoxXPadding = double.NaN;// GConfig.InnerBoxXPadding_MAX;
-        double InnerBoxYPadding = double.NaN;// GConfig.InnerBoxYPadding_MAX;
+        
+        public string Tag { get { return box.Tag; } }
         
 
         IRectLayoutCalc calc = new RectlayoutCalcImpl();
@@ -108,45 +113,9 @@ namespace AnyTagNet
             return false;
         }
 
-        //计算自身内容所占区域的大小
-        private void CalcContentSize(string text, double fontSize, string fontFamily)
-        {
-            
-            FormattedText formattedText = new FormattedText(
-                text,
-                System.Globalization.CultureInfo.InvariantCulture,
-                FlowDirection.LeftToRight,
-                new Typeface(fontFamily.ToString()),
-                fontSize,
-                Brushes.Black
-            );
-            Content.Height = formattedText.Height + CfgTagGraph.YContentPadding;
-            Content.Width = formattedText.WidthIncludingTrailingWhitespace+ CfgTagGraph.XContentPadding;
-            
-        }
         
-        //计算InnerBox（自身内容+Padding）的大小
-        public void CalcInnerBoxSize()
-        {
-            InnerBoxXPadding = CfgTagGraph.InnerBoxXPadding_MAX;
-            InnerBoxYPadding = CfgTagGraph.InnerBoxYPadding_MAX;
-            for (int i = 0;i<Distance;i++)
-            {
-                FontSize /= CfgTagGraph.ScaleInRadio;
-                InnerBoxXPadding /= CfgTagGraph.ScaleInRadio;
-                InnerBoxYPadding /= CfgTagGraph.ScaleInRadio;
-            }
-            if(Distance==0)
-            {
-                FontSize*=1.4;
-            }
-            InnerBoxXPadding = Math.Max(InnerBoxXPadding, CfgTagGraph.InnerBoxXPadding_MIN);
-            InnerBoxYPadding = Math.Max(InnerBoxYPadding, CfgTagGraph.InnerBoxYPadding_MIN);
-            FontSize = Math.Max(FontSize, CfgTagGraph.MinFontSize);
-            CalcContentSize(Tag, FontSize, CfgTagGraph.GFontName);
-            InnerBox.Width = Content.Width + InnerBoxXPadding ;
-            InnerBox.Height = Content.Height + InnerBoxYPadding;
-        }
+        
+        
         //返回所有对象，包括自己，父节点和子节点(以及递归的所有父子节点)
         //TODO：该函数可以优化，实际上并不需要所有节点，只需要指导当前整个图中有多少个节点（以便在节点太多的时候，停止继续遍历）
         public IEnumerable<GObj> GetAll()
@@ -229,11 +198,17 @@ namespace AnyTagNet
             {
                 result.AddCalc(a);
             }
+            
             GObj ret = new GObj();
             ret.db = db;
-            ret.Tag = tag;
-            ret.Level = level;
-            ret.Distance = distance;
+            ret.InitBox(tag, level, distance);
+            //ret.box.db = db;
+            //ret.box.Tag = tag;
+            //ret.box.Level = level;
+            //ret.box.Distance = distance;
+            //ret.Tag = tag;
+            //ret.Level = level;
+            //ret.Distance = distance;
 
             //List<string> b = db.GetBrothers(tag);
             List<string> children = db.QueryTagChildren(tag);
@@ -283,9 +258,9 @@ namespace AnyTagNet
                 ret.calc.Calc(ref ret.ChildBox, ret.gChildList, LayoutOption.FixRadio);
             }
             Logger.D("End Visit All children :{0}<===", tag);
-            ret.CalcInnerBoxSize();
+            //ret.box.Init(distance, tag);
             ret.CalcOutterBoxSize();
-            ret.CalcInnerBoxPos();
+            ret.box.CalcInnerBoxPos(ret.OuterBox,ret.ParentBox);
             ret.ShowAll();
             Logger.OUT();
             return ret;
@@ -304,15 +279,9 @@ namespace AnyTagNet
         {
             OuterBox.X = x;
             OuterBox.Y = y;
-            CalcInnerBoxPos();
+            box.CalcInnerBoxPos(OuterBox,ParentBox);
         }
-        private void CalcInnerBoxPos()
-        {
-            InnerBox.X = OuterBox.X + (OuterBox.Width - InnerBox.Width) / 2;
-            InnerBox.Y = OuterBox.Y + ParentBox.Height;
-            Content.X = InnerBox.X + InnerBoxXPadding;
-            Content.Y = InnerBox.Y + InnerBoxYPadding;
-        }
+        
         //计算所有对象的位置信息
         private void CalcAllObjsPos(double Left,double Top)
         {
@@ -320,7 +289,7 @@ namespace AnyTagNet
             OuterBox.X += Left;
             OuterBox.Y += Top;
 
-            CalcInnerBoxPos();
+            box.CalcInnerBoxPos(OuterBox,ParentBox);
 
             //调整所有父节点的位置
             double leftParentRange, topParentRange;

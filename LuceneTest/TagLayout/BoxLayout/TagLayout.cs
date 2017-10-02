@@ -1,12 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Windows;
 using TagExplorer.TagMgr;
-using AnyTag.UI;
 using TagExplorer.Utils;
 using TagExplorer.TagLayout;
-using TagExplorer;
 
-namespace AnyTagNet
+namespace TagExplorer.BoxLayout
 {
     class TagLayout : ITagLayout
     {

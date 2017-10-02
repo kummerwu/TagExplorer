@@ -447,8 +447,8 @@ namespace TagExplorer
             //    UriDB.AddUri(uri, new List<string>() { currentTag });
             //}
         }
-        public void PasteFiles() { PasteFiles(true); }
-        public void PasteFiles(bool NeedCopy)
+        private void PasteFiles() { PasteFiles(true); }
+        private void PasteFiles(bool NeedCopy)
         {
             UpdateCurrentTagByContextMenu();
             AddUri(FileShell.GetFileListFromClipboard(),NeedCopy);

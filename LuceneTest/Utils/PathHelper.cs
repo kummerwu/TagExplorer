@@ -126,7 +126,8 @@ namespace TagExplorer.Utils
         {
             if (txt == null) return false;
             return (txt.StartsWith("http://", StringComparison.CurrentCultureIgnoreCase) ||
-                    txt.StartsWith("https://", StringComparison.CurrentCultureIgnoreCase));
+                    txt.StartsWith("https://", StringComparison.CurrentCultureIgnoreCase) ||
+                    txt.StartsWith(@"onenote:///",StringComparison.CurrentCultureIgnoreCase));
         }
 
 
