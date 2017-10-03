@@ -57,7 +57,7 @@ namespace TagExplorer.BoxLayout
     {
         private void InitBox(string tag,int level,int distance)
         {
-            box = new GTagLable(distance,tag);
+            box = new GTagLable(distance,tag,0,0);
         }
         //公有属性：
         //public Rect Content = new Rect();   //自身文字所占用的矩形大小（加了一个ContentPadding）

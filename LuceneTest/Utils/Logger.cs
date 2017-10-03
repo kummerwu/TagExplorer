@@ -10,12 +10,12 @@ namespace TagExplorer.Utils
         #region 公有方法
         public static void D(string s)
         {
-            //log.Debug(PREFIX+s);
+            log.Debug(PREFIX+s);
         }
         public static void D(string fmt ,params object[] par)
         {
-            //string s = string.Format(PREFIX+fmt, par);
-            //log.Debug(s);
+            string s = string.Format(PREFIX+fmt, par);
+            log.Debug(s);
         }
 
         public static void I(string fmt, params object[] par)
@@ -33,6 +33,7 @@ namespace TagExplorer.Utils
         }
         public static void IN(string INF)
         {
+            log.Debug("\r\n++++"+INF);
             deep++;
             stack.Push(INF);
             PREFIX = INF.PadRight(8) + new string(' ', deep * 8);
@@ -40,10 +41,12 @@ namespace TagExplorer.Utils
         }
         public static void OUT()
         {
+            
             deep--;
-            stack.Pop();
+            string INF = stack.Pop();
             string tag = stack.Count == 0 ? "        " : stack.Peek().PadRight(8);
             PREFIX = tag + new string(' ', deep * 8);
+            log.Debug("\r\n----" + INF);
         }
         #endregion
 

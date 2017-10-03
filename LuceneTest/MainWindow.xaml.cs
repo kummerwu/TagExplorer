@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AnyTagNet;
+using System;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
@@ -230,7 +231,10 @@ namespace TagExplorer
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            LoadLayout();
+            if (GStyle.mode == LAYOUT_COMPACT_MODE.GRAPH_BEGIN)
+                GStyle.mode = LAYOUT_COMPACT_MODE.TREE_NO_COMPACT;
+            else GStyle.mode = (GStyle.mode + 1);
+            Update(LRUTag.Ins.DefaultTag);
         }
 
         public void Dispose()

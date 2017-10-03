@@ -21,9 +21,9 @@ namespace TagExplorer.TagLayout.LayoutCommon
 
         
         //只读属性
-        public GTagLable(int d,string tag)
+        public GTagLable(int d,string tag,double x,double y)
         {
-            Init(d, tag);
+            Init(d, tag,x,y);
         }
         
         double InnerBoxXPadding;// GConfig.InnerBoxXPadding_MAX;
@@ -35,9 +35,12 @@ namespace TagExplorer.TagLayout.LayoutCommon
         {
             return GStyle.Apply(Level, Distance, x, y, Tag);
         }
-   
+        public TagBox ToTagBox()
+        {
+            return GStyle.Apply(Level, Distance, ColorBox.X, ColorBox.Y, Tag);
+        }
         //计算InnerBox（自身内容（文本着色区域）+Padding）的大小
-        private void Init(int Distance, string Tag)
+        private void Init(int Distance, string Tag,double x,double y)
         {
             ColorBox = new Rect();
             InnerBox = new Rect();
@@ -59,14 +62,15 @@ namespace TagExplorer.TagLayout.LayoutCommon
             InnerBoxYPadding = Math.Max(InnerBoxYPadding, CfgTagGraph.InnerBoxYPadding_MIN);
             FontSize = Math.Max(FontSize, CfgTagGraph.MinFontSize);
 
-            CalcColorBoxSize(Tag,  CfgTagGraph.GFontName);
-           
+            CalcColorBoxSize(Tag,  CfgTagGraph.GFontName,x,y);
+            InnerBox.X = x;
+            InnerBox.Y = y;
             InnerBox.Width = ColorBox.Width + InnerBoxXPadding;
             InnerBox.Height = ColorBox.Height + InnerBoxYPadding;
             return ;
         }
         //计算自身内容所占区域的大小（文本和着色区域）
-        private void CalcColorBoxSize(string text,  string fontFamily)
+        private void CalcColorBoxSize(string text,  string fontFamily,double x,double y)
         {
 
             FormattedText formattedText = new FormattedText(
@@ -79,6 +83,8 @@ namespace TagExplorer.TagLayout.LayoutCommon
             );
             Size tmp = new Size(formattedText.WidthIncludingTrailingWhitespace + CfgTagGraph.XContentPadding,
                                     formattedText.Height + CfgTagGraph.YContentPadding);
+            ColorBox.X = x + CfgTagGraph.XContentPadding;
+            ColorBox.Y = y + CfgTagGraph.YContentPadding;
             ColorBox.Width = tmp.Width;
             ColorBox.Height = tmp.Height;
         }
