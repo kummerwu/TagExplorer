@@ -53,7 +53,7 @@ namespace AnyTagNet
             C(0xFF6666),
             C(0x99CC00),
             C(0x99CCFF),
-            C(0xFFFF33),
+            C(0xFFD39B),
             C(0xFF99CC),
             C(0x9933FF),
             C(0x6699cc),
