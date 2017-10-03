@@ -10,12 +10,12 @@ namespace TagExplorer.Utils
         #region 公有方法
         public static void D(string s)
         {
-            log.Debug(PREFIX+s);
+            //log.Debug(PREFIX+s);
         }
         public static void D(string fmt ,params object[] par)
         {
-            string s = string.Format(PREFIX+fmt, par);
-            log.Debug(s);
+            //string s = string.Format(PREFIX+fmt, par);
+            //log.Debug(s);
         }
 
         public static void I(string fmt, params object[] par)

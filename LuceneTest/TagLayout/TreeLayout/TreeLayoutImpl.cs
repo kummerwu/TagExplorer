@@ -40,7 +40,7 @@ namespace TagExplorer.TagLayout.TreeLayout
         private GTreeObj root = null;
 
         public List<TagBox> tags = null;
-        public List<Line> lines = null;
+        public IEnumerable<UIElement> lines = null;
         public void Layout(ITagDB db, string tag)
         {
             GTreeObjDB.Ins.Reset();
@@ -48,7 +48,7 @@ namespace TagExplorer.TagLayout.TreeLayout
             this.db = db;
             root = GTreeObj.ExpandNode(tag, 0, db,0,0);
             tags = GTreeObjDB.Ins.GetAllTagBox();
-            lines = GTreeObjDB.Ins.GetAllLines();
+            lines = GTreeObjDB.Ins.GetAllLines().Cast<UIElement>();
 
         }
         

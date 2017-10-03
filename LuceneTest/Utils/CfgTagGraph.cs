@@ -12,7 +12,7 @@ namespace TagExplorer.Utils
         //显示字体
         public static string GFontName = @"Microsoft YaHei";
         public static FontFamily GFontF = new FontFamily(GFontName);
-        public static double FontSize = 24;
+        public static double FontSize = 18;
         public static double MinFontSize = 8;
 
         //Tag有向图线的粗细
@@ -30,9 +30,10 @@ namespace TagExplorer.Utils
         //public static double LayoutXPadding = 10;
         //public static double LayoutYPadding = 10;
 
-        public static double InnerBoxXPadding_MAX = 30/2;
+        public const double RADIO = 0.5;
+        public static double InnerBoxXPadding_MAX = 30;
         public static double InnerBoxYPadding_MAX = 24/2;
-        public static double InnerBoxXPadding_MIN = 20/2;
+        public static double InnerBoxXPadding_MIN = 20;
         public static double InnerBoxYPadding_MIN = 18/2;
         public static double XContentPadding = 10/2;
         public static double YContentPadding = 6/2;
@@ -45,7 +46,7 @@ namespace TagExplorer.Utils
         //public static double LayoutInitWidth = 300;
         //public static double layoutInitHeight = 600;
         //每一层Tag显示大小缩放（底层显示更小一些）
-        public static double ScaleInRadio = 1.2;
+        public static double ScaleInRadio = 1.1;
 
         
 

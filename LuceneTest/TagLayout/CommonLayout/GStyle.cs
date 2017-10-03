@@ -84,6 +84,7 @@ namespace AnyTagNet
             b.Background1 = new SolidColorBrush(GetColor(g.Distance,g.Level));
             
         }
+
         public static TagBox Apply(double x, double y, string text)
         {
             TagBox b =  Apply(4,4,x, y, text);
@@ -133,6 +134,22 @@ namespace AnyTagNet
                 l.Stroke = new SolidColorBrush(GetColor(parent.Distance,parent.Level));
                 l.StrokeThickness = CfgTagGraph.StrokeThickness;
                 l.StrokeDashArray = CfgTagGraph.StrokeDashArray;
+            }
+        }
+
+        public static void ApplyLine(GTagLable parent, GTagLable child, Path l)
+        {
+            if (Math.Min(parent.Level, child.Level) == 0)
+            {
+                l.Stroke = new SolidColorBrush(GetColor(parent.Distance, parent.Level));
+                l.StrokeThickness = CfgTagGraph.StrokeThickness * 1.5;
+                //l.StrokeDashArray = CfgTagGraph.StrokeDashArray;
+            }
+            else
+            {
+                l.Stroke = new SolidColorBrush(GetColor(parent.Distance, parent.Level));
+                l.StrokeThickness = CfgTagGraph.StrokeThickness;
+                //l.StrokeDashArray = CfgTagGraph.StrokeDashArray;
             }
         }
     }

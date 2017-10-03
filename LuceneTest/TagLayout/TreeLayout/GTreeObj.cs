@@ -93,7 +93,7 @@ namespace TagExplorer.TagLayout.TreeLayout
                 //w = Math.Max(w, cur.OutBox.Width);
                 root.OutBox.Union(cur.OutBox);
                 root.children.Add(cur);
-                GTreeObjDB.Ins.Lines.Add(new Tuple<GTreeObj, GTreeObj>(root, cur));
+                
 
                 pre = cur;
             }
@@ -140,7 +140,7 @@ namespace TagExplorer.TagLayout.TreeLayout
                     Logger.D("Place {0} after {1}:newline", ctag, root.box.Tag);
                     cur = ExpandNode(ctag, level + 1, db, root.box.InnerBox.Right, root.OutBox.Bottom);
                 }
-                
+                GTreeObjDB.Ins.AddLine(root, cur);
             }
 
             return cur;
@@ -178,7 +178,7 @@ namespace TagExplorer.TagLayout.TreeLayout
                     Logger.D("Place {0} after {1}:newline", ctag, root.box.Tag);
                     cur = ExpandNode(ctag, rootLevel + 1, db, root.box.InnerBox.Right, root.OutBox.Bottom);
                 }
-
+                GTreeObjDB.Ins.AddLine(root, cur);
             }
 
             return cur;
@@ -204,7 +204,7 @@ namespace TagExplorer.TagLayout.TreeLayout
                 cur = ExpandNode(ctag, level + 1, db, root.box.InnerBox.Right, root.OutBox.Bottom);
             }
 
-
+            GTreeObjDB.Ins.AddLine(root, cur);
             return cur;
         }
 

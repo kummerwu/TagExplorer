@@ -205,7 +205,7 @@ namespace TagExplorer
             layoutHeight = tagLayout.Size.Height;
             SetHeight();
             
-            foreach (Line l in lines)
+            foreach (UIElement l in lines)
             {
                 canvas.Children.Add(l);
             }
