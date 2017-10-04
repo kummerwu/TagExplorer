@@ -748,13 +748,16 @@ namespace TagExplorer
             UpdateCurrentTagByContextMenu();
             if (tagDB.QueryTagChildren(currentTag).Count==0)
             {
-                tagDB.RemoveTag(currentTag);
+                string oldCurrentTag = currentTag;
+                string newCurrentTag = NavigateTagBox(Key.Left);
+                tagDB.RemoveTag(oldCurrentTag);
+                ShowGraph(LRUTag.Ins.DefaultTag);
             }
             else
             {
                 MessageBox.Show(string.Format("[{0}]下还有其他子节点，如果确实需要删除该标签，请先删除所有子节点", currentTag), "提示：", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
-            ShowGraph(LRUTag.Ins.DefaultTag);
+            
         }
 
         private void miLinkInFile_Click(object sender, RoutedEventArgs e)
