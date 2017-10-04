@@ -338,7 +338,10 @@ namespace TagExplorer
         }
 
         
-
+        public void SetCurrentTag()
+        {
+            SetCurrentTag(currentTag);
+        }
         public void SetCurrentTag(string tag)
         {
             UpdateSelectedStatus(tag,TagBox.Status.Selected); //这一句必须放在下面检查并return之前，
@@ -695,6 +698,71 @@ namespace TagExplorer
             string dir = PathHelper.GetDirByTag(currentTag);
             dir = System.IO.Path.Combine(dir, DateTime.Now.ToString("yyyyMMdd") + "-");
             ClipBoardSafe.SetText(dir);
+        }
+
+        private void OpenTag_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            miOpenTagDir_Click(sender, e);
+        }
+
+        private void CopyTagFullPath_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            miCopyTagFullPath_Click(sender, e);
+        }
+
+        private void CopyTagFullPathEx_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            miCopyTagFullPathEx_Click(sender, e);
+        }
+
+        private void CopyTagName_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            miCopyTagName_Click(sender, e);
+        }
+
+        private void NewTag_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            miNewTag_Click(sender, e);
+        }
+
+        private void CopyTag_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            miCopyTag_Click(sender, e);
+        }
+
+        private void CutTag_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            miCutTag_Click(sender, e);
+        }
+
+        private void PasteTag_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            miPasteTag_Click(sender, e);
+        }
+
+        private void DeleteTag_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            miDeleteTag_Click(sender, e);
+        }
+
+        private void NewFile_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            miNewFile_Click(sender, e);
+        }
+
+        private void PasteFile_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            miPasteFile_Click(sender, e);
+        }
+
+        private void LinkFile_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            miLinkInFile_Click(sender, e);
+        }
+
+        private void EditFile_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            MessageBox.Show("暂不支持");
         }
     }
 }

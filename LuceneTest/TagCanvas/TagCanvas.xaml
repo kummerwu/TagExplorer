@@ -7,29 +7,137 @@
              xmlns:local="clr-namespace:TagExplorer"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
+
     <UserControl.Resources>
+        <!--===============================================================
+        定义各种命令、以及命令的快捷键
+        ===============================================================-->
+        <!--目录操作 Ctrl+Shift-->
+        <RoutedUICommand x:Key="OpenTagDir" Text="打开标签目录">
+            <RoutedUICommand.InputGestures>
+                <KeyGesture>Ctrl+Shift+O</KeyGesture>
+            </RoutedUICommand.InputGestures>
+        </RoutedUICommand>
+        <RoutedUICommand x:Key="CopyTagFullPath" Text="拷贝标签路径" >
+            <RoutedUICommand.InputGestures>
+                <KeyGesture>Ctrl+Shift+C</KeyGesture>
+            </RoutedUICommand.InputGestures>
+        </RoutedUICommand>
+        <RoutedUICommand x:Key="CopyTagFullPathEx" Text="拷贝标签路径+日期" >
+            <RoutedUICommand.InputGestures>
+                <KeyGesture>Ctrl+Shift+A</KeyGesture>
+            </RoutedUICommand.InputGestures>
+        </RoutedUICommand>
+        <RoutedUICommand x:Key="CopyTagName" Text="拷贝标签名称" >
+            <RoutedUICommand.InputGestures>
+                <KeyGesture>Ctrl+Shift+N</KeyGesture>
+            </RoutedUICommand.InputGestures>
+        <!--Tag操作   ALT-->
+        </RoutedUICommand>
+        <RoutedUICommand x:Key="NewTag" Text="新建标签" >
+            <RoutedUICommand.InputGestures>
+                <KeyGesture>Alt+N</KeyGesture>
+                <KeyGesture>Insert</KeyGesture>
+            </RoutedUICommand.InputGestures>
+        </RoutedUICommand>
+        <RoutedUICommand x:Key="CopyTag" Text="复制标签" >
+            <RoutedUICommand.InputGestures>
+                <KeyGesture>Alt+C</KeyGesture>
+            </RoutedUICommand.InputGestures>
+        </RoutedUICommand>
+        <RoutedUICommand x:Key="CutTag" Text="剪切标签" >
+            <RoutedUICommand.InputGestures>
+                <KeyGesture>Alt+X</KeyGesture>
+            </RoutedUICommand.InputGestures>
+        </RoutedUICommand>
+        <RoutedUICommand x:Key="PasteTag" Text="粘贴标签" >
+            <RoutedUICommand.InputGestures>
+                <KeyGesture>Alt+V</KeyGesture>
+            </RoutedUICommand.InputGestures>
+        </RoutedUICommand>
+        <RoutedUICommand x:Key="DeleteTag" Text="删除标签" >
+            <RoutedUICommand.InputGestures>
+                <KeyGesture>Delete</KeyGesture>
+            </RoutedUICommand.InputGestures>
+        </RoutedUICommand>
+        <!--文件   CTRL-->
+        <RoutedUICommand x:Key="NewFile" Text="新建文件" >
+            <RoutedUICommand.InputGestures>
+                <KeyGesture>Ctrl+N</KeyGesture>
+            </RoutedUICommand.InputGestures>
+        </RoutedUICommand>
+        <RoutedUICommand x:Key="PasteFile" Text="粘贴文件" >
+            <RoutedUICommand.InputGestures>
+                <KeyGesture>Ctrl+P</KeyGesture>
+            </RoutedUICommand.InputGestures>
+        </RoutedUICommand>
+        <RoutedUICommand x:Key="LinkFile" Text="链接文件" >
+            <RoutedUICommand.InputGestures>
+                <KeyGesture>Ctrl+L</KeyGesture>
+            </RoutedUICommand.InputGestures>
+        </RoutedUICommand>
+        <RoutedUICommand x:Key="EditFile" Text="编辑文件" >
+            <RoutedUICommand.InputGestures>
+                <KeyGesture>Ctrl+P</KeyGesture>
+            </RoutedUICommand.InputGestures>
+        </RoutedUICommand>
+
+
+        <!-- ===============================================================
+        定义菜单资源
+        =============================================================== -->
         <ContextMenu x:Name="tagAreaMenu" x:Key="tagAreaMenu" ContextMenuOpening="tagAreaMenu_ContextMenuOpening">
-            <MenuItem Name="miOpenTagDir"       Header="打开标签目录" Click="miOpenTagDir_Click"/>
-            <MenuItem Name="miCopyTagFullPath"  Header="拷贝标签路径" Click="miCopyTagFullPath_Click"/>
-            <MenuItem Name="miCopyTagFullPathEx"  Header="拷贝标签路径+日期" Click="miCopyTagFullPathEx_Click"/>
-            <MenuItem Name="miCopyTagName"      Header="拷贝标签名称" Click="miCopyTagName_Click"/>
-            <Separator></Separator>
-            <MenuItem Name="miNewTag"       Header="新建标签" Click="miNewTag_Click"/>
-            <MenuItem Name="miCopyTag"      Header="复制标签" Click="miCopyTag_Click"/>
-            <MenuItem Name="miCutTag"       Header="剪切标签" Click="miCutTag_Click"/>
-            <MenuItem Name="miPasteTag"     Header="粘贴标签" Click="miPasteTag_Click"/>
-            <MenuItem Name="miDeleteTag"    Header="删除标签" Click="miDeleteTag_Click"/>
-            <Separator></Separator>
-            <MenuItem Name="miNew"          Header="新建文件" Click="miNewFile_Click"></MenuItem>
-            <MenuItem Name="miPaste"        Header="粘贴文件" Click="miPasteFile_Click"/>
-            <MenuItem Name="miLinkIn"       Header="链接文件" Click="miLinkInFile_Click"/>
-            <MenuItem Name="miEdit"         Header="编辑文件">
-                <MenuItem Name="miEditOne"  Header="编辑.One"></MenuItem>
+
+            <MenuItem Command="{StaticResource OpenTagDir}" >
+                <MenuItem.Icon>
+                    <Image Source="pack://siteoforigin:,,,/Resources/left.png"></Image>
+                </MenuItem.Icon>
             </MenuItem>
+            <MenuItem Command="{StaticResource CopyTagFullPath}" />
+            <MenuItem Command="{StaticResource CopyTagFullPathEx}" />
+            <MenuItem Command="{StaticResource CopyTagName}" />
             <Separator></Separator>
+            <MenuItem Command="{StaticResource NewTag}" />
+            <MenuItem Command="{StaticResource CopyTag}" />
+            <MenuItem Command="{StaticResource CutTag}" />
+            <MenuItem Command="{StaticResource PasteTag}" />
+            <MenuItem Command="{StaticResource DeleteTag}" />
+            <Separator></Separator>
+            <MenuItem Command="{StaticResource NewFile}" />
+            <MenuItem Command="{StaticResource PasteFile}" />
+            <MenuItem Command="{StaticResource LinkFile}" />
+            <MenuItem Name="miEdit"         Header="编辑文件">
+                <MenuItem Command="{StaticResource EditFile}" />
+            </MenuItem>
             
         </ContextMenu>
     </UserControl.Resources>
+
+    <!-- ===============================================================
+        定义各种命令的处理函数
+        =============================================================== -->
+    <UserControl.CommandBindings>
+        <!--目录操作-->
+        <CommandBinding Command="{StaticResource OpenTagDir}" Executed="OpenTag_Executed"/>
+        <CommandBinding Command="{StaticResource CopyTagFullPath}" Executed="CopyTagFullPath_Executed"/>
+        <CommandBinding Command="{StaticResource CopyTagFullPathEx}" Executed="CopyTagFullPathEx_Executed"/>
+        <CommandBinding Command="{StaticResource CopyTagName}" Executed="CopyTagName_Executed"/>
+        <!--Tag操作   ALT-->
+        <CommandBinding Command="{StaticResource NewTag}" Executed="NewTag_Executed"/>
+        <CommandBinding Command="{StaticResource CopyTag}" Executed="CopyTag_Executed"/>
+        <CommandBinding Command="{StaticResource CutTag}" Executed="CutTag_Executed"/>
+        <CommandBinding Command="{StaticResource PasteTag}" Executed="PasteTag_Executed"/>
+        <CommandBinding Command="{StaticResource DeleteTag}" Executed="DeleteTag_Executed"/>
+        <!--文件操作  CTRL-->
+        <CommandBinding Command="{StaticResource NewFile}" Executed="NewFile_Executed"/>
+        <CommandBinding Command="{StaticResource PasteFile}" Executed="PasteFile_Executed"/>
+        <CommandBinding Command="{StaticResource LinkFile}" Executed="LinkFile_Executed"/>
+        <CommandBinding Command="{StaticResource EditFile}" Executed="EditFile_Executed"/>
+        
+    </UserControl.CommandBindings>
+    <!-- ===============================================================
+        UI界面
+        =============================================================== -->
     <Grid >
         <Grid.RowDefinitions>
             <RowDefinition Height="25"></RowDefinition>
