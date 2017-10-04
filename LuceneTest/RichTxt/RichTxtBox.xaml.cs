@@ -47,6 +47,7 @@ namespace TagExplorer.RichTxt
                 Save();
                 if (file == f) return;
 
+                //是一个无效的rtf文件
                 if (f == null || System.IO.Path.GetExtension(f).ToLower() != ".rtf")
                 {
                     richTxt.Document.Blocks.Clear();

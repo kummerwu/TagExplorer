@@ -71,6 +71,23 @@ namespace TagExplorer.Utils
                 
             }
         }
+
+        internal static string GetNoteFileByTag(string tag)
+        {
+            string dir = GetDirByTag(tag);
+            string file = Path.Combine(dir, tag + ".note.rtf");
+            string temp = Path.Combine(CfgPath.TemplatePath, "RTF文档.rtf");
+            //if (!File.Exists(temp)) return null;
+
+            if(!File.Exists(file))
+            {
+                File.Copy(temp, file);
+            }
+
+            return file;
+
+        }
+
         public static string GetVDirByTag(string tag)
         {
             return Path.Combine(CfgPath.VDir, tag);
@@ -183,7 +200,7 @@ namespace TagExplorer.Utils
         public static bool NeedSkipByUri(string uri)
         {
             string name = Path.GetFileName(uri);
-            bool ret = Regex.IsMatch(name, @"(_files$)|(^~)|(.tmp$)", RegexOptions.IgnoreCase);
+            bool ret = Regex.IsMatch(name, @"(_files$)|(^~)|(.tmp$)|(\.note\.rtf)", RegexOptions.IgnoreCase);
             if(ret)
             {
                 Logger.I("name match reg: {0}", uri);

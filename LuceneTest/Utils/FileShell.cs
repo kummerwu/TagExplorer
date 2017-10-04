@@ -134,9 +134,14 @@ namespace TagExplorer.Utils
                 MessageBox.Show("目前仅支持文件选择打开方式!");
             }
         }
+        public static bool IsNoteFile(string file)
+        {
+            return file.EndsWith(".note.rtf");
+        }
         public static void StartFile(string file)
         {
-            if (file.EndsWith(".rtf")) return;
+            if (IsNoteFile(file)) return;
+
             Logger.D("StartFile {0} ", file);
             if (!PathHelper.IsValidUri(file))
             {

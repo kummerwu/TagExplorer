@@ -216,12 +216,19 @@ namespace TagExplorer.TagMgr
 
         public List<string> QueryTagChildren(string tag)
         {
-            return GetByField(tag, F_TAGNAME, F_TAGCHILD);
+            //TODO 自己不能关联自己,现在临时规避一下，正式方案需要在用户输入时保证不会出现这种情况
+            List<string> result = GetByField(tag, F_TAGNAME, F_TAGCHILD);
+            result.Remove(tag);
+            return result;
+            
         }
 
         public List<string> QueryTagParent(string tag)
         {
-            return GetByField(tag, F_TAGCHILD, F_TAGNAME);
+            //TODO 自己不能关联自己,现在临时规避一下，正式方案需要在用户输入时保证不会出现这种情况
+            List<string> result = GetByField(tag, F_TAGCHILD, F_TAGNAME);
+            result.Remove(tag);
+            return result;
         }
 
         public int RemoveTag(string tag)//TODO:bug，没有清除该tag所有parent对其的引用

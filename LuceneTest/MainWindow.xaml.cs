@@ -70,6 +70,8 @@ namespace TagExplorer
         public void selectedTagChanged(string tag)
         {
             autoTextBox.Text = tag;
+            string uri = PathHelper.GetNoteFileByTag(tag);
+            richTxt.Load(uri);
             //修改text后，会自动触发 TextBox_TextChanged
             //进一步触发             UpdateUriList
         }
@@ -214,7 +216,7 @@ namespace TagExplorer
         }
         private void Dead(string x)
         {
-            Dead(x);
+            //Dead(x);
         }
         private void BtForward_Click(object sender, RoutedEventArgs e)
         {

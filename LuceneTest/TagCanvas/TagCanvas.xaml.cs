@@ -143,13 +143,13 @@ namespace TagExplorer
         //root是当前有向图显示的中心节点，
         //currentTag是当前选中的节点
         //
-        private string root;
+        private string rootTag;
         private string currentTag = "";
         public void Refresh()
         {
-            if(tagDB!=null && root!=null)
+            if(tagDB!=null && rootTag!=null)
             {
-                ShowGraph(tagDB, root);
+                ShowGraph(tagDB, rootTag);
             }
         }
         public void ShowGraph(string root)
@@ -292,13 +292,23 @@ namespace TagExplorer
             {
                 SetCurrentTag(result);
             }
+            //如果当前节点时根节点，则向上退一级
+            else if((direction == Key.Left || direction == Key.Up) && currentTag == rootTag)
+            {
+                List<string> parents = tagDB.QueryTagParent(rootTag);
+                if (parents.Count > 0)
+                {
+                    ShowGraph(parents[0]);
+                    SetCurrentTag(parents[0]);
+                }
+            }
             return result;
         }
         public void ShowGraph(ITagDB tagDB,string root)
         {
             Logger.I("ShowGraph at " + root);
             this.tagDB = tagDB;
-            this.root = root;
+            this.rootTag = root;
             
             canvas.Children.Clear();
             canvasRecentTags.Children.Clear();
