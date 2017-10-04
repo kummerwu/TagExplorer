@@ -80,6 +80,7 @@ namespace TagExplorer
                 txt.Foreground= value;
             }
         }
+        
         public double Width1
         {
             set
@@ -98,6 +99,10 @@ namespace TagExplorer
             {
                 bdr.Height = value;
                 txt.Height = value - CfgTagGraph.YContentPadding/2;
+            }
+            get
+            {
+                return bdr.Height;
             }
         }
     }

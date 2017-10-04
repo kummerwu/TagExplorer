@@ -84,12 +84,24 @@ namespace AnyTagNet
             b.Background1 = new SolidColorBrush(GetColor(g.Distance,g.Level));
             
         }
-
+        public static void SetColor(TagBox b,int distance)
+        {
+            b.Background1 = new SolidColorBrush(GetColor(distance, distance));
+            if (distance >= 5)
+            {
+                b.Foreground1 = new SolidColorBrush(Colors.White);
+            }
+            else
+            {
+                b.Foreground1 = new SolidColorBrush(Colors.Black);
+            }
+        }
         public static TagBox Apply(double x, double y, string text)
         {
             TagBox b =  Apply(4,4,x, y, text);
-            b.Background1 = new SolidColorBrush(GetColor(6,6));
-            b.Foreground1 = new SolidColorBrush(Colors.White);
+            SetColor(b, 6);
+            //b.Background1 = new SolidColorBrush(GetColor(6,6));
+            //b.Foreground1 = new SolidColorBrush(Colors.White);
             return b;
         }
         public static TagBox Apply(int distance,int level,double x,double y,string text)
@@ -117,7 +129,8 @@ namespace AnyTagNet
             b.Margin = new Thickness(x, y, 0, 0);
             b.TextAlignment = TextAlignment.Center;
             b.Text = text;
-            b.Background1 = new SolidColorBrush(GetColor(distance, level));
+            SetColor(b, distance);
+            //b.Background1 = new SolidColorBrush(GetColor(distance, level));
             return b;
         }
 

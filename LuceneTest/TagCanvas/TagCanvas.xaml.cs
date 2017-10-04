@@ -183,7 +183,117 @@ namespace TagExplorer
                 canvasRecentTags.Children.Add(t);
             }
         }
+        
+        private string NavigateTagBox(Key direction)
+        {
+            //先找到当前选择的节点
+            TagBox curB = null;
+            foreach(UIElement b in canvas.Children)
+            {
+                TagBox tmp = b as TagBox;
+                if(tmp!=null && tmp.Text == currentTag)
+                {
+                    curB = tmp;
+                    break;
+                }
+            }
+            double xyRadio = 0.1;
+            if (direction == Key.Left || direction == Key.Right) xyRadio = 1 / xyRadio;
 
+            double mimDistance = double.MaxValue;
+            double mimDistanceBetter = double.MaxValue;
+            string result = null;
+            string resultBetter = null;
+            //在移动当前节点
+            if (curB!=null)
+            {
+                foreach (UIElement tmp in canvas.Children)
+                {
+                    TagBox b = tmp as TagBox;
+
+                    //过滤掉不满足条件的所有元素
+                    if (b == null) continue;
+                    if (b == curB) continue;
+                    switch (direction)
+                    {
+                        case Key.Up:if (curB.Margin.Top <= b.Margin.Top+b.Height1) continue;break;
+                        case Key.Down: if (curB.Margin.Top+curB.Height1 >= b.Margin.Top) continue; break;
+                        case Key.Left: if (curB.Margin.Left <= b.Margin.Left+b.Width1) continue; break;
+                        case Key.Right: if (curB.Margin.Left+curB.Width1 >= b.Margin.Left) continue; break;
+                        default:break;
+                    }
+                    
+                    double x1 = curB.Margin.Left + curB.Width1 / 2;
+                    double y1 = curB.Margin.Top + curB.Height1 / 2;
+                    double x2 = b.Margin.Left + b.Width1 / 2;
+                    double y2 = b.Margin.Top + b.Height1 / 2;
+
+
+                    double dis = double.MaxValue;
+                    double delta = 0.2;
+                    //左右移动时，如果两个矩形在水平方向上有交集，优先采用
+                    //采用的标准是看水平方向的距离
+                    if (direction == Key.Left || direction == Key.Right)
+                    {
+                        double top1 = b.Margin.Top - delta;
+                        double bottom1 = top1 + b.Height1 +delta;
+
+                        double top2 = curB.Margin.Top - delta;
+                        double bottom2 = top2 + curB.Height1 + delta;
+
+                        if (!(top1>bottom2 || bottom1<top2))
+                        {
+                            
+                            dis = (x1 - x2) * (x1 - x2);
+                            dis = (x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2);
+                        }
+                    }
+                    //上下移动时，如果两个矩形在垂直方向上有交集，优先采用
+                    //采用的标准是看垂直方向的距离
+                    else if (direction == Key.Up || direction == Key.Down)
+                    {
+                        double left1 = b.Margin.Left - delta;
+                        double right1 = left1 + b.Width1 + delta;
+
+                        double left2 = curB.Margin.Left - delta;
+                        double right2 = left2 + curB.Width1 + delta;
+
+
+
+                        if (!(left1 > right2 || right1 < left2))
+                        {
+                            dis = (y1 - y2) * (y1 - y2);
+                            dis = (x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2);
+                        }
+                        
+                    }
+                    //记录下优选中的佼佼者
+                    if(dis<mimDistanceBetter)
+                    {
+                        mimDistanceBetter = dis;
+                        resultBetter = b.Text;
+                    }
+                    //如果都没有交集，就直接看距离
+                    dis = (x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2) ;
+                    if (dis<mimDistance)
+                    {
+                        mimDistance = dis;
+                        result = b.Text;
+                    }
+
+
+                }
+            }
+            if(resultBetter!=null)
+            {
+                SetCurrentTag(resultBetter);
+            }
+            else if(result!=null)
+            {
+                SetCurrentTag(result);
+            }
+            return result;
+        }
         public void ShowGraph(ITagDB tagDB,string root)
         {
             Logger.I("ShowGraph at " + root);
@@ -764,6 +874,19 @@ namespace TagExplorer
         private void EditFile_Executed(object sender, ExecutedRoutedEventArgs e)
         {
             MessageBox.Show("暂不支持");
+        }
+
+        private void NavigateTag_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            NavigateTagBox(Key.Up);
+        }
+
+        private void canvas_KeyUp(object sender, KeyEventArgs e)
+        {
+            if(e.Key == Key.Up || e.Key == Key.Down || e.Key == Key.Left || e.Key == Key.Right)
+            {
+                NavigateTagBox(e.Key);
+            }
         }
     }
 }

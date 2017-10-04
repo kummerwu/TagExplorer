@@ -13,6 +13,13 @@
         定义各种命令、以及命令的快捷键
         ===============================================================-->
         <!--目录操作 Ctrl+Shift-->
+        <RoutedUICommand x:Key="NavigateTag" Text="游览标签">
+            <RoutedUICommand.InputGestures>
+                <KeyGesture>Ctrl+Q</KeyGesture>
+            </RoutedUICommand.InputGestures>
+        </RoutedUICommand>
+        
+        <!--目录操作 Ctrl+Shift-->
         <RoutedUICommand x:Key="OpenTagDir" Text="打开标签目录">
             <RoutedUICommand.InputGestures>
                 <KeyGesture>Ctrl+Shift+O</KeyGesture>
@@ -109,7 +116,8 @@
             <MenuItem Name="miEdit"         Header="编辑文件">
                 <MenuItem Command="{StaticResource EditFile}" />
             </MenuItem>
-            
+            <Separator></Separator>
+            <MenuItem Command="{StaticResource NavigateTag}" />
         </ContextMenu>
     </UserControl.Resources>
 
@@ -133,12 +141,13 @@
         <CommandBinding Command="{StaticResource PasteFile}" Executed="PasteFile_Executed"/>
         <CommandBinding Command="{StaticResource LinkFile}" Executed="LinkFile_Executed"/>
         <CommandBinding Command="{StaticResource EditFile}" Executed="EditFile_Executed"/>
-        
+        <CommandBinding Command="{StaticResource NavigateTag}" Executed="NavigateTag_Executed"/>
+
     </UserControl.CommandBindings>
     <!-- ===============================================================
         UI界面
         =============================================================== -->
-    <Grid >
+    <Grid KeyUp="canvas_KeyUp">
         <Grid.RowDefinitions>
             <RowDefinition Height="25"></RowDefinition>
             <RowDefinition Height="*"></RowDefinition>
@@ -147,7 +156,7 @@
         <Canvas x:Name="canvasRecentTags" HorizontalAlignment="Left"  VerticalAlignment="Top"  Background="Gray"   />
 
         <ScrollViewer Grid.Row="1" x:Name="scrollViewer" DockPanel.Dock="Bottom" VerticalAlignment="Top"  Background="White" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto"  SizeChanged="scrollViewer_SizeChanged">
-            <Canvas x:Name="canvas" HorizontalAlignment="Left"  VerticalAlignment="Top"  Background="White"   >
+            <Canvas KeyUp="canvas_KeyUp" x:Name="canvas" HorizontalAlignment="Left"  VerticalAlignment="Top"  Background="White"   >
             </Canvas>
         </ScrollViewer>
         <TextBlock x:Name="CurrentTagInf" Grid.Row="2" Text="{Binding Path=Tips,Source={x:Static utils:TipsCenter.Ins}}"></TextBlock>
