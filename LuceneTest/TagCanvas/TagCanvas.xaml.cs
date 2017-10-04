@@ -218,7 +218,8 @@ namespace TagExplorer
                 canvas.Children.Add(t);
             }
             UpdateRecentTags(root);
-            SetCurrentTag(root);
+            //SetCurrentTag(root);
+            SetCurrentTag();
         }
         //双击tag，以该tag为根显示有向图
         private void Tag_MouseDoubleClick(object sender, MouseButtonEventArgs e)
