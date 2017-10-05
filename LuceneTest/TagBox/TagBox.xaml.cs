@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using AnyTagNet;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using TagExplorer.TagMgr;
@@ -68,16 +69,26 @@ namespace TagExplorer
             internal set { txt.TextAlignment = value; }
         }
 
-        public SolidColorBrush Background1
+        public int Background1
         {
             set
             {
-                bdr.Background = value;
-                if(TagDBFactory.Ins!=null && TagDBFactory.Ins.GetTagChildrenCount(Text)==0)
+                SolidColorBrush b = new SolidColorBrush(GStyle.GetColor(value, value));
+                bdr.Background = b;
+
+                int childCount = TagDBFactory.Ins == null ? 10 : TagDBFactory.Ins.GetTagChildrenCount(Text);
+                if (childCount == 0)
                 {
                     circle.Background = null;
                 }
-                else circle.Background = value;
+                else
+                {
+                    circle.Background = new SolidColorBrush(GStyle.GetColor(value+1, value+1));
+                    if(childCount==1)
+                    {
+                        circle.Width = circle.Height = 5;
+                    }
+                }
             }
         }
         public SolidColorBrush Foreground1

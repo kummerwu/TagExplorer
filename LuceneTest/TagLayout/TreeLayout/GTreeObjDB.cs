@@ -72,7 +72,7 @@ namespace TagExplorer.TagLayout.TreeLayout
                 System.Windows.Point p4 = new System.Windows.Point();
                 System.Windows.Point p3 = new System.Windows.Point();
 
-                p1.X = p.box.ColorBox.Right;
+                p1.X = p.box.ColorBox.Right+5;
                 p1.Y = (p.box.ColorBox.Top + p.box.ColorBox.Bottom)/ 2;
 
                 p5.X = c.box.ColorBox.Left;

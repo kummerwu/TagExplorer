@@ -81,12 +81,12 @@ namespace AnyTagNet
             b.Margin = new Thickness(g.ColorBox.X, g.ColorBox.Y, 0, 0);
             b.TextAlignment = TextAlignment.Center;
             b.Text = g.Tag ;
-            b.Background1 = new SolidColorBrush(GetColor(g.Distance,g.Level));
+            b.Background1 = g.Distance;//new SolidColorBrush(GetColor(g.Distance,g.Level));
             
         }
         public static void SetColor(TagBox b,int distance)
         {
-            b.Background1 = new SolidColorBrush(GetColor(distance, distance));
+            b.Background1 = distance;//new SolidColorBrush(GetColor(distance, distance));
             if (distance >= 5)
             {
                 b.Foreground1 = new SolidColorBrush(Colors.White);
@@ -138,13 +138,13 @@ namespace AnyTagNet
         {
             if (Math.Min(parent.Level, child.Level) == 0)
             {
-                l.Stroke = new SolidColorBrush(GetColor(parent.Distance,parent.Level));
+                l.Stroke = new SolidColorBrush(GetColor(parent.Distance+1,parent.Level+1));
                 l.StrokeThickness = CfgTagGraph.StrokeThickness*1.5;
                 l.StrokeDashArray = CfgTagGraph.StrokeDashArray;
             }
             else
             {
-                l.Stroke = new SolidColorBrush(GetColor(parent.Distance,parent.Level));
+                l.Stroke = new SolidColorBrush(GetColor(parent.Distance+1,parent.Level+1));
                 l.StrokeThickness = CfgTagGraph.StrokeThickness;
                 l.StrokeDashArray = CfgTagGraph.StrokeDashArray;
             }
@@ -154,13 +154,13 @@ namespace AnyTagNet
         {
             if (Math.Min(parent.Level, child.Level) == 0)
             {
-                l.Stroke = new SolidColorBrush(GetColor(parent.Distance, parent.Level));
+                l.Stroke = new SolidColorBrush(GetColor(parent.Distance+1, parent.Level+1));
                 l.StrokeThickness = CfgTagGraph.StrokeThickness * 1.5;
                 //l.StrokeDashArray = CfgTagGraph.StrokeDashArray;
             }
             else
             {
-                l.Stroke = new SolidColorBrush(GetColor(parent.Distance, parent.Level));
+                l.Stroke = new SolidColorBrush(GetColor(parent.Distance+1, parent.Level+1));
                 l.StrokeThickness = CfgTagGraph.StrokeThickness;
                 //l.StrokeDashArray = CfgTagGraph.StrokeDashArray;
             }
