@@ -6,9 +6,15 @@
              xmlns:local="clr-namespace:TagExplorer"
              mc:Ignorable="d" 
              >
-    <Border  x:Name="bdr"
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="16" />
+        </Grid.ColumnDefinitions>
+        <Border  x:Name="bdr"
              BorderBrush="Black"  BorderThickness="0" 
              HorizontalAlignment="Center" VerticalAlignment="Center" CornerRadius="5"
+                 Grid.Column="0"
               >
 
 
@@ -23,7 +29,17 @@
         <TextBlock x:Name="txt" Text="Hello World" Foreground="#222222" Background="{x:Null}">
 
         </TextBlock>
+        
         </Border>
-    
-    
+        <StackPanel Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left">
+        <Button Name="circle" Width="10" Height="10"  Click="ExpandSwitchButton_Click" Background="Red"
+                Template="{DynamicResource ButtonControlTemplate1}" Cursor="Hand" >
+                <Button.Resources>
+                    <ControlTemplate x:Key="ButtonControlTemplate1" TargetType="{x:Type Button}">
+                        <Ellipse Fill="{TemplateBinding Background}"  x:Name="ButtonEllipse" Width="Auto" Height="Auto"  ></Ellipse>
+                    </ControlTemplate>
+                </Button.Resources>
+            </Button>
+        </StackPanel>
+    </Grid>
 </UserControl>

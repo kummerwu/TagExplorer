@@ -24,30 +24,30 @@ namespace AnyTagNet
         //static enum COMPACT_MORE = true;//激进压缩模式，这样会在视觉上破坏层次关系
         //static bool COMPACT_MORE = true;//激进压缩模式，这样会在视觉上破坏层次关系
 
-        static  Color[] colors1 = new Color[] {
-               // Color.FromRgb(255,0,0      ),
-                Color.FromRgb(255,51,0     ),
-                //Color.FromRgb(255,102,0    ),
-                //Color.FromRgb(255,153,0    ),
-                Color.FromRgb(255,255,0    ),
-                //Color.FromRgb(204,255,51),
-                Color.FromRgb(153,255,0    ),
-                Color.FromRgb(0,255,0      ),
-                Color.FromRgb(0,255,255    ),
-                Color.FromRgb(0,0,255      ),
-                Color.FromRgb(102,0,255    ),
-                Color.FromRgb(255,0,255    ),
-                Color.FromRgb(255,0,102    ),
-        };
-        static Color[] colors2 = new Color[] {
-            Color.FromRgb(255,0,0),
-            //Color.FromRgb(255,255,0),
-            Color.FromRgb(0,255,0),
-            Color.FromRgb(0,255,255),
-            Color.FromRgb(0,0,255),
-            Color.FromRgb(255,0,255),
+        //static  Color[] colors1 = new Color[] {
+        //       // Color.FromRgb(255,0,0      ),
+        //        Color.FromRgb(255,51,0     ),
+        //        //Color.FromRgb(255,102,0    ),
+        //        //Color.FromRgb(255,153,0    ),
+        //        Color.FromRgb(255,255,0    ),
+        //        //Color.FromRgb(204,255,51),
+        //        Color.FromRgb(153,255,0    ),
+        //        Color.FromRgb(0,255,0      ),
+        //        Color.FromRgb(0,255,255    ),
+        //        Color.FromRgb(0,0,255      ),
+        //        Color.FromRgb(102,0,255    ),
+        //        Color.FromRgb(255,0,255    ),
+        //        Color.FromRgb(255,0,102    ),
+        //};
+        //static Color[] colors2 = new Color[] {
+        //    Color.FromRgb(255,0,0),
+        //    //Color.FromRgb(255,255,0),
+        //    Color.FromRgb(0,255,0),
+        //    Color.FromRgb(0,255,255),
+        //    Color.FromRgb(0,0,255),
+        //    Color.FromRgb(255,0,255),
 
-        };
+        //};
         static Color C(int c) { return Color.FromRgb((byte)((c & 0xFF0000) >> 16), (byte)((c &0xFF00)>>8), (byte)(c &0xFF)); }
         static Color[] colors3 = new Color[] {
             C(0xFF6666),
@@ -56,7 +56,7 @@ namespace AnyTagNet
             C(0xFFD39B),
             C(0xFF99CC),
             C(0x9933FF),
-            C(0x6699cc),
+            C(0x0066CC),
 
         };
         static Color[] colors = colors3;

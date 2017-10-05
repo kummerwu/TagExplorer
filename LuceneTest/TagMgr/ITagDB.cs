@@ -13,6 +13,7 @@ namespace TagExplorer.TagMgr
         int RemoveTag(string tag);
         int MergeAliasTag(string tag1, string tag2);
         List<string> QueryTagChildren(string tag);
+        int GetTagChildrenCount(string tag);
         List<string> QueryTagParent(string tag);
         List<string> QueryTagAlias(string tag);
     }

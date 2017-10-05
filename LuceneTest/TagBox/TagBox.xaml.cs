@@ -1,6 +1,8 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using TagExplorer.TagMgr;
+using TagExplorer.UriMgr;
 using TagExplorer.Utils;
 
 namespace TagExplorer
@@ -71,6 +73,11 @@ namespace TagExplorer
             set
             {
                 bdr.Background = value;
+                if(TagDBFactory.Ins!=null && TagDBFactory.Ins.GetTagChildrenCount(Text)==0)
+                {
+                    circle.Background = null;
+                }
+                else circle.Background = value;
             }
         }
         public SolidColorBrush Foreground1
@@ -104,6 +111,11 @@ namespace TagExplorer
             {
                 return bdr.Height;
             }
+        }
+
+        private void ExpandSwitchButton_Click(object sender, RoutedEventArgs e)
+        {
+            TagSwitchDB.Ins.Swtich(Text);
         }
     }
 }

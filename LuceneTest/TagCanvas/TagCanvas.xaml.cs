@@ -30,6 +30,7 @@ namespace TagExplorer
         {
             InitializeComponent();
             fileWather = new FileWatcherSafe(FileWather_Changed);
+            TagSwitchDB.Ins.SwitchChanged += SwitchChangedCallback;
             //fileWather = new FileSystemWatcher(PathHelper.DocDir);
             //fileWather.IncludeSubdirectories = true;
             //fileWather.Path = PathHelper.DocDir;
@@ -40,6 +41,12 @@ namespace TagExplorer
 
             //CurrentTagInf.SetBinding(TextBlock.TextProperty, new Binding("Tips") { Source = TipsCenter.Ins });
         }
+
+        private void SwitchChangedCallback()
+        {
+            Refresh();
+        }
+
         private void NotifyList()
         {
             UriDB.Notify();

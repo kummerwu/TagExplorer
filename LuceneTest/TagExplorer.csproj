@@ -217,6 +217,7 @@
     <Compile Include="TagLayout\TreeLayout\GTreeObjDB.cs" />
     <Compile Include="TagLayout\TreeLayout\TreeLayoutImpl.cs" />
     <Compile Include="TagMgr\TagInf.cs" />
+    <Compile Include="TagMgr\TagSwitchDB.cs" />
     <Compile Include="TagsBar\TagsPanel.xaml.cs">
       <DependentUpon>TagsPanel.xaml</DependentUpon>
     </Compile>

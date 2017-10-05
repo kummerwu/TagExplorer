@@ -54,7 +54,7 @@ namespace TagExplorer
         }
         public void CurrentUriChanged(string uri)
         {
-            richTxt.Load(uri);
+            //richTxt.Load(uri);  richtxt不与文件列表关联，而是与当前选中的tag关联。
             
         }
 

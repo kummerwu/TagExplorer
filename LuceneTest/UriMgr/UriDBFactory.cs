@@ -4,7 +4,9 @@
     {
         public static IUriDB CreateUriDB()
         {
-            return IDisposableFactory.New<IUriDB>(new LuceneUriDB());
+            Ins = IDisposableFactory.New<IUriDB>(new LuceneUriDB());
+            return Ins;
         }
+        public static IUriDB Ins = null;
     }
 }

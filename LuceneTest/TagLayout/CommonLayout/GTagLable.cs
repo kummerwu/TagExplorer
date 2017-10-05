@@ -13,7 +13,7 @@ namespace TagExplorer.TagLayout.LayoutCommon
     {
         public string Tag { get; private set; }
         public int Level { get; private set; }
-        public int Distance { get; private set; } //本节点离当前节点（跟节点的距离）
+        public int Distance { get; private set; } //本节点离根节点（树层次上的距离）
         public double FontSize { get; private set; }
         public Rect InnerBox;
         public Rect ColorBox;

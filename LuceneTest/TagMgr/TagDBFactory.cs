@@ -4,9 +4,11 @@ namespace TagExplorer.TagMgr
 {
     public class TagDBFactory
     {
+        public static ITagDB Ins = null;
         public static ITagDB CreateTagDB()
         {
-           return IDisposableFactory.New<ITagDB>( new LuceneTagDB());
+            Ins =  IDisposableFactory.New<ITagDB>( new LuceneTagDB());
+            return Ins; 
         }
         
     }

@@ -216,6 +216,8 @@ namespace TagExplorer.TagMgr
 
         public List<string> QueryTagChildren(string tag)
         {
+            if (!TagSwitchDB.Ins.Get(tag)) return new List<string>();
+
             //TODO 自己不能关联自己,现在临时规避一下，正式方案需要在用户输入时保证不会出现这种情况
             List<string> result = GetByField(tag, F_TAGNAME, F_TAGCHILD);
             result.Remove(tag);
@@ -318,6 +320,11 @@ namespace TagExplorer.TagMgr
 
             }
             return tag;
+        }
+
+        public int GetTagChildrenCount(string tag)
+        {
+            return GetByField(tag, F_TAGNAME, F_TAGCHILD).Count;
         }
     }
 }
