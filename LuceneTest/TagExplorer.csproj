@@ -252,6 +252,9 @@
     <Compile Include="Utils\CfgPerformance.cs" />
     <Compile Include="Utils\TemplateHelper.cs" />
     <Compile Include="Utils\TipsCenter.cs" />
+    <Compile Include="Utils\WebHelper.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Page Include="AutoComplete\AutoTextbox.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

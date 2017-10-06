@@ -10,7 +10,9 @@ namespace TagExplorer.Utils
 {
     public class FileShell
     {
-        private static bool FormatSHFile(string [] srcList,string [] dstList,out string src,out string dst)
+
+        
+        private static bool ListToSHStr(string [] srcList,string [] dstList,out string src,out string dst)
         {
             src = "";
             dst = "";
@@ -42,7 +44,7 @@ namespace TagExplorer.Utils
         {
 
             string src, dst;
-            if (!FormatSHFile(srcList, dstList, out src, out dst))
+            if (!ListToSHStr(srcList, dstList, out src, out dst))
                 return false;
 
             Logger.D(string.Format("moveFile: {0} => {1}", src, dst));
@@ -60,7 +62,7 @@ namespace TagExplorer.Utils
         public static bool SHCopyFile(string[] srcList, string[] dstList)
         {
             string src, dst;
-            if (!FormatSHFile(srcList, dstList, out src, out dst))
+            if (!ListToSHStr(srcList, dstList, out src, out dst))
                 return false;
 
             Logger.D(string.Format("CopyFile: {0} => {1}", src, dst));

@@ -581,8 +581,20 @@ namespace TagExplorer
         private void PasteFiles() { PasteFiles(true); }
         private void PasteFiles(bool NeedCopy)
         {
-            UpdateCurrentTagByContextMenu();
-            AddUri(FileShell.GetFileListFromClipboard(),NeedCopy);
+            Cursor bak = this.Cursor;
+            try
+            {
+                this.Cursor = Cursors.Wait;
+                UpdateCurrentTagByContextMenu();
+                AddUri(FileShell.GetFileListFromClipboard(), NeedCopy);
+            }catch(Exception e)
+            {
+                Logger.E(e);
+            }
+            finally
+            {
+                this.Cursor = bak;
+            }
         }
         
         private void UpdateCurrentTagByContextMenu()
@@ -611,6 +623,17 @@ namespace TagExplorer
 
             //TODO,这个动作时间很长，整个过程中界面没有响应。
             UriDB.AddUri(dst, tags);
+            foreach(string uri in dst)
+            {
+                if(PathHelper.IsValidHttps(uri))
+                {
+                    string title = WebHelper.GetWebTitle(uri);
+                    if(title!=null)
+                    {
+                        UriDB.UpdateUri(uri, title);
+                    }
+                }
+            }
             //foreach(string f in dst)
             //{
             //    string dstFile = f;

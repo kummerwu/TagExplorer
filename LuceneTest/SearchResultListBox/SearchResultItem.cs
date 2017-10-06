@@ -11,35 +11,45 @@ namespace TagExplorer.UriInfList
     public class SearchResultItem : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
-        public string _Detail //TODO 支持http图标
+        public void SetUri(string fullPath,IUriDB db)//TODO 支持http图标
         {
-            set
+            all = fullPath;
+            //http链接
+            if (PathHelper.IsValidHttps(all))
             {
-                if (PathHelper.IsValidHttps(value))
+                string title = db.GetTitle(all);
+                //指定了标题的http链接
+                if (title != null && title.Length > 0)
                 {
-                    System.Uri uri = new System.Uri(value); //TODO 获取http文档的名称和路径
-                    int lastIdx = value.LastIndexOf('/');
-                    if(lastIdx<1) lastIdx = value.LastIndexOf('\\');
+                    name = title;
+                    dir = all;
+                }
+                //没有指定标题的http链接
+                else
+                {
+                    System.Uri uri = new System.Uri(all); //TODO 获取http文档的名称和路径
+                    int lastIdx = all.LastIndexOf('/');
+                    if (lastIdx < 1) lastIdx = all.LastIndexOf('\\');
 
                     if (lastIdx > 1)
                     {
-                        name = value.Substring(lastIdx+1); //TODO 更好的获得http文档标题的方法
-                        dir = value.Substring(0, lastIdx);
+                        name = all.Substring(lastIdx + 1); //TODO 更好的获得http文档标题的方法
+                        dir = all.Substring(0, lastIdx);
                     }
                     else
                     {
-                        name = value;
-                        dir = value;
+                        name = all;
+                        dir = all;
                     }
-                    all = value;
-                }
-                else 
-                {
-                    name = Path.GetFileName(value);
-                    dir = Path.GetDirectoryName(value);
-                    all = value;
                 }
             }
+            //文件
+            else 
+            {
+                name = Path.GetFileName(all);
+                dir = Path.GetDirectoryName(all);
+            }
+            
         }
 
         private string name, dir,all;
@@ -143,13 +153,9 @@ namespace TagExplorer.UriInfList
                 if (PathHelper.IsValidUri(uri))
                 {
                     SearchResultItem it = new SearchResultItem();
-                    it._Detail = uri;
+                    it.SetUri(uri,db);
                     it._icon = GIconHelper.GetBitmapFromFile(uri);
-                    string title = db.GetTitle(uri);
-                    if(title!=null && title.Length>0)
-                    {
-                        it.Name = title;
-                    }
+                    
                     ret.Add(it);
                 }
             }
