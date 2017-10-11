@@ -12,14 +12,14 @@ namespace TagExplorer.Utils.Tests
     public class WebHelperTests
     {
         [TestMethod()]
-        public void GetWebTitleTest()
+        public void WebHelper_GetWebTitleTest()
         {
             string t = WebHelper.GetWebTitle("http://www.baidu.com");
             Assert.AreEqual("百度一下，你就知道", t);
         }
 
         [TestMethod()]
-        public void GetHtmlTitleTest()
+        public void WebHelper_GetHtmlTitleTest()
         {
             string t = WebHelper.GetHtmlTitle(@"<title>百度一下，你就知道</title>");
             Assert.AreEqual("百度一下，你就知道", t);

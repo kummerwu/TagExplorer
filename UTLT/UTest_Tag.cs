@@ -2,6 +2,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
 using TagExplorer.Utils;
+using System.IO;
 
 namespace UTLT
 {
@@ -24,11 +25,16 @@ namespace UTLT
         {
             db.Dispose();
             db = null;
+            //为了安全，直接硬编码，防止把真是数据删除
+            Directory.Delete(@"B:\00TagExplorerBase", true);
+            //Directory.Delete(CfgPath.DocBasePath);
+
+
             //if (System.IO.Directory.Exists(Cfg.Ins.TagDB))
             //    System.IO.Directory.Delete(Cfg.Ins.TagDB,true);
         }
         [TestMethod]
-        public void TestTag_AddBase()//简单添加
+        public void ITagDB_Test_AddBase()//简单添加
         {
             db.AddTag("p", "c1");
            
@@ -38,7 +44,7 @@ namespace UTLT
         }
 
         [TestMethod]
-        public void TestTag_AddDel()//添加后删除
+        public void ITagDB_Test_AddDel()//添加后删除
         {
             db.AddTag("p", "c1");
 
@@ -53,7 +59,7 @@ namespace UTLT
         }
 
         [TestMethod]
-        public void TestTag_Remove()//添加后删除
+        public void ITagDB_Test_Remove()//添加后删除
         {
             db.AddTag("p", "c1");
 
@@ -70,7 +76,7 @@ namespace UTLT
         }
 
         [TestMethod]
-        public void TestTag_AddMultiChildren()//父节点，有多个子节点
+        public void ITagDB_Test_AddMultiChildren()//父节点，有多个子节点
         {
             Logger.D("0");
             db.AddTag("p", "c1");
@@ -87,7 +93,7 @@ namespace UTLT
         }
 
         [TestMethod]
-        public void TestTag_AddMultiParent()//子节点，有多个父节点
+        public void ITagDB_Test_AddMultiParent()//子节点，有多个父节点
         {
             Logger.D("0");
             db.AddTag("p1", "c");
@@ -104,7 +110,7 @@ namespace UTLT
         }
 
         [TestMethod]
-        public void TestTag_Add100Parent()//一个节点添加100个父节点
+        public void ITagDB_Test_Add100Parent()//一个节点添加100个父节点
         {
             int i = 0;
             for (i = 0; i < 100; i++)
@@ -123,7 +129,7 @@ namespace UTLT
 
 
         [TestMethod]
-        public void TestTag_Add100Child()//一个父节点，添加100个子节点
+        public void ITagDB_Test_Add100Child()//一个父节点，添加100个子节点
         {
             int i = 0;
             for (i = 0; i < 100; i++)
@@ -141,21 +147,21 @@ namespace UTLT
         }
 
         [TestMethod]
-        public void TestTag_AddAlias()//添加别名
+        public void ITagDB_Test_AddAlias()//添加别名
         {
             db.AddTag("p1", "c1");
             List<string> alias = db.QueryTagAlias("p1");
             Assert.AreEqual(1, alias.Count);
             Assert.AreEqual("p1", alias[0]);
 
-            db.MergeAliasTag("p1", "p2");
-             alias = db.QueryTagAlias("p1");
-            Assert.AreEqual(2, alias.Count);
-            Assert.AreEqual(true, alias.Contains("p1"));
-            Assert.AreEqual(true, alias.Contains("p2"));
+            //db.MergeAliasTag("p1", "p2");
+            // alias = db.QueryTagAlias("p1");
+            //Assert.AreEqual(2, alias.Count);
+            //Assert.AreEqual(true, alias.Contains("p1"));
+            //Assert.AreEqual(true, alias.Contains("p2"));
         }
         [TestMethod]
-        public void TestTag_Reopen()//关闭后重新打开
+        public void ITagDB_Test_Reopen()//关闭后重新打开
         {
             Logger.D("begin test reopen");
             db.AddTag("p1", "c1");
@@ -168,13 +174,13 @@ namespace UTLT
             Assert.AreEqual("p1", alias[0]);
             Logger.D("end test reopen");
 
-            //db = TagDBFactory.CreateTagDB();
-            //alias = db.QueryTagAlias("p1");
-            //Assert.AreEqual(1, alias.Count);
-            //Assert.AreEqual("p1", alias[0]);
+            db = TagDBFactory.CreateTagDB();
+            alias = db.QueryTagAlias("p1");
+            Assert.AreEqual(1, alias.Count);
+            Assert.AreEqual("p1", alias[0]);
         }
         [TestMethod]
-        public void TestTag_AliasAddAndQuery()
+        public void ITagDB_Test_AliasAddAndQuery()
         {
             db.MergeAliasTag("p1", "p2");
             List<string>alias = db.QueryTagAlias("p1");
@@ -189,7 +195,7 @@ namespace UTLT
         }
 
         [TestMethod]
-        public void TestTag_AliasAddAndQuery2()
+        public void ITagDB_Test_AliasAddAndQuery2()
         {
             db.AddTag("p1", "c1");
             db.AddTag("p2", "c2");
@@ -225,7 +231,7 @@ namespace UTLT
 
         }
         [TestMethod]
-        public void TestTag_SetRelation()//多个切换到一个(不存在的)
+        public void ITagDB_Test_SetRelation()//多个切换到一个(不存在的)
         {
             db.AddTag("P1", "C1");
             db.AddTag("P2", "C1");
@@ -238,7 +244,7 @@ namespace UTLT
         }
 
         [TestMethod]
-        public void TestTag_SetRelation2()//多个切换到一个（已存在的）
+        public void ITagDB_Test_SetRelation2()//多个切换到一个（已存在的）
         {
             db.AddTag("P1", "C1");
             db.AddTag("P2", "C1");
@@ -251,7 +257,7 @@ namespace UTLT
         }
 
         [TestMethod]
-        public void TestTag_SetRelation3() //添加不存在的节点
+        public void ITagDB_Test_SetRelation3() //添加不存在的节点
         {
             db.ResetRelationOfChild("P1", "C1");
             List<string> parents = db.QueryTagParent("C1");
@@ -264,7 +270,7 @@ namespace UTLT
         }
 
         [TestMethod]
-        public void TestTag_SetRelation4() //添加不存在的节点
+        public void ITagDB_Test_SetRelation4() //添加不存在的节点
         {
             db.AddTag("P1", "C1");
             db.AddTag("P2", "C1");

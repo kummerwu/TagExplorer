@@ -83,7 +83,7 @@ namespace TagExplorer.Utils
             if (level > 5) return null; //防止递归调用死循环，将堆栈耗尽
             if (PathHelper.IsValidHttps(f))
             {
-                return GetBitmapFromFileNoCache(PathHelper.Res_HTTP_Path,level+1);
+                return GetBitmapFromFileNoCache(CfgPath.Res_HTTP_Path,level+1);
             }
             else if(PathHelper.IsValidFS(f))
             {
@@ -108,9 +108,9 @@ namespace TagExplorer.Utils
                 {
                     Logger.E(e);
                     Logger.E("get icon failed!======{0}", f);
-                    if (f != PathHelper.Res_UNKNOW_Path)
+                    if (f != CfgPath.Res_UNKNOW_Path)
                     {
-                        return GetBitmapFromFileNoCache(PathHelper.Res_UNKNOW_Path, level + 1);
+                        return GetBitmapFromFileNoCache(CfgPath.Res_UNKNOW_Path, level + 1);
                     }
                     else
                     {
@@ -120,7 +120,7 @@ namespace TagExplorer.Utils
             }
             else
             {
-                return GetBitmapFromFileNoCache(PathHelper.Res_UNKNOW_Path,level+1);
+                return GetBitmapFromFileNoCache(CfgPath.Res_UNKNOW_Path,level+1);
             }
         }
 
@@ -135,7 +135,7 @@ namespace TagExplorer.Utils
         {
             if(PathHelper.IsValidHttps(fileName))
             {
-                fileName = PathHelper.Res_HTTP_Path;
+                fileName = CfgPath.Res_HTTP_Path;
             }
             SHFILEINFO info = new SHFILEINFO(true);
             int cbFileInfo = Marshal.SizeOf(info);

@@ -101,7 +101,7 @@ namespace TagExplorer.Utils
             if (title != null)
             {
                 string tag = title;
-                string dir = PathHelper.GetDirByTag(tag);
+                string dir = CfgPath.GetDirByTag(tag);
                 Logger.D("OpenTagDir {0} {1}", tag, dir);
                 Process.Start(dir);
             }
@@ -300,7 +300,7 @@ namespace TagExplorer.Utils
             if (title != null && postfix != null)
             {
                 string tag = title;
-                string file = PathHelper.GetFileByTag(tag, postfix);
+                string file = CfgPath.GetFileByTag(tag, postfix);
                 //string file = System.IO.Path.Combine(MyPath.DocRoot, tag + GConfig.DefaultPostfix);
 
                 //如果文件已经存在，直接打开
@@ -312,7 +312,7 @@ namespace TagExplorer.Utils
                 {
                     //如果文件不存在，尝试在其他路径上查找
                     string[] files = Directory.GetFiles(CfgPath.DocDir, tag + "." + postfix);
-                    string[] files2 = Directory.GetFiles(PathHelper.GetDirByTag(tag), tag + "." + postfix);
+                    string[] files2 = Directory.GetFiles(CfgPath.GetDirByTag(tag), tag + "." + postfix);
 
                     if (files.Length > 0)
                     {

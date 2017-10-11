@@ -4,6 +4,7 @@ using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Search;
 using Lucene.Net.Store;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using TagExplorer.Utils;
@@ -12,7 +13,7 @@ namespace TagExplorer.TagMgr
 {
     class LuceneTagDB : ITagDB, IDisposable
     {
-        const int R_OK = 0;
+        
         const string F_TAGNAME = "tname";
         const string F_TAGCHILD = "tchildren";
 
@@ -128,7 +129,7 @@ namespace TagExplorer.TagMgr
         }
         public int AddTag(string parent, string child)
         {
-            int ret = R_OK;
+            int ret = ITagDBConst.R_OK;
             if (parent == null || child == null) return ret;
 
 
@@ -147,7 +148,7 @@ namespace TagExplorer.TagMgr
                 {
                     if(f.StringValue == child)
                     {
-                        return R_OK;
+                        return ITagDBConst.R_OK;
                     }
                 }
                 parentDoc.Add(new Field(F_TAGCHILD, child, Field.Store.YES, Field.Index.NOT_ANALYZED));
@@ -243,7 +244,7 @@ namespace TagExplorer.TagMgr
                 DelTag(n);
             }
             Commit();
-            return R_OK;
+            return ITagDBConst.R_OK;
         }
 
         public int MergeAliasTag(string tag1,string tag2)
@@ -256,7 +257,7 @@ namespace TagExplorer.TagMgr
             writer.DeleteDocuments(new Term(F_TAGNAME, tag2));
             writer.AddDocument(doc);
             Commit();
-            return R_OK;
+            return ITagDBConst.R_OK;
         }
 
         private  void MergeDoc(string tag, Document doc, HashSet<string> fields)
@@ -284,7 +285,7 @@ namespace TagExplorer.TagMgr
             Query query= new TermQuery(new Term(F_TAGNAME, tag));
             writer.DeleteDocuments(query);
             Commit();
-            return R_OK;
+            return ITagDBConst.R_OK;
         }
 
         public List<string> QueryAutoComplete(string searchTerm)
@@ -325,6 +326,32 @@ namespace TagExplorer.TagMgr
         public int GetTagChildrenCount(string tag)
         {
             return GetByField(tag, F_TAGNAME, F_TAGCHILD).Count;
+        }
+
+
+        public void Dbg()
+        {
+            //return;
+            System.IO.TextWriter w = new System.IO.StreamWriter(@".\tagdb.json");
+            int max = search.MaxDoc;
+            
+            for (int i = 0; i < max; i++)
+            {
+                Document doc = search.Doc(i);
+                if (doc != null)
+                {
+                    string mainTag = doc.Get(F_TAGNAME);
+                    JTagInf tag = new JTagInf(mainTag);
+                    foreach (Field f in doc.GetFields(F_TAGCHILD))
+                    {
+                        tag.AddChild(f.StringValue);
+                    }
+                    w.WriteLine(JsonConvert.SerializeObject(tag));
+                    
+                }
+            }
+            w.Close();
+
         }
     }
 }

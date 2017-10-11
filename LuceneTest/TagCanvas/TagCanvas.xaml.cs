@@ -98,7 +98,7 @@ namespace TagExplorer
         //由于文件变更通知是在一个后台线程中进行的，所以需要通过Invoke机制调用UI主线程中的函数
         private void AddFileInDoc_BackThread(string uri)
         {
-            if (!PathHelper.NeedSkip(uri))//过滤一些不需要观察的文件
+            if (!CfgPath.NeedSkip(uri))//过滤一些不需要观察的文件
             {
                 this.Dispatcher.Invoke(new Action<string>(AddFileInDoc), uri);
             }
@@ -112,7 +112,7 @@ namespace TagExplorer
         private void AddFileInDoc(string uri)
         {
             Logger.I("AddFileInDoc={0}", uri);
-            string tag = PathHelper.GetTagByPath(uri);
+            string tag = CfgPath.GetTagByPath(uri);
             if (tag != null)
             {
                 UriDB.AddUri(new List<string>() { uri }, new List<string>() { tag });
@@ -442,8 +442,8 @@ namespace TagExplorer
             
             foreach(string t in lastTags)
             {
-                string tagVDir = PathHelper.GetVDirByTag(t);
-                string tagDir = PathHelper.GetDirByTag(t);
+                string tagVDir = CfgPath.GetVDirByTag(t);
+                string tagDir = CfgPath.GetDirByTag(t);
                 PathHelper.LinkDir(tagVDir, tagDir);
             }
 
@@ -562,12 +562,15 @@ namespace TagExplorer
             
         }
 
+        //TODO:这儿有bug，moveuri时，src可能是文件，也可能是http链接。
+        //需要有一种机制，将文件和链接统一对待处理。
+        
         private void MoveUris(string[] args)
         {
             string[] src = args;
             string[] dst = PathHelper.MapFilesToTagDir(src, currentTag);
             FileShell.SHMoveFiles(src, dst);
-            UriDB.DelUri(src, false);
+            UriDB.DelUri(src, false);  //TODO bug2:对于http链接，删除后，标题就没有了。
             //foreach (string uri in src)
             //{
             //    UriDB.DelUri(uri, false); 
@@ -664,7 +667,7 @@ namespace TagExplorer
                 {
                     System.Diagnostics.Debug.Assert(PathHelper.IsValidFS(f));
                     FileInfo fi = new FileInfo(f);
-                    string dstDir = PathHelper.GetDirByTag(tag);
+                    string dstDir = CfgPath.GetDirByTag(tag);
                     string dstFile = System.IO.Path.Combine(dstDir, fi.Name);
                     if(dstFile==f)
                     {
@@ -709,7 +712,7 @@ namespace TagExplorer
         private void miCopyTagFullPath_Click(object sender, RoutedEventArgs e)
         {
             UpdateCurrentTagByContextMenu();
-            ClipBoardSafe.SetText(PathHelper.GetDirByTag(currentTag));
+            ClipBoardSafe.SetText(CfgPath.GetDirByTag(currentTag));
         }
 
         private void tagAreaMenu_ContextMenuOpening(object sender, ContextMenuEventArgs e)
@@ -729,7 +732,7 @@ namespace TagExplorer
         private void miNewFile_Click(object sender, RoutedEventArgs e)
         {
             UpdateCurrentTagByContextMenu();
-            string initDir = PathHelper.GetDirByTag(currentTag);
+            string initDir = CfgPath.GetDirByTag(currentTag);
             SaveFileDialog sf = new SaveFileDialog();
             sf.InitialDirectory = initDir;
 
@@ -849,7 +852,7 @@ namespace TagExplorer
         private void miCopyTagFullPathEx_Click(object sender, RoutedEventArgs e)
         {
             UpdateCurrentTagByContextMenu();
-            string dir = PathHelper.GetDirByTag(currentTag);
+            string dir = CfgPath.GetDirByTag(currentTag);
             dir = System.IO.Path.Combine(dir, DateTime.Now.ToString("yyyyMMdd") + "-");
             ClipBoardSafe.SetText(dir);
         }

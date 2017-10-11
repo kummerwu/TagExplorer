@@ -97,5 +97,68 @@ namespace TagExplorer.RichTxt
             Save();
             file = null;
         }
+
+        private void CommandBinding_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            if (Clipboard.ContainsImage())
+            {
+
+                BitmapSource bs = Clipboard.GetImage();
+                Image image = new Image();
+                image.Width = bs.Width;
+                image.Height = bs.Height;
+                image.Stretch = Stretch.None;
+                image.Source = bs;
+
+                InlineUIContainer MyUI = new InlineUIContainer(image, richTxt.Selection.Start);
+
+
+                Paragraph myParagraph = new Paragraph();
+                myParagraph.Inlines.Add(MyUI);
+
+                //object ortf = Clipboard.GetData(DataFormats.Rtf);
+
+                //Clipboard.SetData(DataFormats.Rtf, ortf);
+                richTxt.Paste();
+
+                
+                
+            }
+            else
+            {
+                richTxt.Paste();
+            }
+            //object o = Clipboard.GetData(DataFormats.Html);
+            AdjustImg();
+
+        }
+        private void AdjustImg()
+        {
+            
+                foreach (Block block in richTxt.Document.Blocks)
+                {
+                    if (block is Paragraph)
+                    {
+                        Paragraph paragraph = (Paragraph)block;
+                        foreach (Inline inline in paragraph.Inlines)
+                        {
+                            if (inline is InlineUIContainer)
+                            {
+                                InlineUIContainer uiContainer = (InlineUIContainer)inline;
+                                if (uiContainer.Child is Image)
+                                {
+                                    Image image = (Image)uiContainer.Child;
+                                    image.Width = image.ActualWidth + 1;
+                                    image.Height = image.ActualHeight + 1;
+                                }
+                            }
+                        }
+                    }
+                }
+            
+        }
+        
+
+        
     }
 }

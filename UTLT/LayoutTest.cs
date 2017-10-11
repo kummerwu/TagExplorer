@@ -3,6 +3,7 @@ using TagExplorer.TagMgr;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Linq;
 using TagExplorer.Utils;
+using AnyTagNet;
 
 namespace UTLT
 {
@@ -18,6 +19,7 @@ namespace UTLT
         [TestMethod]
         public void TestLayout_Base()
         {
+            GStyleCfg.mode = LAYOUT_COMPACT_MODE.GRAPH_BEGIN;
             ITagDB tagdb = TagDBFactory.CreateTagDB();
             tagdb.AddTag("parent", "child");
 

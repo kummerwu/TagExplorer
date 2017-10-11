@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using TagExplorer;
+using TagExplorer.UriMgr;
 using TagExplorer.Utils;
 
 namespace AnyTags.Net.Tests
@@ -21,23 +22,32 @@ namespace AnyTags.Net.Tests
             Directory.CreateDirectory(dir);
             Directory.CreateDirectory(dir1);
             Directory.CreateDirectory(dir2);
+            
             string docBase = CfgPath.DocBasePath;
+            Directory.CreateDirectory(docBase);
 
         }
 
         [TestCleanup]
         public void teardown()
         {
+            IDisposableFactory.DisposeAll();
+
+            File.Delete(CfgPath.IniFilePath);
             Directory.Delete(dir, true);
             Directory.Delete(docBase,true);//删除B目录下的文件，用于单元测试
+            
 
         }
         [TestMethod]
         public void TestFS_FilesRelocationTest()
         {
-            FilesRelocationTest(new string[] { PathHelper.GetDirByTag("test") + "\\hello" },
-                                new string[] { @"c:\hello"},
+            string testFile = @"B:\hello";
+            File.Create(testFile).Close();
+            FilesRelocationTest(new string[] { CfgPath.GetDirByTag("test") + "\\hello" },
+                                new string[] { testFile },
                                 "test");
+            File.Delete(testFile);
         }
 
 
@@ -147,12 +157,14 @@ namespace AnyTags.Net.Tests
         [TestMethod]
         public void TestFS_TestFileFilter()
         {
+            
             string file = Path.Combine(dir, "1.txt");
+
             FileStream fs = new FileStream(file, FileMode.CreateNew);
             fs.WriteByte(1);
-            Assert.IsTrue( PathHelper.NeedSkip(file));
+            Assert.IsFalse(CfgPath.NeedSkip(file));//現在不再檢查該文件是否
             fs.Close();
-            Assert.IsFalse(PathHelper.NeedSkip(file));
+            Assert.IsFalse(CfgPath.NeedSkip(file));
 
         }
 
@@ -176,6 +188,8 @@ namespace AnyTags.Net.Tests
         [TestMethod]
         public void TestFS_LRUTag1()
         {
+            
+
             CfgPerformance.LRU_MAX_CNT = 4;
             UTLT.UTest_Tag.AssertListEqual(LRUTag.Ins.GetTags(),new List<string>());
             LRUTag.Ins.Add("tag1");
@@ -217,6 +231,7 @@ namespace AnyTags.Net.Tests
         [TestMethod]
         public void TestFS_LRUTag3()
         {
+            
             CfgPerformance.LRU_MAX_CNT = 4;
             UTLT.UTest_Tag.AssertListEqual(LRUTag.Ins.GetTags(), new List<string>());
             LRUTag.Ins.Add("tag1");

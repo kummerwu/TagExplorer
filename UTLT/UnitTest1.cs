@@ -30,7 +30,7 @@ namespace UTLT
         }
         private static void AssertFilter(bool r,string s)
         {
-            Assert.AreEqual(r, PathHelper.NeedSkip(s));
+            Assert.AreEqual(r, CfgPath.NeedSkip(s));
         }
         [TestMethod]
         public void TestUtil_FileWatcherFilter()
@@ -75,7 +75,7 @@ namespace UTLT
         private static  void AssertTag(string file,string tag)
         {
             //createdir(file);
-            Assert.AreEqual(tag, PathHelper.GetTagByPath(file));
+            Assert.AreEqual(tag, CfgPath.GetTagByPath(file));
 
         }
 

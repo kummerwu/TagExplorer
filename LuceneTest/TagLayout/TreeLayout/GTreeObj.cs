@@ -72,7 +72,7 @@ namespace TagExplorer.TagLayout.TreeLayout
                 //GTreeObj child = ExpandNode(ctag, level + 1, db, x + root.box.InnerBox.Width, y + h);
                 //h += child.OutBox.Height;
                 //w = Math.Max(w, child.OutBox.Width);
-                switch(GStyle.mode)
+                switch(GStyleCfg.mode)
                 {
                     case LAYOUT_COMPACT_MODE.TREE_COMPACT_MORE:
                         cur = ExpandChildMoreCompact(level, db, root, pre, ctag);

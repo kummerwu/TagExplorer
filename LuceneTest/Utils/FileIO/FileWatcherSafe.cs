@@ -69,7 +69,7 @@ namespace TagExplorer.Utils
         public void OnFileChanged(object sender, FileSystemEventArgs e)
         {
             Logger.I("OnFileChanged {0} - {1}",e.FullPath,e.ChangeType);
-            if (!PathHelper.NeedSkipByUri(e.FullPath))
+            if (!CfgPath.NeedSkipByUri(e.FullPath))
             {
                 Push(e);
             }
@@ -91,8 +91,8 @@ namespace TagExplorer.Utils
                 case WatcherChangeTypes.Renamed:
                     return  
                         (
-                            File.Exists(e.FullPath ) && 
-                            PathHelper.CheckAccess(e.FullPath) 
+                            File.Exists(e.FullPath ) &&
+                            CfgPath.CheckAccess(e.FullPath) 
                         ) || 
                         (
                             Directory.Exists(e.FullPath)

@@ -382,7 +382,7 @@ namespace RichTextBoxToolBar
             }
             else
             {
-                throw new ArgumentException("color");
+                //throw new ArgumentException("color");
             }
 
             if (cmd != null && editor != null && newColor != null)

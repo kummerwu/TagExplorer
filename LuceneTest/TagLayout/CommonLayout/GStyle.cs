@@ -8,7 +8,7 @@ using TagExplorer.TagLayout.LayoutCommon;
 
 namespace AnyTagNet
 {
-    enum LAYOUT_COMPACT_MODE
+    public enum LAYOUT_COMPACT_MODE
     {
         TREE_NO_COMPACT,
         TREE_COMPACT,
@@ -16,11 +16,15 @@ namespace AnyTagNet
         
         GRAPH_BEGIN,
     }
+    public class GStyleCfg
+    {
+        public static LAYOUT_COMPACT_MODE mode = LAYOUT_COMPACT_MODE.TREE_COMPACT;
+    }
     class GStyle
     {
         private GStyle() { }
 
-        public static LAYOUT_COMPACT_MODE mode = LAYOUT_COMPACT_MODE.TREE_COMPACT;
+        
         //static enum COMPACT_MORE = true;//激进压缩模式，这样会在视觉上破坏层次关系
         //static bool COMPACT_MORE = true;//激进压缩模式，这样会在视觉上破坏层次关系
 

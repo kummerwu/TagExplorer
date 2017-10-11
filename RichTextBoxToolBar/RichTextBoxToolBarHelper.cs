@@ -117,7 +117,16 @@ namespace RichTextBoxToolBar
                 : GetSelectionColor(
                 GetSelectionPropertyValue(selection, property),
                 defaultColor);
-            if (currentColor == null) currentColor = Colors.White;
+            if (currentColor == null)
+            {
+                //下面这一行有bug，但没有当前颜色时，如果使用白色，会出现如果选择的区域有多种颜色
+                //自动将所有颜色全部清除，变成了白色，这不是一个合理的行为。
+                //currentColor = Colors.White;
+                //
+                //
+                source.Text = String.Empty;
+                return;
+            }
             if (currentColor != null)
             {
                 PropertyInfo selectedColor = source.ItemsSource

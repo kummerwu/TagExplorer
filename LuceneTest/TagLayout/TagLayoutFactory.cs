@@ -6,7 +6,7 @@ namespace TagExplorer.TagLayout
     {
         public static ITagLayout CreateLayout()
         {
-            if (GStyle.mode == LAYOUT_COMPACT_MODE.GRAPH_BEGIN)
+            if (GStyleCfg.mode == LAYOUT_COMPACT_MODE.GRAPH_BEGIN)
             {
                 return new TagExplorer.BoxLayout.TagLayout();
             }

@@ -70,7 +70,7 @@ namespace TagExplorer
         public void selectedTagChanged(string tag)
         {
             autoTextBox.Text = tag;
-            string uri = PathHelper.GetNoteFileByTag(tag);
+            string uri = CfgPath.GetNoteFileByTag(tag);
             richTxt.Load(uri);
             //修改text后，会自动触发 TextBox_TextChanged
             //进一步触发             UpdateUriList
@@ -145,12 +145,12 @@ namespace TagExplorer
             {
                 if (e.KeyboardDevice.Modifiers == ModifierKeys.Control)
                 {
-                    string tag = tagDB.AddTag(autoTextBox.Text);
-                    if (tag != null)
-                    {
-                        Update(tag);
-                        autoTextBox.Text = "";
-                    }
+                    //string tag = tagDB.AddTag(autoTextBox.Text);
+                    //if (tag != null)
+                    //{
+                    //    Update(tag);
+                    //    autoTextBox.Text = "";
+                    //}
                     
                 }
                 else if(tagDB.QueryTagAlias(autoTextBox.Text).Count>0)
@@ -222,20 +222,21 @@ namespace TagExplorer
         {
             //System.Diagnostics.Process.Start(@"C:\Program Files\Internet Explorer\iexplore.exe",
             //    @"D:\00TagExplorerBase\DocumentBase\Doc\分布式架构\Raft 为什么是更易理解的分布式一致性算法 - mindwind - 博客园.mht");
-            if (MessageBox.Show("导出所有Uri信息？","",MessageBoxButton.OKCancel) == MessageBoxResult.OK)
+            if (MessageBox.Show("导出所有Uri信息和tag信息？","",MessageBoxButton.OKCancel) == MessageBoxResult.OK)
             {
                 //Dead("导出完成！");
                 //throw new Exception("mock“）");
                 (uriDB as LuceneUriDB)?.Dbg();
+                (tagDB as LuceneTagDB)?.Dbg();
                 MessageBox.Show("导出完成！");
             }
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            if (GStyle.mode == LAYOUT_COMPACT_MODE.GRAPH_BEGIN)
-                GStyle.mode = LAYOUT_COMPACT_MODE.TREE_NO_COMPACT;
-            else GStyle.mode = (GStyle.mode + 1);
+            if (GStyleCfg.mode == LAYOUT_COMPACT_MODE.GRAPH_BEGIN)
+                GStyleCfg.mode = LAYOUT_COMPACT_MODE.TREE_NO_COMPACT;
+            else GStyleCfg.mode = (GStyleCfg.mode + 1);
             Update(LRUTag.Ins.DefaultTag);
         }
 

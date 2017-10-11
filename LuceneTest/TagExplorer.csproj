@@ -150,6 +150,9 @@
     <Reference Include="Lucene.Net.Contrib.SpellChecker, Version=3.0.3.0, Culture=neutral, PublicKeyToken=85089178b9ac3181, processorArchitecture=MSIL">
       <HintPath>..\packages\Lucene.Net.Contrib.3.0.3\lib\net40\Lucene.Net.Contrib.SpellChecker.dll</HintPath>
     </Reference>
+    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Data" />
@@ -216,6 +219,7 @@
     <Compile Include="TagLayout\TreeLayout\GTreeObj.cs" />
     <Compile Include="TagLayout\TreeLayout\GTreeObjDB.cs" />
     <Compile Include="TagLayout\TreeLayout\TreeLayoutImpl.cs" />
+    <Compile Include="TagMgr\JsonTagDB.cs" />
     <Compile Include="TagMgr\TagInf.cs" />
     <Compile Include="TagMgr\TagSwitchDB.cs" />
     <Compile Include="TagsBar\TagsPanel.xaml.cs">
@@ -229,16 +233,16 @@
       <DependentUpon>SearchResultListBox.xaml</DependentUpon>
     </Compile>
     <Compile Include="UriMgr\IDisposableFactory.cs" />
-    <Compile Include="Utils\CfgPath.cs" />
-    <Compile Include="Utils\ClipBoardSafe.cs" />
-    <Compile Include="Utils\FileWatcherSafe.cs" />
-    <Compile Include="Utils\NtfsFileID.cs" />
+    <Compile Include="Utils\Path\CfgPath.cs" />
+    <Compile Include="Utils\Clip\ClipBoardSafe.cs" />
+    <Compile Include="Utils\FileIO\FileWatcherSafe.cs" />
+    <Compile Include="Utils\FileIO\NtfsFileID.cs" />
     <Compile Include="UriMgr\UriQueryAnalyser.cs" />
-    <Compile Include="Utils\Cfg.cs" />
-    <Compile Include="Utils\ClipboardConst.cs" />
-    <Compile Include="Utils\FileShell.cs" />
-    <Compile Include="Utils\CfgTagGraph.cs" />
-    <Compile Include="Utils\GIconHelper.cs" />
+    <Compile Include="Utils\Cfg\Cfg.cs" />
+    <Compile Include="Utils\Clip\ClipboardConst.cs" />
+    <Compile Include="Utils\FileIO\FileShell.cs" />
+    <Compile Include="Utils\Cfg\CfgTagGraph.cs" />
+    <Compile Include="Utils\FileIO\GIconHelper.cs" />
     <Compile Include="Utils\Logger.cs" />
     <Compile Include="TagMgr\ITagDB.cs" />
     <Compile Include="TagMgr\LuceneTagDB.cs" />
@@ -248,13 +252,11 @@
     <Compile Include="UriMgr\UriAnalyser.cs" />
     <Compile Include="UriMgr\UriDBFactory.cs" />
     <Compile Include="Utils\OpenWithList.cs" />
-    <Compile Include="Utils\PathHelper.cs" />
-    <Compile Include="Utils\CfgPerformance.cs" />
-    <Compile Include="Utils\TemplateHelper.cs" />
+    <Compile Include="Utils\Path\PathHelper.cs" />
+    <Compile Include="Utils\Cfg\CfgPerformance.cs" />
+    <Compile Include="Utils\Path\TemplateHelper.cs" />
     <Compile Include="Utils\TipsCenter.cs" />
-    <Compile Include="Utils\WebHelper.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Utils\Net\WebHelper.cs" />
     <Page Include="AutoComplete\AutoTextbox.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

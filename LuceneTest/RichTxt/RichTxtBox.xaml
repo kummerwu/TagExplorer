@@ -20,7 +20,11 @@
                          ScrollViewer.VerticalScrollBarVisibility="Visible"
                          SpellCheck.IsEnabled="True"
                          AcceptsReturn="True"
-                         AcceptsTab="True" />
+                         AcceptsTab="True" >
+            <RichTextBox.CommandBindings>
+                <CommandBinding Command="Paste" Executed="CommandBinding_Executed"></CommandBinding>
+            </RichTextBox.CommandBindings>
+        </RichTextBox>
 
     </DockPanel>
 </UserControl>
