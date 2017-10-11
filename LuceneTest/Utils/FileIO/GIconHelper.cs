@@ -66,7 +66,15 @@ namespace TagExplorer.Utils
             }
             else if(File.Exists(f))
             {
-                return Path.GetExtension(f);
+                string ext =  Path.GetExtension(f);
+                if(ext==".exe")
+                {
+                    return f;
+                }
+                else
+                {
+                    return ext;
+                }
             }
             else
             {
