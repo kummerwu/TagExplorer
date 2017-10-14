@@ -15,6 +15,7 @@ namespace TagExplorer.TagLayout.TreeLayout
         public Rect TotalRange = new Rect();
         public GTagBox GTagBox = null;
         public GTagBoxTree() { }
+        
         public void CenterItY()
         {
             GTagBox.CenterItY(TotalRange);

@@ -2,6 +2,7 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using TagExplorer.TagLayout.LayoutCommon;
 using TagExplorer.TagMgr;
 using TagExplorer.UriMgr;
 using TagExplorer.Utils;
@@ -13,8 +14,10 @@ namespace TagExplorer
     /// </summary>
     public partial class TagBox : UserControl
     {
-        public TagBox()
+        GTagBox tagInf;
+        public TagBox(GTagBox tagInf)
         {
+            this.tagInf = tagInf;
             InitializeComponent();
         }
         public enum Status
@@ -75,20 +78,40 @@ namespace TagExplorer
             {
                 SolidColorBrush b = new SolidColorBrush(UIElementFactory.GetColor(value, value));
                 bdr.Background = b;
-
                 int childCount = TagDBFactory.Ins == null ? 10 : TagDBFactory.Ins.GetTagChildrenCount(Text);
-                if (childCount == 0)
+                
+                if(childCount==0)
                 {
+                    circleLeft.Background = null;
                     circle.Background = null;
                 }
-                else
+                else if(tagInf.IsRoot)
                 {
-                    circle.Background = new SolidColorBrush(UIElementFactory.GetColor(value+1, value+1));
-                    if(childCount==1)
+                    circle.Background = new SolidColorBrush(UIElementFactory.GetColor(value + 1, value + 1));
+                    if(childCount>2)
                     {
-                        circle.Width = circle.Height = 5;
+                        circleLeft.Background = circle.Background;
                     }
+                    else
+                    {
+                        circleLeft.Background = null;
+                    }
+                    
                 }
+                else if (tagInf.Direct==1)
+                {
+                    circleLeft.Background = null;
+                    circle.Background = new SolidColorBrush(UIElementFactory.GetColor(value + 1, value + 1));
+                    
+                }
+                else if(tagInf.Direct==-1)
+                {
+                    circle.Background = null;
+                    circleLeft.Background = new SolidColorBrush(UIElementFactory.GetColor(value + 1, value + 1));
+                    
+                }
+                
+                
             }
         }
         public SolidColorBrush Foreground1

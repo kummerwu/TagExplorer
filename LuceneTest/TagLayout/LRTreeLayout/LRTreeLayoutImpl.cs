@@ -63,8 +63,8 @@ namespace TagExplorer.TagLayout.LRTreeLayout
             root.GTagBox = new GTagBox(0, tag, centerX, 0, 1);
             TreeLayoutEnv.Ins.Add(tag, root);
             double l, r;
-            l = centerX - CfgTagGraph.LayoutXPadding*5;
-            r = centerX + root.GTagBox.InnerBox.Width + CfgTagGraph.LayoutXPadding*5;
+            l = root.GTagBox.InnerBoxLeftTop.X - CfgTagGraph.LayoutXPadding*5;
+            r = root.GTagBox.InnerBoxLeftTop.X + root.GTagBox.InnerBox.Width + CfgTagGraph.LayoutXPadding*5;
             //outterbox = root.GTagBox.InnerBox;
             outterbox = Rect.Empty;
             
@@ -79,7 +79,7 @@ namespace TagExplorer.TagLayout.LRTreeLayout
                 int direct = (idx) <= mid ? 1 : -1;
                 if (olddirect==1 && direct==-1) y = 0; //显示从左边转到右边，将y重置
 
-                subTree = GTagBoxTree.ExpandNode(c, 0, db, direct==1?r:l, y, direct);
+                subTree = GTagBoxTree.ExpandNode(c, 1, db, direct==1?r:l, y, direct);
                 if(outterbox.IsEmpty)
                 {
                     outterbox = subTree.TotalRange;
@@ -95,6 +95,7 @@ namespace TagExplorer.TagLayout.LRTreeLayout
             outterbox.Union(root.GTagBox.OutterBox);
             root.TotalRange = outterbox;
             root.CenterItY();
+            root.GTagBox.IsRoot = true;
             tags = TreeLayoutEnv.Ins.GetAllTagBox();
             lines = TreeLayoutEnv.Ins.GetAllLines().Cast<UIElement>();
         }

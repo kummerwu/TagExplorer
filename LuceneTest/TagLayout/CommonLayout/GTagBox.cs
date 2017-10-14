@@ -66,13 +66,13 @@ namespace TagExplorer.TagLayout.LayoutCommon
     /// </summary>
     public class GTagBox
     {
-        
 
 
+        public bool IsRoot = false;
         public Point OutterBoxLeftTop = new Point();          //内部文字区域，加上外部空白边缘
         public Point InnerBoxLeftTop = new Point();           //内部文字区域
         readonly TagBoxSizeInf Inf;
-        readonly private int Direct;
+        readonly public int Direct;
 
         //计算只读属性
         public Rect OutterBox{get{return new Rect(OutterBoxLeftTop, Inf.OutterBoxSize);}}

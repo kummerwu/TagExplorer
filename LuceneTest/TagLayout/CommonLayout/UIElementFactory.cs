@@ -15,12 +15,12 @@ namespace AnyTagNet
     {
         public static TagBox CreateTagBox(GTagBox g)
         {
-            TagBox b = new TagBox();
+            TagBox b = new TagBox(g);
             b.FontFamily = CfgTagGraph.GFontF;
             b.FontSize = g.FontSize;
             b.Height1 = g.InnerBox.Height;
             b.Width1 = g.InnerBox.Width;
-            b.Margin = new Thickness(g.InnerBox.X, g.InnerBox.Y, 0, 0);
+            b.Margin = new Thickness(g.InnerBox.X-10, g.InnerBox.Y, 0, 0);
             b.TextAlignment = TextAlignment.Center;
             b.Text = g.Tag;
             b.Background1 = g.Distance;//new SolidColorBrush(GetColor(g.Distance,g.Level));
@@ -64,17 +64,15 @@ namespace AnyTagNet
 
             if (direct == 1)
             {
-                p1.X = p.GTagBox.InnerBox.Right + 5;
+                p1.X = p.GTagBox.InnerBox.Right;
                 p5.X = c.GTagBox.InnerBox.Left;
             }
             else
             {
-                p1.X = p.GTagBox.InnerBox.Left - 5;
+                p1.X = p.GTagBox.InnerBox.Left;
                 p5.X = c.GTagBox.InnerBox.Right;
             }
             p1.Y = (p.GTagBox.InnerBox.Top + p.GTagBox.InnerBox.Bottom) / 2;
-
-
             p5.Y = (c.GTagBox.InnerBox.Top + c.GTagBox.InnerBox.Bottom) / 2;
 
 
