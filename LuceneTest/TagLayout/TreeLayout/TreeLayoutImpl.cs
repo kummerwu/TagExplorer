@@ -1,13 +1,6 @@
-﻿using AnyTagNet;
-using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Shapes;
-using TagExplorer.TagLayout.LayoutCommon;
 using TagExplorer.TagMgr;
 
 namespace TagExplorer.TagLayout.TreeLayout
@@ -16,14 +9,14 @@ namespace TagExplorer.TagLayout.TreeLayout
     {
         public Size Size
         {
-            get { return root.OutBox.Size; }
+            get { return root.TotalRange.Size; }
         }
 
         public Point RootPos
         {
             get
             {
-                return new Point(root.OutBox.Left, (root.OutBox.Top+root.OutBox.Height/2));
+                return new Point(root.TotalRange.Left, (root.TotalRange.Top+root.TotalRange.Height/2));
             }
         }
 
@@ -37,18 +30,19 @@ namespace TagExplorer.TagLayout.TreeLayout
             get { return tags; }
         }
         private ITagDB db = null;
-        private GTreeObj root = null;
-
+        private GTagBoxTree root = null;
+        private Size oriSize;
         public List<TagBox> tags = null;
         public IEnumerable<UIElement> lines = null;
-        public void Layout(ITagDB db, string tag)
+        public void Layout(ITagDB db, string tag,Size size)
         {
-            GTreeObjDB.Ins.Reset();
+            oriSize = size;
+            TreeLayoutEnv.Ins.Reset();
             tags = new List<TagBox>();
             this.db = db;
-            root = GTreeObj.ExpandNode(tag, 0, db,0,0);
-            tags = GTreeObjDB.Ins.GetAllTagBox();
-            lines = GTreeObjDB.Ins.GetAllLines().Cast<UIElement>();
+            root = GTagBoxTree.ExpandNode(tag, 0, db,0,0,1);
+            tags = TreeLayoutEnv.Ins.GetAllTagBox();
+            lines = TreeLayoutEnv.Ins.GetAllLines().Cast<UIElement>();
 
         }
         

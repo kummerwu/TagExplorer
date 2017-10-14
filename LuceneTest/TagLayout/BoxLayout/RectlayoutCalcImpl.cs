@@ -8,16 +8,16 @@ namespace TagExplorer.BoxLayout
 {
     class RectlayoutCalcImpl : IRectLayoutCalc
     {
-        private void Clear(IEnumerable<GObj> objs)
+        private void Clear(IEnumerable<GBoxObj> objs)
         {
-            foreach (GObj r in objs)
+            foreach (GBoxObj r in objs)
             {
                 r.OuterBox.X = r.OuterBox.Y = 0;
             }
             putInObjs.Clear();
         }
         ArrayList putInObjs = new ArrayList();
-        private int isValidPos(GObj obj,Size rect)
+        private int isValidPos(GBoxObj obj,Size rect)
         {
             if(obj.OuterBox.Width > rect.Width ||
                 obj.OuterBox.Height>rect.Height)
@@ -33,7 +33,7 @@ namespace TagExplorer.BoxLayout
             }
 
             //再检查与已有的对象是否相交
-            foreach(GObj pr in putInObjs)
+            foreach(GBoxObj pr in putInObjs)
             {
                 //if (obj.OuterBox.IntersectsWith(pr.OuterBox)) return false;
                 if (obj.OverlayWith(pr)) return 0; //返回0，表示与已有的相交
@@ -47,7 +47,7 @@ namespace TagExplorer.BoxLayout
         /// <param name="initSize">初始显示框大小</param>
         /// <param name="allChildren">所有子节点列表</param>
         /// <param name="opt">布局约束选项：保持宽度，高度，还是比例关系</param>
-        public void Calc(ref Size initSize, IEnumerable<GObj> allChildren,LayoutOption opt)
+        public void Calc(ref Size initSize, IEnumerable<GBoxObj> allChildren,LayoutOption opt)
         {
             bool ret = false;
 
@@ -58,7 +58,7 @@ namespace TagExplorer.BoxLayout
                 LayoutSizeAdjustHelper.AdjustSize(ref initSize, opt);
             } while (!ret);
             double w = 0, h = 0;
-            foreach (GObj r in allChildren)
+            foreach (GBoxObj r in allChildren)
             {
                 w = Math.Max(w, r.OuterBox.X + r.OuterBox.Width);
                 h = Math.Max(h, r.OuterBox.Y + r.OuterBox.Height);
@@ -67,11 +67,11 @@ namespace TagExplorer.BoxLayout
             initSize.Height = h;
         }
 
-        private bool Calc_inner(ref Size s, IEnumerable<GObj> objs)
+        private bool Calc_inner(ref Size s, IEnumerable<GBoxObj> objs)
         {
             Clear(objs);
             bool ret = true;
-            foreach (GObj r in objs)
+            foreach (GBoxObj r in objs)
             {
                 ret = Put(r, s);
                 if (!ret) return false;
@@ -81,7 +81,7 @@ namespace TagExplorer.BoxLayout
         }
         
         //尝试将对象r放到指定大小的矩形中
-        private bool Put(GObj obj,Size rect)
+        private bool Put(GBoxObj obj,Size rect)
         {
             double dx = Math.Max(rect.Width / 50, 1);
             double dy = Math.Max(rect.Height / 50, 1);
@@ -99,7 +99,7 @@ namespace TagExplorer.BoxLayout
                     if (ret>0) //OK
                     {
                         putInObjs.Add(obj);
-                        Logger.D("   Put OK!! {0} # {1}  ##{2}", obj.Tag, obj.InnerBox, obj.OuterBox);
+                        Logger.D("   Put OK!! {0} # {1}  ##{2}", obj.Tag, obj.TextBox, obj.OuterBox);
                         return true;
                     }
                     else if(ret==0)

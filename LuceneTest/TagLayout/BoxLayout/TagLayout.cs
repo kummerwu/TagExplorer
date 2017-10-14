@@ -45,27 +45,28 @@ namespace TagExplorer.BoxLayout
             }
         }
 
-        
 
 
+        private Size oriSize;
         private Size layoutSize = new Size();
         private Point rootPos = new Point();
         private List<UIElement> lines = null, allTxt = null,recentTags = null;
 
-        public void Layout(ITagDB db, string tag)
+        public void Layout(ITagDB db, string tag,Size size)
         {
             double Top = 0;// GConfig.FontSize;
             double Left = 0;
+            oriSize = size;
 
             //计算布局信息
-            GObj gobj = GObj.LayoutTag(tag, db, Top, Left);
+            GBoxObj gobj = GBoxObj.LayoutTag(tag, db, Top, Left);
             layoutSize.Height = gobj.OuterBox.Height + CfgTagGraph.LayoutYPadding + Top;
             layoutSize.Width = gobj.OuterBox.Width + CfgTagGraph.LayoutXPadding + Left;
-            rootPos.X = gobj.Content.X;
-            rootPos.Y = gobj.Content.Y;
+            rootPos.X = gobj.ColorBox.X;
+            rootPos.Y = gobj.ColorBox.Y;
 
             //根据布局信息，生成UIElement控件并对控件的Style进行渲染。
-            IGObjCollection gcanvas = new GObjCollection();
+            IBoxLayoutEnv gcanvas = new BoxLayoutEnv();
             gcanvas.AddGObjs(gobj.GetAll());
             gcanvas.AddEdge(gobj.GetEdges());
 

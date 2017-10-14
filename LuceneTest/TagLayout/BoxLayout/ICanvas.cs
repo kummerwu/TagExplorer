@@ -4,16 +4,16 @@ using System.Windows;
 namespace TagExplorer.BoxLayout
 {
 
-    interface IGObjCollection
+    interface IBoxLayoutEnv
     {
-        void AddGObjs(IEnumerable<GObj> all);
+        void AddGObjs(IEnumerable<GBoxObj> all);
         void AddEdge(IEnumerable<PathEdge> edge);
         List<UIElement> GetAllTextBlocks();
         List<UIElement> GetAllLines();
     }
     interface IRectLayoutCalc
     {
-        void Calc(ref Size initSize, IEnumerable<GObj> objs, LayoutOption o);
+        void Calc(ref Size initSize, IEnumerable<GBoxObj> objs, LayoutOption o);
     }
 
     enum LayoutOption

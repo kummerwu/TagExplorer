@@ -43,7 +43,7 @@
             </Button>
             <Border>
                 <StackPanel Orientation="Horizontal">
-                    <autoTextbox:AutoTextbox x:Name="autoTextBox"    Background="Transparent" Width="200" KeyUp="autoTextBox_KeyUp" ></autoTextbox:AutoTextbox>
+                    <autoTextbox:AutoTextbox x:Name="autoTextBox"    Background="Transparent" Width="200" KeyUp="TextBoxKeyUp_Callback" ></autoTextbox:AutoTextbox>
                     <Button Width="30" Background="White" >
                         <Button.ToolTip>
                             <ToolTip>
@@ -77,7 +77,7 @@
                     
                     <avalonDock:LayoutAnchorablePane DockWidth="150" x:Name="apane1">
                         <avalonDock:LayoutAnchorable Title="最近访问标签" CanClose="False" CanHide="False" x:Name="ID_TagCanvas">
-                            <tagGraph:TagGraphCanvas x:Name="tagCanvas"  Grid.Column="0" ></tagGraph:TagGraphCanvas>
+                            <tagGraph:TagGraphCanvas x:Name="tagCanvas"  Grid.Column="0" SizeChanged="tagCanvas_SizeChanged" ></tagGraph:TagGraphCanvas>
                         </avalonDock:LayoutAnchorable>
                     </avalonDock:LayoutAnchorablePane>
 

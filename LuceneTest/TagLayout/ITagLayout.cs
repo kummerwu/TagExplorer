@@ -6,7 +6,7 @@ namespace TagExplorer.TagLayout
 {
     public interface ITagLayout
     {
-        void Layout(ITagDB db, string root);
+        void Layout(ITagDB db, string root,Size size);
         Size Size { get; }
         Point RootPos { get; }
         IEnumerable<UIElement> Lines { get; }

@@ -53,22 +53,22 @@ namespace TagExplorer.BoxLayout
         }
     }
     
-    class GObj
+    class GBoxObj
     {
         private void InitBox(string tag,int level,int distance)
         {
-            box = new GTagLable(distance,tag,0,0);
+            GTagBox = new GTagBox(distance,tag,0,0,1);
         }
         //公有属性：
         //public Rect Content = new Rect();   //自身文字所占用的矩形大小（加了一个ContentPadding）
         //public Rect InnerBox = new Rect();  //自身文字所占的区域（再加了一个XPadding和YPadding）
-        public GTagLable box ;
+        public GTagBox GTagBox ;
 
         public Rect OuterBox = new Rect();  //整个Gobj所占区域，包括三部分（Parent区域，自身区域，Children区域）
 
 
-        public Rect Content { get { return box.ColorBox; } }
-        public Rect InnerBox { get { return box.InnerBox; } }
+        public Rect ColorBox { get { return GTagBox.InnerBox; } }
+        public Rect TextBox { get { return GTagBox.OutterBox; } }
 
 
         //私有属性
@@ -76,17 +76,17 @@ namespace TagExplorer.BoxLayout
         private ITagDB db = null;
         private Size ChildBox = new Size(0, 0);
         private Size ParentBox = new Size(0, 0);
-        List<GObj> gChildList = new List<GObj>();
-        List<GObj> gParentList = new List<GObj>();
-        List<GObj> gBrotherList = new List<GObj>();
+        List<GBoxObj> gChildList = new List<GBoxObj>();
+        List<GBoxObj> gParentList = new List<GBoxObj>();
+        List<GBoxObj> gBrotherList = new List<GBoxObj>();
         
-        public string Tag { get { return box.Tag; } }
+        public string Tag { get { return GTagBox.Tag; } }
         
 
         IRectLayoutCalc calc = new RectlayoutCalcImpl();
         IGLayoutResult result = null;
 
-        public bool OverlayWith(GObj other)
+        public bool OverlayWith(GBoxObj other)
         {
             //Logger.Log("{0}-{1}-{2}     ## {3}-{4}-{5}",
             //                this.Tag, this.InnerBox, this.OuterBox,
@@ -95,13 +95,13 @@ namespace TagExplorer.BoxLayout
 
 
             if (this.Tag == other.Tag) return false;
-            IEnumerable<GObj> thisAll = GetAll();
-            IEnumerable<GObj> otherAll = other.GetAll();
-            foreach(GObj thisOne in thisAll)
+            IEnumerable<GBoxObj> thisAll = GetAll();
+            IEnumerable<GBoxObj> otherAll = other.GetAll();
+            foreach(GBoxObj thisOne in thisAll)
             {
-                foreach(GObj otherOne in otherAll)
+                foreach(GBoxObj otherOne in otherAll)
                 {
-                    if(thisOne.Tag!=otherOne.Tag && thisOne.InnerBox.IntersectsWith(otherOne.InnerBox))
+                    if(thisOne.Tag!=otherOne.Tag && thisOne.TextBox.IntersectsWith(otherOne.TextBox))
                     {
                         //Logger.Log("{0}-{1}-{2}     @@ {3}-{4}-{5}",
                         //    thisOne.Tag, thisOne.InnerBox, thisOne.OuterBox,
@@ -118,15 +118,15 @@ namespace TagExplorer.BoxLayout
         
         //返回所有对象，包括自己，父节点和子节点(以及递归的所有父子节点)
         //TODO：该函数可以优化，实际上并不需要所有节点，只需要指导当前整个图中有多少个节点（以便在节点太多的时候，停止继续遍历）
-        public IEnumerable<GObj> GetAll()
+        public IEnumerable<GBoxObj> GetAll()
         {
-            List<GObj> all = new List<GObj>();//include self and p,c,b
+            List<GBoxObj> all = new List<GBoxObj>();//include self and p,c,b
             all.Add(this);
-            foreach(GObj c in gChildList)
+            foreach(GBoxObj c in gChildList)
             {
                 all.AddRange(c.GetAll());
             }
-            foreach(GObj p in gParentList)
+            foreach(GBoxObj p in gParentList)
             {
                 all.AddRange(p.GetAll());
             }
@@ -134,17 +134,17 @@ namespace TagExplorer.BoxLayout
 
         }
         
-        public static GObj LayoutTag(string tag, ITagDB db,double Top,double Left)
+        public static GBoxObj LayoutTag(string tag, ITagDB db,double Top,double Left)
         {
             Logger.D("+++Begin Layout Tag from {0}", tag);
             IGLayoutResult result = new GLayoutResult();
-            GObj g = null;
+            GBoxObj g = null;
             for(int curLevel =CfgTagGraph.MinLevel;curLevel<=CfgTagGraph.MaxLevel;curLevel++)
             {
                 CfgTagGraph.CurLevel = curLevel;
                 result.Clear();
                 g = Parse_in(tag, null, null, db, result, 0, 0);
-                if (g.GetAll().Count<GObj>() > CfgTagGraph.MinTagCnt) break; 
+                if (g.GetAll().Count<GBoxObj>() > CfgTagGraph.MinTagCnt) break; 
             }
 
             if (g != null)
@@ -160,14 +160,14 @@ namespace TagExplorer.BoxLayout
         private void ShowAll()
         {
             Logger.IN(Tag);
-            Logger.D("   ShowAll@!! {0} # {1}  ##{2}", Tag, InnerBox, OuterBox);
-            foreach (GObj o in GetAll())
+            Logger.D("   ShowAll@!! {0} # {1}  ##{2}", Tag, TextBox, OuterBox);
+            foreach (GBoxObj o in GetAll())
             {
-                Logger.D("   ShowAll!! {0} # {1}  ##{2}", o.Tag, o.InnerBox, o.OuterBox);
+                Logger.D("   ShowAll!! {0} # {1}  ##{2}", o.Tag, o.TextBox, o.OuterBox);
             }
             Logger.OUT();
         }
-        private static GObj Parse_in(string tag,string fromParent,string fromChild,ITagDB db,IGLayoutResult result, int level,int distance)
+        private static GBoxObj Parse_in(string tag,string fromParent,string fromChild,ITagDB db,IGLayoutResult result, int level,int distance)
         {
             Logger.IN(tag);
             Logger.D(@"Parse In Tag {0} from {1},level={2},distance = {3}", tag, fromParent, level, distance);
@@ -199,7 +199,7 @@ namespace TagExplorer.BoxLayout
                 result.AddCalc(a);
             }
             
-            GObj ret = new GObj();
+            GBoxObj ret = new GBoxObj();
             ret.db = db;
             ret.InitBox(tag, level, distance);
             //ret.box.db = db;
@@ -221,7 +221,7 @@ namespace TagExplorer.BoxLayout
             {
                 if (pTag != tag)
                 {
-                    GObj pg = GObj.Parse_in(pTag, null, tag,db,result,level-1,distance+1);
+                    GBoxObj pg = GBoxObj.Parse_in(pTag, null, tag,db,result,level-1,distance+1);
                     if (pg != null)
                     {
                         ret.gParentList.Add(pg);
@@ -244,7 +244,7 @@ namespace TagExplorer.BoxLayout
             {
                 if (cTag != tag)
                 {
-                    GObj cg = GObj.Parse_in(cTag, tag, null,db,result,level+1,distance+1);
+                    GBoxObj cg = GBoxObj.Parse_in(cTag, tag, null,db,result,level+1,distance+1);
                     if (cg != null)
                     {
                         ret.gChildList.Add(cg);
@@ -260,26 +260,26 @@ namespace TagExplorer.BoxLayout
             Logger.D("End Visit All children :{0}<===", tag);
             //ret.box.Init(distance, tag);
             ret.CalcOutterBoxSize();
-            ret.box.CalcInnerBoxPos(ret.OuterBox,ret.ParentBox);
+            ret.GTagBox.CalcInnerBoxPos(ret.OuterBox,ret.ParentBox);
             ret.ShowAll();
             Logger.OUT();
             return ret;
         }
         private void CalcOutterBoxSize()
         {
-            GObj ret = this;
+            GBoxObj ret = this;
             //ret.OuterBox.X = 0;
             //ret.OuterBox.Y = 0;
             SetOutterBoxPos(0, 0);
             ret.OuterBox.Width = Math.Max(ret.ParentBox.Width, ret.ChildBox.Width);
-            ret.OuterBox.Width = Math.Max(ret.OuterBox.Width, ret.InnerBox.Width);
-            ret.OuterBox.Height = ret.InnerBox.Height + ret.ParentBox.Height + ret.ChildBox.Height;
+            ret.OuterBox.Width = Math.Max(ret.OuterBox.Width, ret.TextBox.Width);
+            ret.OuterBox.Height = ret.TextBox.Height + ret.ParentBox.Height + ret.ChildBox.Height;
         }
         public void SetOutterBoxPos(double x,double y)
         {
             OuterBox.X = x;
             OuterBox.Y = y;
-            box.CalcInnerBoxPos(OuterBox,ParentBox);
+            GTagBox.CalcInnerBoxPos(OuterBox,ParentBox);
         }
         
         //计算所有对象的位置信息
@@ -289,13 +289,13 @@ namespace TagExplorer.BoxLayout
             OuterBox.X += Left;
             OuterBox.Y += Top;
 
-            box.CalcInnerBoxPos(OuterBox,ParentBox);
+            GTagBox.CalcInnerBoxPos(OuterBox,ParentBox);
 
             //调整所有父节点的位置
             double leftParentRange, topParentRange;
             leftParentRange = OuterBox.X + (OuterBox.Width - ParentBox.Width) / 2;
             topParentRange = OuterBox.Y;
-            foreach (GObj p in gParentList)
+            foreach (GBoxObj p in gParentList)
             {
                 p.CalcAllObjsPos(leftParentRange, topParentRange);
             }
@@ -303,8 +303,8 @@ namespace TagExplorer.BoxLayout
             //调整所有子节点的位置
             double leftChildRange, topChildRange;
             leftChildRange = OuterBox.X + (OuterBox.Width - ChildBox.Width) / 2;
-            topChildRange = OuterBox.Y + ParentBox.Height + InnerBox.Height;
-            foreach (GObj c in gChildList)
+            topChildRange = OuterBox.Y + ParentBox.Height + TextBox.Height;
+            foreach (GBoxObj c in gChildList)
             {
                 c.CalcAllObjsPos(leftChildRange,topChildRange);
             }

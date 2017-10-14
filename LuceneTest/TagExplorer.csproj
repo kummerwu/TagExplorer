@@ -205,19 +205,24 @@
     <Compile Include="TagCanvas\TagCanvas.xaml.cs">
       <DependentUpon>TagCanvas.xaml</DependentUpon>
     </Compile>
-    <Compile Include="TagLayout\CommonLayout\GTagLable.cs" />
-    <Compile Include="TagLayout\BoxLayout\GLayout.cs" />
+    <Compile Include="TagCanvas\TagCanvasCtrl.xaml.cs">
+      <DependentUpon>TagCanvasCtrl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="TagLayout\CommonLayout\GTagBox.cs" />
+    <Compile Include="TagLayout\BoxLayout\BoxLayoutEnv.cs" />
     <Compile Include="TagLayout\BoxLayout\GObj.cs" />
-    <Compile Include="TagLayout\CommonLayout\GStyle.cs" />
+    <Compile Include="TagLayout\CommonLayout\UIElementFactory.cs" />
     <Compile Include="TagLayout\BoxLayout\ICanvas.cs" />
     <Compile Include="TagLayout\BoxLayout\ITagGraphDB.cs" />
+    <Compile Include="TagLayout\CommonLayout\LayoutMode.cs" />
     <Compile Include="TagLayout\ITagLayout.cs" />
     <Compile Include="TagLayout\BoxLayout\LayoutSizeAdjustHelper.cs" />
     <Compile Include="TagLayout\BoxLayout\RectlayoutCalcImpl.cs" />
     <Compile Include="TagLayout\BoxLayout\TagLayout.cs" />
+    <Compile Include="TagLayout\LRTreeLayout\LRTreeLayoutImpl.cs" />
     <Compile Include="TagLayout\TagLayoutFactory.cs" />
-    <Compile Include="TagLayout\TreeLayout\GTreeObj.cs" />
-    <Compile Include="TagLayout\TreeLayout\GTreeObjDB.cs" />
+    <Compile Include="TagLayout\TreeLayout\GTagBoxTree.cs" />
+    <Compile Include="TagLayout\TreeLayout\TreeLayoutEnv.cs" />
     <Compile Include="TagLayout\TreeLayout\TreeLayoutImpl.cs" />
     <Compile Include="TagMgr\JsonTagDB.cs" />
     <Compile Include="TagMgr\TagInf.cs" />
@@ -290,6 +295,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="TagCanvas\TagCanvas.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="TagCanvas\TagCanvasCtrl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

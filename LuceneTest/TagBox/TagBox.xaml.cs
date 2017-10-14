@@ -73,7 +73,7 @@ namespace TagExplorer
         {
             set
             {
-                SolidColorBrush b = new SolidColorBrush(GStyle.GetColor(value, value));
+                SolidColorBrush b = new SolidColorBrush(UIElementFactory.GetColor(value, value));
                 bdr.Background = b;
 
                 int childCount = TagDBFactory.Ins == null ? 10 : TagDBFactory.Ins.GetTagChildrenCount(Text);
@@ -83,7 +83,7 @@ namespace TagExplorer
                 }
                 else
                 {
-                    circle.Background = new SolidColorBrush(GStyle.GetColor(value+1, value+1));
+                    circle.Background = new SolidColorBrush(UIElementFactory.GetColor(value+1, value+1));
                     if(childCount==1)
                     {
                         circle.Width = circle.Height = 5;

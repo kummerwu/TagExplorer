@@ -4,6 +4,7 @@ using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using TagExplorer.TagLayout.CommonLayout;
 using TagExplorer.TagMgr;
 using TagExplorer.UriMgr;
 using TagExplorer.Utils;
@@ -24,10 +25,12 @@ namespace TagExplorer
            public  const int MAX_SEARCH = 10;
         }
 
-        public static RoutedCommand MyCommand = new RoutedCommand();
-
-
         
+
+
+        ITagDB tagDB = null;
+        IUriDB uriDB = null;
+        //ITagLayout tagLayout = TagLayoutFactory.CreateLayout();
         public MainWindow()
         {
             Logger.I(@"
@@ -39,107 +42,77 @@ namespace TagExplorer
 ");
 
             InitializeComponent();
-            
-            Logger.I("InitializeComponent Finished!");
-            tagCanvas.SelectedTagChanged += selectedTagChanged;
-            autoTextBox.textBox.TextChanged += TextBox_TextChanged;
-            uriDB.UriDBChanged += UpdateUriList;
+
+            //URI DB相关部分
+            Logger.I("InitializeComponent Finished!，init uridb");
+            uriDB = UriDBFactory.CreateUriDB();
+            uriDB.UriDBChanged += ShowUrlListByText;
+
+            //URI 相关部分
+            //uriList.CurrentUriChangedCallback += CurrentUriChanged;
+
+            //TAG DB相关部分
+            Logger.I("InitializeComponent Finished!，init tagdb");
+            tagDB = TagDBFactory.CreateTagDB();
+            autoTextBox.textBox.TextChanged += TextChanged_Callback;
             autoTextBox.SearchDataProvider = tagDB;
-            Update(LRUTag.Ins.DefaultTag);
-            uriList.CurrentUriChangedCallback += CurrentUriChanged;
-            richTxt.Focus();
-            
+            tagCanvas.InitDB(tagDB);
+            tagCanvas.SelectedTagChanged += SelectedTagChanged_Callback;
+            ShowTagGraph(LRUTag.Ins.DefaultTag);
+
             IDisposableFactory.New<MainWindow>(this);
 
-        }
-        public void CurrentUriChanged(string uri)
-        {
-            //richTxt.Load(uri);  richtxt不与文件列表关联，而是与当前选中的tag关联。
-            
-        }
+            richTxt.Focus();
 
-        public void UpdateUriList()
+        }
+        //public void CurrentUriChanged(string uri)
+        //{
+        //    //richTxt.Load(uri);  richtxt不与文件列表关联，而是与当前选中的tag关联。
+            
+        //}
+
+        public void ShowUrlListByText()
         {
             uriList.ShowQueryResult(autoTextBox.Text, uriDB,tagDB);
         }
-        private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
+        private void TextChanged_Callback(object sender, TextChangedEventArgs e)
         {
-            UpdateUriList();
+            //ShowUrlListByText();
         }
 
-        public void selectedTagChanged(string tag)
+        public void SelectedTagChanged_Callback(string tag)
         {
             autoTextBox.Text = tag;
             string uri = CfgPath.GetNoteFileByTag(tag);
             richTxt.Load(uri);
+            ShowUrlListByText();
             //修改text后，会自动触发 TextBox_TextChanged
-            //进一步触发             UpdateUriList
+            //进一步触发             ShowUrlListByText
         }
-        //public void SearchDir(string dir,IndexWriter w)
-        //{
-        //    Document doc = new Document();
-        //    doc.Add(new Field(LuceneConstants.FILE_PATH, dir, Field.Store.YES, Field.Index.NOT_ANALYZED));
-        //    doc.Add(new Field(LuceneConstants.TYPE, "DIR", Field.Store.YES, Field.Index.NOT_ANALYZED));
-        //    doc.Add(new Field(LuceneConstants.FILE_NAME, new System.IO.DirectoryInfo(dir).Name, Field.Store.YES, Field.Index.NOT_ANALYZED_NO_NORMS));
-        //    w.AddDocument(doc);
 
-        //    string[] files = System.IO.Directory.GetFiles(dir);
-        //    foreach(string f in files)
-        //    {
-        //        Document docf = new Document();
-        //        docf.Add(new Field(LuceneConstants.FILE_PATH, f, Field.Store.YES, Field.Index.NOT_ANALYZED));
-        //        docf.Add(new Field(LuceneConstants.TYPE, "FILE", Field.Store.YES, Field.Index.NOT_ANALYZED));
-        //        docf.Add(new Field(LuceneConstants.FILE_NAME, new System.IO.FileInfo(f).Name, Field.Store.YES, Field.Index.ANALYZED));
-        //        w.AddDocument(docf); 
-        //    }
-        //    string[] dirs = System.IO.Directory.GetDirectories(dir);
-        //    foreach(string subd in dirs)
-        //    {
-        //        SearchDir(subd, w);
-        //    }
-        //}
-
-
-
-
-        public void Update(string root)
+        public void ShowTagGraph(string root)
         {
             Logger.I("Show Tag " + root);
-            CalcCanvasHeight();
+            //CalcCanvasHeight();
             tagCanvas.UriDB = uriDB;
-            tagCanvas.ShowGraph(tagDB, root);
-        }
-        ITagDB tagDB = TagDBFactory.CreateTagDB();
-        IUriDB uriDB = UriDBFactory.CreateUriDB();
-        //ITagLayout tagLayout = TagLayoutFactory.CreateLayout();
-
-        
-        private void scrollViewer_MouseDoubleClick(object sender, MouseButtonEventArgs e)
-        {
-
+            tagCanvas.ShowGraph(root,null);
         }
 
-        
-        private void autoTextBox_KeyDown(object sender, KeyEventArgs e)
-        {
 
-        }
 
-        private void lst_MouseDoubleClick(object sender, MouseButtonEventArgs e)
-        {
 
-        }
-        private void CalcCanvasHeight()
-        {
-            //canvas.Height = Math.Max(canvas.Height, rGrid.RenderSize.Height-10);
-            tagCanvas.CanvasMinHeight = uriList.RenderSize.Height - 10;
-        }
+        //private void CalcCanvasHeight()
+        //{
+        //    //canvas.Height = Math.Max(canvas.Height, rGrid.RenderSize.Height-10);
+        //    //tagCanvas.CanvasMinHeight = uriList.RenderSize.Height - 10;
+        //}
         private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            CalcCanvasHeight();
+            //CalcCanvasHeight();
+            //MessageBox.Show(tagCanvas.ActualWidth + " " + tagCanvas.ActualHeight);
         }
 
-        private void autoTextBox_KeyUp(object sender, KeyEventArgs e)
+        private void TextBoxKeyUp_Callback(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Enter)
             {
@@ -155,14 +128,9 @@ namespace TagExplorer
                 }
                 else if(tagDB.QueryTagAlias(autoTextBox.Text).Count>0)
                 {
-                    Update(autoTextBox.Text);
+                    ShowTagGraph(autoTextBox.Text);
                 }
-                //else if (autoTextBox.Text.IndexOfAny(GConfig.SpecialChar.ToArray<char>()) == -1)
-                //{
-                //    ShowTagGraph(autoTextBox.Text, true);
-                //    autoTextBox.Text = "";
-                //    ShowLstItem();
-                //}
+                
             }
         }
 
@@ -174,7 +142,7 @@ namespace TagExplorer
         private void Paste_Executed(object sender, ExecutedRoutedEventArgs e)
         {
             //tagCanvas.PasteFiles();
-            tagCanvas.miPasteFile_Click(sender, e);
+            tagCanvas.MainCanvas.miPasteFile_Click(sender, e);
         }
 
         private void Window_Closed(object sender, EventArgs e)
@@ -202,7 +170,7 @@ namespace TagExplorer
 
         private void Cut_Executed(object sender, ExecutedRoutedEventArgs e)
         {
-            tagCanvas.miCutTag_Click(sender, e);      
+            tagCanvas.MainCanvas.miCutTag_Click(sender, e);      
         }
 
         private void Copy_CanExecute(object sender, CanExecuteRoutedEventArgs e)
@@ -212,7 +180,7 @@ namespace TagExplorer
 
         private void Copy_Executed(object sender, ExecutedRoutedEventArgs e)
         {
-            tagCanvas.miCopyTag_Click(sender, e);
+            tagCanvas.MainCanvas.miCopyTag_Click(sender, e);
         }
         private void Dead(string x)
         {
@@ -234,10 +202,10 @@ namespace TagExplorer
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            if (GStyleCfg.mode == LAYOUT_COMPACT_MODE.GRAPH_BEGIN)
-                GStyleCfg.mode = LAYOUT_COMPACT_MODE.TREE_NO_COMPACT;
-            else GStyleCfg.mode = (GStyleCfg.mode + 1);
-            Update(LRUTag.Ins.DefaultTag);
+            if (GLayoutMode.mode == LayoutMode.GRAPH_UPDOWN)
+                GLayoutMode.mode = 0;
+            else GLayoutMode.mode = (GLayoutMode.mode + 1);
+            ShowTagGraph(LRUTag.Ins.DefaultTag);
         }
 
         public void Dispose()
@@ -265,6 +233,11 @@ namespace TagExplorer
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             LoadLayout();
+        }
+
+        private void tagCanvas_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            System.Diagnostics.Debug.WriteLine(tagCanvas.ActualWidth + " " + tagCanvas.ActualHeight);
         }
     }
 }

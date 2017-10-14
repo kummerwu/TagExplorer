@@ -38,6 +38,7 @@
   <ItemGroup>
     <Reference Include="PresentationCore" />
     <Reference Include="System" />
+    <Reference Include="WindowsBase" />
   </ItemGroup>
   <Choose>
     <When Condition="('$(VisualStudioVersion)' == '10.0' or '$(VisualStudioVersion)' == '') and '$(TargetFrameworkVersion)' == 'v3.5'">
@@ -53,6 +54,8 @@
   </Choose>
   <ItemGroup>
     <Compile Include="LayoutTest.cs" />
+    <Compile Include="TagLayout\CommonLayout\GTagBoxTests.cs" />
+    <Compile Include="TagLayout\CommonLayout\TagBoxSizeInfTests.cs" />
     <Compile Include="UnitTest2.cs" />
     <Compile Include="UTest_Tag.cs" />
     <Compile Include="LuceneUriTest.cs" />

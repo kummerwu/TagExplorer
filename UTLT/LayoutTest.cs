@@ -4,6 +4,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Linq;
 using TagExplorer.Utils;
 using AnyTagNet;
+using TagExplorer.TagLayout.CommonLayout;
 
 namespace UTLT
 {
@@ -19,12 +20,12 @@ namespace UTLT
         [TestMethod]
         public void TestLayout_Base()
         {
-            GStyleCfg.mode = LAYOUT_COMPACT_MODE.GRAPH_BEGIN;
+            GLayoutMode.mode = LayoutMode.GRAPH_UPDOWN;
             ITagDB tagdb = TagDBFactory.CreateTagDB();
             tagdb.AddTag("parent", "child");
 
             ITagLayout lay = TagLayoutFactory.CreateLayout();
-            lay.Layout(tagdb, "parent");
+            lay.Layout(tagdb, "parent",new System.Windows.Size(1000,1000));
 
             Assert.AreEqual(2, lay.Lines.Count());
             Assert.AreEqual(2, lay.TagArea.Count());
