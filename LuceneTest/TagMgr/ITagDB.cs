@@ -7,14 +7,16 @@ namespace TagExplorer.TagMgr
 
     public interface ITagDB:IDisposable, ISearchDataProvider
     {
-        //删除child的原来所有的parent，将parent切换到指定的新的parent
-        int ResetRelationOfChild(string parent, string child);
-        int AddTag(string parent,string child);
-        //string AddTag(string sentence);
+        
+        int AddTag(string parent, string child);
         int RemoveTag(string tag);
-        int MergeAliasTag(string tag1, string tag2);
+        //删除child的原来所有的parent，将parent切换到指定的新的parent
+        int ResetParent(string parent, string child);
+        int MergeAlias(string tag1, string tag2);
+
+
         List<string> QueryTagChildren(string tag);
-        int GetTagChildrenCount(string tag);
+        int          QueryChildrenCount(string tag);
         List<string> QueryTagParent(string tag);
         List<string> QueryTagAlias(string tag);
     }

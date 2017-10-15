@@ -22,7 +22,11 @@ namespace TagExplorer.TagLayout.CommonLayout
         //从上往下的图形布局
         GRAPH_UPDOWN,
     }
-
+    public enum LayoutCanvas
+    {
+        MAIN_CANVAS,
+        SUB_CANVAS,
+    }
     //当前的布局模式选择
     public class GLayoutMode
     {

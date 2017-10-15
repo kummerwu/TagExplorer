@@ -8,6 +8,7 @@ using System.Windows.Controls;
 using TagExplorer.Utils;
 using AnyTagNet;
 using TagExplorer.TagCanvas;
+using TagExplorer.TagLayout.CommonLayout;
 
 namespace TagExplorer
 {
@@ -18,11 +19,12 @@ namespace TagExplorer
     public partial class TagGraphCanvas : UserControl
     {
 
-        public void InitDB(ITagDB db)
+        public void InitDB(ITagDB db,IUriDB uridb)
         {
             tagDB = db;
-            MainCanvas.InitDB(db);
-            SubCanvas.InitDB(db);
+            UriDB = uridb;
+            MainCanvas.Initial(db,uridb,LayoutMode.LRTREE_COMPACT_MORE, LayoutCanvas.MAIN_CANVAS);
+            SubCanvas.Initial(db,uridb,LayoutMode.TREE_COMPACT, LayoutCanvas.SUB_CANVAS);
         }
         FileWatcherSafe fileWather;
         //FileSystemWatcher fileWather = null;
@@ -30,6 +32,7 @@ namespace TagExplorer
         {
             InitializeComponent();
             fileWather = new FileWatcherSafe(FileWather_Changed);
+
             MainCanvas.SelectedTagChanged += MainCanvasSelectedTagChanged_Callback;
             SubCanvas.SelectedTagChanged += SubCanvasSelectedTagChanged_Callback;
             

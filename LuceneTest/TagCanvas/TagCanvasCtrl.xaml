@@ -83,7 +83,7 @@
         </RoutedUICommand>
         <RoutedUICommand x:Key="EditFile" Text="编辑文件" >
             <RoutedUICommand.InputGestures>
-                <KeyGesture>Ctrl+P</KeyGesture>
+                <KeyGesture>Ctrl+E</KeyGesture>
             </RoutedUICommand.InputGestures>
         </RoutedUICommand>
 

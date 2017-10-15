@@ -50,9 +50,10 @@ namespace TagExplorer.TagLayout.TreeLayout
             double childX = x + direct*root.GTagBox.OutterBox.Width;
             double childY = y;
 
+            int MaxLevel = GLayoutMode.mode == LayoutMode.LRTREE_COMPACT || GLayoutMode.mode == LayoutMode.LRTREE_COMPACT_MORE ? 2 : 100;
             //double h = 0;
             //double w = 0;
-            if (level < 2)
+            if (level < MaxLevel)
             {
                 //遍历展开所有子节点
                 foreach (string ctag in children)
@@ -114,8 +115,8 @@ namespace TagExplorer.TagLayout.TreeLayout
                     ctag, db.QueryTagChildren(ctag).Count);
             //只有满足严格条件的情况下，才放在兄弟节点的后面，否则在父节点后展开
             if (pre != null &&
-                (db.QueryTagChildren(ctag).Count == 0 /*&& db.QueryTagChildren(pre.box.Tag).Count == 0*/)
-                /*&& pre.OutBox.Right < 800*/)
+                /*(db.QueryTagChildren(ctag).Count == 0 && db.QueryTagChildren(pre.box.Tag).Count == 0)*/
+                pre.TotalRange.Right < 800 && pre.TotalRange.Left>70)
             {
                 Logger.D("Place {0} after {1}:follow", ctag, pre.GTagBox.Tag);
                 cur = ExpandNode(ctag, level + 1, db, 
@@ -158,8 +159,8 @@ namespace TagExplorer.TagLayout.TreeLayout
                     ctag, db.QueryTagChildren(ctag).Count);
             //只有满足严格条件的情况下，才放在兄弟节点的后面，否则在父节点后展开
             if (pre != null &&
-                (db.QueryTagChildren(pre.GTagBox.Tag).Count == 0) /*&&
-                pre.OutBox.Right < 800*/)
+                (db.QueryTagChildren(pre.GTagBox.Tag).Count == 0) &&
+                pre.TotalRange.Right< 800)
             {
                 Logger.D("Place {0} after {1}:follow", ctag, pre.GTagBox.Tag);
                 cur = ExpandNode(ctag, rootLevel + 1, db,

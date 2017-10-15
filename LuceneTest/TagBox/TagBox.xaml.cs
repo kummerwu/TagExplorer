@@ -78,7 +78,7 @@ namespace TagExplorer
             {
                 SolidColorBrush b = new SolidColorBrush(UIElementFactory.GetColor(value, value));
                 bdr.Background = b;
-                int childCount = TagDBFactory.Ins == null ? 10 : TagDBFactory.Ins.GetTagChildrenCount(Text);
+                int childCount = TagDBFactory.Ins == null ? 10 : TagDBFactory.Ins.QueryChildrenCount(Text);
                 
                 if(childCount==0)
                 {

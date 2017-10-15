@@ -56,7 +56,7 @@ namespace TagExplorer
             tagDB = TagDBFactory.CreateTagDB();
             autoTextBox.textBox.TextChanged += TextChanged_Callback;
             autoTextBox.SearchDataProvider = tagDB;
-            tagCanvas.InitDB(tagDB);
+            tagCanvas.InitDB(tagDB,uriDB);
             tagCanvas.SelectedTagChanged += SelectedTagChanged_Callback;
             ShowTagGraph(LRUTag.Ins.DefaultTag);
 

@@ -113,7 +113,7 @@ namespace TagExplorer.TagMgr
             tagIdx.Clear();
         }
 
-        public int GetTagChildrenCount(string tag)
+        public int QueryChildrenCount(string tag)
         {
             JTagInf tmp = tagIdx[tag] as JTagInf;
             return tmp == null ? 0 : tmp.Children.Count;
@@ -121,7 +121,7 @@ namespace TagExplorer.TagMgr
         }
         
         
-        public int MergeAliasTag(string tag1, string tag2)
+        public int MergeAlias(string tag1, string tag2)
         {
             JTagInf tmp1 = tagIdx[tag1] as JTagInf;
             if(tmp1==null)
@@ -187,7 +187,7 @@ namespace TagExplorer.TagMgr
         }
 
         //将child原来所有parent删除，并与新的parent建立关系
-        public int ResetRelationOfChild(string parent, string child)
+        public int ResetParent(string parent, string child)
         {
             RemoveAllRelation(child);
             AddTag(parent, child);

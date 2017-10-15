@@ -182,7 +182,7 @@ namespace UTLT
         [TestMethod]
         public void ITagDB_Test_AliasAddAndQuery()
         {
-            db.MergeAliasTag("p1", "p2");
+            db.MergeAlias("p1", "p2");
             List<string>alias = db.QueryTagAlias("p1");
             Assert.AreEqual(2, alias.Count);
             Assert.AreEqual(true, alias.Contains("p1"));
@@ -199,7 +199,7 @@ namespace UTLT
         {
             db.AddTag("p1", "c1");
             db.AddTag("p2", "c2");
-            db.MergeAliasTag("p1", "p2");
+            db.MergeAlias("p1", "p2");
             List<string>alias = db.QueryTagAlias("p1");
             Assert.AreEqual(2, alias.Count);
             Assert.AreEqual(true, alias.Contains("p1"));
@@ -238,7 +238,7 @@ namespace UTLT
             List<string> parents = db.QueryTagParent("C1");
             AssertListEqual(parents, new List<string>() { "P1", "P2" });
 
-            db.ResetRelationOfChild("P3", "C1");
+            db.ResetParent("P3", "C1");
             parents = db.QueryTagParent("C1");
             AssertListEqual(parents, new List<string>() { "P3" });
         }
@@ -251,7 +251,7 @@ namespace UTLT
             List<string> parents = db.QueryTagParent("C1");
             AssertListEqual(parents, new List<string>() { "P1", "P2" });
 
-            db.ResetRelationOfChild("P2", "C1");
+            db.ResetParent("P2", "C1");
             parents = db.QueryTagParent("C1");
             AssertListEqual(parents, new List<string>() { "P2" });
         }
@@ -259,11 +259,11 @@ namespace UTLT
         [TestMethod]
         public void ITagDB_Test_SetRelation3() //添加不存在的节点
         {
-            db.ResetRelationOfChild("P1", "C1");
+            db.ResetParent("P1", "C1");
             List<string> parents = db.QueryTagParent("C1");
             AssertListEqual(parents, new List<string>() { "P1" });
 
-            db.ResetRelationOfChild("P1", "C2");
+            db.ResetParent("P1", "C2");
             parents = db.QueryTagParent("C2");
             AssertListEqual(parents, new List<string>() { "P1" });
 
@@ -279,7 +279,7 @@ namespace UTLT
             AssertListEqual(parents, new List<string>() { "P1","P2" });
 
 
-            db.ResetRelationOfChild("P3", "C1");
+            db.ResetParent("P3", "C1");
             parents = db.QueryTagParent("C1");
             AssertListEqual(parents, new List<string>() { "P3" });
 

@@ -7,6 +7,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using TagExplorer.TagLayout;
+using TagExplorer.TagLayout.CommonLayout;
 using TagExplorer.TagMgr;
 using TagExplorer.UriMgr;
 using TagExplorer.Utils;
@@ -21,20 +22,23 @@ namespace TagExplorer.TagCanvas
     {
         private ITagDB TagDB = null;
         private IUriDB UriDB = null;
-        
+        private LayoutCanvas CanvasType;
 
         //初始化TagDB，该函数必须在空间初始化时就指定
-        public void InitDB(ITagDB db)
+        public void Initial(ITagDB db, IUriDB uridb,LayoutMode mode,LayoutCanvas canvasType)
         {
+            myMode = mode;
             TagDB = db;
+            UriDB = uridb;
+            CanvasType = canvasType;
         }
         public TagCanvasCtrl()
         {
             InitializeComponent();
             TagSwitchDB.Ins.SwitchChanged += SwitchChangedCallback;
-            
+
         }
-        
+
         private void SwitchChangedCallback()
         {
             RedrawGraph();
@@ -52,6 +56,7 @@ namespace TagExplorer.TagCanvas
                 return scrollViewer.RenderSize;
             }
         }
+        private LayoutMode myMode;
         public void ChangeRoot(string tag)
         {
             if (TagDB != null)
@@ -59,9 +64,17 @@ namespace TagExplorer.TagCanvas
                 rootTag = tag;
                 currentTag = tag;
                 RedrawGraph();
+
             }
         }
         private void RedrawGraph()
+        {
+            LayoutMode bak = GLayoutMode.mode;
+            GLayoutMode.mode = myMode;
+            RedrawGraph_();
+            GLayoutMode.mode = bak;
+        }
+        private void RedrawGraph_()
         {
             if (TagDB != null && rootTag != null && oriSize.Height!=0 && oriSize.Width!=0 && !oriSize.IsEmpty)
             {
@@ -445,7 +458,7 @@ namespace TagExplorer.TagCanvas
                         RedrawGraph();
                         break;
                     case ClipboardConst.KUMMERWU_TAG_CUT:
-                        TagDB.ResetRelationOfChild(currentTag, arg);
+                        TagDB.ResetParent(currentTag, arg);
                         RedrawGraph();
                         break;
                     case ClipboardConst.KUMMERWU_URI_CUT:
@@ -751,7 +764,7 @@ namespace TagExplorer.TagCanvas
                         RedrawGraph();
                         break;
                     case ClipboardConst.KUMMERWU_TAG_CUT:
-                        TagDB.ResetRelationOfChild(currentTag, arg);
+                        TagDB.ResetParent(currentTag, arg);
                         RedrawGraph();
                         break;
                 }
@@ -829,7 +842,30 @@ namespace TagExplorer.TagCanvas
 
         private void EditFile_Executed(object sender, ExecutedRoutedEventArgs e)
         {
-            MessageBox.Show("暂不支持");
+            UpdateCurrentTagByContextMenu();
+            if (currentTag == null || currentTag.Trim() == "") return;
+
+            string defaultFile = CfgPath.GetFileByTag(currentTag, "note.one");
+            
+            FileInfo fi = new FileInfo(defaultFile);
+
+            if (!fi.Exists)
+            {
+                string tmplateFile = TemplateHelper.GetTemplateByExtension(fi.Extension);
+                if (tmplateFile != null && File.Exists(tmplateFile))
+                {
+                    File.Copy(tmplateFile, defaultFile);
+                    AddUri(new List<string>() { defaultFile });
+                    FileShell.StartFile(defaultFile);
+                }
+                else
+                {
+                    MessageBox.Show(".one模板文件不存在：" + tmplateFile, "文件不存在", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+            }
+
+            FileShell.StartFile(defaultFile);
         }
 
         private void NavigateTag_Executed(object sender, ExecutedRoutedEventArgs e)

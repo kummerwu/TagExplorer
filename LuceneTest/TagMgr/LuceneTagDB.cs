@@ -89,7 +89,7 @@ namespace TagExplorer.TagMgr
         }
 
         //重置child的父节点为parent
-        public int ResetRelationOfChild(string parent,string child)
+        public int ResetParent(string parent,string child)
         {
             RemoveAllRelation( child);
             AddTag(parent, child);
@@ -247,7 +247,7 @@ namespace TagExplorer.TagMgr
             return ITagDBConst.R_OK;
         }
 
-        public int MergeAliasTag(string tag1,string tag2)
+        public int MergeAlias(string tag1,string tag2)
         {
             Document doc = new Document();
             HashSet<string> fields = new HashSet<string>();
@@ -323,7 +323,7 @@ namespace TagExplorer.TagMgr
             return tag;
         }
 
-        public int GetTagChildrenCount(string tag)
+        public int QueryChildrenCount(string tag)
         {
             return GetByField(tag, F_TAGNAME, F_TAGCHILD).Count;
         }
