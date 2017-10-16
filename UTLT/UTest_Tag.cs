@@ -74,7 +74,18 @@ namespace UTLT
             Assert.AreEqual(0,db.QueryTagParent("c1").Count);
 
         }
+        [TestMethod]
+        public void ITagDB_Test_Remove_一个子节点有两个父节点()//添加后删除
+        {
+            db.AddTag("p1", "c1");
+            db.AddTag("p2", "c1");
 
+            db.RemoveTag("c1");
+            AssertListEqual(new List<string>(), db.QueryTagChildren("p1"));
+            AssertListEqual(new List<string>(), db.QueryTagChildren("p2"));
+
+
+        }
         [TestMethod]
         public void ITagDB_Test_AddMultiChildren()//父节点，有多个子节点
         {

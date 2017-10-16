@@ -183,31 +183,24 @@ namespace TagExplorer.TagMgr
             {
                 //所有自己的别名索引页需要删除
                 DeleteTag(tmp);
-                //删除所有Parent的索引
-                List<string> parents = QueryTagParent(tag);
-                foreach(string p in parents)
-                {
-                    JTagInf pj = Str2TagIdx[p] as JTagInf;
-                    if(pj!=null)
-                    {
-                        pj.RemoveChild(tag);
-                    }
-                }
-                Save(tag);
+                
             }
+            //删除所有Parent的索引
+            RemoveParentsRef(tag);
+            Save(tag);
             return ITagDBConst.R_OK;
         }
 
         //将child原来所有parent删除，并与新的parent建立关系
         public int ResetParent(string parent, string child)
         {
-            RemoveAllRelation(child);
+            RemoveParentsRef(child);
             AddTag(parent, child);
             Save(parent);
             return ITagDBConst.R_OK;
         }
 
-        private void RemoveAllRelation(string child)
+        private void RemoveParentsRef(string child)
         {
             foreach(JTagInf j in AllTagSet)
             {
