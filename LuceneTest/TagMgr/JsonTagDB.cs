@@ -251,6 +251,7 @@ namespace TagExplorer.TagMgr
         {
             AddAlias(n);
         }
+        [JsonIgnore]
         public string Title { get { return Alias.Count>0?Alias[0]:""; } }
         public List<string> Alias = new List<string>();
         //public List<string> Parents = new List<string>();
