@@ -57,15 +57,33 @@ namespace TagExplorer.TagCanvas
             }
         }
         private LayoutMode myMode;
-        public void ChangeRoot(string tag)
+        public void ChangeRoot(string tag,string selectTag)
         {
-            if (TagDB != null)
+            if (!string.IsNullOrEmpty(tag))
             {
-                rootTag = tag;
-                currentTag = tag;
-                RedrawGraph();
-
+                if(CanvasType == LayoutCanvas.MAIN_CANVAS)
+                {
+                    AppCfg.Ins.MainCanvasRoot = tag;
+                }
+                else
+                {
+                    AppCfg.Ins.SubCanvasRoot = tag;
+                }
             }
+            else
+            {
+                if (CanvasType == LayoutCanvas.MAIN_CANVAS)
+                {
+                    tag = AppCfg.Ins.MainCanvasRoot;
+                }
+                else
+                {
+                    tag = AppCfg.Ins.SubCanvasRoot;
+                }
+            }
+            rootTag = tag;
+            currentTag = selectTag == null ? tag : selectTag;
+            RedrawGraph();
         }
         private void RedrawGraph()
         {
@@ -250,7 +268,7 @@ namespace TagExplorer.TagCanvas
                 List<string> parents = TagDB.QueryTagParent(rootTag);
                 if (parents.Count > 0)
                 {
-                    ChangeRoot(parents[0]);
+                    ChangeRoot(parents[0],rootTag);
                     SetCurrentTag(parents[0]);
                 }
             }
@@ -298,7 +316,7 @@ namespace TagExplorer.TagCanvas
         {
             TagBox b = sender as TagBox;
             if (b != null)
-                ChangeRoot(b.Text);
+                ChangeRoot(b.Text,b.Text);
         }
         //单击tag，将该tag改为选定状态  TODO，运行多个tag选中
         private void Tag_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -707,7 +725,11 @@ namespace TagExplorer.TagCanvas
                 string oldCurrentTag = currentTag;
                 string newCurrentTag = NavigateTagBox(Key.Left);
                 TagDB.RemoveTag(oldCurrentTag);
-                ChangeRoot(LRUTag.Ins.DefaultTag);
+                if(string.IsNullOrEmpty(newCurrentTag))
+                {
+                    newCurrentTag = LRUTag.Ins.DefaultTag;
+                }
+                ChangeRoot(newCurrentTag,newCurrentTag);
             }
             else
             {

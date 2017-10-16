@@ -88,7 +88,7 @@ namespace TagExplorer.TagLayout.LayoutCommon
             Direct = direct;
 
             //计算大小
-            Inf = new TagBoxSizeInf(tag, distance, CfgTagGraph.GFontName);
+            Inf = new TagBoxSizeInf(tag, distance, AppCfg.Ins.FontName);
 
             //*****计算位置*****************
             //计算OutterBox

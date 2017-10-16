@@ -237,6 +237,7 @@ namespace TagExplorer.TagMgr
                 if(parent!=null)
                 {
                     parent.ChangePos(tag, direct);
+                    Save(tag);
                 }
 
             }

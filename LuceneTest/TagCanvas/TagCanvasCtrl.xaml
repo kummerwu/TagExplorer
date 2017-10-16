@@ -47,17 +47,17 @@
         </RoutedUICommand>
         <RoutedUICommand x:Key="CopyTag" Text="复制标签" >
             <RoutedUICommand.InputGestures>
-                <KeyGesture>Alt+C</KeyGesture>
+                <KeyGesture>Ctrl+C</KeyGesture>
             </RoutedUICommand.InputGestures>
         </RoutedUICommand>
         <RoutedUICommand x:Key="CutTag" Text="剪切标签" >
             <RoutedUICommand.InputGestures>
-                <KeyGesture>Alt+X</KeyGesture>
+                <KeyGesture>Ctrl+X</KeyGesture>
             </RoutedUICommand.InputGestures>
         </RoutedUICommand>
         <RoutedUICommand x:Key="PasteTag" Text="粘贴标签" >
             <RoutedUICommand.InputGestures>
-                <KeyGesture>Alt+V</KeyGesture>
+                <KeyGesture>Ctrl+V</KeyGesture>
             </RoutedUICommand.InputGestures>
         </RoutedUICommand>
         <RoutedUICommand x:Key="DeleteTag" Text="删除标签" >

@@ -8,6 +8,7 @@ using TagExplorer.TagLayout.CommonLayout;
 using TagExplorer.TagMgr;
 using TagExplorer.UriMgr;
 using TagExplorer.Utils;
+
 using Xceed.Wpf.AvalonDock.Layout.Serialization;
 
 namespace TagExplorer
@@ -58,7 +59,7 @@ namespace TagExplorer
             autoTextBox.SearchDataProvider = tagDB;
             tagCanvas.InitDB(tagDB,uriDB);
             tagCanvas.SelectedTagChanged += SelectedTagChanged_Callback;
-            ShowTagGraph(LRUTag.Ins.DefaultTag);
+            ShowTagGraph(AppCfg.Ins.MainCanvasRoot,AppCfg.Ins.SubCanvasRoot);
 
             IDisposableFactory.New<MainWindow>(this);
 
@@ -90,12 +91,12 @@ namespace TagExplorer
             //进一步触发             ShowUrlListByText
         }
 
-        public void ShowTagGraph(string root)
+        public void ShowTagGraph(string root,string subroot)
         {
             Logger.I("Show Tag " + root);
             //CalcCanvasHeight();
             tagCanvas.UriDB = uriDB;
-            tagCanvas.ShowGraph(root,null);
+            tagCanvas.ShowGraph(root,subroot);
         }
 
 
@@ -128,7 +129,7 @@ namespace TagExplorer
                 }
                 else if(tagDB.QueryTagAlias(autoTextBox.Text).Count>0)
                 {
-                    ShowTagGraph(autoTextBox.Text);
+                    ShowTagGraph(autoTextBox.Text,null);
                 }
                 
             }
@@ -205,7 +206,7 @@ namespace TagExplorer
             if (GLayoutMode.mode == LayoutMode.GRAPH_UPDOWN)
                 GLayoutMode.mode = 0;
             else GLayoutMode.mode = (GLayoutMode.mode + 1);
-            ShowTagGraph(LRUTag.Ins.DefaultTag);
+            ShowTagGraph(AppCfg.Ins.MainCanvasRoot,AppCfg.Ins.SubCanvasRoot);
         }
 
         public void Dispose()

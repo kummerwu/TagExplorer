@@ -238,6 +238,7 @@
       <DependentUpon>SearchResultListBox.xaml</DependentUpon>
     </Compile>
     <Compile Include="UriMgr\IDisposableFactory.cs" />
+    <Compile Include="Utils\Cfg\AppCfg.cs" />
     <Compile Include="Utils\Path\CfgPath.cs" />
     <Compile Include="Utils\Clip\ClipBoardSafe.cs" />
     <Compile Include="Utils\FileIO\FileWatcherSafe.cs" />

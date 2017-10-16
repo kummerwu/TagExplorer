@@ -40,7 +40,7 @@ namespace TagExplorer
         private void MainCanvasSelectedTagChanged_Callback(string tag)
         {
             SelectedTagChanged?.Invoke(tag);
-            SubCanvas.ChangeRoot(tag);
+            SubCanvas.ChangeRoot(tag,tag);
         }
         private void SubCanvasSelectedTagChanged_Callback(string tag)
         {
@@ -114,11 +114,11 @@ namespace TagExplorer
         {
             if (root != null)
             {
-                MainCanvas.ChangeRoot(root);
+                MainCanvas.ChangeRoot(root,sub);
             }
             if (sub != null)
             {
-                SubCanvas.ChangeRoot(sub);
+                SubCanvas.ChangeRoot(sub,sub);
             }
         }
 
