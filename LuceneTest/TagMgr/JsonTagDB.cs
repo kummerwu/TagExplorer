@@ -181,8 +181,18 @@ namespace TagExplorer.TagMgr
             JTagInf tmp = Str2TagIdx[tag] as JTagInf;
             if (tmp != null)
             {
-                //所有别名索引页需要删除
+                //所有自己的别名索引页需要删除
                 DeleteTag(tmp);
+                //删除所有Parent的索引
+                List<string> parents = QueryTagParent(tag);
+                foreach(string p in parents)
+                {
+                    JTagInf pj = Str2TagIdx[p] as JTagInf;
+                    if(pj!=null)
+                    {
+                        pj.RemoveChild(tag);
+                    }
+                }
                 Save(tag);
             }
             return ITagDBConst.R_OK;
