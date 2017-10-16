@@ -948,6 +948,34 @@ namespace TagExplorer.TagCanvas
         {
             ChangeTagPos(1);
         }
+
+        //private void canvas_PreviewKeyDown(object sender, KeyEventArgs e)
+        //{
+        //    if (e.Key == Key.Up || e.Key == Key.Down || e.Key == Key.Left || e.Key == Key.Right)
+        //    {
+        //        NavigateTagBox(e.Key);
+        //    }
+        //}
+
+        private void NavigateTagUp_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            NavigateTagBox(Key.Up);
+        }
+
+        private void NavigateTagDown_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            NavigateTagBox(Key.Down);
+        }
+
+        private void NavigateTagLeft_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            NavigateTagBox(Key.Left);
+        }
+
+        private void NavigateTagRight_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            NavigateTagBox(Key.Right);
+        }
     }
     
     

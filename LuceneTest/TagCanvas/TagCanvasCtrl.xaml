@@ -12,9 +12,19 @@
         ===============================================================-->
         <!--目录操作 Ctrl+Shift-->
         <RoutedUICommand x:Key="NavigateTag" Text="游览标签">
-            <RoutedUICommand.InputGestures>
-                <KeyGesture>Ctrl+Q</KeyGesture>
-            </RoutedUICommand.InputGestures>
+           
+        </RoutedUICommand>
+        <RoutedUICommand x:Key="NavigateTagUp" Text="游览标签">
+            
+        </RoutedUICommand>
+        <RoutedUICommand x:Key="NavigateTagDown" Text="游览标签">
+           
+        </RoutedUICommand>
+        <RoutedUICommand x:Key="NavigateTagLeft" Text="游览标签">
+            
+        </RoutedUICommand>
+        <RoutedUICommand x:Key="NavigateTagRight" Text="游览标签">
+           
         </RoutedUICommand>
 
         <!--目录操作 Ctrl+Shift-->
@@ -131,7 +141,12 @@
                 <MenuItem Command="{StaticResource EditFile}" />
             </MenuItem>
             <Separator></Separator>
-            <MenuItem Command="{StaticResource NavigateTag}" />
+            <MenuItem Command="{StaticResource NavigateTag}" >
+                <MenuItem Command="{StaticResource NavigateTagUp}" />
+                <MenuItem Command="{StaticResource NavigateTagDown}" />
+                <MenuItem Command="{StaticResource NavigateTagLeft}" />
+                <MenuItem Command="{StaticResource NavigateTagRight}" />
+            </MenuItem>
         </ContextMenu>
     </UserControl.Resources>
 
@@ -159,10 +174,14 @@
         <CommandBinding Command="{StaticResource LinkFile}" Executed="LinkFile_Executed"/>
         <CommandBinding Command="{StaticResource EditFile}" Executed="EditFile_Executed"/>
         <CommandBinding Command="{StaticResource NavigateTag}" Executed="NavigateTag_Executed"/>
+        <CommandBinding Command="{StaticResource NavigateTagUp}" Executed="NavigateTagUp_Executed"/>
+        <CommandBinding Command="{StaticResource NavigateTagDown}" Executed="NavigateTagDown_Executed"/>
+        <CommandBinding Command="{StaticResource NavigateTagLeft}" Executed="NavigateTagLeft_Executed"/>
+        <CommandBinding Command="{StaticResource NavigateTagRight}" Executed="NavigateTagRight_Executed"/>
 
     </UserControl.CommandBindings>
     <ScrollViewer x:Name="scrollViewer" DockPanel.Dock="Bottom" VerticalAlignment="Top"  Background="White" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto"  SizeChanged="scrollViewer_SizeChanged">
-        <Canvas KeyUp="canvas_KeyUp" x:Name="canvas" HorizontalAlignment="Left"  VerticalAlignment="Top"  Background="White"   >
+        <Canvas Focusable="True" KeyUp="canvas_KeyUp" x:Name="canvas" HorizontalAlignment="Left"  VerticalAlignment="Top"  Background="White"   >
         </Canvas>
     </ScrollViewer>
 </UserControl>
