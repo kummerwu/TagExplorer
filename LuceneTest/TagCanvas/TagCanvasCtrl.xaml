@@ -65,6 +65,20 @@
                 <KeyGesture>Delete</KeyGesture>
             </RoutedUICommand.InputGestures>
         </RoutedUICommand>
+
+        <RoutedUICommand x:Key="UpTag" Text="标签上移" >
+            <RoutedUICommand.InputGestures>
+                <KeyGesture>Alt+Up</KeyGesture>
+            </RoutedUICommand.InputGestures>
+        </RoutedUICommand>
+
+        <RoutedUICommand x:Key="DownTag" Text="标签下移" >
+            <RoutedUICommand.InputGestures>
+                <KeyGesture>Alt+Down</KeyGesture>
+            </RoutedUICommand.InputGestures>
+        </RoutedUICommand>
+        
+        
         <!--文件   CTRL-->
         <RoutedUICommand x:Key="NewFile" Text="新建文件" >
             <RoutedUICommand.InputGestures>
@@ -107,6 +121,8 @@
             <MenuItem Command="{StaticResource CutTag}" />
             <MenuItem Command="{StaticResource PasteTag}" />
             <MenuItem Command="{StaticResource DeleteTag}" />
+            <MenuItem Command="{StaticResource UpTag}" />
+            <MenuItem Command="{StaticResource DownTag}" />
             <Separator></Separator>
             <MenuItem Command="{StaticResource NewFile}" />
             <MenuItem Command="{StaticResource PasteFile}" />
@@ -134,6 +150,9 @@
         <CommandBinding Command="{StaticResource CutTag}" Executed="CutTag_Executed"/>
         <CommandBinding Command="{StaticResource PasteTag}" Executed="PasteTag_Executed"/>
         <CommandBinding Command="{StaticResource DeleteTag}" Executed="DeleteTag_Executed"/>
+        <CommandBinding Command="{StaticResource UpTag}" Executed="UpTag_Executed"/>
+        <CommandBinding Command="{StaticResource DownTag}" Executed="DownTag_Executed"/>
+        
         <!--文件操作  CTRL-->
         <CommandBinding Command="{StaticResource NewFile}" Executed="NewFile_Executed"/>
         <CommandBinding Command="{StaticResource PasteFile}" Executed="PasteFile_Executed"/>

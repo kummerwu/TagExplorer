@@ -353,5 +353,10 @@ namespace TagExplorer.TagMgr
             w.Close();
 
         }
+
+        public int ChangePos(string tag, int direct)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

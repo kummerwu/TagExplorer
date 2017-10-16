@@ -880,7 +880,24 @@ namespace TagExplorer.TagCanvas
                 NavigateTagBox(e.Key);
             }
         }
+        private void ChangeTagPos(int direct)
+        {
+            UpdateCurrentTagByContextMenu();
+            if (currentTag == null || currentTag.Trim() == "") return;
+            TagDB.ChangePos(currentTag, direct);
+            RedrawGraph();
+        }
+        private void UpTag_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            ChangeTagPos(-1);
+        }
+
         
+
+        private void DownTag_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            ChangeTagPos(1);
+        }
     }
     
     

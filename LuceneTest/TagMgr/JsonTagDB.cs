@@ -14,14 +14,14 @@ namespace TagExplorer.TagMgr
 {
     class JsonTagDB:ITagDB
     {
-        Hashtable tagIdx = new Hashtable();
-        HashSet<JTagInf> allTag = new HashSet<JTagInf>();
+        Hashtable Str2TagIdx = new Hashtable();
+        HashSet<JTagInf> AllTagSet = new HashSet<JTagInf>();
         public void Save(string tag)
         {
             
             using (StreamWriter w = new StreamWriter(CfgPath.TagDBPath_Json))
             {
-                foreach(JTagInf j in allTag)
+                foreach(JTagInf j in AllTagSet)
                 {
                     if (j.Children.Count > 0)
                     {
@@ -42,29 +42,23 @@ namespace TagExplorer.TagMgr
                 foreach(string ln in lns)
                 {
                     JTagInf j = JsonConvert.DeserializeObject<JTagInf>(ln);
-                    //foreach(string p in j.Parents)
-                    //{
-                    //    db.AddTag(p,j.Alias[0]);
-                    //}
-                    //foreach (string c in j.Children)
-                    //{
-                    //    db.AddTag(j.Alias[0], c);
-                    //}
                     db.UpdateIndex(j);
-                    db.allTag.Add(j);
+                    db.AllTagSet.Add(j);
                 }
             }
+            
             return db;
         }
+        
         //////////////////////////////////////////////////////////
         private JTagInf NewTag(string stag)
         {
-            JTagInf tag = tagIdx[stag] as JTagInf;
+            JTagInf tag = Str2TagIdx[stag] as JTagInf;
             if (tag == null)
             {
                 tag = new JTagInf(stag);
-                tagIdx.Add(stag, tag);
-                allTag.Add(tag);
+                Str2TagIdx.Add(stag, tag);
+                AllTagSet.Add(tag);
             }
             return tag;
         }
@@ -72,35 +66,35 @@ namespace TagExplorer.TagMgr
         {
             foreach (string a in j.Alias)
             {
-                tagIdx.Remove(a);
+                Str2TagIdx.Remove(a);
             }
-            allTag.Remove(j);
+            AllTagSet.Remove(j);
         }
         private void UpdateIndex(JTagInf j)
         {
             foreach (string a in j.Alias)
             {
-                tagIdx.Remove(a);
-                tagIdx[a] = j;
+                Str2TagIdx.Remove(a);
+                Str2TagIdx[a] = j;
             }
         }
         //////////////////////////////////////////////////////////
 
         public int AddTag(string parent, string child)
         {
-            JTagInf tag= tagIdx[parent] as JTagInf;
+            JTagInf tag= Str2TagIdx[parent] as JTagInf;
             if(tag==null)
             {
                 tag = NewTag(parent);
             }
             tag.AddChild(child);
 
-            JTagInf cTag = tagIdx[child] as JTagInf;
+            JTagInf cTag = Str2TagIdx[child] as JTagInf;
             if (cTag == null)
             {
                 cTag = NewTag(child);
             }
-            cTag.AddParent(parent);
+            
 
 
             Save(parent);
@@ -110,12 +104,12 @@ namespace TagExplorer.TagMgr
 
         public void Dispose()
         {
-            tagIdx.Clear();
+            Str2TagIdx.Clear();
         }
 
         public int QueryChildrenCount(string tag)
         {
-            JTagInf tmp = tagIdx[tag] as JTagInf;
+            JTagInf tmp = Str2TagIdx[tag] as JTagInf;
             return tmp == null ? 0 : tmp.Children.Count;
 
         }
@@ -123,12 +117,12 @@ namespace TagExplorer.TagMgr
         
         public int MergeAlias(string tag1, string tag2)
         {
-            JTagInf tmp1 = tagIdx[tag1] as JTagInf;
+            JTagInf tmp1 = Str2TagIdx[tag1] as JTagInf;
             if(tmp1==null)
             {
                 tmp1 = NewTag(tag1);
             }
-            JTagInf tmp2 = tagIdx[tag2] as JTagInf;
+            JTagInf tmp2 = Str2TagIdx[tag2] as JTagInf;
             if (tmp2 == null)
             {
                 tmp2 = NewTag(tag2);
@@ -146,7 +140,7 @@ namespace TagExplorer.TagMgr
         {
             string ls = searchTerm.ToLower();
             List<string> ret = new List<string>();
-            foreach(string s in tagIdx.Keys)
+            foreach(string s in Str2TagIdx.Keys)
             {
                 if(s.ToLower().Contains(ls))
                 {
@@ -158,25 +152,33 @@ namespace TagExplorer.TagMgr
 
         public List<string> QueryTagAlias(string tag)
         {
-            JTagInf tmp = tagIdx[tag] as JTagInf;
+            JTagInf tmp = Str2TagIdx[tag] as JTagInf;
             return tmp == null ? EMPTY_LIST : tmp.Alias;
         }
         private static List<string> EMPTY_LIST = new List<string>();
         public List<string> QueryTagChildren(string tag)
         {
-            JTagInf tmp = tagIdx[tag] as JTagInf;
+            JTagInf tmp = Str2TagIdx[tag] as JTagInf;
             return tmp == null ? EMPTY_LIST : tmp.Children;
         }
 
         public List<string> QueryTagParent(string tag)
         {
-            JTagInf tmp = tagIdx[tag] as JTagInf;
-            return tmp == null ? EMPTY_LIST : tmp.Parents;
+            List<string> ret = new List<string>();
+            foreach(JTagInf j in AllTagSet)
+            {
+                if(j.Children.Contains(tag))
+                {
+                    ret.Add(j.Title);
+                }
+            }
+            return ret;
+            //return tmp == null ? EMPTY_LIST : tmp.Parents;
         }
 
         public int RemoveTag(string tag)
         {
-            JTagInf tmp = tagIdx[tag] as JTagInf;
+            JTagInf tmp = Str2TagIdx[tag] as JTagInf;
             if (tmp != null)
             {
                 //所有别名索引页需要删除
@@ -197,19 +199,39 @@ namespace TagExplorer.TagMgr
 
         private void RemoveAllRelation(string child)
         {
-            JTagInf tmp = tagIdx[child] as JTagInf;
-            if (tmp != null)
+            foreach(JTagInf j in AllTagSet)
             {
-                foreach (string oldP in tmp.Parents)
-                {
-                    JTagInf op = tagIdx[oldP] as JTagInf;
-                    if (op != null)
-                    {
-                        op.RemoveChild(child);
-                    }
-                }
-                tmp.Parents.Clear();
+                j.RemoveChild(child);
             }
+            //JTagInf tmp = tagIdx[child] as JTagInf;
+            //if (tmp != null)
+            //{
+            //    foreach (string oldP in tmp.Parents)
+            //    {
+            //        JTagInf op = tagIdx[oldP] as JTagInf;
+            //        if (op != null)
+            //        {
+            //            op.RemoveChild(child);
+            //        }
+            //    }
+            //    tmp.Parents.Clear();
+            //}
+        }
+
+        public int ChangePos(string tag, int direct)
+        {
+            List<string> parents = QueryTagParent(tag);
+            if(parents.Count==1)
+            {
+                JTagInf parent = Str2TagIdx[parents[0]] as JTagInf;
+                if(parent!=null)
+                {
+                    parent.ChangePos(tag, direct);
+                }
+
+            }
+            return ITagDBConst.R_OK;
+
         }
     }
     [Serializable]
@@ -219,21 +241,47 @@ namespace TagExplorer.TagMgr
         {
             AddAlias(n);
         }
+        public string Title { get { return Alias.Count>0?Alias[0]:""; } }
         public List<string> Alias = new List<string>();
-        public List<string> Parents = new List<string>();
+        //public List<string> Parents = new List<string>();
         public List<string> Children = new List<string>();
+        public void ChangePos(string c,int direct)
+        {
+            int idx = Children.IndexOf(c);
+            int newIdx= idx + direct;
+            if(newIdx>=0 && newIdx<Children.Count)
+            {
+                Children.RemoveAt(idx);
+                Children.Insert(newIdx, c);
+            }
+        }
+        private void Check()
+        {
+            foreach(string a in Alias)
+            {
+                //foreach(string p in Parents)
+                //{
+                //    System.Diagnostics.Debug.Assert(a != p);
+                //}
+                foreach (string c in Children)
+                {
+                    System.Diagnostics.Debug.Assert(a != c);
+                }
+            }
+        }
         public void Add(string s,List<string> l)
         {
             if (!l.Contains(s)) l.Add(s);
+            Check();
         }
         public void AddChild(string c)
         {
             Add(c, Children);
         }
-        public void AddParent(string p)
-        {
-            Add(p, Parents);
-        }
+        //public void AddParent(string p)
+        //{
+        //    Add(p, Parents);
+        //}
         public void AddAlias(string a)
         {
             Add(a, Alias);
@@ -254,7 +302,7 @@ namespace TagExplorer.TagMgr
         {
             foreach (string a in tag.Alias) AddAlias(a);
             foreach (string c in tag.Children) AddChild(c);
-            foreach (string p in tag.Parents) AddParent(p);
+            //foreach (string p in tag.Parents) AddParent(p);
         }
     }
 }

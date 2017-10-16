@@ -239,8 +239,21 @@ namespace UTLT
             AssertListEqual(parents, new List<string>() { "P1", "P2" });
 
             db.ResetParent("P3", "C1");
-            parents = db.QueryTagParent("C1");
-            AssertListEqual(parents, new List<string>() { "P3" });
+
+            AssertListEqual(new List<string>() { "P3" }, db.QueryTagParent("C1"));
+            AssertListEqual(new List<string>() { }, db.QueryTagChildren("C1"));
+
+            AssertListEqual(new List<string>(), db.QueryTagParent("P1"));
+            AssertListEqual(new List<string>() { }, db.QueryTagChildren("P1"));
+
+            AssertListEqual(new List<string>(), db.QueryTagParent("P2"));
+            AssertListEqual(new List<string>() { }, db.QueryTagChildren("P2"));
+
+            AssertListEqual(new List<string>(), db.QueryTagParent("P3"));
+            AssertListEqual(new List<string>() { "C1"}, db.QueryTagChildren("P3"));
+
+
+            
         }
 
         [TestMethod]
@@ -252,8 +265,17 @@ namespace UTLT
             AssertListEqual(parents, new List<string>() { "P1", "P2" });
 
             db.ResetParent("P2", "C1");
-            parents = db.QueryTagParent("C1");
-            AssertListEqual(parents, new List<string>() { "P2" });
+
+            AssertListEqual( new List<string>() { "P2" }, db.QueryTagParent("C1"));
+            AssertListEqual(new List<string>() {  }, db.QueryTagChildren("C1"));
+
+            AssertListEqual(new List<string>() ,db.QueryTagParent("P1"));
+            AssertListEqual(new List<string>() { }, db.QueryTagChildren("P1"));
+
+            AssertListEqual(new List<string>(), db.QueryTagParent("P2"));
+            AssertListEqual(new List<string>() { "C1"}, db.QueryTagChildren("P2"));
+            
+
         }
 
         [TestMethod]

@@ -13,7 +13,7 @@ namespace TagExplorer.TagMgr
         //删除child的原来所有的parent，将parent切换到指定的新的parent
         int ResetParent(string parent, string child);
         int MergeAlias(string tag1, string tag2);
-
+        int ChangePos(string tag, int direct);
 
         List<string> QueryTagChildren(string tag);
         int          QueryChildrenCount(string tag);
