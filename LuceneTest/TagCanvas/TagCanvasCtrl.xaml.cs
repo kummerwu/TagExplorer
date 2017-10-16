@@ -723,13 +723,41 @@ namespace TagExplorer.TagCanvas
             if (TagDB.QueryTagChildren(currentTag).Count == 0)
             {
                 string oldCurrentTag = currentTag;
+                List<string> parents = TagDB.QueryTagParent(oldCurrentTag);
+
+                //找到一个合适的父节点
                 string newCurrentTag = NavigateTagBox(Key.Left);
-                TagDB.RemoveTag(oldCurrentTag);
-                if(string.IsNullOrEmpty(newCurrentTag))
+                if(parents.Count==1)
+                {
+                    newCurrentTag = parents[0];
+                }
+                if (string.IsNullOrEmpty(newCurrentTag))
                 {
                     newCurrentTag = LRUTag.Ins.DefaultTag;
                 }
-                ChangeRoot(newCurrentTag,newCurrentTag);
+
+                TagDB.RemoveTag(oldCurrentTag);
+                
+                //如果新选出来的当前节点在视图中，直接选中该tag
+                foreach(UIElement u in canvas.Children)
+                {
+                    TagBox t = u as TagBox;
+                    if(t!=null && t.Text == newCurrentTag)
+                    {
+                        SetCurrentTag(newCurrentTag);
+                        
+
+                    }
+                }
+                //当新选出来的tag不再视图中时，才需要切换视图的根节点
+                if (currentTag != newCurrentTag)
+                {
+                    ChangeRoot(newCurrentTag, newCurrentTag);
+                }
+                else
+                {
+                    RedrawGraph();
+                }
             }
             else
             {
