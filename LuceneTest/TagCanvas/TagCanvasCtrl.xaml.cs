@@ -889,33 +889,19 @@ namespace TagExplorer.TagCanvas
         {
             miLinkInFile_Click(sender, e);
         }
-
-        private void EditFile_Executed(object sender, ExecutedRoutedEventArgs e)
+        private void EditFile(string dotPostfix)
         {
             UpdateCurrentTagByContextMenu();
             if (currentTag == null || currentTag.Trim() == "") return;
 
-            string defaultFile = CfgPath.GetFileByTag(currentTag, "note.one");
-            
-            FileInfo fi = new FileInfo(defaultFile);
-
-            if (!fi.Exists)
-            {
-                string tmplateFile = TemplateHelper.GetTemplateByExtension(fi.Extension);
-                if (tmplateFile != null && File.Exists(tmplateFile))
-                {
-                    File.Copy(tmplateFile, defaultFile);
-                    AddUri(new List<string>() { defaultFile });
-                    FileShell.StartFile(defaultFile);
-                }
-                else
-                {
-                    MessageBox.Show(".one模板文件不存在：" + tmplateFile, "文件不存在", MessageBoxButton.OK, MessageBoxImage.Error);
-                    return;
-                }
-            }
+            string defaultFile = CfgPath.GetTemplateFileByTag(currentTag, dotPostfix);
+            if (defaultFile == null) return;
 
             FileShell.StartFile(defaultFile);
+        }
+        private void EditFile_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            EditFile(".one");
         }
 
         private void NavigateTag_Executed(object sender, ExecutedRoutedEventArgs e)
@@ -975,6 +961,11 @@ namespace TagExplorer.TagCanvas
         private void NavigateTagRight_Executed(object sender, ExecutedRoutedEventArgs e)
         {
             NavigateTagBox(Key.Right);
+        }
+
+        private void EditRTFFile_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            EditFile(".rtf");
         }
     }
     

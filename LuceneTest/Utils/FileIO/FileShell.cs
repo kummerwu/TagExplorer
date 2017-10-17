@@ -142,7 +142,12 @@ namespace TagExplorer.Utils
         }
         public static void StartFile(string file)
         {
-            if (IsNoteFile(file)) return;
+            if (IsNoteFile(file))
+            {
+                string wordpad = CfgPath.GetWordPadExeFile();
+                Process.Start(wordpad, file);
+                return;
+            }
 
             Logger.D("StartFile {0} ", file);
             if (!PathHelper.IsValidUri(file))

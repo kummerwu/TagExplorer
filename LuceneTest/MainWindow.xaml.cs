@@ -84,8 +84,9 @@ namespace TagExplorer
         public void SelectedTagChanged_Callback(string tag)
         {
             autoTextBox.Text = tag;
-            string uri = CfgPath.GetNoteFileByTag(tag);
-            richTxt.Load(uri);
+            //现在自己的这个richtextbox非常不好用，将其暂时废除，除非有一个好用的再说
+            //string uri = CfgPath.GetNoteFileByTag(tag);
+            //richTxt.Load(uri);
             ShowUrlListByText();
             //修改text后，会自动触发 TextBox_TextChanged
             //进一步触发             ShowUrlListByText

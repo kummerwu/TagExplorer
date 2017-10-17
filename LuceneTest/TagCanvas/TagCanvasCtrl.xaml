@@ -105,12 +105,16 @@
                 <KeyGesture>Ctrl+L</KeyGesture>
             </RoutedUICommand.InputGestures>
         </RoutedUICommand>
-        <RoutedUICommand x:Key="EditFile" Text="编辑文件" >
+        <RoutedUICommand x:Key="EditOneFile" Text="编辑文件" >
             <RoutedUICommand.InputGestures>
                 <KeyGesture>Ctrl+E</KeyGesture>
             </RoutedUICommand.InputGestures>
         </RoutedUICommand>
-
+        <RoutedUICommand x:Key="EditRTFFile" Text="编辑RTF文件" >
+            <RoutedUICommand.InputGestures>
+                <KeyGesture>Ctrl+R</KeyGesture>
+            </RoutedUICommand.InputGestures>
+        </RoutedUICommand>
 
         <!-- ===============================================================
         定义菜单资源
@@ -138,7 +142,8 @@
             <MenuItem Command="{StaticResource PasteFile}" />
             <MenuItem Command="{StaticResource LinkFile}" />
             <MenuItem Name="miEdit"         Header="编辑文件">
-                <MenuItem Command="{StaticResource EditFile}" />
+                <MenuItem Command="{StaticResource EditOneFile}" />
+                <MenuItem Command="{StaticResource EditRTFFile}" />
             </MenuItem>
             <Separator></Separator>
             <MenuItem Command="{StaticResource NavigateTag}" >
@@ -172,7 +177,8 @@
         <CommandBinding Command="{StaticResource NewFile}" Executed="NewFile_Executed"/>
         <CommandBinding Command="{StaticResource PasteFile}" Executed="PasteFile_Executed"/>
         <CommandBinding Command="{StaticResource LinkFile}" Executed="LinkFile_Executed"/>
-        <CommandBinding Command="{StaticResource EditFile}" Executed="EditFile_Executed"/>
+        <CommandBinding Command="{StaticResource EditOneFile}" Executed="EditFile_Executed"/>
+        <CommandBinding Command="{StaticResource EditRTFFile}" Executed="EditRTFFile_Executed"/>
         <CommandBinding Command="{StaticResource NavigateTag}" Executed="NavigateTag_Executed"/>
         <CommandBinding Command="{StaticResource NavigateTagUp}" Executed="NavigateTagUp_Executed"/>
         <CommandBinding Command="{StaticResource NavigateTagDown}" Executed="NavigateTagDown_Executed"/>

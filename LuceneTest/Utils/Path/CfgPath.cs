@@ -59,21 +59,34 @@ namespace TagExplorer.Utils
         public static string DocDir { get { return SubDir(DocBasePath, "Doc"); } }
         public static string TemplatePath { get { return Path.Combine(DocBasePath, "Template"); } }
         public static string Res_Path { get { return SubDir(DocBasePath, "Res"); } }
-        public static string GetNoteFileByTag(string tag)
+        
+        public static string GetTemplateFileByTag(string tag,string dotPostfix)
         {
-            string dir = GetDirByTag(tag);
-            string file = Path.Combine(dir, tag + ".note.rtf");
-            string temp = Path.Combine(CfgPath.TemplatePath, "RTF文档.rtf");
-            //if (!File.Exists(temp)) return null;
-
-            if (!File.Exists(file))
+            string file = CfgPath.GetFileByTag(tag, "note"+dotPostfix);
+            string tmplateFile = TemplateHelper.GetTemplateByExtension(dotPostfix);
+            if (!File.Exists(file) && File.Exists(tmplateFile))
             {
-                File.Copy(temp, file);
+                File.Copy(tmplateFile, file);
             }
-
-            return file;
-
+            if(File.Exists(file))
+            {
+                return file;
+            }
+            else
+            {
+                return null;
+            }
+            
         }
+        //public static string GetOneFileByTag(string tag)
+        //{
+        //    return GetTemplateFileByTag(tag, ".one");
+        //}
+        //public static string GetRtfFileByTag(string tag)
+        //{
+        //    return GetTemplateFileByTag(tag, ".rtf");
+
+        //}
         public static string GetVDirByTag(string tag)
         {
             return Path.Combine(CfgPath.VDir, tag);
@@ -86,7 +99,19 @@ namespace TagExplorer.Utils
                 return GetResFile("http.html");
             }
         }
-
+        public static string GetWordPadExeFile()
+        {
+            string d = CfgPath.Res_Path;
+            string f = Path.Combine(d, "wordpad", "wordpad.exe");
+            if(File.Exists(f))
+            {
+                return f;
+            }
+            else
+            {
+                return "wordpad.exe";
+            }
+        }
         private static string GetResFile(string name)
         {
             string d = CfgPath.Res_Path;
