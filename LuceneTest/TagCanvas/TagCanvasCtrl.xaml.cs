@@ -967,6 +967,16 @@ namespace TagExplorer.TagCanvas
         {
             EditFile(".rtf");
         }
+
+        private void scrollViewer_GotFocus(object sender, RoutedEventArgs e)
+        {
+            SetCurrentTag();
+        }
+
+        private void scrollViewer_LostFocus(object sender, RoutedEventArgs e)
+        {
+            UpdateSelectedStatus(null, TagBox.Status.None);
+        }
     }
     
     

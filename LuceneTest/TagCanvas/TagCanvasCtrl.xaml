@@ -186,7 +186,7 @@
         <CommandBinding Command="{StaticResource NavigateTagRight}" Executed="NavigateTagRight_Executed"/>
 
     </UserControl.CommandBindings>
-    <ScrollViewer x:Name="scrollViewer" DockPanel.Dock="Bottom" VerticalAlignment="Top"  Background="White" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto"  SizeChanged="scrollViewer_SizeChanged">
+    <ScrollViewer LostFocus="scrollViewer_LostFocus" GotFocus="scrollViewer_GotFocus" x:Name="scrollViewer" DockPanel.Dock="Bottom" VerticalAlignment="Top"  Background="White" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto"  SizeChanged="scrollViewer_SizeChanged">
         <Canvas Focusable="True" KeyUp="canvas_KeyUp" x:Name="canvas" HorizontalAlignment="Left"  VerticalAlignment="Top"  Background="White"   >
         </Canvas>
     </ScrollViewer>
