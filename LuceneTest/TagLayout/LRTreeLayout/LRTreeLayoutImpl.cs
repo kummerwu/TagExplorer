@@ -71,18 +71,25 @@ namespace TagExplorer.TagLayout.LRTreeLayout
             outterbox = Rect.Empty;
             
             int idx = 0;
-            int mid = (allChild.Count((item) => item != tag) + 1) / 2;
-            if (mid < 2) mid = 2;
+            int cnt = allChild.Count((item) => item != tag);
+            int mid = Math.Max((cnt + 1) / 2 , 2);
+            GTagBoxTree[] children = new GTagBoxTree[cnt];
+
+            int direct = 1;
             foreach (string c in allChild)
             {
                 if (c == tag) continue;//临时规避数据上的一个问题，有些节点自己成环了。
-                int olddirect = idx <= mid ? 1 : -1;
-                idx++;
-                int direct = (idx) <= mid ? 1 : -1;
-                if (olddirect==1 && direct==-1) y = 0; //显示从左边转到右边，将y重置
+                //半数放在左边，半数放在右边
+                if (idx == mid)
+                {
+                    y = 0; //显示从左边转到右边，将y重置
+                    direct = -1;
+                }
+
 
                 subTree = GTagBoxTree.ExpandNode(c, 1, db, direct==1?r:l, y, direct);
-                if(outterbox.IsEmpty)
+                children[idx] = subTree;
+                if(idx==0)
                 {
                     outterbox = subTree.TotalRange;
                 }
@@ -93,13 +100,45 @@ namespace TagExplorer.TagLayout.LRTreeLayout
                 root.Children.Add(subTree);
                 TreeLayoutEnv.Ins.AddLine(root, subTree, direct);
                 y += subTree.TotalRange.Height;
+                idx++;
             }
             outterbox.Union(root.GTagBox.OutterBox);
             root.TotalRange = outterbox;
             root.CenterItY();
             root.GTagBox.IsRoot = true;
+
+            LRBanlance(children, mid);
             tags = TreeLayoutEnv.Ins.GetAllTagBox();
             lines = TreeLayoutEnv.Ins.GetAllLines().Cast<UIElement>();
+        }
+
+        private void LRBanlance(GTagBoxTree[] children, int mid)
+        {
+            if (children.Length <= mid) return;
+
+            //先显示优先，再显示左边，右边有mid个，剩余的放左边
+            double RightBottom = children[mid-1].TotalRange.Bottom;
+            double LeftBottom = children[children.Length - 1].TotalRange.Bottom;
+            int rightCnt = mid;
+            int leftCnt = children.Length - rightCnt;
+            //左边比较高，需要把右边的所有子树平均下移一些
+            if(LeftBottom>RightBottom && rightCnt>1)
+            {
+                double dy = (LeftBottom - RightBottom) / (rightCnt-1);
+                for(int i = 1;i<rightCnt;i++)
+                {
+                    children[i].Move(0, dy * i);
+                }
+            }
+            if (RightBottom > LeftBottom && leftCnt > 1)
+            {
+                double dy = (RightBottom - LeftBottom ) / (leftCnt - 1);
+                for (int i = 1; i < leftCnt; i++)
+                {
+                    children[mid+i].Move(0, dy * i);
+                }
+            }
+
         }
     }
 }
