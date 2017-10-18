@@ -24,7 +24,7 @@ namespace AnyTagNet
             b.TextAlignment = TextAlignment.Center;
             b.Text = g.Tag;
             b.Background1 = g.Distance;//new SolidColorBrush(GetColor(g.Distance,g.Level));
-            if (g.Distance >= 5) b.Foreground1 = new SolidColorBrush(Colors.White);
+            if (g.Distance >= 5) b.Foreground1 = g.Distance;// new SolidColorBrush(Colors.White);
             return b;
         }
 
@@ -123,33 +123,42 @@ namespace AnyTagNet
 
         /*************************************************************************************/
         private UIElementFactory() { }
-        private static Color C(int c) { return Color.FromRgb((byte)((c & 0xFF0000) >> 16), (byte)((c &0xFF00)>>8), (byte)(c &0xFF)); }
-        private static Color[] colors = new Color[] {
-            C(0xFF6666),            C(0x99CC00),            C(0x99CCFF),            C(0xFFD39B),
-            C(0xFF99CC),            C(0x9933FF),            C(0x0066CC),
-        };
+        
         
         public static Color GetColor(int distance,int level)
         {
+            Color[] FColor = AppCfg.Ins.TagBoxBackColor;
             int i = distance;
             if(level==-1)
             {
                 i = 0;
             }
-            i = i % colors.Length;
-            i += colors.Length;
-            i = i % colors.Length;
-            return colors[i];
-        } 
+            i = i % FColor.Length;
+            i += FColor.Length;
+            i = i % FColor.Length;
+            return FColor[i];
+        }
+        public static Color GetForeColor(int distance, int level)
+        {
+            Color[] FColor = AppCfg.Ins.TagBoxForeColor;
+            int i = distance;
+            if (level == -1)
+            {
+                i = 0;
+            }
+            i = i % FColor.Length;
+            i += FColor.Length;
+            i = i % FColor.Length;
+            return FColor[i];
+        }
 
-        
 
-        
-        
+
+
 
 
         /// <summary>
-        
+
         /// </summary>
         /// <param name="parent"></param>
         /// <param name="child"></param>

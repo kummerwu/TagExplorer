@@ -76,16 +76,19 @@ namespace TagExplorer
         {
             set
             {
+                //确定自己的颜色
                 SolidColorBrush b = new SolidColorBrush(UIElementFactory.GetColor(value, value));
                 bdr.Background = b;
+
+                //确定小圆圈的颜色
                 int childCount = TagDBFactory.Ins == null ? 10 : TagDBFactory.Ins.QueryChildrenCount(Text);
                 
-                if(childCount==0)
+                if(childCount==0)//无child，不显示小圆圈
                 {
                     circleLeft.Background = null;
                     circle.Background = null;
                 }
-                else if(tagInf.IsRoot)
+                else if(tagInf.IsRoot) //根节点，可能显示两个小圆圈
                 {
                     circle.Background = new SolidColorBrush(UIElementFactory.GetColor(value + 1, value + 1));
                     if(childCount>2)
@@ -98,7 +101,7 @@ namespace TagExplorer
                     }
                     
                 }
-                else if (tagInf.Direct==1)
+                else if (tagInf.Direct==1) //否则，显示一个小圆圈
                 {
                     circleLeft.Background = null;
                     circle.Background = new SolidColorBrush(UIElementFactory.GetColor(value + 1, value + 1));
@@ -114,11 +117,11 @@ namespace TagExplorer
                 
             }
         }
-        public SolidColorBrush Foreground1
+        public int Foreground1
         {
             set
             {
-                txt.Foreground= value;
+                txt.Foreground= new SolidColorBrush(UIElementFactory.GetForeColor(value,value));
             }
         }
         
