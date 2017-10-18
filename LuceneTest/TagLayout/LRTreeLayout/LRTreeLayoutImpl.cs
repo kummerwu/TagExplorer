@@ -87,7 +87,7 @@ namespace TagExplorer.TagLayout.LRTreeLayout
                 }
 
 
-                subTree = GTagBoxTree.ExpandNode(c, 1, db, direct==1?r:l, y, direct);
+                subTree = GTagBoxTree.ExpandNode(c, 1, db, direct==1?r:l, y, direct,size);
                 children[idx] = subTree;
                 if(idx==0)
                 {

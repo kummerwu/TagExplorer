@@ -40,7 +40,7 @@ namespace TagExplorer.TagLayout.TreeLayout
             TreeLayoutEnv.Ins.Reset();
             tags = new List<TagBox>();
             this.db = db;
-            root = GTagBoxTree.ExpandNode(tag, 0, db,0,0,1);
+            root = GTagBoxTree.ExpandNode(tag, 0, db,0,0,1,oriSize);
             tags = TreeLayoutEnv.Ins.GetAllTagBox();
             lines = TreeLayoutEnv.Ins.GetAllLines().Cast<UIElement>();
 
