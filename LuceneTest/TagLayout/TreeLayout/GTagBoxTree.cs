@@ -16,6 +16,11 @@ namespace TagExplorer.TagLayout.TreeLayout
         public GTagBox GTagBox = null;
         public GTagBoxTree() { }
         
+        public void Move(double dx,double dy)
+        {
+            GTagBox.Move(dx, dy);
+            foreach (GTagBoxTree c in Children) c.Move(dx, dy);
+        }
         public void CenterItY()
         {
             GTagBox.CenterItY(TotalRange);

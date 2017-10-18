@@ -122,6 +122,13 @@ namespace TagExplorer.TagLayout.LayoutCommon
             InnerBoxLeftTop.Y = OutterBoxLeftTop.Y + Inf.InnerBoxYPadding;
         }
 
-       
+        internal void Move(double dx, double dy)
+        {
+            OutterBoxLeftTop.X += dx;
+            OutterBoxLeftTop.Y += dy;
+            InnerBoxLeftTop.X += dx;
+            InnerBoxLeftTop.Y += dy;
+
+        }
     }
 }

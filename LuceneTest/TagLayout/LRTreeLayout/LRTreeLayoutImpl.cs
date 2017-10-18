@@ -41,18 +41,19 @@ namespace TagExplorer.TagLayout.LRTreeLayout
         private ITagDB db = null;
 
         private Size oriSize;
-        public List<TagBox> tags = null;
+        public List<TagBox> tags = new List<TagBox>();
         public IEnumerable<UIElement> lines = null;
         public void Layout(ITagDB db, string tag,Size size)
         {
             oriSize = size;
+            this.db = db;
+
+            TreeLayoutEnv.Ins.Reset();
+            tags.Clear();
             GTagBoxTree subTree = null;
             double y = 0;
             List<string> allChild = db.QueryTagChildren(tag);
             
-            TreeLayoutEnv.Ins.Reset();
-            tags = new List<TagBox>();
-            this.db = db;
             
             //double x = 600;
             double centerX = size.Width / 2;
@@ -61,6 +62,7 @@ namespace TagExplorer.TagLayout.LRTreeLayout
             GTagBoxTree root = new GTagBoxTree();
             //TagBox box = UIElementFactory.CreateTagBox(tagbox);
             root.GTagBox = new GTagBox(0, tag, centerX, 0, 1);
+            root.Move(-1 * root.GTagBox.InnerBox.Width / 2, 0);
             TreeLayoutEnv.Ins.Add(tag, root);
             double l, r;
             l = root.GTagBox.InnerBoxLeftTop.X - CfgTagGraph.LayoutXPadding*5;
