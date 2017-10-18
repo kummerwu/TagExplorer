@@ -108,6 +108,11 @@ namespace TagExplorer.TagLayout.LRTreeLayout
             root.GTagBox.IsRoot = true;
 
             LRBanlance(children, mid);
+            //如果有图形在坐标0的左边，将其往右移一些。
+            if(outterbox.X<0)
+            {
+                root.Move(-outterbox.X, 0);
+            }
             tags = TreeLayoutEnv.Ins.GetAllTagBox();
             lines = TreeLayoutEnv.Ins.GetAllLines().Cast<UIElement>();
         }
