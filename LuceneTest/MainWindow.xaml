@@ -48,7 +48,7 @@
             <RowDefinition Height="30" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        <ToolBar Grid.Row="0" >
+        <ToolBar Grid.Row="0" Background="White">
             
 
             <StackPanel Orientation="Horizontal">
@@ -72,6 +72,7 @@
 
             </StackPanel>
             
+            <Separator Margin="10,0,10,0"></Separator>
             <Button Width="30" Name="btExport" Click="btExport_Click" ToolTip="导出所有的Tag和文档信息">
                 <Button.Content>
                     <Image Source="pack://siteoforigin:,,,/Resources/export.png" ></Image>
@@ -84,7 +85,7 @@
             </Button>
             <Button Width="30" Click="Button_Click">
                 <Button.Content>
-                    <Image Source="pack://siteoforigin:,,,/Resources/right.png" ></Image>
+                    <Image Source="pack://siteoforigin:,,,/Resources/information.png" ></Image>
                 </Button.Content>
             </Button>
             <Button Width="30" >
