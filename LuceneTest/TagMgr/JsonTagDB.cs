@@ -16,7 +16,11 @@ namespace TagExplorer.TagMgr
     {
         Hashtable Str2TagIdx = new Hashtable();
         HashSet<JTagInf> AllTagSet = new HashSet<JTagInf>();
-        public void Save(string tag)
+        private void Save()
+        {
+            Save(null);
+        }
+        private void Save(string tag)
         {
             
             using (StreamWriter w = new StreamWriter(CfgPath.TagDBPath_Json))
@@ -115,23 +119,23 @@ namespace TagExplorer.TagMgr
         }
         
         
-        public int MergeAlias(string tag1, string tag2)
+        public int MergeAlias(string mainTag, string aliasTag)
         {
-            JTagInf tmp1 = Str2TagIdx[tag1] as JTagInf;
-            if(tmp1==null)
+            JTagInf jMain = Str2TagIdx[mainTag] as JTagInf;
+            if(jMain==null)
             {
-                tmp1 = NewTag(tag1);
+                jMain = NewTag(mainTag);
             }
-            JTagInf tmp2 = Str2TagIdx[tag2] as JTagInf;
-            if (tmp2 == null)
+            JTagInf jAlias = Str2TagIdx[aliasTag] as JTagInf;
+            if (jAlias == null)
             {
-                tmp2 = NewTag(tag2);
+                jAlias = NewTag(aliasTag);
             }
 
             
-            DeleteTag(tmp2);
-            tmp1.Merge(tmp2);
-            UpdateIndex(tmp1);
+            DeleteTag(jAlias);
+            jMain.Merge(jAlias);
+            UpdateIndex(jMain);
             //allTag.Add(tag2, tmp1);//别名也需要快速索引
             return ITagDBConst.R_OK;
         }
@@ -236,6 +240,39 @@ namespace TagExplorer.TagMgr
             }
             return ITagDBConst.R_OK;
 
+        }
+
+        public int Import(string importInf)
+        {
+            int ret = 0;
+            if (File.Exists(importInf))
+            {
+                string[] lns = File.ReadAllLines(importInf);
+                foreach (string ln in lns)
+                {
+                    JTagInf j = JsonConvert.DeserializeObject<JTagInf>(ln);
+                    if(j.Alias.Count>0)
+                    {
+                        string title = j.Alias[0];
+                        foreach(string a in j.Alias)
+                        {
+                            if(a!=title)
+                            {
+                                ret++;
+                                MergeAlias(title, a);
+                            }
+                        }
+                        foreach(string c in j.Children)
+                        {
+                            ret++;
+                            AddTag(title, c);
+
+                        }
+                    }
+                }
+            }
+            Save();
+            return ret;
         }
     }
     [Serializable]

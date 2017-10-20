@@ -361,5 +361,10 @@ namespace TagExplorer.TagMgr
         {
             throw new NotImplementedException();
         }
+
+        public int Import(string importInf)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

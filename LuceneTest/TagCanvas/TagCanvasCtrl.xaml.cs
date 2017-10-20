@@ -85,7 +85,7 @@ namespace TagExplorer.TagCanvas
             currentTag = selectTag == null ? tag : selectTag;
             RedrawGraph();
         }
-        private void RedrawGraph()
+        public void RedrawGraph()
         {
             LayoutMode bak = GLayoutMode.mode;
             GLayoutMode.mode = myMode;

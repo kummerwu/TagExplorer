@@ -19,6 +19,7 @@ namespace TagExplorer.TagMgr
         int          QueryChildrenCount(string tag);
         List<string> QueryTagParent(string tag);
         List<string> QueryTagAlias(string tag);
+        int Import(string importInf);
     }
     public class ITagDBConst
     {

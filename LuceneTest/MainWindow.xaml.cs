@@ -3,6 +3,7 @@ using System;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
+
 using System.Windows.Input;
 using TagExplorer.TagLayout.CommonLayout;
 using TagExplorer.TagMgr;
@@ -197,7 +198,7 @@ namespace TagExplorer
         {
             //Dead(x);
         }
-        private void BtForward_Click(object sender, RoutedEventArgs e)
+        private void btExport_Click(object sender, RoutedEventArgs e)
         {
             //System.Diagnostics.Process.Start(@"C:\Program Files\Internet Explorer\iexplore.exe",
             //    @"D:\00TagExplorerBase\DocumentBase\Doc\分布式架构\Raft 为什么是更易理解的分布式一致性算法 - mindwind - 博客园.mht");
@@ -259,6 +260,18 @@ namespace TagExplorer
         private void btSearch_Click(object sender, RoutedEventArgs e)
         {
             SearchByTxt();
+        }
+
+        private void btImport_Click(object sender, RoutedEventArgs e)
+        {
+            var fd = new System.Windows.Forms.OpenFileDialog();
+            fd.Title = "导入Tag文件";
+            if(fd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                int cnt = tagDB.Import(fd.FileName);
+                tagCanvas.RedrawGraph();
+                MessageBox.Show("成功导入"+cnt+"条Tag关系","Tag关系导入",MessageBoxButton.OK);
+            }
         }
     }
 }

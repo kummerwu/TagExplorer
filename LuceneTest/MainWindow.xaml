@@ -49,16 +49,7 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <ToolBar Grid.Row="0" >
-            <Button Width="30" Name="BtForward" Click="BtForward_Click">
-                    <Button.Content>
-                    <Image Source="pack://siteoforigin:,,,/Resources/left.png" > </Image>
-                    </Button.Content>
-            </Button>
-            <Button Width="30" Click="Button_Click">
-                <Button.Content>
-                    <Image Source="pack://siteoforigin:,,,/Resources/right.png" ></Image>
-                </Button.Content>
-            </Button>
+            
 
             <StackPanel Orientation="Horizontal">
                 <autoTextbox:AutoTextbox x:Name="autoTextBox"    Width="250" KeyUp="TextBoxKeyUp_Callback" ></autoTextbox:AutoTextbox>
@@ -80,7 +71,22 @@
                 </Button>
 
             </StackPanel>
-
+            
+            <Button Width="30" Name="btExport" Click="btExport_Click" ToolTip="导出所有的Tag和文档信息">
+                <Button.Content>
+                    <Image Source="pack://siteoforigin:,,,/Resources/export.png" ></Image>
+                </Button.Content>
+            </Button>
+            <Button Width="30" Name="btImport" Click="btImport_Click" ToolTip="导入Tag数据(Json格式）">
+                <Button.Content>
+                    <Image Source="pack://siteoforigin:,,,/Resources/import.png" ></Image>
+                </Button.Content>
+            </Button>
+            <Button Width="30" Click="Button_Click">
+                <Button.Content>
+                    <Image Source="pack://siteoforigin:,,,/Resources/right.png" ></Image>
+                </Button.Content>
+            </Button>
             <Button Width="30" >
                 <Button.ToolTip>
                     <ToolTip>

@@ -109,7 +109,11 @@ namespace TagExplorer
                 this.Dispatcher.Invoke(new Action(NotifyList));//有一个bug，当ie保存一个文件时，总是先create，然后delete，然后再次create。
             }
         }
-
+        public void RedrawGraph()
+        {
+            MainCanvas.RedrawGraph();
+            SubCanvas.RedrawGraph();
+        }
         public void ShowGraph(string root,string sub)
         {
             if (root != null)
