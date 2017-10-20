@@ -281,6 +281,7 @@ namespace TagExplorer.TagMgr
         }
         public void AddChild(string c)
         {
+            if (Alias.Contains(c)) return;
             Add(c, Children);
         }
         //public void AddParent(string p)
@@ -289,6 +290,10 @@ namespace TagExplorer.TagMgr
         //}
         public void AddAlias(string a)
         {
+            if(Children.Contains(a))
+            {
+                Children.Remove(a);
+            }
             Add(a, Alias);
         }
         public void SetMainName(string n)

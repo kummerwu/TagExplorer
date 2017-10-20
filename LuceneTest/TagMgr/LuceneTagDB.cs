@@ -329,7 +329,7 @@ namespace TagExplorer.TagMgr
         }
 
 
-        public void Dbg()
+        public void TranslateToJson()
         {
             //return;
             System.IO.TextWriter w = new System.IO.StreamWriter(@".\tagdb.json");
@@ -346,7 +346,10 @@ namespace TagExplorer.TagMgr
                     {
                         tag.AddChild(f.StringValue);
                     }
-                    w.WriteLine(JsonConvert.SerializeObject(tag));
+                    if (tag.Children.Count > 0)
+                    {
+                        w.WriteLine(JsonConvert.SerializeObject(tag));
+                    }
                     
                 }
             }

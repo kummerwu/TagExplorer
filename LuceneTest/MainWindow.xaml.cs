@@ -128,12 +128,21 @@ namespace TagExplorer
                     //}
                     
                 }
-                else if(tagDB.QueryTagAlias(autoTextBox.Text).Count>0)
+                else 
                 {
-                    ShowTagGraph(autoTextBox.Text,null);
+                    SearchByTxt();
                 }
-                
+
             }
+        }
+
+        private void SearchByTxt()
+        {
+            if (tagDB.QueryTagAlias(autoTextBox.Text).Count > 0)
+            {
+                ShowTagGraph(autoTextBox.Text, null);
+            }
+            ShowUrlListByText();
         }
 
         private void Paste_CanExecute(object sender, CanExecuteRoutedEventArgs e)
@@ -197,7 +206,12 @@ namespace TagExplorer
                 //Dead("导出完成！");
                 //throw new Exception("mock“）");
                 (uriDB as LuceneUriDB)?.Dbg();
-                (tagDB as LuceneTagDB)?.Dbg();
+                (tagDB as LuceneTagDB)?.TranslateToJson();
+                if(!(tagDB is LuceneTagDB))
+                {
+                    LuceneTagDB ltb = new LuceneTagDB();
+                    ltb.TranslateToJson();
+                }
                 MessageBox.Show("导出完成！");
             }
         }
@@ -240,6 +254,11 @@ namespace TagExplorer
         private void tagCanvas_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             System.Diagnostics.Debug.WriteLine(tagCanvas.ActualWidth + " " + tagCanvas.ActualHeight);
+        }
+
+        private void btSearch_Click(object sender, RoutedEventArgs e)
+        {
+            SearchByTxt();
         }
     }
 }

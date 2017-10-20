@@ -52,6 +52,8 @@ namespace TagExplorer.AutoComplete
             comboBox.IsTabStop = false;
             comboBox.SelectionChanged += new SelectionChangedEventHandler(comboBox_SelectionChanged);
             comboBox.DropDownClosed += ComboBox_DropDownClosed;
+            comboBox.Background = null;
+            comboBoxStateChanged();
             //comboBox.KeyDown += ComboBox_KeyDown;
             textBox = new TextBox();
             textBox.TextChanged += new TextChangedEventHandler(textBox_TextChanged);
@@ -126,8 +128,9 @@ namespace TagExplorer.AutoComplete
                 //textBox.Text = comboBox.Text;
                 SetCurrentToken(comboBox.Text);
                 textBox.Focus();
-
+                
             }
+            comboBox.Width = 0;
         }
         public new void Focus()
         {
@@ -212,7 +215,10 @@ namespace TagExplorer.AutoComplete
                 SetCurrentToken(cbItem.Content.ToString());
             }
         }
-        
+        private void comboBoxStateChanged()
+        {
+            comboBox.Width = comboBox.IsDropDownOpen ? textBox.Width : 0;
+        }
         //在文本发生变化时，及时显示ComboBox提示信息
         private void TextChanged()
         {
@@ -236,6 +242,7 @@ namespace TagExplorer.AutoComplete
                 {
                     comboBox.IsDropDownOpen = false;
                 }
+                comboBoxStateChanged();
             }
             catch { }
         }
@@ -263,7 +270,7 @@ namespace TagExplorer.AutoComplete
                 else TextChanged();
             }
         }
-
+        
         protected override Size ArrangeOverride(Size arrangeSize)
         {
             textBox.Arrange(new Rect(arrangeSize));
