@@ -161,7 +161,7 @@ namespace TagExplorer
                 left += box.Width1;
                 left += 10;
             }
-            canvasRecentTags.Children.Clear();
+            //canvasRecentTags.Children.Clear();
             foreach (TagBox t in recentTags)
             {
                 //TODO 是否还需要recent tag？
