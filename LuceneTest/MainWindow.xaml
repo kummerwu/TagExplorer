@@ -73,6 +73,16 @@
             </StackPanel>
             
             <Separator Margin="10,0,10,0"></Separator>
+            <Button Width="30" Name="btUp" Click="btUp_Click" ToolTip="回到上一级Tag">
+                <Button.Content>
+                    <Image Source="pack://siteoforigin:,,,/Resources/parent.png" ></Image>
+                </Button.Content>
+            </Button>
+            <Button Width="30" Name="btHome" Click="btHome_Click" ToolTip="回到根Tag">
+                <Button.Content>
+                    <Image Source="pack://siteoforigin:,,,/Resources/home.png" ></Image>
+                </Button.Content>
+            </Button>
             <Button Width="30" Name="btExport" Click="btExport_Click" ToolTip="导出所有的Tag和文档信息">
                 <Button.Content>
                     <Image Source="pack://siteoforigin:,,,/Resources/export.png" ></Image>
@@ -96,6 +106,11 @@
                 </Button.ToolTip>
                 <Button.Content>
                     <Image Source="pack://siteoforigin:,,,/Resources/search.png" ></Image>
+                </Button.Content>
+            </Button>
+            <Button Width="30" x:Name="test"  Click="test_Click">
+                <Button.Content>
+                    <Image Source="pack://siteoforigin:,,,/Resources/information.png" ></Image>
                 </Button.Content>
             </Button>
         </ToolBar>

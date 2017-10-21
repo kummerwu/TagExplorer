@@ -113,10 +113,67 @@ namespace TagExplorer.TagLayout.LRTreeLayout
             {
                 root.Move(-outterbox.X, 0);
             }
+            //ShowParent(root);
             tags = TreeLayoutEnv.Ins.GetAllTagBox();
             lines = TreeLayoutEnv.Ins.GetAllLines().Cast<UIElement>();
         }
+        //private void ShowParent(GTagBoxTree root)
+        //{
+        //    string tag = root.GTagBox.Tag;
+        //    string p1 = null, p2 = null;
+        //    if(!string.IsNullOrEmpty(tag))
+        //    {
+        //        List<string> p1s = db.QueryTagParent(tag);
+        //        if (p1s.Count > 0) p1 = p1s[0];
+        //    }
+        //    if (!string.IsNullOrEmpty(p1))
+        //    {
+        //        List<string> p2s = db.QueryTagParent(p1);
+        //        if (p2s.Count > 0) p2 = p2s[0];
+        //    }
 
+        //    double dy = 3 * CfgTagGraph.Ins.InnerBoxYPadding_MAX;
+
+        //    if (root.GTagBox.OutterBoxLeftTop.Y < dy)
+        //    {
+        //        root.Move(0, dy - root.GTagBox.InnerBoxLeftTop.Y+10);
+        //    }
+
+        //    double x = root.GTagBox.InnerBoxLeftTop.X;
+        //    double y = root.GTagBox.InnerBoxLeftTop.Y;
+            
+            
+
+        //    GTagBoxTree p1tree = null, p2tree = null;
+        //    x = 0;
+        //    y = 0;
+        //    if (!string.IsNullOrEmpty(p2))
+        //    {
+        //        GTagBox p2box = null;
+        //        p2box = new GTagBox(6, p2, x, y, 1);
+        //        p2tree = new GTagBoxTree();
+        //        p2tree.GTagBox = p2box;
+        //        TreeLayoutEnv.Ins.Add(p2box.Tag, p2tree);
+        //        //TreeLayoutEnv.Ins.AddLine(p2tree, p1tree, 1);
+        //        x += p2tree.TotalRange.Width ;
+        //    }
+            
+        //    if (!string.IsNullOrEmpty(p1))
+        //    {
+        //        GTagBox p1box = null;
+        //        p1box  = new GTagBox(5, p1, x, y , 1);
+        //        p1tree= new GTagBoxTree();
+        //        p1tree.GTagBox = p1box;
+        //        TreeLayoutEnv.Ins.Add(p1box.Tag, p1tree);
+        //        //TreeLayoutEnv.Ins.AddLine(root, p1tree, 1);
+        //        x += p1tree.TotalRange.Width;
+        //    }
+
+            
+            
+
+
+        //}
         private void LRBanlance(GTagBoxTree[] children, int mid)
         {
             if (children.Length <= mid) return;

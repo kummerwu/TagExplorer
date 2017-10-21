@@ -235,6 +235,16 @@ namespace TagExplorer
             //AppCfg.Ins.SubCanvasHeight = c.ConvertToString(new GridLength(subGridRow.ActualHeight, GridUnitType.Star));
         }
 
+        public void UpTag()
+        {
+            MainCanvas.UpTag();
+        }
+
+        internal void HomeTag()
+        {
+            ShowGraph(Cfg.Ins.DefaultTag, null);
+        }
+
 
 
 

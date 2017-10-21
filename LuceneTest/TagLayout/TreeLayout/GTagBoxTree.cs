@@ -12,7 +12,25 @@ namespace TagExplorer.TagLayout.TreeLayout
     class GTagBoxTree
     {
         public List<GTagBoxTree> Children = new List<GTagBoxTree>();
-        public Rect TotalRange = new Rect();
+        private Rect totalRange = Rect.Empty;
+        public Rect TotalRange
+        {
+            get
+            {
+                if(totalRange.IsEmpty)
+                {
+                    return GTagBox.OutterBox;
+                }
+                else
+                {
+                    return totalRange;
+                }
+            }
+            set
+            {
+                totalRange = value;
+            }
+        }
         public GTagBox GTagBox = null;
         public GTagBoxTree() { }
         
@@ -23,7 +41,7 @@ namespace TagExplorer.TagLayout.TreeLayout
         }
         public void CenterItY()
         {
-            GTagBox.CenterItY(TotalRange);
+            GTagBox.CenterItY(totalRange);
         }
         public static GTagBoxTree ExpandNode(string tag, int level, ITagDB db, double x, double y,int direct,Size size)
         {
@@ -43,7 +61,7 @@ namespace TagExplorer.TagLayout.TreeLayout
             //创建子树的根对象
             GTagBoxTree root = new GTagBoxTree();
             root.GTagBox = new GTagBox(level, tag,x,y,direct);
-            root.TotalRange = root.GTagBox.OutterBox;
+            root.totalRange = root.GTagBox.OutterBox;
             root.D("计算自身大小（不包括子节点）" + root.GTagBox.Tag);
             TreeLayoutEnv.Ins.Add(tag, root);//这个特别需要注意，在递归展开之前，先要将该节点加入DB，否则可能会出现无限递归
 
@@ -91,7 +109,7 @@ namespace TagExplorer.TagLayout.TreeLayout
 
                     //h += cur.OutBox.Height;
                     //w = Math.Max(w, cur.OutBox.Width);
-                    root.TotalRange.Union(cur.TotalRange);
+                    root.totalRange.Union(cur.totalRange);
                     root.Children.Add(cur);
 
 
@@ -103,7 +121,7 @@ namespace TagExplorer.TagLayout.TreeLayout
             //root.OutBox.Width = w + root.box.InnerBox.Width;
             //root.OutBox.Height = Math.Max(h, root.box.InnerBox.Height);
             //root.GTagBox.InnerBox.Y = (root.TotalRange.Top + root.TotalRange.Bottom) / 2;
-            root.GTagBox.CenterItY(root.TotalRange);
+            root.GTagBox.CenterItY(root.totalRange);
 
             root.D(null);
             Logger.OUT();
@@ -116,17 +134,17 @@ namespace TagExplorer.TagLayout.TreeLayout
             Logger.D("ChoosePos:pre:{0}-{1}-{2} cur:{0}-{1},",
                     pre?.GTagBox.Tag,
                     pre == null ? 0 : db.QueryTagChildren(pre.GTagBox.Tag).Count,
-                    pre == null ? 0 : pre.TotalRange.Right,
+                    pre == null ? 0 : pre.totalRange.Right,
                     ctag, db.QueryTagChildren(ctag).Count);
             //只有满足严格条件的情况下，才放在兄弟节点的后面，否则在父节点后展开
             if (pre != null &&
                 /*(db.QueryTagChildren(ctag).Count == 0 && db.QueryTagChildren(pre.box.Tag).Count == 0)*/
-                pre.TotalRange.Right < size.Width - 70 && pre.TotalRange.Left>70)
+                pre.totalRange.Right < size.Width - 70 && pre.totalRange.Left>70)
             {
                 Logger.D("Place {0} after {1}:follow", ctag, pre.GTagBox.Tag);
                 cur = ExpandNode(ctag, level + 1, db, 
-                    direct==1?pre.TotalRange.Right:pre.TotalRange.Left, 
-                    pre.TotalRange.Top,direct,size);
+                    direct==1?pre.totalRange.Right:pre.totalRange.Left, 
+                    pre.totalRange.Top,direct,size);
 
             }
 
@@ -140,14 +158,14 @@ namespace TagExplorer.TagLayout.TreeLayout
                     Logger.D("Place {0} after {1}:follow", ctag, root.GTagBox.Tag);
                     cur = ExpandNode(ctag, level + 1, db,
                         direct == 1 ? root.GTagBox.OutterBox.Right : root.GTagBox.OutterBox.Left,
-                        root.TotalRange.Top,direct,size);
+                        root.totalRange.Top,direct,size);
                 }
                 else
                 {
                     Logger.D("Place {0} after {1}:newline", ctag, root.GTagBox.Tag);
                     cur = ExpandNode(ctag, level + 1, db,
                         direct == 1 ? root.GTagBox.OutterBox.Right : root.GTagBox.OutterBox.Left,
-                        root.TotalRange.Bottom,direct,size);
+                        root.totalRange.Bottom,direct,size);
                 }
                 TreeLayoutEnv.Ins.AddLine(root, cur,direct);
             }
@@ -160,17 +178,17 @@ namespace TagExplorer.TagLayout.TreeLayout
             Logger.D("ChoosePos:pre:{0}-{1}-{2} cur:{0}-{1},",
                     pre?.GTagBox.Tag,
                     pre == null ? 0 : db.QueryTagChildren(pre.GTagBox.Tag).Count,
-                    pre == null ? 0 : pre.TotalRange.Right,
+                    pre == null ? 0 : pre.totalRange.Right,
                     ctag, db.QueryTagChildren(ctag).Count);
             //只有满足严格条件的情况下，才放在兄弟节点的后面，否则在父节点后展开
             if (pre != null &&
                 (db.QueryTagChildren(pre.GTagBox.Tag).Count == 0) &&
-                pre.TotalRange.Right< size.Width-70)
+                pre.totalRange.Right< size.Width-70)
             {
                 Logger.D("Place {0} after {1}:follow", ctag, pre.GTagBox.Tag);
                 cur = ExpandNode(ctag, rootLevel + 1, db,
-                    direct == 1 ? pre.TotalRange.Right : pre.TotalRange.Left,
-                    pre.TotalRange.Top,direct,size);
+                    direct == 1 ? pre.totalRange.Right : pre.totalRange.Left,
+                    pre.totalRange.Top,direct,size);
 
             }
 
@@ -184,14 +202,14 @@ namespace TagExplorer.TagLayout.TreeLayout
                     Logger.D("Place {0} after {1}:follow", ctag, root.GTagBox.Tag);
                     cur = ExpandNode(ctag, rootLevel + 1, db,
                         direct == 1 ? root.GTagBox.OutterBox.Right : root.GTagBox.OutterBox.Left,
-                        root.TotalRange.Top,direct,size);
+                        root.totalRange.Top,direct,size);
                 }
                 else
                 {
                     Logger.D("Place {0} after {1}:newline", ctag, root.GTagBox.Tag);
                     cur = ExpandNode(ctag, rootLevel + 1, db,
                         direct == 1 ? root.GTagBox.OutterBox.Right : root.GTagBox.OutterBox.Left,
-                        root.TotalRange.Bottom,direct,size);
+                        root.totalRange.Bottom,direct,size);
                 }
                 TreeLayoutEnv.Ins.AddLine(root, cur,direct);
             }
@@ -205,7 +223,7 @@ namespace TagExplorer.TagLayout.TreeLayout
             Logger.D("ChoosePos:pre:{0}-{1}-{2} cur:{0}-{1},",
                     pre?.GTagBox.Tag,
                     pre == null ? 0 : db.QueryTagChildren(pre.GTagBox.Tag).Count,
-                    pre == null ? 0 : pre.TotalRange.Right,
+                    pre == null ? 0 : pre.totalRange.Right,
                     ctag, db.QueryTagChildren(ctag).Count);
             
             if (pre == null)
@@ -213,14 +231,14 @@ namespace TagExplorer.TagLayout.TreeLayout
                 Logger.D("Place {0} after {1}:follow", ctag, root.GTagBox.Tag);
                 cur = ExpandNode(ctag, level + 1, db,
                     direct == 1 ? root.GTagBox.OutterBox.Right : root.GTagBox.OutterBox.Left, 
-                    root.TotalRange.Top,direct,size);
+                    root.totalRange.Top,direct,size);
             }
             else
             {
                 Logger.D("Place {0} after {1}:newline", ctag, root.GTagBox.Tag);
                 cur = ExpandNode(ctag, level + 1, db,
                     direct == 1 ? root.GTagBox.OutterBox.Right : root.GTagBox.OutterBox.Left,
-                    root.TotalRange.Bottom,direct,size);
+                    root.totalRange.Bottom,direct,size);
             }
 
             TreeLayoutEnv.Ins.AddLine(root, cur,direct);
@@ -232,7 +250,7 @@ namespace TagExplorer.TagLayout.TreeLayout
             if(tip!=null)Logger.D(tip);
             Logger.D("ColorBox:" + GTagBox.Tag + " " + GTagBox.InnerBox.Left + " " + GTagBox.InnerBox.Right + " " + GTagBox.InnerBox.Top + " " + GTagBox.InnerBox.Bottom + " ");
             Logger.D("InnerBox:" + GTagBox.Tag + " " + GTagBox.OutterBox.Left + " " + GTagBox.OutterBox.Right + " " + GTagBox.OutterBox.Top + " " + GTagBox.OutterBox.Bottom + " ");
-            Logger.D("OutterBox:" + GTagBox.Tag + " " + TotalRange.Left + " " + TotalRange.Right + " " + TotalRange.Top + " " + TotalRange.Bottom + " ");
+            Logger.D("OutterBox:" + GTagBox.Tag + " " + totalRange.Left + " " + totalRange.Right + " " + totalRange.Top + " " + totalRange.Bottom + " ");
         }
     }
 }

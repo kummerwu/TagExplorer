@@ -77,6 +77,15 @@ namespace TagExplorer.Utils
                 return null;
             }
         }
+
+        public static void Save(string url,string dst)
+        {
+            CDO.Message msg = new CDO.Message();
+            
+            msg.CreateMHTMLBody(url, CDO.CdoMHTMLFlags.cdoSuppressAll, "", "");
+
+            msg.GetStream().SaveToFile(dst, ADODB.SaveOptionsEnum.adSaveCreateOverWrite);
+        }
     }
 
     public class WebClienTimeout : WebClient

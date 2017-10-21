@@ -265,15 +265,23 @@ namespace TagExplorer.TagCanvas
             //如果当前节点时根节点，则向上退一级
             else if ((direction == Key.Left || direction == Key.Up) && currentTag == rootTag)
             {
-                List<string> parents = TagDB.QueryTagParent(rootTag);
-                if (parents.Count > 0)
-                {
-                    ChangeRoot(parents[0],rootTag);
-                    SetCurrentTag(parents[0]);
-                }
+                UpTag();
             }
             return result;
         }
+
+        public void UpTag()
+        {
+            List<string> parents = TagDB.QueryTagParent(rootTag);
+            if (parents.Count > 0)
+            {
+                ChangeRoot(parents[0], rootTag);
+                SetCurrentTag(parents[0]);
+            }
+        }
+
+        
+
         //在当前图中的所有tag查找，看看当前是否已经显示，如果已经显示，直接切换节点
         //如果没有显示，返回false
         public bool ChangeSelectd(string tag)

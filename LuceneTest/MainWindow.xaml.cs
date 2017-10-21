@@ -275,5 +275,20 @@ namespace TagExplorer
                 MessageBox.Show("成功导入"+cnt+"条Tag关系","Tag关系导入",MessageBoxButton.OK);
             }
         }
+
+        private void test_Click(object sender, RoutedEventArgs e)
+        {
+            WebHelper.Save("http://www.baidu.com", @"j:\test.mht");
+        }
+
+        private void btUp_Click(object sender, RoutedEventArgs e)
+        {
+            tagCanvas.UpTag();
+        }
+
+        private void btHome_Click(object sender, RoutedEventArgs e)
+        {
+            tagCanvas.HomeTag();
+        }
     }
 }
