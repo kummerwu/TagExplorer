@@ -187,7 +187,7 @@
 
     </UserControl.CommandBindings>
     <ScrollViewer LostFocus="scrollViewer_LostFocus" GotFocus="scrollViewer_GotFocus" x:Name="scrollViewer" DockPanel.Dock="Bottom" VerticalAlignment="Top"  Background="White" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto"  SizeChanged="scrollViewer_SizeChanged">
-        <Canvas Focusable="True" KeyUp="canvas_KeyUp" x:Name="canvas" HorizontalAlignment="Left"  VerticalAlignment="Top"  Background="White"   >
+        <Canvas Focusable="True" KeyUp="canvas_KeyUp" x:Name="canvas" HorizontalAlignment="Left"  VerticalAlignment="Top"  Background="White"  Margin="10,10,10,10">
         </Canvas>
     </ScrollViewer>
 </UserControl>

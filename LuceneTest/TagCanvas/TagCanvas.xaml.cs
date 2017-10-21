@@ -35,7 +35,14 @@ namespace TagExplorer
 
             MainCanvas.SelectedTagChanged += MainCanvasSelectedTagChanged_Callback;
             SubCanvas.SelectedTagChanged += SubCanvasSelectedTagChanged_Callback;
-            
+
+
+            GridLengthConverter c = new GridLengthConverter();
+            mainGridRow.Height = (GridLength)c.ConvertFromString(AppCfg.Ins.MainCanvasHeight);
+            //subGridRow.Height = (GridLength)c.ConvertFromString(AppCfg.Ins.SubCanvasHeight);
+
+
+
         }
         private void MainCanvasSelectedTagChanged_Callback(string tag)
         {
@@ -172,9 +179,17 @@ namespace TagExplorer
                 //canvasRecentTags.Children.Add(t);
             }
         }
-        
-        
-        
+
+        private void MainCanvas_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            GridLengthConverter c = new GridLengthConverter();
+            
+            AppCfg.Ins.MainCanvasHeight = c.ConvertToString(new GridLength(mainGridRow.ActualHeight,GridUnitType.Pixel));
+            //AppCfg.Ins.SubCanvasHeight = c.ConvertToString(new GridLength(subGridRow.ActualHeight, GridUnitType.Star));
+        }
+
+
+
 
         //private void scrollViewer_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         //{
@@ -197,13 +212,13 @@ namespace TagExplorer
 
         //private void canvas_Click(object sender, RoutedEventArgs e)
         //{
-            
+
         //}
-        
-        
-        
-        
-        
+
+
+
+
+
 
 
     }

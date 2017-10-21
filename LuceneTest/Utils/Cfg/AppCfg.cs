@@ -100,6 +100,18 @@ namespace TagExplorer.Utils
             set { SaveString("FontName", value, ref fontName); }
         }
 
+        private string mainCanvasHeight = null;
+        public string MainCanvasHeight
+        {
+            get { return LoadString("MainCanvasHeight", "50*", ref mainCanvasHeight); }
+            set { SaveString("MainCanvasHeight", value, ref mainCanvasHeight); }
+        }
+        private string subCanvasHeight = null;
+        public string SubCanvasHeight
+        {
+            get { return LoadString("SubCanvasHeight", "50*", ref mainCanvasHeight); }
+            set { SaveString("SubCanvasHeight", value, ref mainCanvasHeight); }
+        }
         //////////////////////////////////////////////////////////////////////////////////////
         private static Color C(int c) { return Color.FromRgb((byte)((c & 0xFF0000) >> 16), (byte)((c & 0xFF00) >> 8), (byte)(c & 0xFF)); }
         
