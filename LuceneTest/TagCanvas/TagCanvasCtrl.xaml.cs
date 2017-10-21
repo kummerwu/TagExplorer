@@ -274,6 +274,24 @@ namespace TagExplorer.TagCanvas
             }
             return result;
         }
+        //在当前图中的所有tag查找，看看当前是否已经显示，如果已经显示，直接切换节点
+        //如果没有显示，返回false
+        public bool ChangeSelectd(string tag)
+        {
+            foreach(UIElement u in canvas.Children)
+            {
+                TagBox t = u as TagBox;
+                if(t!=null)
+                {
+                    if(t.Text == tag)
+                    {
+                        SetCurrentTag(tag);
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
         //public void ShowGraph(ITagDB tagDB, string root)
         //{
         //    Logger.I("ShowGraph at " + root);

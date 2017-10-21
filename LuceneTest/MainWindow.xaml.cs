@@ -137,11 +137,13 @@ namespace TagExplorer
             }
         }
 
+        //TODO:这个地方需要优化，用户任意搜索一个单词，就直接把root tag切换过去，实际上不合理
         private void SearchByTxt()
         {
             if (tagDB.QueryTagAlias(autoTextBox.Text).Count > 0)
             {
-                ShowTagGraph(autoTextBox.Text, null);
+                //ShowTagGraph(autoTextBox.Text, null);
+                tagCanvas.SearchByTxt(autoTextBox.Text);
             }
             ShowUrlListByText();
         }
