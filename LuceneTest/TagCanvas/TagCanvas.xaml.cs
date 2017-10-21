@@ -129,8 +129,10 @@ namespace TagExplorer
             }
             if (sub != null)
             {
+                MainCanvas.ClearSelected();
                 SubCanvas.ChangeRoot(sub,sub);
             }
+            
         }
 
         //UI主线程中的方法调用
@@ -159,6 +161,7 @@ namespace TagExplorer
             //再在sub中查找，如果有，切换焦点后返回
             if(SubCanvas.ChangeSelectd(text))
             {
+                MainCanvas.ClearSelected();
                 return;
             }
             //如果不在视图中，但数据库中存在，TODO：如何有效的切换？？是一个需要考虑的问题

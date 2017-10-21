@@ -357,6 +357,10 @@ namespace TagExplorer.TagCanvas
             FileShell.OpenExplorerByTag(currentTag);
 
         }
+        public void ClearSelected()
+        {
+            UpdateSelectedStatus(null, TagBox.Status.None);
+        }
         private void UpdateSelectedStatus(string tag, TagBox.Status stat)
         {
             foreach (UIElement u in canvas.Children)
@@ -993,7 +997,7 @@ namespace TagExplorer.TagCanvas
 
         private void scrollViewer_LostFocus(object sender, RoutedEventArgs e)
         {
-            UpdateSelectedStatus(null, TagBox.Status.None);
+            ClearSelected();
         }
     }
     
