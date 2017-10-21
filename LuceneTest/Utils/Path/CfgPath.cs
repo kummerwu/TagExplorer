@@ -41,6 +41,7 @@ namespace TagExplorer.Utils
         //Root根目录下的一级目录下的文件
         public static string IniFilePath { get { return Path.Combine(RootPath, "TagExplorer.ini"); } }
         public static string LayoutCfgFilePath { get { return Path.Combine(RootPath, "TagExplorerLayout.xml"); } }
+        public static string CfgTagGraphFilePath { get { return Path.Combine(RootPath, "CfgTagGraph.json"); } }
 
         //Root根目录下的一级目录下的文件夹
         public static string TagDBPath { get { return Path.Combine(RootPath, "TagDB"); } }

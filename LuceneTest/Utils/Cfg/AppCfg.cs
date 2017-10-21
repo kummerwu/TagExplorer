@@ -23,7 +23,7 @@ namespace TagExplorer.Utils
         {
             cfa.Save();
         }
-        private string LoadString(string Name,string DefaultValue,ref string Field)
+        public string LoadString(string Name,string DefaultValue,ref string Field)
         {
             //获得配置存储的值
             if (Field==null)
@@ -37,7 +37,7 @@ namespace TagExplorer.Utils
             }
             return Field;
         }
-        private void SaveString(string Name,string Value,ref string Field)
+        public void SaveString(string Name,string Value,ref string Field)
         {
             bool needSave = true;
             Field = Value;
@@ -93,12 +93,7 @@ namespace TagExplorer.Utils
             set { SaveString("SubCanvasRoot", value, ref subCanvasRoot); }
         }
 
-        private string fontName = null;
-        public string FontName
-        {
-            get { return LoadString("FontName", CfgTagGraph.GFontName, ref fontName); }
-            set { SaveString("FontName", value, ref fontName); }
-        }
+        
 
         private string mainCanvasHeight = null;
         public string MainCanvasHeight
@@ -106,12 +101,7 @@ namespace TagExplorer.Utils
             get { return LoadString("MainCanvasHeight", "50*", ref mainCanvasHeight); }
             set { SaveString("MainCanvasHeight", value, ref mainCanvasHeight); }
         }
-        private string subCanvasHeight = null;
-        public string SubCanvasHeight
-        {
-            get { return LoadString("SubCanvasHeight", "50*", ref mainCanvasHeight); }
-            set { SaveString("SubCanvasHeight", value, ref mainCanvasHeight); }
-        }
+        
         //////////////////////////////////////////////////////////////////////////////////////
         private static Color C(int c) { return Color.FromRgb((byte)((c & 0xFF0000) >> 16), (byte)((c & 0xFF00) >> 8), (byte)(c & 0xFF)); }
         

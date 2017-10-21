@@ -50,7 +50,31 @@ namespace TagExplorer.TagMgr
                     db.AllTagSet.Add(j);
                 }
             }
-            
+
+            //叶子节点没有存储，但内存索引中需要，在这儿自动恢复出来
+            List<string> leafNotExist = new List<string>();
+            foreach(JTagInf j in db.AllTagSet)
+            {
+                
+                foreach(string a in j.Alias)
+                {
+                    if (!db.Str2TagIdx.Contains(a))
+                    {
+                        leafNotExist.Add(a);
+                    }
+                }
+                foreach(string c in j.Children)
+                {
+                    if (!db.Str2TagIdx.Contains(c))
+                    {
+                        leafNotExist.Add(c);
+                    }
+                }
+            }
+            foreach(string leaf in leafNotExist)
+            {
+                db.NewTag(leaf);
+            }
             return db;
         }
         

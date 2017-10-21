@@ -25,19 +25,19 @@ namespace TagExplorer.TagLayout.LayoutCommon
         public Size OutterBoxSize;
         private void PreCalcBoxSize()
         {
-            FontSize = CfgTagGraph.FontSize;
-            InnerBoxXPadding = CfgTagGraph.InnerBoxXPadding_MAX;
-            InnerBoxYPadding = CfgTagGraph.InnerBoxYPadding_MAX;
+            FontSize = CfgTagGraph.Ins.FontSize;
+            InnerBoxXPadding = CfgTagGraph.Ins.InnerBoxXPadding_MAX;
+            InnerBoxYPadding = CfgTagGraph.Ins.InnerBoxYPadding_MAX;
             for (int i = 0; i < Distance; i++)
             {
-                FontSize /= CfgTagGraph.ScaleInRadio;
-                InnerBoxXPadding /= CfgTagGraph.ScaleInRadio;
-                InnerBoxYPadding /= CfgTagGraph.ScaleInRadio;
+                FontSize /= CfgTagGraph.Ins.ScaleInRadio;
+                InnerBoxXPadding /= CfgTagGraph.Ins.ScaleInRadio;
+                InnerBoxYPadding /= CfgTagGraph.Ins.ScaleInRadio;
             }
 
-            InnerBoxXPadding = Math.Max(InnerBoxXPadding, CfgTagGraph.InnerBoxXPadding_MIN);
-            InnerBoxYPadding = Math.Max(InnerBoxYPadding, CfgTagGraph.InnerBoxYPadding_MIN);
-            FontSize = Math.Max(FontSize, CfgTagGraph.MinFontSize);
+            InnerBoxXPadding = Math.Max(InnerBoxXPadding, CfgTagGraph.Ins.InnerBoxXPadding_MIN);
+            InnerBoxYPadding = Math.Max(InnerBoxYPadding, CfgTagGraph.Ins.InnerBoxYPadding_MIN);
+            FontSize = Math.Max(FontSize, CfgTagGraph.Ins.MinFontSize);
         }
         //计算自身内容所占区域的大小（文本和着色区域）
         private void CalcBoxSize(string fname)
@@ -50,8 +50,8 @@ namespace TagExplorer.TagLayout.LayoutCommon
                 FontSize,
                 Brushes.Black
             );
-            Size tmp = new Size(formattedText.WidthIncludingTrailingWhitespace + CfgTagGraph.XContentPadding,
-                                    formattedText.Height + CfgTagGraph.YContentPadding);
+            Size tmp = new Size(formattedText.WidthIncludingTrailingWhitespace + CfgTagGraph.Ins.XContentPadding,
+                                    formattedText.Height + CfgTagGraph.Ins.YContentPadding);
             InnerBoxSize.Width = tmp.Width;
             InnerBoxSize.Height = tmp.Height;
 
@@ -88,7 +88,7 @@ namespace TagExplorer.TagLayout.LayoutCommon
             Direct = direct;
 
             //计算大小
-            Inf = new TagBoxSizeInf(tag, distance, AppCfg.Ins.FontName);
+            Inf = new TagBoxSizeInf(tag, distance, CfgTagGraph.Ins.GFontName);
 
             //*****计算位置*****************
             //计算OutterBox

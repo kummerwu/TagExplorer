@@ -14,16 +14,16 @@
         <RoutedUICommand x:Key="NavigateTag" Text="游览标签">
            
         </RoutedUICommand>
-        <RoutedUICommand x:Key="NavigateTagUp" Text="游览标签">
+        <RoutedUICommand x:Key="NavigateTagUp" Text="游览标签(上一个)">
             
         </RoutedUICommand>
-        <RoutedUICommand x:Key="NavigateTagDown" Text="游览标签">
+        <RoutedUICommand x:Key="NavigateTagDown" Text="游览标签(下一个)">
            
         </RoutedUICommand>
-        <RoutedUICommand x:Key="NavigateTagLeft" Text="游览标签">
+        <RoutedUICommand x:Key="NavigateTagLeft" Text="游览标签(左一个)">
             
         </RoutedUICommand>
-        <RoutedUICommand x:Key="NavigateTagRight" Text="游览标签">
+        <RoutedUICommand x:Key="NavigateTagRight" Text="游览标签(右一个)">
            
         </RoutedUICommand>
 
