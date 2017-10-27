@@ -3,7 +3,9 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Windows;
 using System.Windows.Shapes;
+using TagExplorer.TagLayout.LayoutCommon;
 
 namespace TagExplorer.TagLayout.TreeLayout
 {
@@ -30,10 +32,10 @@ namespace TagExplorer.TagLayout.TreeLayout
                 all.Add(tag, obj);
             }
         }
-        private List<Tuple<GTagBoxTree, GTagBoxTree,int>> Lines = new List<Tuple<GTagBoxTree, GTagBoxTree,int>>();
-        public void AddLine(GTagBoxTree parent, GTagBoxTree child,int direct)
+        private List<Tuple<GTagBoxTree, GTagBoxTree, int>> Lines = new List<Tuple<GTagBoxTree, GTagBoxTree, int>>();
+        public void AddLine(GTagBoxTree parent, GTagBoxTree child, int direct)
         {
-            Lines.Add(new Tuple<GTagBoxTree, GTagBoxTree,int>(parent, child,direct));
+            Lines.Add(new Tuple<GTagBoxTree, GTagBoxTree, int>(parent, child, direct));
         }
         private static TreeLayoutEnv ins = null;
         public static TreeLayoutEnv Ins
@@ -45,6 +47,32 @@ namespace TagExplorer.TagLayout.TreeLayout
             }
         }
 
+        // ////
+        private List<TagBox> reuseList = new List<TagBox>();
+        public void Return(List<TagBox> lst)
+        {
+            retTag += lst.Count;
+            reuseList.AddRange(lst);
+        }
+        public int newTag = 0;
+        public int retTag = 0;
+        public int reuseTag = 0;
+        public TagBox New(GTagBox g)
+        {
+            if(reuseList.Count>0)
+            {
+                reuseTag++;
+                TagBox b = reuseList[0] as TagBox;
+                reuseList.RemoveAt(0);
+                return b;
+            }
+            else
+            {
+                newTag++;
+                return new TagBox(g);
+            }
+        }
+        ///////////////
         public List<TagBox> GetAllTagBox()
         {
             List<TagBox> result = new List<TagBox>();

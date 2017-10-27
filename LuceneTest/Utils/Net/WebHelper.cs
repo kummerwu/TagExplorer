@@ -1,16 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Net;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using System.Windows.Input;
 
 namespace TagExplorer.Utils
 {
-    
+
 
 
     public class WebHelper
@@ -28,7 +22,7 @@ namespace TagExplorer.Utils
                 {
                     Match charSetMatch = Regex.Match(strWebData, "<meta([^>]*)charset=(\")?(.*)?\"", RegexOptions.IgnoreCase | RegexOptions.Multiline);
                     string webCharSet = charSetMatch.Groups[3].Value.Trim().ToLower();
-                    if (webCharSet != "gb2312")
+                    if (webCharSet != "gb2312" && webCharSet!= "gbk" )
                     {
                         webCharSet = "utf-8";
                     }
@@ -80,11 +74,11 @@ namespace TagExplorer.Utils
 
         public static void Save(string url,string dst)
         {
-            CDO.Message msg = new CDO.Message();
+            //CDO.Message msg = new CDO.Message();
             
-            msg.CreateMHTMLBody(url, CDO.CdoMHTMLFlags.cdoSuppressAll, "", "");
+            //msg.CreateMHTMLBody(url, CDO.CdoMHTMLFlags.cdoSuppressAll, "", "");
 
-            msg.GetStream().SaveToFile(dst, ADODB.SaveOptionsEnum.adSaveCreateOverWrite);
+            //msg.GetStream().SaveToFile(dst, ADODB.SaveOptionsEnum.adSaveCreateOverWrite);
         }
     }
 

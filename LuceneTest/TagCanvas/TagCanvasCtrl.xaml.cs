@@ -8,6 +8,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using TagExplorer.TagLayout;
 using TagExplorer.TagLayout.CommonLayout;
+using TagExplorer.TagLayout.TreeLayout;
 using TagExplorer.TagMgr;
 using TagExplorer.UriMgr;
 using TagExplorer.Utils;
@@ -92,6 +93,8 @@ namespace TagExplorer.TagCanvas
             RedrawGraph_();
             GLayoutMode.mode = bak;
         }
+
+        private List<TagBox> lastTagboxs = null;
         private void RedrawGraph_()
         {
             if (TagDB != null && rootTag != null && oriSize.Height!=0 && oriSize.Width!=0 && !oriSize.IsEmpty)
@@ -99,8 +102,12 @@ namespace TagExplorer.TagCanvas
                 Logger.I("ShowGraph at " + rootTag);
                 //this.TagDB = tagDB;
                 //this.rootTag = root;
-
+                
                 canvas.Children.Clear();
+                if (lastTagboxs != null)
+                {
+                    //TreeLayoutEnv.Ins.Return(lastTagboxs);
+                }
                 //canvasRecentTags.Children.Clear();
 
                 //计算有向图布局
@@ -110,7 +117,7 @@ namespace TagExplorer.TagCanvas
                 //将有向图中的元素显示在界面上
                 IEnumerable<UIElement> lines = tagLayout.Lines;
                 IEnumerable<UIElement> allTxt = tagLayout.TagArea;
-
+                lastTagboxs = allTxt as List<TagBox>;
                 canvas.Width = tagLayout.Size.Width;
                 layoutHeight = tagLayout.Size.Height;
                 SetHeight();
@@ -122,9 +129,12 @@ namespace TagExplorer.TagCanvas
                 foreach (TagBox t in allTxt)
                 {
                     //设置每一个tag的上下文菜单和事件响应钩子
-                    t.ContextMenu = TagAreaMenu;
-                    t.MouseLeftButtonDown += Tag_MouseLeftButtonDown;
-                    t.MouseDoubleClick += Tag_MouseDoubleClick;
+                    if (t.ContextMenu == null)
+                    {
+                        t.ContextMenu = TagAreaMenu;
+                        t.MouseLeftButtonDown += Tag_MouseLeftButtonDown;
+                        t.MouseDoubleClick += Tag_MouseDoubleClick;
+                    }
                     canvas.Children.Add(t);
                 }
                 //UpdateRecentTags(root);
@@ -349,7 +359,10 @@ namespace TagExplorer.TagCanvas
         {
             if (sender is TagBox)
             {
+                DateTime t1 = DateTime.Now;
                 SetCurrentTag((sender as TagBox).Text);
+                DateTime t2 = DateTime.Now;
+                //MessageBox.Show("ts=" + (t2 - t1).TotalSeconds);
             }
         }
         ContextMenu TagAreaMenu

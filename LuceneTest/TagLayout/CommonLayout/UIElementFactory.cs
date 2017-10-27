@@ -13,9 +13,11 @@ namespace AnyTagNet
 
     class UIElementFactory
     {
+
         public static TagBox CreateTagBox(GTagBox g)
         {
-            TagBox b = new TagBox(g);
+            //TagBox b = new TagBox(g);
+            TagBox b = TreeLayoutEnv.Ins.New(g);
             b.FontFamily = CfgTagGraph.Ins.GFontF;
             b.FontSize = g.FontSize;
             b.Height1 = g.InnerBox.Height;
@@ -24,7 +26,8 @@ namespace AnyTagNet
             b.TextAlignment = TextAlignment.Center;
             b.Text = g.Tag;
             b.Background1 = g.Distance;//new SolidColorBrush(GetColor(g.Distance,g.Level));
-            if (g.Distance >= 5) b.Foreground1 = g.Distance;// new SolidColorBrush(Colors.White);
+            //if (g.Distance >= 5) b.Foreground1 = g.Distance;// new SolidColorBrush(Colors.White);
+            b.Foreground1 = g.Distance;
             return b;
         }
 

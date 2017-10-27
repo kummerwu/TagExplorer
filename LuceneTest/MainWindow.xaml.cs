@@ -6,6 +6,7 @@ using System.Windows.Controls;
 
 using System.Windows.Input;
 using TagExplorer.TagLayout.CommonLayout;
+using TagExplorer.TagLayout.TreeLayout;
 using TagExplorer.TagMgr;
 using TagExplorer.UriMgr;
 using TagExplorer.Utils;
@@ -278,7 +279,16 @@ namespace TagExplorer
 
         private void test_Click(object sender, RoutedEventArgs e)
         {
-            WebHelper.Save("http://www.baidu.com", @"j:\test.mht");
+            if (MessageBox.Show("开始10次show根节点","测试",MessageBoxButton.OKCancel) == MessageBoxResult.OK)
+            {
+                DateTime t1 = DateTime.Now;
+                for (int i = 0; i < 10; i++)
+                {
+                    ShowTagGraph(Cfg.Ins.DefaultTag, Cfg.Ins.DefaultTag);
+                }
+                DateTime t2 = DateTime.Now;
+                MessageBox.Show("总共耗时:" + (t2 - t1).TotalSeconds+"new reuse,ret tag = "+TreeLayoutEnv.Ins.newTag+" "+TreeLayoutEnv.Ins.reuseTag+" " +TreeLayoutEnv.Ins.retTag);
+            }
         }
 
         private void btUp_Click(object sender, RoutedEventArgs e)
