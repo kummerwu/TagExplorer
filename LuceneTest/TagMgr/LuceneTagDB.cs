@@ -25,7 +25,7 @@ namespace TagExplorer.TagMgr
         {
             Logger.I("Create TagDB Instance!");
             bool create = true;
-            if (Cfg.Ins.IsUTest)
+            if (UTestCfg.Ins.IsUTest)
             {
                 dir = new RAMDirectory();
                 create = true;
@@ -66,7 +66,7 @@ namespace TagExplorer.TagMgr
         {
             Term term = new Term(F_TAGCHILD, child);
             Query query = new TermQuery(term);
-            ScoreDoc[] docs = search.Search(query, CfgPerformance.TAG_MAX_RELATION).ScoreDocs;
+            ScoreDoc[] docs = search.Search(query, StaticCfg.Ins.TAG_MAX_RELATION).ScoreDocs;
             Document []docArray = new Document[docs.Length];
             //foreach(ScoreDoc doc in docs)
             for(int i = 0;i<docs.Length;i++)
@@ -192,7 +192,7 @@ namespace TagExplorer.TagMgr
         private List<string> GetByQuery(string fieldName,  Query query)
         {
             List<string> ret = new List<string>();
-            ScoreDoc[] docs = search.Search(query, CfgPerformance.TAG_MAX_RELATION).ScoreDocs;
+            ScoreDoc[] docs = search.Search(query, StaticCfg.Ins.TAG_MAX_RELATION).ScoreDocs;
             Document doc = null;
             foreach (ScoreDoc sdoc in docs)
             {

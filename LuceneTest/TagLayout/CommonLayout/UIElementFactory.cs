@@ -18,7 +18,7 @@ namespace AnyTagNet
         {
             TagBox b = (env==null)?new TagBox(g): env.New(g);
             
-            b.FontFamily = CfgTagGraph.Ins.GFontF;
+            b.FontFamily = StaticCfg.Ins.GFontF;
             b.FontSize = g.FontSize;
             b.Height1 = g.InnerBox.Height;
             b.Width1 = g.InnerBox.Width;
@@ -39,18 +39,18 @@ namespace AnyTagNet
             l.Y1 = parent.ColorBox.Y + parent.ColorBox.Height;
             l.X2 = child.ColorBox.X + child.ColorBox.Width / 2;
             l.Y2 = child.ColorBox.Y;
-            l.Tag = parent.Tag.ToString() + CfgTagGraph.Ins.ParentChildSplit + child.Tag.ToString();
+            l.Tag = parent.Tag.ToString() + StaticCfg.Ins.ParentChildSplit + child.Tag.ToString();
             if (Math.Min(parent.GTagBox.Level, child.GTagBox.Level) == 0)
             {
                 l.Stroke = new SolidColorBrush(GetColor(parent.GTagBox.Distance + 1, parent.GTagBox.Level + 1));
-                l.StrokeThickness = CfgTagGraph.Ins.StrokeThickness * 1.5;
-                l.StrokeDashArray = CfgTagGraph.Ins.StrokeDashArray;
+                l.StrokeThickness = StaticCfg.Ins.StrokeThickness * 1.5;
+                l.StrokeDashArray = StaticCfg.Ins.StrokeDashArray;
             }
             else
             {
                 l.Stroke = new SolidColorBrush(GetColor(parent.GTagBox.Distance + 1, parent.GTagBox.Level + 1));
-                l.StrokeThickness = CfgTagGraph.Ins.StrokeThickness;
-                l.StrokeDashArray = CfgTagGraph.Ins.StrokeDashArray;
+                l.StrokeThickness = StaticCfg.Ins.StrokeThickness;
+                l.StrokeDashArray = StaticCfg.Ins.StrokeDashArray;
             }
             return l;
         }
@@ -142,7 +142,7 @@ namespace AnyTagNet
         
         public static Color GetColor(int distance,int level)
         {
-            Color[] FColor = AppCfg.Ins.TagBoxBackColor;
+            Color[] FColor = StaticCfg.Ins.TagBoxBackColor;
             int i = distance;
             if(level==-1)
             {
@@ -155,7 +155,7 @@ namespace AnyTagNet
         }
         public static Color GetForeColor(int distance, int level)
         {
-            Color[] FColor = AppCfg.Ins.TagBoxForeColor;
+            Color[] FColor = StaticCfg.Ins.TagBoxForeColor;
             int i = distance;
             if (level == -1)
             {
@@ -183,13 +183,13 @@ namespace AnyTagNet
             if (Math.Min(parent.Level, child.Level) == 0)
             {
                 l.Stroke = new SolidColorBrush(GetColor(parent.Distance+1, parent.Level+1));
-                l.StrokeThickness = CfgTagGraph.Ins.StrokeThickness * 1.5;
+                l.StrokeThickness = StaticCfg.Ins.StrokeThickness * 1.5;
                 //l.StrokeDashArray = CfgTagGraph.Ins.StrokeDashArray;
             }
             else
             {
                 l.Stroke = new SolidColorBrush(GetColor(parent.Distance+1, parent.Level+1));
-                l.StrokeThickness = CfgTagGraph.Ins.StrokeThickness;
+                l.StrokeThickness = StaticCfg.Ins.StrokeThickness;
                 //l.StrokeDashArray = CfgTagGraph.Ins.StrokeDashArray;
             }
         }

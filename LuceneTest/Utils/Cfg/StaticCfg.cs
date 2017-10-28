@@ -6,10 +6,10 @@ using System.Windows.Media;
 
 namespace TagExplorer.Utils
 {
-    class CfgTagGraph
+    public class StaticCfg
     {
-        public static CfgTagGraph ins = null;
-        public static CfgTagGraph Ins
+        private static StaticCfg ins = null;
+        public static StaticCfg Ins
         {
             get
             {
@@ -18,10 +18,10 @@ namespace TagExplorer.Utils
                 {
                     try
                     {
-                        if (File.Exists(CfgPath.CfgTagGraphFilePath))
+                        if (File.Exists(CfgPath.StaticCfg))
                         {
-                            string tmp = File.ReadAllText(CfgPath.CfgTagGraphFilePath);
-                            ins = JsonConvert.DeserializeObject<CfgTagGraph>(tmp);
+                            string tmp = File.ReadAllText(CfgPath.StaticCfg);
+                            ins = JsonConvert.DeserializeObject<StaticCfg>(tmp);
                         }
                     }catch(Exception e)
                     {
@@ -32,9 +32,9 @@ namespace TagExplorer.Utils
                 //如果文件读取失败，尝试使用默认值
                 if(ins == null)
                 {
-                    ins = new CfgTagGraph();//JsonConvert.DeserializeObject<CfgTagGraph>(App)
+                    ins = new StaticCfg();//JsonConvert.DeserializeObject<CfgTagGraph>(App)
                     string tmp= JsonConvert.SerializeObject(ins,Formatting.Indented); //将默认值保存到json中去
-                    File.WriteAllText(CfgPath.CfgTagGraphFilePath, tmp);
+                    File.WriteAllText(CfgPath.StaticCfg, tmp);
                 }
                 return ins;
             }
@@ -42,9 +42,6 @@ namespace TagExplorer.Utils
         //在图中显示两个tag之间的边时，使用Split将
         public char ParentChildSplit = '`';
         public string SpecialChar = "<>《》~?";
-
-        //显示字体
-        public string GFontName = @"Microsoft YaHei";
         
         public double FontSize = 18;
         public double MinFontSize = 8;
@@ -55,15 +52,7 @@ namespace TagExplorer.Utils
 
         //Tag有向图的大致比例关系，边缘空白大小
         public Size Radio = new Size(40, 40);
-        //public static double InnerBoxXPadding_MAX = 30;
-        //public static double InnerBoxYPadding_MAX = 24;
-        //public static double InnerBoxXPadding_MIN = 20;
-        //public static double InnerBoxYPadding_MIN = 18;
-        //public static double XContentPadding = 10;
-        //public static double YContentPadding = 6;
-        //public static double LayoutXPadding = 10;
-        //public static double LayoutYPadding = 10;
-
+        
         public double RADIO = 0.5;
         public double InnerBoxXPadding_MAX = 30;
         public double InnerBoxYPadding_MAX = 24/2;
@@ -74,7 +63,11 @@ namespace TagExplorer.Utils
         public double LayoutXPadding = 10/2;
         public double LayoutYPadding = 10/2;
 
-
+        public class FuncOpt
+        {
+            public bool KeepVDir = false;
+        }
+        public FuncOpt Opt = new FuncOpt();
 
 
         //public static double LayoutInitWidth = 300;
@@ -92,8 +85,55 @@ namespace TagExplorer.Utils
 
         //最后显示的Tag字符串
         //public static string TitleDataFile = "title.dat";
+        public int TAG_MAX_RELATION = 1000;
+        public int LRU_MAX_CNT = 8;
+        public int MAX_TAG_VDIR = 6;
+
+        //public string MainCanvasRoot = "我的大脑";
+        //public string SubCanvasRoot = "我的大脑";
+        public string DefaultTag = "我的大脑";
+
+
         
-            //不需要保存的配置
+
+        
+
+
+        //颜色配置：
+        private static Color C(int c) { return Color.FromRgb((byte)((c & 0xFF0000) >> 16), (byte)((c & 0xFF00) >> 8), (byte)(c & 0xFF)); }
+        private Color[] ColorsParse(string s)
+        {
+            string[] cs = s.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+            Color[] all = new Color[cs.Length];
+            for (int i = 0; i < all.Length; i++)
+            {
+                all[i] = (Color)ColorConverter.ConvertFromString(cs[i]);
+            }
+            return all;
+
+        }
+
+
+        public string RootDir = @"J:\00TagExplorerBase";
+        
+        public Color[] TagBoxBackColor = new Color[] {
+            C(0xFF6666),            C(0x99CC00),            C(0x99CCFF),            C(0xFFD39B),
+            C(0xFF99CC),            C(0x9933FF),            C(0x0066CC),
+        };
+
+
+
+
+        public Color[] TagBoxForeColor = new Color[] {
+            C(0x000000),            C(0x000000),            C(0x000000),            C(0x000000),
+            C(0x000000),            C(0xFFFFFF),            C(0xFFFFFF),
+        };
+
+
+
+        //字体:存储字符串，转换为FontFamily
+        public string GFontName = @"Microsoft YaHei";
+        //不需要保存的配置
         private FontFamily gfontf = null;
         [JsonIgnore]
         public FontFamily GFontF
@@ -110,4 +150,6 @@ namespace TagExplorer.Utils
 
 
     }
+
+    
 }

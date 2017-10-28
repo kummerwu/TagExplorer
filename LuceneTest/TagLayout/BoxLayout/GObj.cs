@@ -139,12 +139,12 @@ namespace TagExplorer.BoxLayout
             Logger.D("+++Begin Layout Tag from {0}", tag);
             IGLayoutResult result = new GLayoutResult();
             GBoxObj g = null;
-            for(int curLevel =CfgTagGraph.Ins.MinLevel;curLevel<=CfgTagGraph.Ins.MaxLevel;curLevel++)
+            for(int curLevel =StaticCfg.Ins.MinLevel;curLevel<=StaticCfg.Ins.MaxLevel;curLevel++)
             {
-                CfgTagGraph.Ins.CurLevel = curLevel;
+                StaticCfg.Ins.CurLevel = curLevel;
                 result.Clear();
                 g = Parse_in(tag, null, null, db, result, 0, 0);
-                if (g.GetAll().Count<GBoxObj>() > CfgTagGraph.Ins.MinTagCnt) break; 
+                if (g.GetAll().Count<GBoxObj>() > StaticCfg.Ins.MinTagCnt) break; 
             }
 
             if (g != null)
@@ -178,7 +178,7 @@ namespace TagExplorer.BoxLayout
                 Logger.OUT();
                 return null;
             }
-            if (distance > CfgTagGraph.Ins.CurLevel)
+            if (distance > StaticCfg.Ins.CurLevel)
             {
                 Logger.D("     !distance out,Skip!");
                 Logger.OUT();
@@ -231,7 +231,7 @@ namespace TagExplorer.BoxLayout
             }
             if(ret.gParentList.Count>0)
             {
-                ret.ParentBox = CfgTagGraph.Ins.Radio;
+                ret.ParentBox = StaticCfg.Ins.Radio;
                 ret.calc.Calc(ref ret.ParentBox, ret.gParentList, LayoutOption.FixRadio);
             }
             Logger.D("End Visit All Parent :{0}<===", tag);
@@ -254,7 +254,7 @@ namespace TagExplorer.BoxLayout
             }
             if (ret.gChildList.Count > 0)
             {
-                ret.ChildBox = CfgTagGraph.Ins.Radio;
+                ret.ChildBox = StaticCfg.Ins.Radio;
                 ret.calc.Calc(ref ret.ChildBox, ret.gChildList, LayoutOption.FixRadio);
             }
             Logger.D("End Visit All children :{0}<===", tag);

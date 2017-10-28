@@ -9,6 +9,7 @@ using TagExplorer.Utils;
 using AnyTagNet;
 using TagExplorer.TagCanvas;
 using TagExplorer.TagLayout.CommonLayout;
+using TagExplorer.Utils.Cfg;
 
 namespace TagExplorer
 {
@@ -38,7 +39,7 @@ namespace TagExplorer
 
 
             GridLengthConverter c = new GridLengthConverter();
-            mainGridRow.Height = (GridLength)c.ConvertFromString(AppCfg.Ins.MainCanvasHeight);
+            mainGridRow.Height = (GridLength)c.ConvertFromString(DynamicCfg.Ins.MainCanvasHeight);
             //subGridRow.Height = (GridLength)c.ConvertFromString(AppCfg.Ins.SubCanvasHeight);
 
 
@@ -230,8 +231,8 @@ namespace TagExplorer
         private void MainCanvas_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             GridLengthConverter c = new GridLengthConverter();
-            
-            AppCfg.Ins.MainCanvasHeight = c.ConvertToString(new GridLength(mainGridRow.ActualHeight,GridUnitType.Pixel));
+
+            DynamicCfg.Ins.ChangeMainCanvasHeight(c.ConvertToString(new GridLength(mainGridRow.ActualHeight,GridUnitType.Pixel)));
             //AppCfg.Ins.SubCanvasHeight = c.ConvertToString(new GridLength(subGridRow.ActualHeight, GridUnitType.Star));
         }
 
@@ -242,7 +243,7 @@ namespace TagExplorer
 
         internal void HomeTag()
         {
-            ShowGraph(Cfg.Ins.DefaultTag, null);
+            ShowGraph(StaticCfg.Ins.DefaultTag, null);
         }
 
 

@@ -1,15 +1,15 @@
 ﻿namespace TagExplorer.Utils
 {
-    public class Cfg
+    public class UTestCfg
     {
-        private static Cfg _ins;
-        public static Cfg Ins
+        private static UTestCfg _ins;
+        public static UTestCfg Ins
         {
             get
             {
                 if(_ins==null)
                 {
-                    _ins = new Cfg();
+                    _ins = new UTestCfg();
                 }
                 return _ins;
             }
@@ -32,7 +32,7 @@
                 }
             }
         }
-        public string DefaultTag { get { return "我的大脑"; } }
+        
         
 
     }

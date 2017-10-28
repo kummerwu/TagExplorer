@@ -239,16 +239,16 @@
       <DependentUpon>SearchResultListBox.xaml</DependentUpon>
     </Compile>
     <Compile Include="UriMgr\IDisposableFactory.cs" />
-    <Compile Include="Utils\Cfg\AppCfg.cs" />
+    <Compile Include="Utils\Cfg\DynamicCfg.cs" />
     <Compile Include="Utils\Path\CfgPath.cs" />
     <Compile Include="Utils\Clip\ClipBoardSafe.cs" />
     <Compile Include="Utils\FileIO\FileWatcherSafe.cs" />
     <Compile Include="Utils\FileIO\NtfsFileID.cs" />
     <Compile Include="UriMgr\UriQueryAnalyser.cs" />
-    <Compile Include="Utils\Cfg\Cfg.cs" />
+    <Compile Include="Utils\Cfg\UTestCfg.cs" />
     <Compile Include="Utils\Clip\ClipboardConst.cs" />
     <Compile Include="Utils\FileIO\FileShell.cs" />
-    <Compile Include="Utils\Cfg\CfgTagGraph.cs" />
+    <Compile Include="Utils\Cfg\StaticCfg.cs" />
     <Compile Include="Utils\FileIO\GIconHelper.cs" />
     <Compile Include="Utils\Logger.cs" />
     <Compile Include="TagMgr\ITagDB.cs" />
@@ -260,7 +260,6 @@
     <Compile Include="UriMgr\UriDBFactory.cs" />
     <Compile Include="Utils\OpenWithList.cs" />
     <Compile Include="Utils\Path\PathHelper.cs" />
-    <Compile Include="Utils\Cfg\CfgPerformance.cs" />
     <Compile Include="Utils\Path\TemplateHelper.cs" />
     <Compile Include="Utils\TipsCenter.cs" />
     <Compile Include="Utils\Net\WebHelper.cs" />

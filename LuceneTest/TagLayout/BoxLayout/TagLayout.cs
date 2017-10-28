@@ -61,8 +61,8 @@ namespace TagExplorer.BoxLayout
 
             //计算布局信息
             GBoxObj gobj = GBoxObj.LayoutTag(tag, db, Top, Left);
-            layoutSize.Height = gobj.OuterBox.Height + CfgTagGraph.Ins.LayoutYPadding + Top;
-            layoutSize.Width = gobj.OuterBox.Width + CfgTagGraph.Ins.LayoutXPadding + Left;
+            layoutSize.Height = gobj.OuterBox.Height + StaticCfg.Ins.LayoutYPadding + Top;
+            layoutSize.Width = gobj.OuterBox.Width + StaticCfg.Ins.LayoutXPadding + Left;
             rootPos.X = gobj.ColorBox.X;
             rootPos.Y = gobj.ColorBox.Y;
 

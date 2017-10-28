@@ -10,7 +10,7 @@ namespace UTLT
         [AssemblyInitialize()]
         public static void AssemblyInit(TestContext context)
         {
-            Cfg.Ins.IsUTest = true;
+            UTestCfg.Ins.IsUTest = true;
             string d1 = CfgPath.DocBasePath;
             d1 = CfgPath.DocDir;
         }

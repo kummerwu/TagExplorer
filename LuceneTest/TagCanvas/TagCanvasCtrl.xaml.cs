@@ -12,6 +12,7 @@ using TagExplorer.TagLayout.TreeLayout;
 using TagExplorer.TagMgr;
 using TagExplorer.UriMgr;
 using TagExplorer.Utils;
+using TagExplorer.Utils.Cfg;
 
 namespace TagExplorer.TagCanvas
 {
@@ -64,22 +65,22 @@ namespace TagExplorer.TagCanvas
             {
                 if(CanvasType == LayoutCanvas.MAIN_CANVAS)
                 {
-                    AppCfg.Ins.MainCanvasRoot = tag;
+                    DynamicCfg.Ins.ChangeMainCanvasRoot( tag);
                 }
                 else
                 {
-                    AppCfg.Ins.SubCanvasRoot = tag;
+                    DynamicCfg.Ins.ChangeSubCanvasRoot( tag);
                 }
             }
             else
             {
                 if (CanvasType == LayoutCanvas.MAIN_CANVAS)
                 {
-                    tag = AppCfg.Ins.MainCanvasRoot;
+                    tag = DynamicCfg.Ins.MainCanvasRoot;
                 }
                 else
                 {
-                    tag = AppCfg.Ins.SubCanvasRoot;
+                    tag = DynamicCfg.Ins.SubCanvasRoot;
                 }
             }
             rootTag = tag;
@@ -417,9 +418,12 @@ namespace TagExplorer.TagCanvas
         private List<string> lastTags = new List<string>();
         private void KeepVDir(string tag)
         {
+            if (!StaticCfg.Ins.Opt.KeepVDir) return;
+
+
             if (!lastTags.Contains(tag))
             {
-                while (lastTags.Count >= CfgPerformance.MAX_TAG_VDIR)
+                while (lastTags.Count >= StaticCfg.Ins.MAX_TAG_VDIR)
                 {
                     lastTags.RemoveAt(0);
                 }
@@ -445,7 +449,7 @@ namespace TagExplorer.TagCanvas
 
             foreach (DirectoryInfo v in vdirs)
             {
-                if (!lastTags.Contains(v.Name) && vDirCount > CfgPerformance.MAX_TAG_VDIR)
+                if (!lastTags.Contains(v.Name) && vDirCount > StaticCfg.Ins.MAX_TAG_VDIR)
                 {
                     v.Delete();
                     vDirCount--;

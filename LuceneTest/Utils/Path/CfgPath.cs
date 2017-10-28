@@ -27,7 +27,17 @@ namespace TagExplorer.Utils
             {
                 if (rootPath == null)
                 {
-                    rootPath = ConfigurationManager.AppSettings["RootDir"];
+                    string tmp = ConfigurationManager.AppSettings["RootDir"];
+                    string[] paths = tmp.Split(' ');
+                    foreach(string p in paths)
+                    {
+                        if(Directory.Exists(p))
+                        {
+                            rootPath = p;
+                            break;
+                        }
+
+                    }
                     return rootPath;
 
                 }
@@ -41,7 +51,8 @@ namespace TagExplorer.Utils
         //Root根目录下的一级目录下的文件
         public static string IniFilePath { get { return Path.Combine(RootPath, "TagExplorer.ini"); } }
         public static string LayoutCfgFilePath { get { return Path.Combine(RootPath, "TagExplorerLayout.xml"); } }
-        public static string CfgTagGraphFilePath { get { return Path.Combine(RootPath, "CfgTagGraph.json"); } }
+        public static string StaticCfg { get { return Path.Combine(RootPath, "StaticCfg.json"); } }
+        public static string DynamicCfg { get { return Path.Combine(RootPath, "DynamicCfg.json"); } }
 
         //Root根目录下的一级目录下的文件夹
         public static string TagDBPath { get { return Path.Combine(RootPath, "TagDB"); } }

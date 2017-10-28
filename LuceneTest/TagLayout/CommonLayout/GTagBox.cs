@@ -26,19 +26,19 @@ namespace TagExplorer.TagLayout.LayoutCommon
         public Size OutterBoxSize;
         private void PreCalcBoxSize()
         {
-            FontSize = CfgTagGraph.Ins.FontSize;
-            InnerBoxXPadding = CfgTagGraph.Ins.InnerBoxXPadding_MAX;
-            InnerBoxYPadding = CfgTagGraph.Ins.InnerBoxYPadding_MAX;
+            FontSize = StaticCfg.Ins.FontSize;
+            InnerBoxXPadding = StaticCfg.Ins.InnerBoxXPadding_MAX;
+            InnerBoxYPadding = StaticCfg.Ins.InnerBoxYPadding_MAX;
             for (int i = 0; i < Distance; i++)
             {
-                FontSize /= CfgTagGraph.Ins.ScaleInRadio;
-                InnerBoxXPadding /= CfgTagGraph.Ins.ScaleInRadio;
-                InnerBoxYPadding /= CfgTagGraph.Ins.ScaleInRadio;
+                FontSize /= StaticCfg.Ins.ScaleInRadio;
+                InnerBoxXPadding /= StaticCfg.Ins.ScaleInRadio;
+                InnerBoxYPadding /= StaticCfg.Ins.ScaleInRadio;
             }
 
-            InnerBoxXPadding = Math.Max(InnerBoxXPadding, CfgTagGraph.Ins.InnerBoxXPadding_MIN);
-            InnerBoxYPadding = Math.Max(InnerBoxYPadding, CfgTagGraph.Ins.InnerBoxYPadding_MIN);
-            FontSize = Math.Max(FontSize, CfgTagGraph.Ins.MinFontSize);
+            InnerBoxXPadding = Math.Max(InnerBoxXPadding, StaticCfg.Ins.InnerBoxXPadding_MIN);
+            InnerBoxYPadding = Math.Max(InnerBoxYPadding, StaticCfg.Ins.InnerBoxYPadding_MIN);
+            FontSize = Math.Max(FontSize, StaticCfg.Ins.MinFontSize);
         }
 
         
@@ -87,7 +87,7 @@ namespace TagExplorer.TagLayout.LayoutCommon
                     System.Globalization.CultureInfo.InvariantCulture,
                     FlowDirection.LeftToRight,
                     new Typeface(fname),
-                    CfgTagGraph.Ins.FontSize,
+                    StaticCfg.Ins.FontSize,
                     Brushes.Black
                 );
                 tmp = new Size(formattedText.WidthIncludingTrailingWhitespace, formattedText.Height);
@@ -95,8 +95,8 @@ namespace TagExplorer.TagLayout.LayoutCommon
 
             }
             tmp = (Size)cache[tag] ;
-            tmp.Width = tmp.Width * fsize / CfgTagGraph.Ins.FontSize + CfgTagGraph.Ins.XContentPadding;
-            tmp.Height = tmp.Height * fsize / CfgTagGraph.Ins.FontSize + CfgTagGraph.Ins.YContentPadding;
+            tmp.Width = tmp.Width * fsize / StaticCfg.Ins.FontSize + StaticCfg.Ins.XContentPadding;
+            tmp.Height = tmp.Height * fsize / StaticCfg.Ins.FontSize + StaticCfg.Ins.YContentPadding;
             return tmp;
         }
     }
@@ -127,7 +127,7 @@ namespace TagExplorer.TagLayout.LayoutCommon
             Direct = direct;
 
             //计算大小
-            Inf = new TagBoxSizeInf(tag, distance, CfgTagGraph.Ins.GFontName);
+            Inf = new TagBoxSizeInf(tag, distance, StaticCfg.Ins.GFontName);
 
             //*****计算位置*****************
             //计算OutterBox

@@ -10,7 +10,7 @@ using TagExplorer.TagLayout.TreeLayout;
 using TagExplorer.TagMgr;
 using TagExplorer.UriMgr;
 using TagExplorer.Utils;
-
+using TagExplorer.Utils.Cfg;
 using Xceed.Wpf.AvalonDock.Layout.Serialization;
 
 namespace TagExplorer
@@ -61,7 +61,7 @@ namespace TagExplorer
             autoTextBox.SearchDataProvider = tagDB;
             tagCanvas.InitDB(tagDB,uriDB);
             tagCanvas.SelectedTagChanged += SelectedTagChanged_Callback;
-            ShowTagGraph(AppCfg.Ins.MainCanvasRoot,AppCfg.Ins.SubCanvasRoot);
+            ShowTagGraph(DynamicCfg.Ins.MainCanvasRoot, DynamicCfg.Ins.SubCanvasRoot);
 
             IDisposableFactory.New<MainWindow>(this);
 
@@ -225,7 +225,7 @@ namespace TagExplorer
             if (GLayoutMode.mode == LayoutMode.GRAPH_UPDOWN)
                 GLayoutMode.mode = 0;
             else GLayoutMode.mode = (GLayoutMode.mode + 1);
-            ShowTagGraph(AppCfg.Ins.MainCanvasRoot,AppCfg.Ins.SubCanvasRoot);
+            ShowTagGraph(DynamicCfg.Ins.MainCanvasRoot, DynamicCfg.Ins.SubCanvasRoot);
         }
 
         public void Dispose()
@@ -284,7 +284,7 @@ namespace TagExplorer
                 DateTime t1 = DateTime.Now;
                 for (int i = 0; i < 20; i++)
                 {
-                    ShowTagGraph(Cfg.Ins.DefaultTag, Cfg.Ins.DefaultTag);
+                    ShowTagGraph(StaticCfg.Ins.DefaultTag, StaticCfg.Ins.DefaultTag);
                 }
                 DateTime t2 = DateTime.Now;
                 MessageBox.Show("总共耗时:" + (t2 - t1).TotalSeconds+TreeLayoutEnv.StatInf);

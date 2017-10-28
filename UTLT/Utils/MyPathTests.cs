@@ -188,9 +188,9 @@ namespace AnyTags.Net.Tests
         [TestMethod]
         public void TestFS_LRUTag1()
         {
-            
 
-            CfgPerformance.LRU_MAX_CNT = 4;
+
+            StaticCfg.Ins.LRU_MAX_CNT = 4;
             UTLT.UTest_Tag.AssertListEqual(LRUTag.Ins.GetTags(),new List<string>());
             LRUTag.Ins.Add("tag1");
             UTLT.UTest_Tag.AssertListEqual(LRUTag.Ins.GetTags(), 
@@ -217,7 +217,7 @@ namespace AnyTags.Net.Tests
         [TestMethod]
         public void TestFS_LRUTag2()
         {
-            CfgPerformance.LRU_MAX_CNT = 4;
+            StaticCfg.Ins.LRU_MAX_CNT = 4;
             TestFS_LRUTag1();
             LRUTag.Ins.Dispose();
             UTLT.UTest_Tag.AssertListEqual(LRUTag.Ins.GetTags(),
@@ -231,8 +231,8 @@ namespace AnyTags.Net.Tests
         [TestMethod]
         public void TestFS_LRUTag3()
         {
-            
-            CfgPerformance.LRU_MAX_CNT = 4;
+
+            StaticCfg.Ins.LRU_MAX_CNT = 4;
             UTLT.UTest_Tag.AssertListEqual(LRUTag.Ins.GetTags(), new List<string>());
             LRUTag.Ins.Add("tag1");
             UTLT.UTest_Tag.AssertListEqual(LRUTag.Ins.GetTags(),

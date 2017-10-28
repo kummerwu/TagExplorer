@@ -14,7 +14,7 @@ namespace UTLT
         [TestInitialize]
         public void setup()
         {
-            Cfg.Ins.IsUTest = true;
+            UTestCfg.Ins.IsUTest = true;
             
         }
         [TestMethod]

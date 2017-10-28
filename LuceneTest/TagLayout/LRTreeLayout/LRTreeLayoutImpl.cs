@@ -65,8 +65,8 @@ namespace TagExplorer.TagLayout.LRTreeLayout
             root.Move(-1 * root.GTagBox.InnerBox.Width / 2, 0);
             env.Add(tag, root);
             double l, r;
-            l = root.GTagBox.InnerBoxLeftTop.X - CfgTagGraph.Ins.LayoutXPadding*5;
-            r = root.GTagBox.InnerBoxLeftTop.X + root.GTagBox.InnerBox.Width + CfgTagGraph.Ins.LayoutXPadding*5;
+            l = root.GTagBox.InnerBoxLeftTop.X - StaticCfg.Ins.LayoutXPadding*5;
+            r = root.GTagBox.InnerBoxLeftTop.X + root.GTagBox.InnerBox.Width + StaticCfg.Ins.LayoutXPadding*5;
             //outterbox = root.GTagBox.InnerBox;
             outterbox = Rect.Empty;
             

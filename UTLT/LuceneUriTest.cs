@@ -13,7 +13,7 @@ namespace UTLT
         [TestInitialize]
         public void setup()
         {
-            Cfg.Ins.IsUTest = true;
+            UTestCfg.Ins.IsUTest = true;
             //if (!System.IO.Directory.Exists(Cfg.Ins.TagDB))
             //{
             //    System.IO.Directory.CreateDirectory(Cfg.Ins.TagDB);

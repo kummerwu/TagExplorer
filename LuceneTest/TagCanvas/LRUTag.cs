@@ -55,7 +55,7 @@ namespace TagExplorer
                 }
                 else
                 {
-                    return Cfg.Ins.DefaultTag;
+                    return StaticCfg.Ins.DefaultTag;
                 }
             }
         }
@@ -72,7 +72,7 @@ namespace TagExplorer
             {
                 tags.Remove(tag);
             }
-            else if(tags.Count>=CfgPerformance.LRU_MAX_CNT)
+            else if(tags.Count>=StaticCfg.Ins.LRU_MAX_CNT)
             {
                 tags.RemoveAt(0);
             }

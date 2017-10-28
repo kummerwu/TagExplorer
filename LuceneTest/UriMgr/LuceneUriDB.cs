@@ -30,7 +30,7 @@ namespace TagExplorer.UriMgr
         {
             Logger.I("Create LuceneUriDB Instance!");
             bool create = true;
-            if (Cfg.Ins.IsUTest)
+            if (UTestCfg.Ins.IsUTest)
             {
                 dir = new RAMDirectory();
                 create = true;
@@ -125,7 +125,7 @@ namespace TagExplorer.UriMgr
             try
             {
                 query = parser.Parse(querystr);
-                ScoreDoc[] docs = search.Search(query, CfgPerformance.TAG_MAX_RELATION).ScoreDocs;
+                ScoreDoc[] docs = search.Search(query, StaticCfg.Ins.TAG_MAX_RELATION).ScoreDocs;
                 for (int i = 0; i < docs.Length; i++)
                 {
                     Document doc = search.Doc(docs[i].Doc);
