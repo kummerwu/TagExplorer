@@ -279,15 +279,15 @@ namespace TagExplorer
 
         private void test_Click(object sender, RoutedEventArgs e)
         {
-            if (MessageBox.Show("开始10次show根节点","测试",MessageBoxButton.OKCancel) == MessageBoxResult.OK)
+            if (MessageBox.Show("开始20次show根节点","测试",MessageBoxButton.OKCancel) == MessageBoxResult.OK)
             {
                 DateTime t1 = DateTime.Now;
-                for (int i = 0; i < 10; i++)
+                for (int i = 0; i < 20; i++)
                 {
                     ShowTagGraph(Cfg.Ins.DefaultTag, Cfg.Ins.DefaultTag);
                 }
                 DateTime t2 = DateTime.Now;
-                MessageBox.Show("总共耗时:" + (t2 - t1).TotalSeconds+"new reuse,ret tag = "+TreeLayoutEnv.Ins.newTag+" "+TreeLayoutEnv.Ins.reuseTag+" " +TreeLayoutEnv.Ins.retTag);
+                MessageBox.Show("总共耗时:" + (t2 - t1).TotalSeconds+TreeLayoutEnv.StatInf);
             }
         }
 

@@ -26,6 +26,7 @@ namespace TagExplorer.TagLayout.CommonLayout
     {
         MAIN_CANVAS,
         SUB_CANVAS,
+        MAX_CANVAS,
     }
     //当前的布局模式选择
     public class GLayoutMode

@@ -34,15 +34,15 @@ namespace TagExplorer.TagLayout.TreeLayout
         private Size oriSize;
         public List<TagBox> tags = null;
         public IEnumerable<UIElement> lines = null;
-        public void Layout(ITagDB db, string tag,Size size)
+        public void Layout(ITagDB db, string tag,Size size,TreeLayoutEnv env)
         {
             oriSize = size;
-            TreeLayoutEnv.Ins.Reset();
+            env.Reset();
             tags = new List<TagBox>();
             this.db = db;
-            root = GTagBoxTree.ExpandNode(tag, 0, db,0,0,1,oriSize);
-            tags = TreeLayoutEnv.Ins.GetAllTagBox();
-            lines = TreeLayoutEnv.Ins.GetAllLines().Cast<UIElement>();
+            root = GTagBoxTree.ExpandNode(tag, 0, db,0,0,1,oriSize,env);
+            tags = env.GetAllTagBox();
+            lines = env.GetAllLines().Cast<UIElement>();
 
         }
         

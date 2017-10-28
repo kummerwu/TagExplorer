@@ -43,12 +43,12 @@ namespace TagExplorer.TagLayout.LRTreeLayout
         private Size oriSize;
         public List<TagBox> tags = new List<TagBox>();
         public IEnumerable<UIElement> lines = null;
-        public void Layout(ITagDB db, string tag,Size size)
+        public void Layout(ITagDB db, string tag,Size size,TreeLayoutEnv env)
         {
             oriSize = size;
             this.db = db;
 
-            TreeLayoutEnv.Ins.Reset();
+            env.Reset();
             tags.Clear();
             GTagBoxTree subTree = null;
             double y = 0;
@@ -63,7 +63,7 @@ namespace TagExplorer.TagLayout.LRTreeLayout
             //TagBox box = UIElementFactory.CreateTagBox(tagbox);
             root.GTagBox = new GTagBox(0, tag, centerX, 0, 1);
             root.Move(-1 * root.GTagBox.InnerBox.Width / 2, 0);
-            TreeLayoutEnv.Ins.Add(tag, root);
+            env.Add(tag, root);
             double l, r;
             l = root.GTagBox.InnerBoxLeftTop.X - CfgTagGraph.Ins.LayoutXPadding*5;
             r = root.GTagBox.InnerBoxLeftTop.X + root.GTagBox.InnerBox.Width + CfgTagGraph.Ins.LayoutXPadding*5;
@@ -87,7 +87,7 @@ namespace TagExplorer.TagLayout.LRTreeLayout
                 }
 
 
-                subTree = GTagBoxTree.ExpandNode(c, 1, db, direct==1?r:l, y, direct,size);
+                subTree = GTagBoxTree.ExpandNode(c, 1, db, direct==1?r:l, y, direct,size,env);
                 children[idx] = subTree;
                 if(idx==0)
                 {
@@ -98,7 +98,7 @@ namespace TagExplorer.TagLayout.LRTreeLayout
                     outterbox.Union(subTree.TotalRange);
                 }
                 root.Children.Add(subTree);
-                TreeLayoutEnv.Ins.AddLine(root, subTree, direct);
+                env.AddLine(root, subTree, direct);
                 y += subTree.TotalRange.Height;
                 idx++;
             }
@@ -114,8 +114,8 @@ namespace TagExplorer.TagLayout.LRTreeLayout
                 root.Move(-outterbox.X, 0);
             }
             //ShowParent(root);
-            tags = TreeLayoutEnv.Ins.GetAllTagBox();
-            lines = TreeLayoutEnv.Ins.GetAllLines().Cast<UIElement>();
+            tags = env.GetAllTagBox();
+            lines = env.GetAllLines().Cast<UIElement>();
         }
         //private void ShowParent(GTagBoxTree root)
         //{

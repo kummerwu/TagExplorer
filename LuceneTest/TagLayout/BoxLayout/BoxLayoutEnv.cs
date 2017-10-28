@@ -26,7 +26,7 @@ namespace TagExplorer.BoxLayout
                 if (gobjMaps[g.Tag] == null)
                 {
                     gobjMaps.Add(g.Tag, g);
-                    TagBox b = UIElementFactory.CreateTagBox(g.GTagBox);
+                    TagBox b = UIElementFactory.CreateTagBox(g.GTagBox,null);
                     allTxt.Add(b);
                 }
             }

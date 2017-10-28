@@ -94,7 +94,9 @@ namespace TagExplorer.TagCanvas
             GLayoutMode.mode = bak;
         }
 
-        private List<TagBox> lastTagboxs = null;
+        private List<TagBox> allTagBox = new List<TagBox>();
+        private List<System.Windows.Shapes.Path> allLine = new List<System.Windows.Shapes.Path>();
+        private TreeLayoutEnv env = new TreeLayoutEnv();
         private void RedrawGraph_()
         {
             if (TagDB != null && rootTag != null && oriSize.Height!=0 && oriSize.Width!=0 && !oriSize.IsEmpty)
@@ -103,28 +105,36 @@ namespace TagExplorer.TagCanvas
                 //this.TagDB = tagDB;
                 //this.rootTag = root;
                 
-                canvas.Children.Clear();
-                if (lastTagboxs != null)
+                //canvas.Children.Clear();
+                if (allTagBox != null)
                 {
-                    //TreeLayoutEnv.Ins.Return(lastTagboxs);
+                    env.Return(allTagBox);
+                }
+                if(allLine!=null)
+                {
+                    env.Return(allLine);
                 }
                 //canvasRecentTags.Children.Clear();
 
                 //计算有向图布局
                 ITagLayout tagLayout = TagLayoutFactory.CreateLayout();
-                tagLayout.Layout(TagDB, rootTag,oriSize);
+                tagLayout.Layout(TagDB, rootTag,oriSize,env);
 
                 //将有向图中的元素显示在界面上
                 IEnumerable<UIElement> lines = tagLayout.Lines;
                 IEnumerable<UIElement> allTxt = tagLayout.TagArea;
-                lastTagboxs = allTxt as List<TagBox>;
+                allTagBox = allTxt as List<TagBox>;
+                allLine = lines as List<System.Windows.Shapes.Path>;
                 canvas.Width = tagLayout.Size.Width;
                 layoutHeight = tagLayout.Size.Height;
                 SetHeight();
 
                 foreach (UIElement l in lines)
                 {
-                    canvas.Children.Add(l);
+                    if (!l.IsVisible)
+                    {
+                        canvas.Children.Add(l);
+                    }
                 }
                 foreach (TagBox t in allTxt)
                 {
@@ -134,8 +144,9 @@ namespace TagExplorer.TagCanvas
                         t.ContextMenu = TagAreaMenu;
                         t.MouseLeftButtonDown += Tag_MouseLeftButtonDown;
                         t.MouseDoubleClick += Tag_MouseDoubleClick;
+                        canvas.Children.Add(t);
                     }
-                    canvas.Children.Add(t);
+                    
                 }
                 //UpdateRecentTags(root);
                 //SetCurrentTag(root);

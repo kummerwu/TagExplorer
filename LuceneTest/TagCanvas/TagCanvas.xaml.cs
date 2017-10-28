@@ -210,10 +210,10 @@ namespace TagExplorer
             double top = 0, left = 0;
             for (int i = 0; i < tags.Count; i++)
             {
-                TagBox box = UIElementFactory.CreateTagBox(new TagLayout.LayoutCommon.GTagBox(4,tags[i],left,top,1));//GStyle.Apply(left, top, tags[i]);
-                recentTags.Add(box);
-                left += box.Width1;
-                left += 10;
+                //TagBox box = UIElementFactory.CreateTagBox(new TagLayout.LayoutCommon.GTagBox(4,tags[i],left,top,1));//GStyle.Apply(left, top, tags[i]);
+                //recentTags.Add(box);
+                //left += box.Width1;
+                //left += 10;
             }
             //canvasRecentTags.Children.Clear();
             foreach (TagBox t in recentTags)

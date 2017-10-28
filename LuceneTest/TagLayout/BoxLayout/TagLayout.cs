@@ -3,6 +3,7 @@ using System.Windows;
 using TagExplorer.TagMgr;
 using TagExplorer.Utils;
 using TagExplorer.TagLayout;
+using TagExplorer.TagLayout.TreeLayout;
 
 namespace TagExplorer.BoxLayout
 {
@@ -52,7 +53,7 @@ namespace TagExplorer.BoxLayout
         private Point rootPos = new Point();
         private List<UIElement> lines = null, allTxt = null,recentTags = null;
 
-        public void Layout(ITagDB db, string tag,Size size)
+        public void Layout(ITagDB db, string tag,Size size,TreeLayoutEnv env)
         {
             double Top = 0;// GConfig.FontSize;
             double Left = 0;

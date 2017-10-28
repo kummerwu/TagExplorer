@@ -14,10 +14,10 @@ namespace AnyTagNet
     class UIElementFactory
     {
 
-        public static TagBox CreateTagBox(GTagBox g)
+        public static TagBox CreateTagBox(GTagBox g,TreeLayoutEnv env)
         {
-            //TagBox b = new TagBox(g);
-            TagBox b = TreeLayoutEnv.Ins.New(g);
+            TagBox b = (env==null)?new TagBox(g): env.New(g);
+            
             b.FontFamily = CfgTagGraph.Ins.GFontF;
             b.FontSize = g.FontSize;
             b.Height1 = g.InnerBox.Height;
@@ -54,7 +54,7 @@ namespace AnyTagNet
             }
             return l;
         }
-        public static Path CreateBezier(Tuple<GTagBoxTree, GTagBoxTree, int> p_c)
+        public static Path CreateBezier(Tuple<GTagBoxTree, GTagBoxTree, int> p_c,TreeLayoutEnv env)
         {
             GTagBoxTree p = p_c.Item1;
             GTagBoxTree c = p_c.Item2;
@@ -91,36 +91,48 @@ namespace AnyTagNet
 
 
 
+            Path path = env.New(p_c);
+           
+
+            if (path.Data == null)
+            { 
+                PathGeometry pg = new PathGeometry();
+                PathFigureCollection pfc = new PathFigureCollection();
+                PathFigure pf = new PathFigure();
+                BezierSegment seg1 = new BezierSegment(p1, p2, p3, true);
+                seg1.IsSmoothJoin = true;
+                BezierSegment seg2 = new BezierSegment(p3, p4, p5, true);
+                seg2.IsSmoothJoin = true;
+
+                //Path->PathGeometry->PathFigureCollection->PathFigure->PathSegmentCollection->BezierSegment
+                path.Data = pg;
+                //PathGeometry
+                pg.Figures = pfc;
+                //PathFigureCollection
+                pfc.Add(pf);
+            
+                //PF
+                pf.StartPoint = p1;
+                pf.Segments.Add(seg1);
+                pf.Segments.Add(seg2);
+                pg.Figures.Add(pf);
 
 
-
-            BezierSegment b1 = new BezierSegment(p1, p2, p3, true);
-            b1.IsSmoothJoin = true;
-            BezierSegment b2 = new BezierSegment(p3, p4, p5, true);
-            b2.IsSmoothJoin = true;
-
-
-            Path myPath = new Path();
-            SetBezierStyle(p.GTagBox, c.GTagBox, myPath);
-            PathGeometry pg = new PathGeometry();
-
-            PathFigure pf = new PathFigure();
-
-            //Path
-            myPath.Data = pg;
-            //PG
-            pg.Figures = new PathFigureCollection();
-            pg.Figures.Add(pf);
-            //PF
-            pf.StartPoint = p1;
-            pf.Segments.Add(b1);
-            pf.Segments.Add(b2);
-            pg.Figures.Add(pf);
-
-
-            myPath.Data = pg;
-
-            return myPath;
+            }
+            else
+            {
+                PathGeometry pg = path.Data as PathGeometry;
+                PathFigureCollection pfc = pg.Figures as PathFigureCollection;
+                PathFigure pf = pfc[0] as PathFigure;
+                pf.StartPoint = p1;
+                BezierSegment seg1 = pf.Segments[0] as BezierSegment;
+                BezierSegment seg2 = pf.Segments[1] as BezierSegment;
+                seg1.Point1 = p1;   seg1.Point2 = p2;   seg1.Point3 = p3;
+                seg2.Point1 = p3;   seg2.Point2 = p4;   seg2.Point3 = p5;
+                //pg.Figures.Add(pf);
+            }
+            SetBezierStyle(p.GTagBox, c.GTagBox, path);
+            return path;
         }
 
 

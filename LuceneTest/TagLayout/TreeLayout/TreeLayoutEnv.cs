@@ -3,13 +3,13 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Windows;
 using System.Windows.Shapes;
+using TagExplorer.TagLayout.CommonLayout;
 using TagExplorer.TagLayout.LayoutCommon;
 
 namespace TagExplorer.TagLayout.TreeLayout
 {
-    class TreeLayoutEnv
+    public class TreeLayoutEnv
     {
         public void Reset()
         {
@@ -37,13 +37,21 @@ namespace TagExplorer.TagLayout.TreeLayout
         {
             Lines.Add(new Tuple<GTagBoxTree, GTagBoxTree, int>(parent, child, direct));
         }
-        private static TreeLayoutEnv ins = null;
-        public static TreeLayoutEnv Ins
-        {
-            get
-            {
-                if (ins == null) ins = new TreeLayoutEnv();
-                return ins;
+        //private static TreeLayoutEnv ins = null;
+        //private static TreeLayoutEnv Ins
+        //{
+        //    get
+        //    {
+        //        if (ins == null) ins = new TreeLayoutEnv();
+        //        return ins;
+        //    }
+        //}
+
+        public static string StatInf {
+            get {
+                return "new reuse,ret tag = " + newTag + " " + reuseTag + " " + retTag
+                    + "\r\n Line:new reuse ,ret = " + newLine + " " + reuseLine + " " + retLine;
+                    ;
             }
         }
 
@@ -54,9 +62,9 @@ namespace TagExplorer.TagLayout.TreeLayout
             retTag += lst.Count;
             reuseList.AddRange(lst);
         }
-        public int newTag = 0;
-        public int retTag = 0;
-        public int reuseTag = 0;
+        private static int newTag = 0;
+        private static int retTag = 0;
+        private static int reuseTag = 0;
         public TagBox New(GTagBox g)
         {
             if(reuseList.Count>0)
@@ -64,6 +72,7 @@ namespace TagExplorer.TagLayout.TreeLayout
                 reuseTag++;
                 TagBox b = reuseList[0] as TagBox;
                 reuseList.RemoveAt(0);
+                b.Visibility = System.Windows.Visibility.Visible;
                 return b;
             }
             else
@@ -73,12 +82,46 @@ namespace TagExplorer.TagLayout.TreeLayout
             }
         }
         ///////////////
+        private static int newLine = 0;
+        private static int retLine = 0;
+        private static int reuseLine = 0;
+
+        private List<Path> reuseLineList = new List<Path>();
+        public void Return(List<Path> lst)
+        {
+            retLine += lst.Count;
+            reuseLineList.AddRange(lst);
+        }
+        
+        public Path New(Tuple<GTagBoxTree, GTagBoxTree, int> p_c)
+        {
+            if (reuseLineList.Count > 0)
+            {
+                reuseLine++;
+                Path b = reuseLineList[0] as Path;
+                reuseLineList.RemoveAt(0);
+                b.Visibility = System.Windows.Visibility.Visible;
+                return b;
+            }
+            else
+            {
+                newLine++;
+                return new Path();
+            }
+        }
+
+        
+        // ///////////////////////////////
         public List<TagBox> GetAllTagBox()
         {
             List<TagBox> result = new List<TagBox>();
-            foreach (GTagBoxTree obj in TreeLayoutEnv.Ins.All)
+            foreach(TagBox b in reuseList)
             {
-                result.Add(UIElementFactory.CreateTagBox(obj.GTagBox));
+                b.Visibility = System.Windows.Visibility.Collapsed;
+            }
+            foreach (GTagBoxTree obj in All)
+            {
+                result.Add(UIElementFactory.CreateTagBox(obj.GTagBox,this));
             }
             return result;
         }
@@ -86,11 +129,17 @@ namespace TagExplorer.TagLayout.TreeLayout
         public List<Path> GetAllLines()
         {
             List<Path> result = new List<Path>();
-            foreach (Tuple<GTagBoxTree, GTagBoxTree,int> p_c in TreeLayoutEnv.Ins.Lines)
+            foreach (Path b in reuseLineList)
             {
-                result.Add(UIElementFactory.CreateBezier(p_c));
+                b.Visibility = System.Windows.Visibility.Collapsed;
+            }
+            foreach (Tuple<GTagBoxTree, GTagBoxTree,int> p_c in Lines)
+            {
+                result.Add(UIElementFactory.CreateBezier(p_c,this));
             }
             return result;
         }
+
+        
     }
 }
