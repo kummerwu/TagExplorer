@@ -1,5 +1,6 @@
 ﻿using AnyTagNet;
 using System;
+using System.Collections;
 using System.Windows;
 using System.Windows.Media;
 using TagExplorer.Utils;
@@ -39,19 +40,12 @@ namespace TagExplorer.TagLayout.LayoutCommon
             InnerBoxYPadding = Math.Max(InnerBoxYPadding, CfgTagGraph.Ins.InnerBoxYPadding_MIN);
             FontSize = Math.Max(FontSize, CfgTagGraph.Ins.MinFontSize);
         }
+
+        
         //计算自身内容所占区域的大小（文本和着色区域）
         private void CalcBoxSize(string fname)
         {
-            FormattedText formattedText = new FormattedText(
-                Tag,
-                System.Globalization.CultureInfo.InvariantCulture,
-                FlowDirection.LeftToRight,
-                new Typeface(fname),
-                FontSize,
-                Brushes.Black
-            );
-            Size tmp = new Size(formattedText.WidthIncludingTrailingWhitespace + CfgTagGraph.Ins.XContentPadding,
-                                    formattedText.Height + CfgTagGraph.Ins.YContentPadding);
+            Size tmp = FCalc.Ins.Calc(Tag, FontSize, fname);
             InnerBoxSize.Width = tmp.Width;
             InnerBoxSize.Height = tmp.Height;
 
@@ -59,6 +53,51 @@ namespace TagExplorer.TagLayout.LayoutCommon
             OutterBoxSize.Height = InnerBoxSize.Height + InnerBoxYPadding;
 
 
+        }
+    }
+
+    public class FCalc
+    {
+        private static FCalc ins;
+        public static FCalc Ins
+        {
+            get
+            {
+                if (ins == null)
+                {
+                    ins = new FCalc();
+                }
+                return ins;
+            }
+        }
+
+        Hashtable cache = new Hashtable();
+        public Size Calc(string tag,double fsize,string fname)
+        {
+            Size tmp;
+            if (cache[tag] == null)
+            {
+                //cache内容过多，直接将所有数据全部老化。
+                if(cache.Keys.Count>2000)
+                {
+                    cache.Clear();
+                }
+                FormattedText formattedText = new FormattedText(
+                    tag,
+                    System.Globalization.CultureInfo.InvariantCulture,
+                    FlowDirection.LeftToRight,
+                    new Typeface(fname),
+                    CfgTagGraph.Ins.FontSize,
+                    Brushes.Black
+                );
+                tmp = new Size(formattedText.WidthIncludingTrailingWhitespace, formattedText.Height);
+                cache.Add(tag, tmp); 
+
+            }
+            tmp = (Size)cache[tag] ;
+            tmp.Width = tmp.Width * fsize / CfgTagGraph.Ins.FontSize + CfgTagGraph.Ins.XContentPadding;
+            tmp.Height = tmp.Height * fsize / CfgTagGraph.Ins.FontSize + CfgTagGraph.Ins.YContentPadding;
+            return tmp;
         }
     }
     /// <summary>
