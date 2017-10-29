@@ -122,7 +122,7 @@ namespace TagExplorer
             MainCanvas.RedrawGraph();
             SubCanvas.RedrawGraph();
         }
-        public void ShowGraph(string root,string sub)
+        public void ShowGraph(string root,string sub,string subsel)
         {
             if (root != null)
             {
@@ -131,7 +131,7 @@ namespace TagExplorer
             if (sub != null)
             {
                 MainCanvas.ClearSelected();
-                SubCanvas.ChangeRoot(sub,sub);
+                SubCanvas.ChangeRoot(sub,subsel);
             }
             
         }
@@ -151,7 +151,26 @@ namespace TagExplorer
             }
 
         }
-
+        private List<string> QueryParents(string tag)
+        {
+            List<string> ret = new List<string>();
+            int MAX = 6;
+            string child = tag;
+            while(ret.Count<MAX)
+            {
+                ret.Add(child);
+                List<string> tmp = tagDB.QueryTagParent(child);
+                if(tmp.Count>0)
+                {
+                    child = tmp[0];
+                }
+                else
+                {
+                    break;
+                }
+            }
+            return ret;
+        }
         internal void SearchByTxt(string text)
         {
             //先在main中查找，如果有，切换焦点后返回
@@ -168,27 +187,19 @@ namespace TagExplorer
             //如果不在视图中，但数据库中存在，TODO：如何有效的切换？？是一个需要考虑的问题
             if(tagDB.QueryTagAlias(text).Count>0)
             {
-                List<string> p1s = null, p2s = null, p3s = null;
-                string p1 = null, p2 = null, p3 = null;
-
-                if (!string.IsNullOrEmpty(text))
+                string mainRoot = StaticCfg.Ins.DefaultTag;
+                string subRoot = mainRoot;
+                string subSel = subRoot;
+                List<string> parents = QueryParents(text);
+                int cnt = parents.Count;
+                if(cnt>0)
                 {
-                    p1s = tagDB.QueryTagParent(text);
-                    if (p1s.Count > 0) p1 = p1s[0];
+                    subSel = parents[0];
+                    subRoot = parents[Math.Min(3, cnt - 1)];
+                    mainRoot = parents[Math.Min(6, cnt - 1)];
                 }
-                if (!string.IsNullOrEmpty(p1))
-                {
-                    p2s = tagDB.QueryTagParent(text);
-                    if (p2s.Count > 0) p2 = p2s[0];
-                }
-                if (!string.IsNullOrEmpty(p2))
-                {
-                    p3s = tagDB.QueryTagParent(p2);
-                    if (p3s.Count > 0) p3 = p3s[0];
-                }
-
-                string ppp = p3 != null ? p3 : p2 != null ? p2 : p1 != null ? p1 : text;
-                ShowGraph(ppp, text);
+                
+                ShowGraph(mainRoot, subRoot,subSel);
                 
             }
             //不存在精确匹配的tag
@@ -243,7 +254,7 @@ namespace TagExplorer
 
         internal void HomeTag()
         {
-            ShowGraph(StaticCfg.Ins.DefaultTag, null);
+            ShowGraph(StaticCfg.Ins.DefaultTag, null,null);
         }
 
 

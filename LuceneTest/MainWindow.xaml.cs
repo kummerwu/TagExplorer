@@ -99,7 +99,7 @@ namespace TagExplorer
             Logger.I("Show Tag " + root);
             //CalcCanvasHeight();
             tagCanvas.UriDB = uriDB;
-            tagCanvas.ShowGraph(root,subroot);
+            tagCanvas.ShowGraph(root,subroot,subroot);
         }
 
 
