@@ -52,7 +52,7 @@
 
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
-                                <Image Source="{Binding Path=icon}"  Stretch="None"/>
+                                <Image Source="{Binding Path=Icon}"  Stretch="None"/>
                                 <DataTemplate.Triggers>
                                     <DataTrigger Binding="{Binding Path=Status}" Value="1">
                                         <Setter Property="Image.Opacity" Value="0.5"></Setter>

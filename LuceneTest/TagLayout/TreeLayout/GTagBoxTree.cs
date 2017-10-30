@@ -40,9 +40,9 @@ namespace TagExplorer.TagLayout.TreeLayout
             GTagBox.Move(dx, dy);
             foreach (GTagBoxTree c in Children) c.Move(dx, dy);
         }
-        public void CenterItY()
+        public void CenterRootY()
         {
-            GTagBox.CenterItY(totalRange);
+            GTagBox.CenterRootY(totalRange);
         }
         public static GTagBoxTree ExpandNode(string tag, int level, ITagDB db, double x, double y,int direct,Size size,TreeLayoutEnv env)
         {
@@ -122,7 +122,7 @@ namespace TagExplorer.TagLayout.TreeLayout
             //root.OutBox.Width = w + root.box.InnerBox.Width;
             //root.OutBox.Height = Math.Max(h, root.box.InnerBox.Height);
             //root.GTagBox.InnerBox.Y = (root.TotalRange.Top + root.TotalRange.Bottom) / 2;
-            root.GTagBox.CenterItY(root.totalRange);
+            root.GTagBox.CenterRootY(root.totalRange);
 
             root.D(null);
             Logger.OUT();

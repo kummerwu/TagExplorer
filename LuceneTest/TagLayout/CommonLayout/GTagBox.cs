@@ -9,6 +9,17 @@ namespace TagExplorer.TagLayout.LayoutCommon
 {
     public class TagBoxSizeInf
     {
+        //公有成员变量************************************************************
+        public Size InnerBoxSize;
+        public Size OutterBoxSize;
+        //公有成员变量(只读)******************************************************
+        public double FontSize { get; private set; }
+        public int Distance { get; private set; } //本节点离根节点（树层次上的距离）
+        public string Tag { get; private set; }
+        public double InnerBoxXPadding { get; private set; }// GConfig.InnerBoxXPadding_MAX;
+        public double InnerBoxYPadding { get; private set; }// GConfig.InnerBoxYPadding_MAX;
+        //私有成员变量************************************************************
+        //公有成员方法************************************************************
         public TagBoxSizeInf(string tag, int dis,string fname)
         {
             Tag = tag;
@@ -16,14 +27,8 @@ namespace TagExplorer.TagLayout.LayoutCommon
             PreCalcBoxSize();
             CalcBoxSize(fname);
         }
-        public double FontSize { get; private set; }
-        //public int Level { get; private set; }
-        public int Distance { get; private set; } //本节点离根节点（树层次上的距离）
-        public double InnerBoxXPadding;// GConfig.InnerBoxXPadding_MAX;
-        public double InnerBoxYPadding;// GConfig.InnerBoxYPadding_MAX;
-        public string Tag { get; private set; }
-        public Size InnerBoxSize;
-        public Size OutterBoxSize;
+        
+        //根据Distance计算字体大小和Padding大小
         private void PreCalcBoxSize()
         {
             FontSize = StaticCfg.Ins.FontSize;
@@ -56,9 +61,11 @@ namespace TagExplorer.TagLayout.LayoutCommon
         }
     }
 
+    //文本显示宽度和高度的快速计算（用了cache加速计算）
     public class FCalc
     {
         private static FCalc ins;
+        Hashtable cache = new Hashtable();
         public static FCalc Ins
         {
             get
@@ -70,8 +77,6 @@ namespace TagExplorer.TagLayout.LayoutCommon
                 return ins;
             }
         }
-
-        Hashtable cache = new Hashtable();
         public Size Calc(string tag,double fsize,string fname)
         {
             Size tmp;
@@ -141,12 +146,10 @@ namespace TagExplorer.TagLayout.LayoutCommon
         }
         
        //将本TextBox移到指定矩形的正中间（仅移动Y坐标）
-        public void CenterItY(Rect outter)
+        public void CenterRootY(Rect rect)
         {
-            //TextBox.X = outter.X + (outter.Width - TextBox.Width) / 2;
-            OutterBoxLeftTop.Y = outter.Y + (outter.Height-Inf.OutterBoxSize.Height)/2;
-            //ColorBox.X = outter.X + (outter.Width - ColorBox.Width) / 2;
-            InnerBoxLeftTop.Y = outter.Y + (outter.Height - Inf.InnerBoxSize.Height) / 2;
+            OutterBoxLeftTop.Y = rect.Y + (rect.Height-Inf.OutterBoxSize.Height)/2;
+            InnerBoxLeftTop.Y = rect.Y + (rect.Height - Inf.InnerBoxSize.Height) / 2;
         }
         /// <summary>
         /// 这个函数放在这儿不合适，需要优化 TODO

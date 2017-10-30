@@ -104,7 +104,7 @@ namespace TagExplorer.TagLayout.LRTreeLayout
             }
             outterbox.Union(root.GTagBox.OutterBox);
             root.TotalRange = outterbox;
-            root.CenterItY();
+            root.CenterRootY();
             root.GTagBox.IsRoot = true;
 
             LRBanlance(children, mid);

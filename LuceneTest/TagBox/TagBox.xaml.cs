@@ -10,7 +10,7 @@ using TagExplorer.Utils;
 namespace TagExplorer
 {
     /// <summary>
-    /// 在标签有向图中，显示一个标签的空间（封装了一个textblock和一个border，border是为了显示状态信息）
+    /// 在标签有向图中，显示一个标签的控件（封装了一个textblock和一个border，border是为了显示状态信息）
     /// </summary>
     public partial class TagBox : UserControl
     {

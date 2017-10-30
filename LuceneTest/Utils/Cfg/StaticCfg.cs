@@ -54,10 +54,14 @@ namespace TagExplorer.Utils
         public Size Radio = new Size(40, 40);
         
         public double RADIO = 0.5;
+
+        //每一层Tag显示大小缩放（底层显示更小一些）
+        public double ScaleInRadio = 1.1;
         public double InnerBoxXPadding_MAX = 30;
         public double InnerBoxYPadding_MAX = 24/2;
         public double InnerBoxXPadding_MIN = 20;
         public double InnerBoxYPadding_MIN = 18/2;
+
         public double XContentPadding = 10/2;
         public double YContentPadding = 6/2;
         public double LayoutXPadding = 10/2;
@@ -70,10 +74,7 @@ namespace TagExplorer.Utils
         public FuncOpt Opt = new FuncOpt();
 
 
-        //public static double LayoutInitWidth = 300;
-        //public static double layoutInitHeight = 600;
-        //每一层Tag显示大小缩放（底层显示更小一些）
-        public double ScaleInRadio = 1.1;
+        
 
         
 

@@ -8,73 +8,49 @@ using System;
 
 namespace TagExplorer.UriInfList
 {
+    /// <summary>
+    ///  查询获得文件列表，SearchResultItem是该文件列表中每一项的显示信息。
+    /// </summary>
     public class SearchResultItem : INotifyPropertyChanged
     {
+        //公有成员变量************************************************************
         public event PropertyChangedEventHandler PropertyChanged;
-        public void SetUri(string fullPath,IUriDB db)//TODO 支持http图标
-        {
-            all = fullPath;
-            //http链接
-            if (PathHelper.IsValidHttps(all))
-            {
-                string title = db.GetTitle(all);
-                //指定了标题的http链接
-                if (title != null && title.Length > 0)
-                {
-                    name = title;
-                    dir = all;
-                }
-                //没有指定标题的http链接
-                else
-                {
-                    System.Uri uri = new System.Uri(all); //TODO 获取http文档的名称和路径
-                    int lastIdx = all.LastIndexOf('/');
-                    if (lastIdx < 1) lastIdx = all.LastIndexOf('\\');
 
-                    if (lastIdx > 1)
-                    {
-                        name = all.Substring(lastIdx + 1); //TODO 更好的获得http文档标题的方法
-                        dir = all.Substring(0, lastIdx);
-                    }
-                    else
-                    {
-                        name = all;
-                        dir = all;
-                    }
+        //私有成员变量************************************************************
+        private string fullUri;
+        private BitmapSource _icon; 
+        private string name;     //对于文件，该字段存储文件名，如果是链接，存储标题（两种情况，用户手工修改了标题，或者没有修改标题）   
+        private string dir;
+        
+        private DateTime lastAccessTime = DateTime.MinValue;
+        private DateTime lastWriteTime = DateTime.MinValue;
+        private DateTime InvalidTime = new DateTime(1);
+        private int status = 0;
+        //公有成员方法************************************************************
+        public static List<SearchResultItem> QueryByTag(string tag, IUriDB db)
+        {
+            List<string> files = db.Query(tag);
+            List<SearchResultItem> ret = new List<SearchResultItem>();
+            foreach (string uri in files)
+            {
+                if (PathHelper.IsValidUri(uri))
+                {
+                    SearchResultItem it = new SearchResultItem();
+                    it.Init(uri, db);
+                    ret.Add(it);
                 }
             }
-            //文件
-            else 
-            {
-                name = Path.GetFileName(all);
-                dir = Path.GetDirectoryName(all);
-            }
-            
+            return ret;
         }
-
-        private string name, dir,all;
-        public BitmapSource _icon;
-        public string Detail
-        {
-            get
-            {
-                return all;
-            }
-        }
-        public BitmapSource icon
-        {
-            get
-            {
-                return _icon;
-            }
-        }
+        public string FullUri { get { return fullUri; } }
+        public BitmapSource Icon { get { return _icon; } }
         public string Name
         {
             get
             {
-                if(name.Length>64)
+                if (name.Length > 64)
                 {
-                    name = name.Substring(0, 64)+"...";
+                    name = name.Substring(0, 64) + "...";
                 }
                 return name;
             }
@@ -90,7 +66,6 @@ namespace TagExplorer.UriInfList
                 return dir;
             }
         }
-        private int status = 0;
         public int Status
         {
             get
@@ -103,18 +78,15 @@ namespace TagExplorer.UriInfList
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Status"));
             }
         }
-        private DateTime lastAccessTime = DateTime.MinValue;
-        private DateTime lastWriteTime = DateTime.MinValue;
-        private DateTime InvalidTime = new DateTime(1);
         public DateTime LastAccessTime
         {
             get
             {
-                if(lastAccessTime == DateTime.MinValue)
+                if (lastAccessTime == DateTime.MinValue)
                 {
-                    if (PathHelper.IsValidFS(all))
+                    if (PathHelper.IsValidFS(fullUri))
                     {
-                        lastAccessTime = File.GetLastAccessTime(all);
+                        lastAccessTime = File.GetLastAccessTime(fullUri);
                     }
                     else
                     {
@@ -124,16 +96,15 @@ namespace TagExplorer.UriInfList
                 return lastAccessTime;
             }
         }
-
         public DateTime LastWriteTime
         {
             get
             {
                 if (lastWriteTime == DateTime.MinValue)
                 {
-                    if (PathHelper.IsValidFS(all))
+                    if (PathHelper.IsValidFS(fullUri))
                     {
-                        lastWriteTime = File.GetLastWriteTime(all);
+                        lastWriteTime = File.GetLastWriteTime(fullUri);
                     }
                     else
                     {
@@ -143,23 +114,47 @@ namespace TagExplorer.UriInfList
                 return lastWriteTime;
             }
         }
-
-        public static List<SearchResultItem> GetFilesByTag(string tag,IUriDB db)
+        //私有成员方法************************************************************
+        private void Init(string fullPath, IUriDB db)//TODO 支持http图标
         {
-            List<string> files = db.Query(tag);
-            List<SearchResultItem> ret = new List<SearchResultItem>();
-            foreach (string uri in files)
+            fullUri = fullPath;
+            //http链接
+            if (PathHelper.IsValidHttps(fullUri))
             {
-                if (PathHelper.IsValidUri(uri))
+                string title = db.GetTitle(fullUri);
+                //指定了标题的http链接
+                if (title != null && title.Length > 0)
                 {
-                    SearchResultItem it = new SearchResultItem();
-                    it.SetUri(uri,db);
-                    it._icon = GIconHelper.GetBitmapFromFile(uri);
-                    
-                    ret.Add(it);
+                    name = title;
+                    dir = fullUri;
+                }
+                //没有指定标题的http链接
+                else
+                {
+                    System.Uri uri = new System.Uri(fullUri); //TODO 获取http文档的名称和路径
+                    int lastIdx = fullUri.LastIndexOf('/');
+                    if (lastIdx < 1) lastIdx = fullUri.LastIndexOf('\\');
+
+                    if (lastIdx > 1)
+                    {
+                        name = fullUri.Substring(lastIdx + 1); //TODO 更好的获得http文档标题的方法
+                        dir = fullUri.Substring(0, lastIdx);
+                    }
+                    else
+                    {
+                        name = fullUri;
+                        dir = fullUri;
+                    }
                 }
             }
-            return ret;
+            //文件
+            else
+            {
+                name = Path.GetFileName(fullUri);
+                dir = Path.GetDirectoryName(fullUri);
+            }
+            _icon = GIconHelper.GetBitmapFromFile(fullUri);
         }
+
     }
 }

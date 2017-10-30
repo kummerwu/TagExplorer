@@ -11,32 +11,42 @@ using TagExplorer.SearchResultListBox;
 namespace TagExplorer.UriInfList
 {
     /// <summary>
-    /// UriInfoPanel.xaml 的交互逻辑
+    /// 搜索结果文件列表的UI界面
     /// </summary>
     public partial class SearchResultListBox : UserControl
     {
+        //公有成员变量************************************************************
         public delegate void CurrentUriChanged(string uri);
         public CurrentUriChanged CurrentUriChangedCallback;
+
+        //私有成员变量************************************************************
+        private IUriDB uriDB = null;
+        private ITagDB tagsDB = null;
+        private List<SearchResultItem> dataList = null;
+        private string CurrentUri = null;
+        private int SortType = 1;
+        //公有成员方法************************************************************
         public SearchResultListBox()
         {
             InitializeComponent();
         }
-        List<SearchResultItem> dataList = null;
+        
         public void ShowQueryResult(string query, IUriDB uriDB, ITagDB tagsDB)
         {
             this.uriDB = uriDB;
             this.tagsDB = tagsDB;
-            dataList = SearchResultItem.GetFilesByTag(query, uriDB);
+            dataList = SearchResultItem.QueryByTag(query, uriDB);
             SortType = -1;
             SortBy("访问时间");
             TipsCenter.Ins.ListInf = "文件列表统计:" + query + " Found Files:" + dataList.Count;
-            UpdateCurrentList();
+            ShowItemList();
             AdjustGridColumnWidth();
         }
-
-        private void UpdateCurrentList()
+        //私有成员方法************************************************************
+        //如果dataList发生变化（数据变化，或者排序发生变化），通过该函数显示
+        private void ShowItemList()
         {
-            lst.ItemsSource = null;
+            lst.ItemsSource = null; //这一句非常重要，如果不先制空，在显示上可能会错误。
             lst.ItemsSource = dataList;
             
             if (lst.Items.Count > 0)
@@ -44,10 +54,10 @@ namespace TagExplorer.UriInfList
                 lst.SelectedIndex = 0;
 
             }
-            UpdateCurrentUriByContextMenu();
+            CheckSelectedItem();
             
         }
-
+        //自动调整每一列的宽度
         private void AdjustGridColumnWidth()
         {
             //自动调整列的宽度
@@ -61,66 +71,66 @@ namespace TagExplorer.UriInfList
                 }
             }
         }
-
-        private IUriDB uriDB = null;
-        private ITagDB tagsDB = null;
-        private void lst_MouseDoubleClick_1(object sender, MouseButtonEventArgs e)
+        //通知外界当前选中的Uri发生变化
+        private void NotifyCurrentUri(string uri)
         {
-            
-            OpenSelectedUri();
-        }
-        private void ChangeCurrentUri(string uri)
-        {
-            if (CurrentUri != uri)
+            if (CurrentUri != uri)//如果确实发生了变化，通知所有观察者
             {
                 CurrentUri = uri;
                 CurrentUriChangedCallback?.Invoke(uri);
-            }            
-            tagsBar.ChangeCurrentUri(uri,uriDB,tagsDB);
+            }
+
         }
-        private string CurrentUri = null;
-        private void UpdateCurrentUriByContextMenu()
+        //检查看，当前的uri是否已经发生变化？如果有变化，通知UI更新。
+        private void CheckSelectedItem()
         {
             SearchResultItem it = lst.SelectedItem as SearchResultItem;
-            if (it!=null && PathHelper.IsValidUri(it.Detail))
+            if (it != null && PathHelper.IsValidUri(it.FullUri))
             {
-                ChangeCurrentUri(it.Detail);
+                NotifyCurrentUri(it.FullUri);
+                tagsBar.ChangeCurrentUri(it.FullUri, uriDB, tagsDB);
             }
             else
             {
-                ChangeCurrentUri(null);
+                NotifyCurrentUri(null);
+                tagsBar.ChangeCurrentUri(null, uriDB, tagsDB);
             }
+
         }
+        
         private void miOpen_Click(object sender, RoutedEventArgs e)
         {
             OpenSelectedUri();
-
         }
-        private void lstItem_MouseDoubleClick(object sender,RoutedEventArgs e)
+        private void lstItem_MouseDoubleClick(object sender, RoutedEventArgs e)
         {
             OpenSelectedUri();
         }
+        
+        
+        
+        
         private void OpenSelectedUri()
         {
-            UpdateCurrentUriByContextMenu();
+            CheckSelectedItem();
             FileShell.StartFile(CurrentUri);
             
         }
         private void miOpenPath_Click(object sender, RoutedEventArgs e)
         {
-            UpdateCurrentUriByContextMenu();
+            CheckSelectedItem();
             FileShell.OpenExplorerByFile(CurrentUri);
             
         }
 
         private void lst_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            UpdateCurrentUriByContextMenu();
+            CheckSelectedItem();
         }
 
         private void miCopy_Click(object sender, RoutedEventArgs e)
         {
-            UpdateCurrentUriByContextMenu();
+            CheckSelectedItem();
             ClipBoardSafe.SetText(ClipboardConst.KUMMERWU_URI_COPY+"`" + GetSelUriList(ClipboardConst.CO_COPY));
         }
         private string GetSelUriList(int status)
@@ -128,7 +138,7 @@ namespace TagExplorer.UriInfList
             string uris = "";
             foreach(SearchResultItem it in lst.SelectedItems)
             {
-                uris += it.Detail + ClipboardConst.ArgsSplitToken;
+                uris += it.FullUri + ClipboardConst.ArgsSplitToken;
                 it.Status = status;
             }
             return uris.Trim(ClipboardConst.ArgsSplitToken);
@@ -160,20 +170,19 @@ namespace TagExplorer.UriInfList
 
         private void miOpenWith_Click(object sender, RoutedEventArgs e)
         {
-            UpdateCurrentUriByContextMenu();
-
+            CheckSelectedItem();
             FileShell.StartWithFile(CurrentUri);
         }
 
         private void miCopyPath_Click(object sender, RoutedEventArgs e)
         {
-            UpdateCurrentUriByContextMenu();
+            CheckSelectedItem();
             ClipBoardSafe.SetText(CurrentUri);
         }
 
         private void miCopyName_Click(object sender, RoutedEventArgs e)
         {
-            UpdateCurrentUriByContextMenu();
+            CheckSelectedItem();
             string name = "";
             if(PathHelper.IsValidFS(CurrentUri))
             {
@@ -182,7 +191,7 @@ namespace TagExplorer.UriInfList
             
             ClipBoardSafe.SetText(name);
         }
-        private int SortType = 1;
+        
         private void lst_Click(object sender, RoutedEventArgs e)
         {
             var header = e.OriginalSource as GridViewColumnHeader;
@@ -191,7 +200,7 @@ namespace TagExplorer.UriInfList
             if(col!=null)
             {
                 SortBy(col.Header.ToString());
-                UpdateCurrentList();
+                ShowItemList();
             }
 
 
@@ -219,14 +228,13 @@ namespace TagExplorer.UriInfList
 
         private void miRename_Click(object sender, RoutedEventArgs e)
         {
-            UpdateCurrentUriByContextMenu();
-            InputBox box = new InputBox(CurrentUri,"");
-            string newTitle = box.ShowDialog();
+            CheckSelectedItem();
+            string newTitle = InputBoxWindow.ShowDlg("条目重命名", CurrentUri, "");
             if (newTitle != null && newTitle.Length > 0)
             {
                 uriDB.UpdateUri(CurrentUri, newTitle);
             }
-            //ClipBoardSafe.SetText(CurrentUri);
+            
         }
     }
 }
