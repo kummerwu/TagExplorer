@@ -167,6 +167,13 @@ namespace TagExplorer.Utils
             }
             else return dirs[0];
         }
+
+        /// <summary>
+        /// 根据tag和后缀名获得文件路径
+        /// </summary>
+        /// <param name="tag">标签名称</param>
+        /// <param name="postfix">文件后缀名（不带.) </param>
+        /// <returns></returns>
         public static string GetFileByTag(string tag, string postfix)
         {
             return System.IO.Path.Combine(GetDirByTag(tag), tag + "." + postfix);
