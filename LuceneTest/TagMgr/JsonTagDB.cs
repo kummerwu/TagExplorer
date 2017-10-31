@@ -14,15 +14,24 @@ namespace TagExplorer.TagMgr
 {
     class JsonTagDB:ITagDB
     {
+        //维护所有tag=》taginf（有可能有别名，存在多个tag对应一个tagInf）
         Hashtable Str2TagIdx = new Hashtable();
-        HashSet<JTagInf> AllTagSet = new HashSet<JTagInf>();
+        HashSet<JTagInf> GetAllJTagInf()
+        {
+            HashSet<JTagInf> ret = new HashSet<JTagInf>();
+            foreach(JTagInf j in Str2TagIdx.Values)
+            {
+                if (!ret.Contains(j)) ret.Add(j);
+            }
+            return ret;
+        }
         private void Save()
         {
             Save(null);
         }
         private void Save(string tag)
         {
-            
+            HashSet<JTagInf> AllTagSet = GetAllJTagInf();
             using (StreamWriter w = new StreamWriter(CfgPath.TagDBPath_Json))
             {
                 foreach(JTagInf j in AllTagSet)
@@ -47,15 +56,14 @@ namespace TagExplorer.TagMgr
                 {
                     JTagInf j = JsonConvert.DeserializeObject<JTagInf>(ln);
                     db.UpdateIndex(j);
-                    db.AllTagSet.Add(j);
+                    //db.AllTagSet.Add(j);
                 }
             }
-
+            HashSet<JTagInf> AllTagSet = db.GetAllJTagInf();
             //叶子节点没有存储，但内存索引中需要，在这儿自动恢复出来
             List<string> leafNotExist = new List<string>();
-            foreach(JTagInf j in db.AllTagSet)
+            foreach(JTagInf j in AllTagSet)
             {
-                
                 foreach(string a in j.Alias)
                 {
                     if (!db.Str2TagIdx.Contains(a))
@@ -86,7 +94,7 @@ namespace TagExplorer.TagMgr
             {
                 tag = new JTagInf(stag);
                 Str2TagIdx.Add(stag, tag);
-                AllTagSet.Add(tag);
+                //AllTagSet.Add(tag);
             }
             return tag;
         }
@@ -96,7 +104,7 @@ namespace TagExplorer.TagMgr
             {
                 Str2TagIdx.Remove(a);
             }
-            AllTagSet.Remove(j);
+            //AllTagSet.Remove(j);
         }
         private void UpdateIndex(JTagInf j)
         {
@@ -193,7 +201,8 @@ namespace TagExplorer.TagMgr
         public List<string> QueryTagParent(string tag)
         {
             List<string> ret = new List<string>();
-            foreach(JTagInf j in AllTagSet)
+            var AllTagSet = GetAllJTagInf();
+            foreach (JTagInf j in AllTagSet)
             {
                 if(j.Children.Contains(tag))
                 {
@@ -230,7 +239,8 @@ namespace TagExplorer.TagMgr
 
         private void RemoveParentsRef(string child)
         {
-            foreach(JTagInf j in AllTagSet)
+            var AllTagSet = GetAllJTagInf();
+            foreach (JTagInf j in AllTagSet)
             {
                 j.RemoveChild(child);
             }
@@ -298,6 +308,30 @@ namespace TagExplorer.TagMgr
             Save();
             return ret;
         }
+
+        public int UpdateTag(string oldTag, string newTag)
+        {
+            
+            List<string> parents = QueryTagParent(oldTag);
+            if (parents.Count == 0) return ITagDBConst.R_OK;
+
+
+            string parent = parents[0];
+            JTagInf jParent = Str2TagIdx[parent] as JTagInf;
+            if (jParent == null) return ITagDBConst.R_OK;
+
+
+            JTagInf jOld = Str2TagIdx[oldTag] as JTagInf;
+            if (jOld == null) return ITagDBConst.R_OK;
+
+            jParent.UpdateChild(oldTag, newTag);
+            jOld.UpdateAlias(oldTag, newTag);
+            Str2TagIdx.Remove(oldTag);
+            UpdateIndex(jOld);
+            
+            
+            return ITagDBConst.R_OK;
+        }
     }
     [Serializable]
     class JTagInf
@@ -320,6 +354,10 @@ namespace TagExplorer.TagMgr
                 Children.RemoveAt(idx);
                 Children.Insert(newIdx, c);
             }
+        }
+        public int GetPos(string c)
+        {
+            return Children.IndexOf(c);
         }
         private void Check()
         {
@@ -374,6 +412,34 @@ namespace TagExplorer.TagMgr
             foreach (string a in tag.Alias) AddAlias(a);
             foreach (string c in tag.Children) AddChild(c);
             //foreach (string p in tag.Parents) AddParent(p);
+        }
+
+        public void UpdateChild(string oldChild, string newChild)
+        {
+            for (int i = 0;i<Children.Count;i++)
+            {
+                if(Children[i]==oldChild)
+                {
+                    Children[i] = newChild;
+                }
+            }
+        }
+        public void UpdateAlias(string oldTag, string newTag)
+        {
+            if (Alias.Contains(oldTag))
+            {
+                for (int i = 0; i < Alias.Count; i++)
+                {
+                    if (Alias[i] == oldTag)
+                    {
+                        Alias[i] = newTag;
+                    }
+                }
+            }
+            else
+            {
+                Alias.Add(newTag);
+            }
         }
     }
 }

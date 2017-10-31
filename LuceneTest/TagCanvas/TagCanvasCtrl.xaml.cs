@@ -306,7 +306,7 @@ namespace TagExplorer.TagCanvas
 
         //在当前图中的所有tag查找，看看当前是否已经显示，如果已经显示，直接切换节点
         //如果没有显示，返回false
-        public bool ChangeSelectd(string tag)
+        public TagBox ChangeSelectd(string tag)
         {
             foreach(UIElement u in canvas.Children)
             {
@@ -316,11 +316,11 @@ namespace TagExplorer.TagCanvas
                     if(t.Text == tag)
                     {
                         SetCurrentTag(tag);
-                        return true;
+                        return t;
                     }
                 }
             }
-            return false;
+            return null;
         }
         //public void ShowGraph(ITagDB tagDB, string root)
         //{
@@ -485,7 +485,72 @@ namespace TagExplorer.TagCanvas
             KeepVDir(tag);
 
         }
+        class EditBoxInf
+        {
+            public TextBox Edit = null;
+            public Canvas Parent = null;
+            public TagBox NoEdit = null; 
+        }
+        static EditBoxInf editInf = null;
+        private void HideEdit()
+        {
+            if (editInf!=null && editInf.Parent != null)
+            {
+                editInf.Parent.Children.Remove(editInf.Edit);
+                editInf.Parent = null;
+                editInf.NoEdit = null;
+            }
+        }
+        private void InitEdit()
+        {
+            if (editInf == null)
+            {
+                editInf = new EditBoxInf();
+                editInf.Edit = new TextBox();
+                editInf.Edit.BorderThickness = new Thickness(0);
+                editInf.Edit.LostFocus += Edit_LostFocus;
+                editInf.Edit.KeyUp += Edit_KeyUp;
+            }
+        }
 
+        private void Edit_KeyUp(object sender, KeyEventArgs e)
+        {
+            if(e.Key == Key.Enter || e.Key == Key.Return)
+            {
+                if(editInf.Edit!=null && editInf.NoEdit!=null)
+                {
+                    TagDB.UpdateTag(editInf.NoEdit.Text, editInf.Edit.Text);
+                    
+                }
+                HideEdit();
+                RedrawGraph();
+                SetCurrentTag(editInf.Edit.Text);
+            }
+        }
+
+        private void Edit_LostFocus(object sender, RoutedEventArgs e)
+        {
+            HideEdit();
+        }
+
+        private void ShowEdit(Canvas c, TagBox brother)
+        {
+            InitEdit();
+            HideEdit();
+            editInf.Parent = c;
+            editInf.NoEdit = brother;
+            editInf.Edit.Text = brother.Text;
+            editInf.Edit.Width = Math.Max(500, brother.Width + 10);
+            Thickness m = brother.Margin;
+            editInf.Edit.Margin = new Thickness(m.Left+20,m.Top+5,0,0);
+            editInf.Edit.FontFamily = brother.txt.FontFamily;
+            editInf.Edit.FontSize = brother.txt.FontSize;
+            editInf.Edit.FontStretch = brother.txt.FontStretch;
+            editInf.Edit.FontStyle = brother.txt.FontStyle;
+            editInf.Parent.Children.Add(editInf.Edit);
+            editInf.Edit.Focus();
+            editInf.Edit.SelectAll();
+        }
 
         private string GetTagInf(string tag, ITagDB db)
         {
@@ -836,21 +901,29 @@ namespace TagExplorer.TagCanvas
         {
             UpdateCurrentTagByContextMenu();
             if (currentTag == null || currentTag.Trim() == "") return;
+            //TODO 如果有多个创建子标签如何正确处理？
+            
+            TagDB.AddTag(currentTag, "创建子标签");
+            RedrawGraph();
 
-            NewTagWindow w = new NewTagWindow();
-            w.Title = "创建子标签";
-            w.Tips = string.Format("创建{0}子标签，多个子标签可以用空格隔开", currentTag);
-            w.ShowDialog();
-            string input = w.Inputs;
-            if (input != null && input.Trim().Length > 0)
-            {
-                string[] tags = ParseTags(input);
-                foreach (string tag in tags)
-                {
-                    TagDB.AddTag(currentTag, tag);
-                }
-                RedrawGraph();
-            }
+            //BUG20171031: 子标签如果没有在图中显示出来（比如mainCanvas中因为深度的限制，并没有将其显示出来，下面b可能为null
+            TagBox b = ChangeSelectd("创建子标签");
+            ShowEdit(canvas, b);
+
+            //NewTagWindow w = new NewTagWindow();
+            //w.Title = "创建子标签";
+            //w.Tips = string.Format("创建{0}子标签，多个子标签可以用空格隔开", currentTag);
+            //w.ShowDialog();
+            //string input = w.Inputs;
+            //if (input != null && input.Trim().Length > 0)
+            //{
+            //    string[] tags = ParseTags(input);
+            //    foreach (string tag in tags)
+            //    {
+            //        TagDB.AddTag(currentTag, tag);
+            //    }
+            //    RedrawGraph();
+            //}
         }
 
         private void miPasteTag_Click(object sender, RoutedEventArgs e)
@@ -969,10 +1042,10 @@ namespace TagExplorer.TagCanvas
 
         private void canvas_KeyUp(object sender, KeyEventArgs e)
         {
-            if (e.Key == Key.Up || e.Key == Key.Down || e.Key == Key.Left || e.Key == Key.Right)
-            {
-                NavigateTagBox(e.Key);
-            }
+            //if (e.Key == Key.Up || e.Key == Key.Down || e.Key == Key.Left || e.Key == Key.Right)
+            //{
+            //    NavigateTagBox(e.Key);
+            //}
         }
         private void ChangeTagPos(int direct)
         {
@@ -1034,6 +1107,31 @@ namespace TagExplorer.TagCanvas
         private void scrollViewer_LostFocus(object sender, RoutedEventArgs e)
         {
             ClearSelected();
+        }
+
+        private void ModifyTag_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            TagBox t = TagAreaMenu.PlacementTarget as TagBox;
+            if (t != null && t.Text.Length > 0)
+            {
+                SetCurrentTag(t.Text);
+                ShowEdit(canvas, t);
+            }
+
+        }
+
+        private void NewBrotherTag_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            UpdateCurrentTagByContextMenu();
+            if (currentTag == null || currentTag.Trim() == "") return;
+            List<string> ps = TagDB.QueryTagParent(currentTag);
+            if (ps.Count == 0) return;
+
+            string parent = ps[0];
+            TagDB.AddTag(parent, "创建标签");//TODO 如果有多个创建子标签如何正确处理？
+            RedrawGraph();
+            TagBox b = ChangeSelectd("创建标签");
+            ShowEdit(canvas, b);
         }
     }
     

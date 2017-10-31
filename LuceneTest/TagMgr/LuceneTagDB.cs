@@ -366,5 +366,10 @@ namespace TagExplorer.TagMgr
         {
             throw new NotImplementedException();
         }
+
+        public int UpdateTag(string oldChild, string newChild)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

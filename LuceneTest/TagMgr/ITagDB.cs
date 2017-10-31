@@ -9,6 +9,7 @@ namespace TagExplorer.TagMgr
     {
         
         int AddTag(string parent, string child);
+        int UpdateTag(string oldChild, string newChild);
         int RemoveTag(string tag);
         //删除child的原来所有的parent，将parent切换到指定的新的parent
         int ResetParent(string parent, string child);

@@ -49,10 +49,15 @@
             </RoutedUICommand.InputGestures>
             <!--Tag操作   ALT-->
         </RoutedUICommand>
-        <RoutedUICommand x:Key="NewTag" Text="新建标签" >
+        <RoutedUICommand x:Key="NewTag" Text="新建子标签" >
             <RoutedUICommand.InputGestures>
                 <KeyGesture>Alt+N</KeyGesture>
                 <KeyGesture>Insert</KeyGesture>
+            </RoutedUICommand.InputGestures>
+        </RoutedUICommand>
+        <RoutedUICommand x:Key="NewBrotherTag" Text="新建兄弟标签" >
+            <RoutedUICommand.InputGestures>
+                <KeyGesture>Ctrl+Return</KeyGesture>
             </RoutedUICommand.InputGestures>
         </RoutedUICommand>
         <RoutedUICommand x:Key="CopyTag" Text="复制标签" >
@@ -73,6 +78,11 @@
         <RoutedUICommand x:Key="DeleteTag" Text="删除标签" >
             <RoutedUICommand.InputGestures>
                 <KeyGesture>Delete</KeyGesture>
+            </RoutedUICommand.InputGestures>
+        </RoutedUICommand>
+        <RoutedUICommand x:Key="ModifyTag" Text="修改标签" >
+            <RoutedUICommand.InputGestures>
+                <KeyGesture>F2</KeyGesture>
             </RoutedUICommand.InputGestures>
         </RoutedUICommand>
 
@@ -131,10 +141,12 @@
             <MenuItem Command="{StaticResource CopyTagName}" />
             <Separator></Separator>
             <MenuItem Command="{StaticResource NewTag}" />
+            <MenuItem Command="{StaticResource NewBrotherTag}" />
             <MenuItem Command="{StaticResource CopyTag}" />
             <MenuItem Command="{StaticResource CutTag}" />
             <MenuItem Command="{StaticResource PasteTag}" />
             <MenuItem Command="{StaticResource DeleteTag}" />
+            <MenuItem Command="{StaticResource ModifyTag}" />
             <MenuItem Command="{StaticResource UpTag}" />
             <MenuItem Command="{StaticResource DownTag}" />
             <Separator></Separator>
@@ -166,10 +178,12 @@
         <CommandBinding Command="{StaticResource CopyTagName}" Executed="CopyTagName_Executed"/>
         <!--Tag操作   ALT-->
         <CommandBinding Command="{StaticResource NewTag}" Executed="NewTag_Executed"/>
+        <CommandBinding Command="{StaticResource NewBrotherTag}" Executed="NewBrotherTag_Executed"/>
         <CommandBinding Command="{StaticResource CopyTag}" Executed="CopyTag_Executed"/>
         <CommandBinding Command="{StaticResource CutTag}" Executed="CutTag_Executed"/>
         <CommandBinding Command="{StaticResource PasteTag}" Executed="PasteTag_Executed"/>
         <CommandBinding Command="{StaticResource DeleteTag}" Executed="DeleteTag_Executed"/>
+        <CommandBinding Command="{StaticResource ModifyTag}" Executed="ModifyTag_Executed"/>
         <CommandBinding Command="{StaticResource UpTag}" Executed="UpTag_Executed"/>
         <CommandBinding Command="{StaticResource DownTag}" Executed="DownTag_Executed"/>
         

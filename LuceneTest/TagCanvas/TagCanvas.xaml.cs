@@ -174,12 +174,12 @@ namespace TagExplorer
         internal void SearchByTxt(string text)
         {
             //先在main中查找，如果有，切换焦点后返回
-            if(MainCanvas.ChangeSelectd(text))
+            if(MainCanvas.ChangeSelectd(text)!=null)
             {
                 return;
             }
             //再在sub中查找，如果有，切换焦点后返回
-            if(SubCanvas.ChangeSelectd(text))
+            if(SubCanvas.ChangeSelectd(text)!=null)
             {
                 MainCanvas.ClearSelected();
                 return;
