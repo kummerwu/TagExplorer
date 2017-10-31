@@ -328,8 +328,8 @@ namespace TagExplorer.TagMgr
             jOld.UpdateAlias(oldTag, newTag);
             Str2TagIdx.Remove(oldTag);
             UpdateIndex(jOld);
-            
-            
+
+            Save();
             return ITagDBConst.R_OK;
         }
     }

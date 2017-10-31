@@ -7,14 +7,14 @@ using TagExplorer.Utils;
 
 namespace TagExplorer
 {
-    public class LRUTag : IDisposable
+    public class TagVisitHistory : IDisposable
     {
         public void Dispose()
         {
             Save();
             _ins = null;
         }
-        public List<string> GetTags()
+        public List<string> GetHistory()
         {
             List<string> ret = new List<string>();
             ret.AddRange(tags);
@@ -31,14 +31,14 @@ namespace TagExplorer
             File.WriteAllText(CfgPath.IniFilePath, sb.ToString().Trim());
         }
 
-        private static LRUTag _ins = null;
-        public static LRUTag Ins
+        private static TagVisitHistory _ins = null;
+        public static TagVisitHistory Ins
         {
             get
             {
                 if(_ins==null)
                 {
-                    _ins = IDisposableFactory.New<LRUTag>(new LRUTag());
+                    _ins = IDisposableFactory.New<TagVisitHistory>(new TagVisitHistory());
                     _ins.Load();
                 }
                 return _ins;
@@ -66,7 +66,7 @@ namespace TagExplorer
                 tags.AddRange(File.ReadAllLines(CfgPath.IniFilePath));
             }
         }
-        public void Add(string tag)
+        public void AddHistory(string tag)
         {
             if(tags.Contains(tag))
             {

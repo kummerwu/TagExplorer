@@ -38,9 +38,18 @@ namespace TagExplorer.TagCanvas
         {
             InitializeComponent();
             TagSwitchDB.Ins.SwitchChanged += SwitchChangedCallback;
+            FloatTextBox.Ins.TextChangedCallback += TextChanged;
 
         }
-
+        private void TextChanged(Canvas Parent, TagBox box, string NewString)
+        {
+            if(canvas == Parent)
+            {
+                TagDB.UpdateTag(box.Text, NewString);
+                RedrawGraph();
+                SetCurrentTag(NewString);
+            }
+        }
         private void SwitchChangedCallback()
         {
             RedrawGraph();
@@ -305,7 +314,7 @@ namespace TagExplorer.TagCanvas
         
 
         //在当前图中的所有tag查找，看看当前是否已经显示，如果已经显示，直接切换节点
-        //如果没有显示，返回false
+        //如果没有显示，返回null
         public TagBox ChangeSelectd(string tag)
         {
             foreach(UIElement u in canvas.Children)
@@ -364,7 +373,9 @@ namespace TagExplorer.TagCanvas
         {
             TagBox b = sender as TagBox;
             if (b != null)
-                ChangeRoot(b.Text,b.Text);
+            {
+                ChangeRoot(b.Text, b.Text);
+            }
         }
         //单击tag，将该tag改为选定状态  TODO，运行多个tag选中
         private void Tag_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -402,10 +413,6 @@ namespace TagExplorer.TagCanvas
 
                 if (tb != null)
                 {
-                    //if (tb.Selected)
-                    //{
-                    //    tb.Selected = false;
-                    //}
                     tb.Stat = TagBox.Status.None;
                     if (tb.Text == tag)
                     {
@@ -415,51 +422,7 @@ namespace TagExplorer.TagCanvas
             }
 
         }
-        private List<string> lastTags = new List<string>();
-        private void KeepVDir(string tag)
-        {
-            if (!StaticCfg.Ins.Opt.KeepVDir) return;
-
-
-            if (!lastTags.Contains(tag))
-            {
-                while (lastTags.Count >= StaticCfg.Ins.MAX_TAG_VDIR)
-                {
-                    lastTags.RemoveAt(0);
-                }
-                lastTags.Add(tag);
-            }
-            else
-            {
-                lastTags.Remove(tag);
-                lastTags.Add(tag);
-            }
-            //string[] oldVDirs = Directory.GetDirectories(PathHelper.VDir);
-
-            foreach (string t in lastTags)
-            {
-                string tagVDir = CfgPath.GetVDirByTag(t);
-                string tagDir = CfgPath.GetDirByTag(t);
-                PathHelper.LinkDir(tagVDir, tagDir);
-            }
-
-            DirectoryInfo vroot = new DirectoryInfo(CfgPath.VDir);
-            DirectoryInfo[] vdirs = vroot.GetDirectories();
-            int vDirCount = vdirs.Length;
-
-            foreach (DirectoryInfo v in vdirs)
-            {
-                if (!lastTags.Contains(v.Name) && vDirCount > StaticCfg.Ins.MAX_TAG_VDIR)
-                {
-                    v.Delete();
-                    vDirCount--;
-                    //System.Diagnostics.Process.Start("cmd.exe",
-                    //    string.Format(@" /c rd ""{0}"" ", v.FullName));
-                }
-            }
-
-
-        }
+        
 
 
         private void SetCurrentTag()
@@ -482,75 +445,17 @@ namespace TagExplorer.TagCanvas
 
             ShowCurrentTagInf();
             SelectedTagChanged?.Invoke(tag);
-            KeepVDir(tag);
+            TagVirtualDir.Ins.KeepVDir(tag);
 
         }
-        class EditBoxInf
-        {
-            public TextBox Edit = null;
-            public Canvas Parent = null;
-            public TagBox NoEdit = null; 
-        }
-        static EditBoxInf editInf = null;
-        private void HideEdit()
-        {
-            if (editInf!=null && editInf.Parent != null)
-            {
-                editInf.Parent.Children.Remove(editInf.Edit);
-                editInf.Parent = null;
-                editInf.NoEdit = null;
-            }
-        }
-        private void InitEdit()
-        {
-            if (editInf == null)
-            {
-                editInf = new EditBoxInf();
-                editInf.Edit = new TextBox();
-                editInf.Edit.BorderThickness = new Thickness(0);
-                editInf.Edit.LostFocus += Edit_LostFocus;
-                editInf.Edit.KeyUp += Edit_KeyUp;
-            }
-        }
+        
+        
 
-        private void Edit_KeyUp(object sender, KeyEventArgs e)
-        {
-            if(e.Key == Key.Enter || e.Key == Key.Return)
-            {
-                if(editInf.Edit!=null && editInf.NoEdit!=null)
-                {
-                    TagDB.UpdateTag(editInf.NoEdit.Text, editInf.Edit.Text);
-                    
-                }
-                HideEdit();
-                RedrawGraph();
-                SetCurrentTag(editInf.Edit.Text);
-            }
-        }
+       
 
-        private void Edit_LostFocus(object sender, RoutedEventArgs e)
-        {
-            HideEdit();
-        }
+        
 
-        private void ShowEdit(Canvas c, TagBox brother)
-        {
-            InitEdit();
-            HideEdit();
-            editInf.Parent = c;
-            editInf.NoEdit = brother;
-            editInf.Edit.Text = brother.Text;
-            editInf.Edit.Width = Math.Max(500, brother.Width + 10);
-            Thickness m = brother.Margin;
-            editInf.Edit.Margin = new Thickness(m.Left+20,m.Top+5,0,0);
-            editInf.Edit.FontFamily = brother.txt.FontFamily;
-            editInf.Edit.FontSize = brother.txt.FontSize;
-            editInf.Edit.FontStretch = brother.txt.FontStretch;
-            editInf.Edit.FontStyle = brother.txt.FontStyle;
-            editInf.Parent.Children.Add(editInf.Edit);
-            editInf.Edit.Focus();
-            editInf.Edit.SelectAll();
-        }
+        
 
         private string GetTagInf(string tag, ITagDB db)
         {
@@ -856,7 +761,7 @@ namespace TagExplorer.TagCanvas
                 }
                 if (string.IsNullOrEmpty(newCurrentTag))
                 {
-                    newCurrentTag = LRUTag.Ins.DefaultTag;
+                    newCurrentTag = TagVisitHistory.Ins.DefaultTag;
                 }
 
                 TagDB.RemoveTag(oldCurrentTag);
@@ -908,7 +813,7 @@ namespace TagExplorer.TagCanvas
 
             //BUG20171031: 子标签如果没有在图中显示出来（比如mainCanvas中因为深度的限制，并没有将其显示出来，下面b可能为null
             TagBox b = ChangeSelectd("创建子标签");
-            ShowEdit(canvas, b);
+            FloatTextBox.Ins.ShowEdit(canvas, b);
 
             //NewTagWindow w = new NewTagWindow();
             //w.Title = "创建子标签";
@@ -1115,7 +1020,7 @@ namespace TagExplorer.TagCanvas
             if (t != null && t.Text.Length > 0)
             {
                 SetCurrentTag(t.Text);
-                ShowEdit(canvas, t);
+                FloatTextBox.Ins.ShowEdit(canvas, t);
             }
 
         }
@@ -1131,7 +1036,7 @@ namespace TagExplorer.TagCanvas
             TagDB.AddTag(parent, "创建标签");//TODO 如果有多个创建子标签如何正确处理？
             RedrawGraph();
             TagBox b = ChangeSelectd("创建标签");
-            ShowEdit(canvas, b);
+            FloatTextBox.Ins.ShowEdit(canvas, b);
         }
     }
     

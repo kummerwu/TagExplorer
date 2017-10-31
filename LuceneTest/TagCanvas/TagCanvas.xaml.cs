@@ -217,8 +217,8 @@ namespace TagExplorer
         private void UpdateRecentTags(string tag)
         {
             List<UIElement> recentTags = new List<UIElement>();
-            LRUTag.Ins.Add(tag);
-            List<string> tags = LRUTag.Ins.GetTags();
+            TagVisitHistory.Ins.AddHistory(tag);
+            List<string> tags = TagVisitHistory.Ins.GetHistory();
             double top = 0, left = 0;
             for (int i = 0; i < tags.Count; i++)
             {

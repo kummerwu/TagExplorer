@@ -191,27 +191,27 @@ namespace AnyTags.Net.Tests
 
 
             StaticCfg.Ins.LRU_MAX_CNT = 4;
-            UTLT.UTest_Tag.AssertListEqual(LRUTag.Ins.GetTags(),new List<string>());
-            LRUTag.Ins.Add("tag1");
-            UTLT.UTest_Tag.AssertListEqual(LRUTag.Ins.GetTags(), 
+            UTLT.UTest_Tag.AssertListEqual(TagVisitHistory.Ins.GetHistory(),new List<string>());
+            TagVisitHistory.Ins.AddHistory("tag1");
+            UTLT.UTest_Tag.AssertListEqual(TagVisitHistory.Ins.GetHistory(), 
                 new List<string>() { "tag1" });
 
 
-            LRUTag.Ins.Add("tag2");
-            UTLT.UTest_Tag.AssertListEqual(LRUTag.Ins.GetTags(),
+            TagVisitHistory.Ins.AddHistory("tag2");
+            UTLT.UTest_Tag.AssertListEqual(TagVisitHistory.Ins.GetHistory(),
                 new List<string>() { "tag1", "tag2", });
 
-            LRUTag.Ins.Add("tag3");
-            UTLT.UTest_Tag.AssertListEqual(LRUTag.Ins.GetTags(),
+            TagVisitHistory.Ins.AddHistory("tag3");
+            UTLT.UTest_Tag.AssertListEqual(TagVisitHistory.Ins.GetHistory(),
                 new List<string>() { "tag1", "tag2", "tag3", });
 
 
-            LRUTag.Ins.Add("tag4");
-            UTLT.UTest_Tag.AssertListEqual(LRUTag.Ins.GetTags(),
+            TagVisitHistory.Ins.AddHistory("tag4");
+            UTLT.UTest_Tag.AssertListEqual(TagVisitHistory.Ins.GetHistory(),
                 new List<string>() { "tag1", "tag2", "tag3", "tag4", });
 
-            LRUTag.Ins.Add("tag5");
-            UTLT.UTest_Tag.AssertListEqual(LRUTag.Ins.GetTags(),
+            TagVisitHistory.Ins.AddHistory("tag5");
+            UTLT.UTest_Tag.AssertListEqual(TagVisitHistory.Ins.GetHistory(),
                 new List<string>() { "tag2", "tag3", "tag4", "tag5", });
         }
         [TestMethod]
@@ -219,12 +219,12 @@ namespace AnyTags.Net.Tests
         {
             StaticCfg.Ins.LRU_MAX_CNT = 4;
             TestFS_LRUTag1();
-            LRUTag.Ins.Dispose();
-            UTLT.UTest_Tag.AssertListEqual(LRUTag.Ins.GetTags(),
+            TagVisitHistory.Ins.Dispose();
+            UTLT.UTest_Tag.AssertListEqual(TagVisitHistory.Ins.GetHistory(),
                 new List<string>() { "tag2", "tag3", "tag4", "tag5", });
 
-            LRUTag.Ins.Add("tag1");
-            UTLT.UTest_Tag.AssertListEqual(LRUTag.Ins.GetTags(),
+            TagVisitHistory.Ins.AddHistory("tag1");
+            UTLT.UTest_Tag.AssertListEqual(TagVisitHistory.Ins.GetHistory(),
                 new List<string>() { "tag3", "tag4", "tag5", "tag1" });
         }
 
@@ -233,51 +233,51 @@ namespace AnyTags.Net.Tests
         {
 
             StaticCfg.Ins.LRU_MAX_CNT = 4;
-            UTLT.UTest_Tag.AssertListEqual(LRUTag.Ins.GetTags(), new List<string>());
-            LRUTag.Ins.Add("tag1");
-            UTLT.UTest_Tag.AssertListEqual(LRUTag.Ins.GetTags(),
+            UTLT.UTest_Tag.AssertListEqual(TagVisitHistory.Ins.GetHistory(), new List<string>());
+            TagVisitHistory.Ins.AddHistory("tag1");
+            UTLT.UTest_Tag.AssertListEqual(TagVisitHistory.Ins.GetHistory(),
                 new List<string>() { "tag1" });
 
 
-            LRUTag.Ins.Add("tag1");
-            UTLT.UTest_Tag.AssertListEqual(LRUTag.Ins.GetTags(),
+            TagVisitHistory.Ins.AddHistory("tag1");
+            UTLT.UTest_Tag.AssertListEqual(TagVisitHistory.Ins.GetHistory(),
                 new List<string>() { "tag1" });
 
 
-            LRUTag.Ins.Add("tag2");
-            UTLT.UTest_Tag.AssertListEqual(LRUTag.Ins.GetTags(),
+            TagVisitHistory.Ins.AddHistory("tag2");
+            UTLT.UTest_Tag.AssertListEqual(TagVisitHistory.Ins.GetHistory(),
                 new List<string>() { "tag1", "tag2", });
 
-            LRUTag.Ins.Add("tag2");
-            UTLT.UTest_Tag.AssertListEqual(LRUTag.Ins.GetTags(),
+            TagVisitHistory.Ins.AddHistory("tag2");
+            UTLT.UTest_Tag.AssertListEqual(TagVisitHistory.Ins.GetHistory(),
                 new List<string>() { "tag1", "tag2", });
 
 
-            LRUTag.Ins.Add("tag3");
-            UTLT.UTest_Tag.AssertListEqual(LRUTag.Ins.GetTags(),
+            TagVisitHistory.Ins.AddHistory("tag3");
+            UTLT.UTest_Tag.AssertListEqual(TagVisitHistory.Ins.GetHistory(),
                 new List<string>() { "tag1", "tag2", "tag3", });
 
-            LRUTag.Ins.Add("tag3");
-            UTLT.UTest_Tag.AssertListEqual(LRUTag.Ins.GetTags(),
+            TagVisitHistory.Ins.AddHistory("tag3");
+            UTLT.UTest_Tag.AssertListEqual(TagVisitHistory.Ins.GetHistory(),
                 new List<string>() { "tag1", "tag2", "tag3", });
 
-            LRUTag.Ins.Add("tag4");
-            UTLT.UTest_Tag.AssertListEqual(LRUTag.Ins.GetTags(),
+            TagVisitHistory.Ins.AddHistory("tag4");
+            UTLT.UTest_Tag.AssertListEqual(TagVisitHistory.Ins.GetHistory(),
                 new List<string>() { "tag1", "tag2", "tag3", "tag4", });
 
 
-            LRUTag.Ins.Add("tag4");
-            UTLT.UTest_Tag.AssertListEqual(LRUTag.Ins.GetTags(),
+            TagVisitHistory.Ins.AddHistory("tag4");
+            UTLT.UTest_Tag.AssertListEqual(TagVisitHistory.Ins.GetHistory(),
                 new List<string>() { "tag1", "tag2", "tag3", "tag4", });
 
 
-            LRUTag.Ins.Add("tag5");
-            UTLT.UTest_Tag.AssertListEqual(LRUTag.Ins.GetTags(),
+            TagVisitHistory.Ins.AddHistory("tag5");
+            UTLT.UTest_Tag.AssertListEqual(TagVisitHistory.Ins.GetHistory(),
                 new List<string>() { "tag2", "tag3", "tag4", "tag5", });
 
 
-            LRUTag.Ins.Add("tag5");
-            UTLT.UTest_Tag.AssertListEqual(LRUTag.Ins.GetTags(),
+            TagVisitHistory.Ins.AddHistory("tag5");
+            UTLT.UTest_Tag.AssertListEqual(TagVisitHistory.Ins.GetHistory(),
                 new List<string>() { "tag2", "tag3", "tag4", "tag5", });
         }
     }

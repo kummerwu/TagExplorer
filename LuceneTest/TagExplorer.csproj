@@ -198,7 +198,9 @@
     <Compile Include="TagBox\TagBox.xaml.cs">
       <DependentUpon>TagBox.xaml</DependentUpon>
     </Compile>
-    <Compile Include="TagCanvas\LRUTag.cs" />
+    <Compile Include="TagCanvas\FloatTextBox.cs" />
+    <Compile Include="TagCanvas\TagVirtualDir.cs" />
+    <Compile Include="TagCanvas\TagVisitHistory.cs" />
     <Compile Include="TagCanvas\NewTagWindow.xaml.cs">
       <DependentUpon>NewTagWindow.xaml</DependentUpon>
     </Compile>
