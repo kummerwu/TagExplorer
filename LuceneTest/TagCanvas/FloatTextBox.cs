@@ -31,7 +31,13 @@ namespace TagExplorer.TagCanvas
                 return ins;
             }
         }
-
+        public bool IsVisible
+        {
+            get
+            {
+                return Parent != null && NoEdit != null;
+            }
+        }
         private void HideEdit()
         {
             Canvas tmpP = Parent;
@@ -44,11 +50,13 @@ namespace TagExplorer.TagCanvas
                 
                 Parent.Children.Remove(Edit);
                 Parent = null;
-                
+                System.Diagnostics.Debug.WriteLine("HideFloat1");
+
             }
             if (oldS != newS && oldS!=null && newS!=null)
             {
                 TextChangedCallback?.Invoke(tmpP, oldS, newS);
+                System.Diagnostics.Debug.WriteLine("HideFloat2");
             }
         }
         private void InitEdit()
@@ -56,17 +64,22 @@ namespace TagExplorer.TagCanvas
             Edit = new TextBox();
             Edit.BorderThickness = new Thickness(0);
             Edit.LostFocus += Edit_LostFocus;
-            Edit.KeyUp += Edit_KeyUp; 
+        
+            Edit.KeyDown += Edit_KeyDown;
             
         }
 
-        private void Edit_KeyUp(object sender, System.Windows.Input.KeyEventArgs e)
+        //改为KeyDown事件，如果使用KeyUp事件，会导致与输入法的回车选择冲突。
+        private void Edit_KeyDown(object sender, KeyEventArgs e)
         {
-            if((e.Key == Key.Enter || e.Key == Key.Return) && (e.KeyboardDevice.Modifiers & ModifierKeys.Control) != ModifierKeys.Control)
+            if ((e.Key == Key.Enter) && (e.KeyboardDevice.Modifiers & ModifierKeys.Control) != ModifierKeys.Control)
             {
                 HideEdit();
+                e.Handled = true;
             }
         }
+
+        
 
         private void Edit_LostFocus(object sender, RoutedEventArgs e)
         {
