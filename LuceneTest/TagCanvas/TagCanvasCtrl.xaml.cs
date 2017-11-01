@@ -50,12 +50,14 @@ namespace TagExplorer.TagCanvas
                     TagDB.UpdateTag(oldString, NewString);
                     RedrawGraph();
                     SetCurrentTag(NewString);
+                    scrollViewer.Focus();
                 }
                 else
                 {
                     MessageBox.Show("已经有同名标签存在，请换一个标题。\r\n标签名为：" + NewString, "标题冲突", MessageBoxButton.OK, MessageBoxImage.Error);
+                    FloatTextBox.Ins.ShowEdit(canvas, FindTagBox(currentTag));
                 }
-                scrollViewer.Focus();
+                
             }
         }
         private void SwitchChangedCallback()
@@ -330,26 +332,34 @@ namespace TagExplorer.TagCanvas
             }
             Logger.D("EndDbgShowTagBox {0}=====================\r\n\r\n  ", CanvasType);
         }
-
-        //在当前图中的所有tag查找，看看当前是否已经显示，如果已经显示，直接切换节点
-        //如果没有显示，返回null
-        public TagBox ChangeSelectd(string tag)
+        private TagBox FindTagBox(string tag)
         {
-            DbgShowTagBox();
-            foreach(UIElement u in allTagBox)//此处不能在Canvas.Children中查找，因为为了性能做了特殊优化，一些不可见的tagbox仍然存在于Canvas.Children中。
+            foreach (UIElement u in allTagBox)//此处不能在Canvas.Children中查找，因为为了性能做了特殊优化，一些不可见的tagbox仍然存在于Canvas.Children中。
             {
                 TagBox t = u as TagBox;
-                if(t!=null)
+                if (t != null)
                 {
-                    if(t.Text == tag)
+                    if (t.Text == tag)
                     {
-                        Logger.D("ChangeSelected:{0} - POS:{1}-{2}", tag, t.Margin.Left, t.Margin.Top);
-                        SetCurrentTag(tag);
+                        Logger.D("FindTagBox:{0} - POS:{1}-{2}", tag, t.Margin.Left, t.Margin.Top);
                         return t;
                     }
                 }
             }
             return null;
+        }
+        //在当前图中的所有tag查找，看看当前是否已经显示，如果已经显示，直接切换节点
+        //如果没有显示，返回null
+        public TagBox ChangeSelectd(string tag)
+        {
+            DbgShowTagBox();
+            TagBox target = FindTagBox(tag);
+            if(target!=null)
+            {
+                SetCurrentTag(tag);
+            }
+            return target;
+            
         }
         //public void ShowGraph(ITagDB tagDB, string root)
         //{
@@ -980,6 +990,15 @@ namespace TagExplorer.TagCanvas
                 {
                     NewBrotherTag();
                     e.Handled = true;
+                }
+                else if(e.Key == Key.F2)
+                {
+                    TagBox t = FindTagBox(currentTag);
+                    if (t != null)
+                    {
+                        FloatTextBox.Ins.ShowEdit(canvas, t);
+                        e.Handled = true;
+                    }
                 }
             }
 
