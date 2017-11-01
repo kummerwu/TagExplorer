@@ -207,10 +207,10 @@
                   VerticalAlignment="Top"  
                   Background="White" VerticalScrollBarVisibility="Auto" 
                   HorizontalScrollBarVisibility="Auto"  SizeChanged="scrollViewer_SizeChanged"
-                   PreviewKeyDown="precanvas_KeyDown">
+                   PreviewKeyDown="precanvas_KeyDown"  FocusVisualStyle="{x:Null}">
         <Canvas Focusable="True" KeyDown="canvas_KeyDown" x:Name="canvas"
                 HorizontalAlignment="Left"  VerticalAlignment="Top"  
-                Background="White"  Margin="10,10,10,10">
+                Background="White"  Margin="10,10,10,10" FocusVisualStyle="{x:Null}">
         </Canvas>
     </ScrollViewer>
 </UserControl>
