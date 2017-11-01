@@ -16,7 +16,7 @@ namespace TagExplorer.Utils
                 log.Debug(PREFIX + s);
             }
         }
-        
+        [Conditional("LOGGER")]
         public static void D(string fmt ,params object[] par)
         {
             if (on)
