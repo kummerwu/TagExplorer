@@ -45,9 +45,16 @@ namespace TagExplorer.TagCanvas
         {
             if(canvas == Parent)
             {
-                TagDB.UpdateTag(box.Text, NewString);
-                RedrawGraph();
-                SetCurrentTag(NewString);
+                if (TagDB.QueryTagAlias(NewString).Count == 0)
+                {
+                    TagDB.UpdateTag(box.Text, NewString);
+                    RedrawGraph();
+                    SetCurrentTag(NewString);
+                }
+                else
+                {
+                    MessageBox.Show("已经有同名标签存在，请换一个标题。\r\n标签名为：" + NewString, "标题冲突", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
             }
         }
         private void SwitchChangedCallback()
@@ -112,10 +119,7 @@ namespace TagExplorer.TagCanvas
             if (TagDB != null && rootTag != null && oriSize.Height!=0 && oriSize.Width!=0 && !oriSize.IsEmpty)
             {
                 Logger.I("ShowGraph at " + rootTag);
-                //this.TagDB = tagDB;
-                //this.rootTag = root;
-                
-                //canvas.Children.Clear();
+               
                 if (allTagBox != null)
                 {
                     env.Return(allTagBox);
@@ -817,33 +821,30 @@ namespace TagExplorer.TagCanvas
         {
             return input.Split(new char[] { ' ', ',', '，' }, StringSplitOptions.RemoveEmptyEntries);
         }
+        private string GetNewTagTitle()
+        {
+            string tag = StaticCfg.Ins.DefaultNewTag;
+            int i = 0;
+            while(TagDB.QueryTagAlias(tag).Count>0)
+            {
+                tag = StaticCfg.Ins.DefaultNewTag + "-" + (++i);
+            }
+            return tag;
+        }
         private void miNewTag_Click(object sender, RoutedEventArgs e)
         {
             UpdateCurrentTagByContextMenu();
             if (currentTag == null || currentTag.Trim() == "") return;
             //TODO 如果有多个创建子标签如何正确处理？
-            
-            TagDB.AddTag(currentTag, "创建子标签");
+            string newTag = GetNewTagTitle();
+            TagDB.AddTag(currentTag, newTag);
             RedrawGraph();
 
             //BUG20171031: 子标签如果没有在图中显示出来（比如mainCanvas中因为深度的限制，并没有将其显示出来，下面b可能为null
-            TagBox b = ChangeSelectd("创建子标签");
+            TagBox b = ChangeSelectd(newTag);
             FloatTextBox.Ins.ShowEdit(canvas, b);
 
-            //NewTagWindow w = new NewTagWindow();
-            //w.Title = "创建子标签";
-            //w.Tips = string.Format("创建{0}子标签，多个子标签可以用空格隔开", currentTag);
-            //w.ShowDialog();
-            //string input = w.Inputs;
-            //if (input != null && input.Trim().Length > 0)
-            //{
-            //    string[] tags = ParseTags(input);
-            //    foreach (string tag in tags)
-            //    {
-            //        TagDB.AddTag(currentTag, tag);
-            //    }
-            //    RedrawGraph();
-            //}
+            
         }
 
         private void miPasteTag_Click(object sender, RoutedEventArgs e)
@@ -1048,9 +1049,10 @@ namespace TagExplorer.TagCanvas
             if (ps.Count == 0) return;
 
             string parent = ps[0];
-            TagDB.AddTag(parent, "创建标签");//TODO 如果有多个创建子标签如何正确处理？
+            string newTag = GetNewTagTitle();
+            TagDB.AddTag(parent,newTag);//TODO 如果有多个创建子标签如何正确处理？
             RedrawGraph();
-            TagBox b = ChangeSelectd("创建标签");
+            TagBox b = ChangeSelectd(newTag);
             FloatTextBox.Ins.ShowEdit(canvas, b);
         }
     }
