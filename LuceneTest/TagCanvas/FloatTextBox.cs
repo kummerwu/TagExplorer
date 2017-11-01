@@ -49,8 +49,10 @@ namespace TagExplorer.TagCanvas
             {
                 
                 Parent.Children.Remove(Edit);
+                Parent.Focus();
                 Parent = null;
                 System.Diagnostics.Debug.WriteLine("HideFloat1");
+
 
             }
             if (oldS != newS && oldS!=null && newS!=null)

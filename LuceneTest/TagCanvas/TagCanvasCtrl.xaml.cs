@@ -50,7 +50,7 @@ namespace TagExplorer.TagCanvas
                     TagDB.UpdateTag(oldString, NewString);
                     RedrawGraph();
                     SetCurrentTag(NewString);
-                    scrollViewer.Focus();
+                    
                 }
                 else
                 {
