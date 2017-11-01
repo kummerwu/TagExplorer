@@ -25,7 +25,7 @@ namespace TagExplorer
             tagDB = db;
             UriDB = uridb;
             MainCanvas.Initial(db,uridb,LayoutMode.LRTREE_COMPACT_MORE, LayoutCanvas.MAIN_CANVAS);
-            SubCanvas.Initial(db,uridb,LayoutMode.TREE_COMPACT, LayoutCanvas.SUB_CANVAS);
+            SubCanvas.Initial(db,uridb,LayoutMode.TREE_NO_COMPACT, LayoutCanvas.SUB_CANVAS);
         }
         FileWatcherSafe fileWather;
         //FileSystemWatcher fileWather = null;
