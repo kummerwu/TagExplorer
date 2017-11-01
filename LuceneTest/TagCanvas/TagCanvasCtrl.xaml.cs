@@ -189,7 +189,7 @@ namespace TagExplorer.TagCanvas
         {
             //先找到当前选择的节点
             TagBox curB = null;
-            foreach (UIElement b in canvas.Children)
+            foreach (UIElement b in allTagBox)//Bug:不能使用Children，Children中有些事不可见的（为了性能优化，没有将所有无用的TagBox从Canvas.Children中删除
             {
                 TagBox tmp = b as TagBox;
                 if (tmp != null && tmp.Text == currentTag)
@@ -208,7 +208,7 @@ namespace TagExplorer.TagCanvas
             //在移动当前节点
             if (curB != null)
             {
-                foreach (UIElement tmp in canvas.Children)
+                foreach (UIElement tmp in allTagBox)
                 {
                     TagBox b = tmp as TagBox;
 
@@ -311,19 +311,34 @@ namespace TagExplorer.TagCanvas
             }
         }
 
-        
+        private void DbgShowTagBox()
+        {
+            Logger.D("\r\n\r\n  BeginDbgShowTagBox {0}=====================", CanvasType);
+
+            foreach(UIElement u in canvas.Children)
+            {
+                TagBox t = u as TagBox;
+                if(t!=null)
+                {
+                    Logger.D("DbgShowTagBox:{0} - POS:{1}-{2}，Visibility={3}", t.Text, t.Margin.Left, t.Margin.Top,t.Visibility);
+                }
+            }
+            Logger.D("EndDbgShowTagBox {0}=====================\r\n\r\n  ", CanvasType);
+        }
 
         //在当前图中的所有tag查找，看看当前是否已经显示，如果已经显示，直接切换节点
         //如果没有显示，返回null
         public TagBox ChangeSelectd(string tag)
         {
-            foreach(UIElement u in canvas.Children)
+            DbgShowTagBox();
+            foreach(UIElement u in allTagBox)//此处不能在Canvas.Children中查找，因为为了性能做了特殊优化，一些不可见的tagbox仍然存在于Canvas.Children中。
             {
                 TagBox t = u as TagBox;
                 if(t!=null)
                 {
                     if(t.Text == tag)
                     {
+                        Logger.D("ChangeSelected:{0} - POS:{1}-{2}", tag, t.Margin.Left, t.Margin.Top);
                         SetCurrentTag(tag);
                         return t;
                     }
@@ -407,7 +422,7 @@ namespace TagExplorer.TagCanvas
         }
         private void UpdateSelectedStatus(string tag, TagBox.Status stat)
         {
-            foreach (UIElement u in canvas.Children)
+            foreach (UIElement u in allTagBox)
             {
                 TagBox tb = u as TagBox;
 
@@ -767,7 +782,7 @@ namespace TagExplorer.TagCanvas
                 TagDB.RemoveTag(oldCurrentTag);
                 
                 //如果新选出来的当前节点在视图中，直接选中该tag
-                foreach(UIElement u in canvas.Children)
+                foreach(UIElement u in allTagBox)
                 {
                     TagBox t = u as TagBox;
                     if(t!=null && t.Text == newCurrentTag)

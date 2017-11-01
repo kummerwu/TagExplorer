@@ -4,7 +4,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Shapes;
-using TagExplorer.TagLayout.CommonLayout;
 using TagExplorer.TagLayout.LayoutCommon;
 
 namespace TagExplorer.TagLayout.TreeLayout
@@ -49,63 +48,63 @@ namespace TagExplorer.TagLayout.TreeLayout
 
         public static string StatInf {
             get {
-                return "new reuse,ret tag = " + newTag + " " + reuseTag + " " + retTag
-                    + "\r\n Line:new reuse ,ret = " + newLine + " " + reuseLine + " " + retLine;
+                return "new reuse,ret tag = " + sttNewTag + " " + sttReuseTag + " " + sttRetTag
+                    + "\r\n Line:new reuse ,ret = " + sttNewLine + " " + sttReuseLine + " " + sttRetLine;
                     ;
             }
         }
 
         // ////
-        private List<TagBox> reuseList = new List<TagBox>();
+        private List<TagBox> TagBoxGarbage = new List<TagBox>();
         public void Return(List<TagBox> lst)
         {
-            retTag += lst.Count;
-            reuseList.AddRange(lst);
+            sttRetTag += lst.Count;
+            TagBoxGarbage.AddRange(lst);
         }
-        private static int newTag = 0;
-        private static int retTag = 0;
-        private static int reuseTag = 0;
+        private static int sttNewTag = 0;
+        private static int sttRetTag = 0;
+        private static int sttReuseTag = 0;
         public TagBox New(GTagBox g)
         {
-            if(reuseList.Count>0)
+            if(TagBoxGarbage.Count>0)
             {
-                reuseTag++;
-                TagBox b = reuseList[0] as TagBox;
-                reuseList.RemoveAt(0);
+                sttReuseTag++;
+                TagBox b = TagBoxGarbage[0] as TagBox;
+                TagBoxGarbage.RemoveAt(0);
                 b.Visibility = System.Windows.Visibility.Visible;
                 return b;
             }
             else
             {
-                newTag++;
+                sttNewTag++;
                 return new TagBox(g);
             }
         }
         ///////////////
-        private static int newLine = 0;
-        private static int retLine = 0;
-        private static int reuseLine = 0;
+        private static int sttNewLine = 0;
+        private static int sttRetLine = 0;
+        private static int sttReuseLine = 0;
 
-        private List<Path> reuseLineList = new List<Path>();
+        private List<Path> LineGarbage = new List<Path>();
         public void Return(List<Path> lst)
         {
-            retLine += lst.Count;
-            reuseLineList.AddRange(lst);
+            sttRetLine += lst.Count;
+            LineGarbage.AddRange(lst);
         }
         
         public Path New(Tuple<GTagBoxTree, GTagBoxTree, int> p_c)
         {
-            if (reuseLineList.Count > 0)
+            if (LineGarbage.Count > 0)
             {
-                reuseLine++;
-                Path b = reuseLineList[0] as Path;
-                reuseLineList.RemoveAt(0);
+                sttReuseLine++;
+                Path b = LineGarbage[0] as Path;
+                LineGarbage.RemoveAt(0);
                 b.Visibility = System.Windows.Visibility.Visible;
                 return b;
             }
             else
             {
-                newLine++;
+                sttNewLine++;
                 return new Path();
             }
         }
@@ -115,7 +114,7 @@ namespace TagExplorer.TagLayout.TreeLayout
         public List<TagBox> GetAllTagBox()
         {
             List<TagBox> result = new List<TagBox>();
-            foreach(TagBox b in reuseList)
+            foreach(TagBox b in TagBoxGarbage)
             {
                 b.Visibility = System.Windows.Visibility.Collapsed;
             }
@@ -129,7 +128,7 @@ namespace TagExplorer.TagLayout.TreeLayout
         public List<Path> GetAllLines()
         {
             List<Path> result = new List<Path>();
-            foreach (Path b in reuseLineList)
+            foreach (Path b in LineGarbage)
             {
                 b.Visibility = System.Windows.Visibility.Collapsed;
             }

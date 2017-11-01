@@ -6,7 +6,7 @@ namespace TagExplorer.Utils
 
     public class Logger
     {
-        public const bool on = false;
+        public const bool on = true;
         #region 公有方法
         [Conditional("LOGGER")]
         public static void D(string s)
@@ -16,7 +16,7 @@ namespace TagExplorer.Utils
                 log.Debug(PREFIX + s);
             }
         }
-        [Conditional("LOGGER")]
+        
         public static void D(string fmt ,params object[] par)
         {
             if (on)
