@@ -11,7 +11,7 @@ namespace TagExplorer.TagCanvas
 {
     class FloatTextBox
     {
-        public delegate void TextChanged(Canvas Parent,TagBox box,string NewString);
+        public delegate void TextChanged(Canvas Parent,string oldString,string NewString);
         public TextChanged TextChangedCallback;
 
 
@@ -34,15 +34,21 @@ namespace TagExplorer.TagCanvas
 
         private void HideEdit()
         {
+            Canvas tmpP = Parent;
+            string oldS = NoEdit?.Text;
+            string newS = Edit?.Text;
+
+            NoEdit = null;
             if (Parent != null )
             {
-                if (Edit.Text != NoEdit.Text)
-                {
-                    TextChangedCallback?.Invoke(Parent, NoEdit, Edit.Text);
-                }
+                
                 Parent.Children.Remove(Edit);
                 Parent = null;
-                NoEdit = null;
+                
+            }
+            if (oldS != newS && oldS!=null && newS!=null)
+            {
+                TextChangedCallback?.Invoke(tmpP, oldS, newS);
             }
         }
         private void InitEdit()
@@ -56,7 +62,7 @@ namespace TagExplorer.TagCanvas
 
         private void Edit_KeyUp(object sender, System.Windows.Input.KeyEventArgs e)
         {
-            if((e.Key == Key.Enter || e.Key == Key.Return))
+            if((e.Key == Key.Enter || e.Key == Key.Return) && (e.KeyboardDevice.Modifiers & ModifierKeys.Control) != ModifierKeys.Control)
             {
                 HideEdit();
             }
@@ -68,6 +74,8 @@ namespace TagExplorer.TagCanvas
         }
         public void ShowEdit(Canvas c, TagBox brother)
         {
+            if (c == null || brother == null) return;
+
             InitEdit();
             HideEdit();
             Parent = c;

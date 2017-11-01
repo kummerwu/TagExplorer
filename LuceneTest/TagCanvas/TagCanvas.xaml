@@ -18,7 +18,7 @@
             <RowDefinition Height="*" Name="subGridRow"></RowDefinition>
         </Grid.RowDefinitions>
         <!--<Canvas Grid.Row="0" x:Name="canvasRecentTags" HorizontalAlignment="Left"  VerticalAlignment="Top"  Background="Red"   />-->
-        <tagcavas:TagCanvasCtrl Grid.Row="0" x:Name="MainCanvas" SizeChanged="MainCanvas_SizeChanged"></tagcavas:TagCanvasCtrl>
+        <tagcavas:TagCanvasCtrl Grid.Row="0" x:Name="MainCanvas" SizeChanged="MainCanvas_SizeChanged" Focusable="False"></tagcavas:TagCanvasCtrl>
         <GridSplitter Height="4" ShowsPreview="True" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Background="#84AD02"></GridSplitter>
         <tagcavas:TagCanvasCtrl Grid.Row="1" x:Name="SubCanvas"></tagcavas:TagCanvasCtrl>
         

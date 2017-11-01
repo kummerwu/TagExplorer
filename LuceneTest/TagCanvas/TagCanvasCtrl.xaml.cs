@@ -41,13 +41,13 @@ namespace TagExplorer.TagCanvas
             FloatTextBox.Ins.TextChangedCallback += TextChanged;
 
         }
-        private void TextChanged(Canvas Parent, TagBox box, string NewString)
+        private void TextChanged(Canvas Parent, string oldString, string NewString)
         {
             if(canvas == Parent)
             {
                 if (TagDB.QueryTagAlias(NewString).Count == 0)
                 {
-                    TagDB.UpdateTag(box.Text, NewString);
+                    TagDB.UpdateTag(oldString, NewString);
                     RedrawGraph();
                     SetCurrentTag(NewString);
                 }
@@ -55,6 +55,7 @@ namespace TagExplorer.TagCanvas
                 {
                     MessageBox.Show("已经有同名标签存在，请换一个标题。\r\n标签名为：" + NewString, "标题冲突", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
+                scrollViewer.Focus();
             }
         }
         private void SwitchChangedCallback()
