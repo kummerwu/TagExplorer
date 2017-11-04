@@ -45,7 +45,8 @@ namespace TagExplorer.TagCanvas
         {
             if(canvas == Parent && tag!=null &&NewString!=null)
             {
-                tag.ChangeTitle(NewString);
+                TagDB.ChangeTitle(tag,NewString);
+                RedrawGraph();
                 SetCurrentTag(tag);
             }
         }
@@ -875,7 +876,7 @@ namespace TagExplorer.TagCanvas
             UpdateCurrentTagByContextMenu();
             if (currentTag == null) return;
             //TODO 如果有多个创建子标签如何正确处理？
-            GUTag newTag = new GUTag(StaticCfg.Ins.DefaultNewTag);
+            GUTag newTag = TagDB.NewTag(StaticCfg.Ins.DefaultNewTag);
             TagDB.AddTag(currentTag, newTag);
             RedrawGraph();
 
@@ -1130,7 +1131,7 @@ namespace TagExplorer.TagCanvas
             if (ps.Count == 0) return;
 
             GUTag parent = ps[0];
-            GUTag newTag = new GUTag(StaticCfg.Ins.DefaultNewTag);
+            GUTag newTag = TagDB.NewTag(StaticCfg.Ins.DefaultNewTag);
             TagDB.AddTag(parent, newTag);//TODO 如果有多个创建子标签如何正确处理？
             RedrawGraph();
             TagBox b = ChangeSelectd(newTag);

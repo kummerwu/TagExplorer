@@ -184,7 +184,7 @@ namespace TagExplorer
                 MainCanvas.ClearSelected();
                 return;
             }
-            List<GUTag> tags = tagDB.GetTags(text);
+            List<GUTag> tags = tagDB.QueryTags(text);
 
             //如果不在视图中，但数据库中存在，TODO：如何有效的切换？？是一个需要考虑的问题
             if(tags.Count>0)

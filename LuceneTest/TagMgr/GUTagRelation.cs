@@ -7,25 +7,25 @@ using System.Threading.Tasks;
 
 namespace TagExplorer.TagMgr
 {
-    [Serializable]
-    class GUTagRelation_del
-    {
-        public GUTag Tag;
-        public List<GUTag> Children = new List<GUTag>();
+    //[Serializable]
+    //class GUTagRelation_del
+    //{
+    //    public GUTag Tag;
+    //    public List<GUTag> Children = new List<GUTag>();
 
 
-        public GUTagRelation_del(string n)
-        {
-            Tag = new GUTag(n);
-        }
+    //    public GUTagRelation_del(string n)
+    //    {
+    //        Tag = new GUTag(n);
+    //    }
 
-        [JsonIgnore]
-        public string Title { get { return Tag.Title; } }
-
-        
-        
-
+    //    [JsonIgnore]
+    //    public string Title { get { return Tag.Title; } }
 
         
-    }
+        
+
+
+        
+    //}
 }

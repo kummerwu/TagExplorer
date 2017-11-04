@@ -1,5 +1,7 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
+using TagExplorer.Utils;
 
 namespace TagExplorer.TagMgr
 {
@@ -10,11 +12,13 @@ namespace TagExplorer.TagMgr
         public List<string> Alias = new List<string>();
         public List<Guid> Children = new List<Guid>();
 
+        [JsonIgnore]
         public string Title { get { return Alias.Count > 0 ? Alias[0] : ""; } }
-        
+        public GUTag() { }
         public GUTag(string title)
         {
-            Id = Guid.NewGuid();
+            if (title == StaticCfg.Ins.DefaultTag) Id = StaticCfg.Ins.DefaultTagID;
+            else Id = Guid.NewGuid();
             Alias.Add(title);
         }
         public GUTag(string title,Guid id)

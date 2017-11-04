@@ -45,27 +45,33 @@ namespace TagExplorer.TagMgr
                 foreach(string ln in lns)
                 {
                     GUTag j = JsonConvert.DeserializeObject<GUTag>(ln);
-                    db.UpdateIndex(j);
+                    db.AddToDB(j);
                 }
             }
             
             return db;
         }
-        
+        private void AssertValid(GUTag tag)
+        {
+            System.Diagnostics.Debug.Assert(id2Gutag[tag.Id] == tag);
+        }
         //////////////////////////////////////////////////////////
         public GUTag NewTag(string stag)
         {
+
             GUTag tag = new GUTag(stag);
-            UpdateIndex(tag);
+            AddToDB(tag);
             return tag;
         }
         private void DeleteTag(GUTag j)
         {
+            AssertValid(j);
             id2Gutag.Remove(j.Id);
             //AllTagSet.Remove(j);
         }
-        private void UpdateIndex(GUTag j)
+        private void AddToDB(GUTag j)
         {
+            Debug.Assert(id2Gutag[j.Id] == null);
             id2Gutag[j.Id] = j;
             
         }
@@ -73,10 +79,11 @@ namespace TagExplorer.TagMgr
 
         public int AddTag(GUTag parent, GUTag child)
         {
+            AssertValid(parent);
+            AssertValid(child);
             GUTag tag= id2Gutag[parent.Id] as GUTag;
-            System.Diagnostics.Debug.Assert(tag != null);
             GUTag cTag = id2Gutag[child.Id] as GUTag;
-            System.Diagnostics.Debug.Assert(cTag != null);
+            
 
             tag.AddChild(child);
             
@@ -92,6 +99,7 @@ namespace TagExplorer.TagMgr
 
         public int QueryChildrenCount(GUTag tag)
         {
+            AssertValid(tag);
             GUTag tmp = id2Gutag[tag.Id] as GUTag;
             return tmp == null ? 0 : tmp.Children.Count;
 
@@ -100,13 +108,13 @@ namespace TagExplorer.TagMgr
         
         public int MergeAlias(GUTag mainTag, GUTag aliasTag)
         {
-            
-            Debug.Assert(id2Gutag[mainTag.Id] == mainTag);
-            Debug.Assert(id2Gutag[aliasTag.Id] == aliasTag);
+            AssertValid(mainTag);
+            AssertValid(aliasTag);
             DeleteTag(aliasTag);
             mainTag.Merge(aliasTag);
-            UpdateIndex(mainTag);
+            AddToDB(mainTag);
             //allTag.Add(tag2, tmp1);//别名也需要快速索引
+            Save();
             return ITagDBConst.R_OK;
         }
 
@@ -126,12 +134,14 @@ namespace TagExplorer.TagMgr
 
         public List<string> QueryTagAlias(GUTag tag)
         {
+            AssertValid(tag);
             if (id2Gutag[tag.Id] != tag) return new List<string>();
             else return tag.Alias;
         }
         private static List<string> EMPTY_LIST = new List<string>();
         public List<GUTag> QueryTagChildren(GUTag tag)
         {
+            AssertValid(tag);
             if (id2Gutag[tag.Id] != tag) return new List<GUTag>();
 
             List<GUTag> gutagChildren= new List<GUTag>();
@@ -148,6 +158,7 @@ namespace TagExplorer.TagMgr
 
         public List<GUTag> QueryTagParent(GUTag tag)
         {
+            AssertValid(tag);
             if (id2Gutag[tag.Id] != tag) return new List<GUTag>();
 
 
@@ -166,6 +177,7 @@ namespace TagExplorer.TagMgr
 
         public int RemoveTag(GUTag tag)
         {
+            AssertValid(tag);
             id2Gutag.Remove(tag.Id);
             Save(tag);
             return ITagDBConst.R_OK;
@@ -174,6 +186,8 @@ namespace TagExplorer.TagMgr
         //将child原来所有parent删除，并与新的parent建立关系
         public int ResetParent(GUTag parent,GUTag child)
         {
+            AssertValid(parent);
+            AssertValid(child);
             RemoveParentsRef(child);
             AddTag(parent, child);
             Save(parent);
@@ -182,7 +196,7 @@ namespace TagExplorer.TagMgr
 
         private void RemoveParentsRef(GUTag child)
         {
-            
+            AssertValid(child);
             foreach (GUTag j in id2Gutag.Values)
             {
                 j.RemoveChild(child);
@@ -192,6 +206,7 @@ namespace TagExplorer.TagMgr
 
         public int ChangePos(GUTag tag, int direct)
         {
+            AssertValid(tag);
             List<GUTag> parents = QueryTagParent(tag);
             Debug.Assert(parents.Count == 1);
             if(parents.Count==1)
@@ -203,19 +218,14 @@ namespace TagExplorer.TagMgr
             return ITagDBConst.R_OK;
 
         }
-        public List<GUTag> GetTags(string title)
-        {
-            List<GUTag> ret = new List<GUTag>();
-            foreach(GUTag tag in id2Gutag.Values)
-            {
-                if (tag.Title == title) ret.Add(tag);
-            }
-            return ret;
-        }
+        
         public int Import(string importInf)
         {
             int ret = 0;
+            GUTag dtag = NewTag(StaticCfg.Ins.DefaultTag);
+
             Hashtable title2GUtag = new Hashtable();
+            title2GUtag.Add(StaticCfg.Ins.DefaultTag, dtag);
             if (File.Exists(importInf))
             {
                 string[] lns = File.ReadAllLines(importInf);
@@ -228,11 +238,14 @@ namespace TagExplorer.TagMgr
                     if(tag==null)
                     {
                         tag = NewTag(j.Title);
+                        if(title2GUtag[j.Title]==null)
+                            title2GUtag.Add(j.Title, tag);
                     }
                     foreach (string a in j.Alias)
                     {
                         tag.AddAlias(a);
-                        title2GUtag.Add(a, tag);
+                        if (title2GUtag[a] == null)
+                            title2GUtag.Add(a, tag);
                     }
                     //把子节点先创建出来
                     foreach (string c in j.Children)
@@ -240,7 +253,8 @@ namespace TagExplorer.TagMgr
                         if (title2GUtag[c] == null)
                         {
                             GUTag ctag = NewTag(c);
-                            title2GUtag.Add(c, ctag);
+                            if (title2GUtag[c] == null)
+                                title2GUtag.Add(c, ctag);
                         }
                     }
                     
@@ -274,10 +288,21 @@ namespace TagExplorer.TagMgr
 
         public List<GUTag> QueryTags(string title)
         {
-            throw new NotImplementedException();
+            List<GUTag> ret = new List<GUTag>();
+            foreach (GUTag tag in id2Gutag.Values)
+            {
+                if (tag.Title == title) ret.Add(tag);
+            }
+            return ret;
         }
 
-        
+        public int ChangeTitle(GUTag tag, string newTitle)
+        {
+            AssertValid(tag);
+            tag.ChangeTitle(newTitle);
+            Save();
+            return ITagDBConst.R_OK;
+        }
     }
     
     

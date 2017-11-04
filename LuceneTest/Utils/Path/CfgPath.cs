@@ -60,7 +60,7 @@ namespace TagExplorer.Utils
             get
             {
                 string tdbDir = RootSubDir("TagDBJson");
-                return Path.Combine(tdbDir, "Tags.json");
+                return Path.Combine(tdbDir, "Tags3.json");
             }
         }
         public static string UriDBPath { get { return Path.Combine(RootPath, "UriDB"); } }
