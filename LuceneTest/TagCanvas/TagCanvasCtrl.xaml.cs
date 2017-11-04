@@ -25,11 +25,25 @@ namespace TagExplorer.TagCanvas
         private ITagDB TagDB = null;
         private IUriDB UriDB = null;
         private LayoutCanvas CanvasType;
-
-        //初始化TagDB，该函数必须在空间初始化时就指定
-        public void Initial(ITagDB db, IUriDB uridb,LayoutMode mode,LayoutCanvas canvasType)
+        private LayoutMode myMode
         {
-            myMode = mode;
+            get
+            {
+                switch(CanvasType)
+                {
+                    case LayoutCanvas.MAIN_CANVAS:
+                        return DynamicCfg.Ins.MainCanvasLayoutMode;
+                    case LayoutCanvas.SUB_CANVAS:
+                        return DynamicCfg.Ins.SubCanvasLayoutMode;
+                    default:
+                        return LayoutMode.TREE_NO_COMPACT;
+                }
+            }
+        }
+        //初始化TagDB，该函数必须在空间初始化时就指定
+        public void Initial(ITagDB db, IUriDB uridb,LayoutCanvas canvasType)
+        {
+
             TagDB = db;
             UriDB = uridb;
             CanvasType = canvasType;
@@ -67,7 +81,7 @@ namespace TagExplorer.TagCanvas
                 return scrollViewer.RenderSize;
             }
         }
-        private LayoutMode myMode;
+        
         public void ChangeRoot(GUTag rootTag,GUTag selectTag)
         {
             if (rootTag!=null)
@@ -1137,6 +1151,53 @@ namespace TagExplorer.TagCanvas
             TagBox b = ChangeSelectd(newTag);
             FloatTextBox.Ins.ShowEdit(canvas, b);
         }
+
+        #region 修改Tag布局
+        private void ChangeLayoutMode(LayoutMode m)
+        {
+            switch (CanvasType)
+            {
+                case LayoutCanvas.MAIN_CANVAS:
+                    DynamicCfg.Ins.ChangeMainCanvasLayoutMode(m);
+                    break;
+                case LayoutCanvas.SUB_CANVAS:
+                    DynamicCfg.Ins.ChangeSubCanvasLayoutMode(m);
+                    break;
+                default:
+                    break;
+            }
+            RedrawGraph();
+        }
+        private void miNormalTree_Click(object sender, RoutedEventArgs e)
+        {
+            ChangeLayoutMode(LayoutMode.TREE_NO_COMPACT);
+        }
+
+        private void miCompactTree_Click(object sender, RoutedEventArgs e)
+        {
+            ChangeLayoutMode(LayoutMode.TREE_COMPACT);
+        }
+
+        private void miCompactMoreTree_Click(object sender, RoutedEventArgs e)
+        {
+            ChangeLayoutMode(LayoutMode.TREE_COMPACT_MORE);
+        }
+
+        private void miNormalLRTree_Click(object sender, RoutedEventArgs e)
+        {
+            ChangeLayoutMode(LayoutMode.LRTREE_NO_COMPACT);
+        }
+
+        private void miCompactLRTree_Click(object sender, RoutedEventArgs e)
+        {
+            ChangeLayoutMode(LayoutMode.LRTREE_COMPACT);
+        }
+
+        private void miCompactMoreLRTree_Click(object sender, RoutedEventArgs e)
+        {
+            ChangeLayoutMode(LayoutMode.LRTREE_COMPACT_MORE);
+        }
+        #endregion
     }
     
     

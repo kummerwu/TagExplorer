@@ -59,16 +59,16 @@ namespace TagExplorer
                 
             }
         }
-        private GUTag tagID;
+        private GUTag guTag;
         public GUTag GUTag
         {
             get
             {
-                return tagID;
+                return guTag;
             }
             internal set
             {
-                tagID = value;
+                guTag = value;
                 txt.Text = value.Title;
             }
         }

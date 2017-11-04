@@ -33,32 +33,28 @@ namespace TagExplorer
 
         ITagDB tagDB = null;
         IUriDB uriDB = null;
-        //ITagLayout tagLayout = TagLayoutFactory.CreateLayout();
+
+        #region 窗口的总体初始化与销毁
         public MainWindow()
         {
-            Logger.I(@"
-////////////////////////////////////////////////////////////////////
-//
-//init main window
-//
-///////////////////////////////////////////////////////////////////
-");
+            Logger.I(@"init main window");
 
             InitializeComponent();
 
-            //URI DB相关部分
+            //URI DB初始化
             Logger.I("InitializeComponent Finished!，init uridb");
             uriDB = UriDBFactory.CreateUriDB();
             uriDB.UriDBChanged += ShowUrlListByText;
-
-            //URI 相关部分
-            //uriList.CurrentUriChangedCallback += CurrentUriChanged;
-
-            //TAG DB相关部分
+            
+            //TAG DB初始化
             Logger.I("InitializeComponent Finished!，init tagdb");
             tagDB = TagDBFactory.CreateTagDB();
-            autoTextBox.textBox.TextChanged += TextChanged_Callback;
-            autoTextBox.SearchDataProvider = tagDB;
+
+            //查询输入框初始化
+            SearchBox.textBox.TextChanged += SearchBoxTextChanged_Callback;
+            SearchBox.SearchDataProvider = tagDB;
+
+            //Tag视图初始化
             tagCanvas.InitDB(tagDB,uriDB);
             tagCanvas.SelectedTagChanged += SelectedTagChanged_Callback;
             GUTag mroot = GUTag.Parse(DynamicCfg.Ins.MainCanvasRoot,tagDB);
@@ -70,24 +66,57 @@ namespace TagExplorer
             richTxt.Focus();
 
         }
-        //public void CurrentUriChanged(string uri)
-        //{
-        //    //richTxt.Load(uri);  richtxt不与文件列表关联，而是与当前选中的tag关联。
-            
-        //}
-
-        public void ShowUrlListByText()
+        private void Window_Closed(object sender, EventArgs e)
         {
-            uriList.ShowQueryResult(autoTextBox.Text, uriDB,tagDB);
+            IDisposableFactory.Dispose(tagDB);
+            IDisposableFactory.Dispose(uriDB);
+            //tagDB.Dispose();
+            //uriDB.Dispose();
+            tagDB = null;
+            uriDB = null;
+            Logger.I(@"Close main window");
         }
-        private void TextChanged_Callback(object sender, TextChangedEventArgs e)
+        private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+
+        }
+        #endregion
+
+        #region 查询输入框相关的处理流程
+        //输入框回车，开始查询
+        private void SearchBoxKeyUp_Callback(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                SearchByTxt();
+            }
+        }
+        //TODO:这个地方需要优化，用户任意搜索一个单词，就直接把root tag切换过去，实际上不合理
+        private void SearchByTxt()
+        {
+            tagCanvas.SearchByTxt(SearchBox.Text);
+            ShowUrlListByText();
+        }
+        private void SearchBoxTextChanged_Callback(object sender, TextChangedEventArgs e)
         {
             //ShowUrlListByText();
         }
+        private void btSearch_Click(object sender, RoutedEventArgs e)
+        {
+            SearchByTxt();
+        }
+        #endregion
 
+
+
+        public void ShowUrlListByText()
+        {
+            uriList.ShowQueryResult(SearchBox.Text, uriDB,tagDB);
+        }
+        #region Tag相关的处理
         public void SelectedTagChanged_Callback(GUTag tag)
         {
-            autoTextBox.Text = tag.Title;
+            SearchBox.Text = tag.Title;
             //现在自己的这个richtextbox非常不好用，将其暂时废除，除非有一个好用的再说
             string uri = CfgPath.GetFileByTag(tag.Title,"note.rtf");
             richTxt.Load(uri);
@@ -99,61 +128,19 @@ namespace TagExplorer
         public void ShowTagGraph(GUTag root,GUTag subroot)
         {
             Logger.I("Show Tag " + root);
-            //CalcCanvasHeight();
-            tagCanvas.UriDB = uriDB;
             tagCanvas.ShowGraph(root,subroot,subroot);
         }
 
 
+        #endregion
 
 
-        //private void CalcCanvasHeight()
-        //{
-        //    //canvas.Height = Math.Max(canvas.Height, rGrid.RenderSize.Height-10);
-        //    //tagCanvas.CanvasMinHeight = uriList.RenderSize.Height - 10;
-        //}
-        private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
-        {
-            //CalcCanvasHeight();
-            //MessageBox.Show(tagCanvas.ActualWidth + " " + tagCanvas.ActualHeight);
-        }
 
-        private void TextBoxKeyUp_Callback(object sender, KeyEventArgs e)
-        {
-            if (e.Key == Key.Enter)
-            {
-                if (e.KeyboardDevice.Modifiers == ModifierKeys.Control)
-                {
-                    //string tag = tagDB.AddTag(autoTextBox.Text);
-                    //if (tag != null)
-                    //{
-                    //    Update(tag);
-                    //    autoTextBox.Text = "";
-                    //}
-                    
-                }
-                else 
-                {
-                    SearchByTxt();
-                }
 
-            }
-        }
 
-        //TODO:这个地方需要优化，用户任意搜索一个单词，就直接把root tag切换过去，实际上不合理
-        private void SearchByTxt()
-        {
-            //如果输入的txt是一个tag的title，才进行视图切换。//TODO
-            //if (tagDB.QueryTagAlias(autoTextBox.Text).Count > 0)
-            //{
-            //    //ShowTagGraph(autoTextBox.Text, null);
-            //    tagCanvas.SearchByTxt(autoTextBox.Text);
-            //}
 
-            tagCanvas.SearchByTxt(autoTextBox.Text);
-            ShowUrlListByText();
-        }
 
+        #region 命令处理相关
         private void Paste_CanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
             e.CanExecute = true;
@@ -165,22 +152,7 @@ namespace TagExplorer
             tagCanvas.MainCanvas.miPasteFile_Click(sender, e);
         }
 
-        private void Window_Closed(object sender, EventArgs e)
-        {
-            IDisposableFactory.Dispose(tagDB);
-            IDisposableFactory.Dispose(uriDB);
-            //tagDB.Dispose();
-            //uriDB.Dispose();
-            tagDB = null;
-            uriDB = null;
-            Logger.I(@"
-**********************************************************************
-*
-*Close main window
-*
-**********************************************************************
-");
-        }
+        
 
         private void Cut_CanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
@@ -235,7 +207,7 @@ namespace TagExplorer
             GUTag sroot = GUTag.Parse(DynamicCfg.Ins.SubCanvasRoot, tagDB);
             ShowTagGraph(mroot,sroot);
         }
-
+#region 布局相关的处理
         public void Dispose()
         {
             SaveLayout();
@@ -262,16 +234,13 @@ namespace TagExplorer
         {
             LoadLayout();
         }
-
+#endregion
         private void tagCanvas_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             System.Diagnostics.Debug.WriteLine(tagCanvas.ActualWidth + " " + tagCanvas.ActualHeight);
         }
 
-        private void btSearch_Click(object sender, RoutedEventArgs e)
-        {
-            SearchByTxt();
-        }
+        
 
         private void btImport_Click(object sender, RoutedEventArgs e)
         {
@@ -309,5 +278,6 @@ namespace TagExplorer
         {
             tagCanvas.HomeTag();
         }
+        #endregion
     }
 }

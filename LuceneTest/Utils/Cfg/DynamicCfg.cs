@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TagExplorer.TagLayout.CommonLayout;
 using TagExplorer.TagMgr;
 
 namespace TagExplorer.Utils.Cfg
@@ -69,5 +70,18 @@ namespace TagExplorer.Utils.Cfg
             Save();
         }
 
+        public LayoutMode SubCanvasLayoutMode = LayoutMode.TREE_COMPACT;
+        public void ChangeSubCanvasLayoutMode(LayoutMode v)
+        {
+            SubCanvasLayoutMode = v;
+            Save();
+        }
+
+        public LayoutMode MainCanvasLayoutMode = LayoutMode.LRTREE_COMPACT_MORE;
+        public void ChangeMainCanvasLayoutMode(LayoutMode v)
+        {
+            MainCanvasLayoutMode = v;
+            Save();
+        }
     }
 }

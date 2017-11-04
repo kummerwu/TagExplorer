@@ -129,6 +129,16 @@
         <!-- ===============================================================
         定义菜单资源
         =============================================================== -->
+        <ContextMenu x:Key="canvasMenu" x:Name="canvasMenu">
+            <MenuItem Name="miNormalTree"       Header="树形布局-标准" Click="miNormalTree_Click"></MenuItem>
+            <MenuItem Name="miCompactTree"      Header="树形布局-压缩" Click="miCompactTree_Click"></MenuItem>
+            <MenuItem Name="miCompactMoreTree"  Header="树形布局-紧凑" Click="miCompactMoreTree_Click"></MenuItem>
+            <MenuItem Name="miNormalLRTree"       Header="左右布局-标准" Click="miNormalLRTree_Click"></MenuItem>
+            <MenuItem Name="miCompactLRTree"      Header="左右布局-压缩" Click="miCompactLRTree_Click"></MenuItem>
+            <MenuItem Name="miCompactMoreLRTree"  Header="左右布局-紧凑" Click="miCompactMoreLRTree_Click"></MenuItem>
+        </ContextMenu>
+        
+        
         <ContextMenu x:Name="tagAreaMenu" x:Key="tagAreaMenu" ContextMenuOpening="tagAreaMenu_ContextMenuOpening">
 
             <MenuItem Command="{StaticResource OpenTagDir}" >
@@ -207,10 +217,11 @@
                   VerticalAlignment="Top"  
                   Background="White" VerticalScrollBarVisibility="Auto" 
                   HorizontalScrollBarVisibility="Auto"  SizeChanged="scrollViewer_SizeChanged"
-                   PreviewKeyDown="precanvas_KeyDown"  FocusVisualStyle="{x:Null}">
+                   PreviewKeyDown="precanvas_KeyDown"  FocusVisualStyle="{x:Null}"
+                  ContextMenu="{StaticResource canvasMenu}">
         <Canvas Focusable="True" KeyDown="canvas_KeyDown" x:Name="canvas"
                 HorizontalAlignment="Left"  VerticalAlignment="Top"  
-                Background="White"  Margin="10,10,10,10" FocusVisualStyle="{x:Null}">
+                Background="White"  Margin="10,10,10,10" FocusVisualStyle="{x:Null}" >
         </Canvas>
     </ScrollViewer>
 </UserControl>

@@ -19,16 +19,19 @@ namespace TagExplorer
     /// </summary>
     public partial class TagGraphCanvas : UserControl
     {
+        private FileWatcherSafe fileWather;
+        private ITagDB tagDB = null;
+        private IUriDB UriDB = null;
 
         public void InitDB(ITagDB db,IUriDB uridb)
         {
             tagDB = db;
             UriDB = uridb;
-            MainCanvas.Initial(db,uridb,LayoutMode.LRTREE_COMPACT_MORE, LayoutCanvas.MAIN_CANVAS);
-            SubCanvas.Initial(db,uridb,LayoutMode.TREE_NO_COMPACT, LayoutCanvas.SUB_CANVAS);
+            MainCanvas.Initial(db,uridb, LayoutCanvas.MAIN_CANVAS);
+            SubCanvas.Initial(db,uridb,LayoutCanvas.SUB_CANVAS);
         }
-        FileWatcherSafe fileWather;
-        //FileSystemWatcher fileWather = null;
+        
+
         public TagGraphCanvas()
         {
             InitializeComponent();
@@ -212,8 +215,7 @@ namespace TagExplorer
             }
         }
 
-        private ITagDB tagDB = null;
-        public IUriDB UriDB = null;
+        
 
 
         public CurrentTagChanged SelectedTagChanged = null;
@@ -260,39 +262,6 @@ namespace TagExplorer
             GUTag defaultTag = GUTag.Parse(StaticCfg.Ins.DefaultTagID.ToString(), tagDB);
             ShowGraph(defaultTag, null,null);
         }
-
-
-
-
-        //private void scrollViewer_MouseDoubleClick(object sender, MouseButtonEventArgs e)
-        //{
-        //    if (e.OriginalSource is TagBox)
-        //    {
-        //        TagBox b = (TagBox)e.OriginalSource;
-        //        ShowGraph(b.Text);
-        //    }
-        //}
-
-        //private void canvas_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
-        //{
-
-        //}
-
-        //private void canvas_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        //{
-
-        //}
-
-        //private void canvas_Click(object sender, RoutedEventArgs e)
-        //{
-
-        //}
-
-
-
-
-
-
-
+        
     }
 }
