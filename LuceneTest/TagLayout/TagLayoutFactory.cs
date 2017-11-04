@@ -1,4 +1,5 @@
 ﻿using AnyTagNet;
+using System;
 using TagExplorer.TagLayout.CommonLayout;
 
 namespace TagExplorer.TagLayout
@@ -9,7 +10,8 @@ namespace TagExplorer.TagLayout
         {
             if (GLayoutMode.mode == LayoutMode.GRAPH_UPDOWN)
             {
-                return new TagExplorer.BoxLayout.TagLayout();
+                throw new NotSupportedException("该布局模式已经被删除");
+                //return new TagExplorer.BoxLayout.TagLayout();
             }
             else if(GLayoutMode.mode >= LayoutMode.LRTREE_NO_COMPACT && GLayoutMode.mode<= LayoutMode.LRTREE_COMPACT_MORE)
             {

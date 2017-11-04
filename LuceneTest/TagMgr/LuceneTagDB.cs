@@ -11,7 +11,7 @@ using TagExplorer.Utils;
 
 namespace TagExplorer.TagMgr
 {
-    class LuceneTagDB : ITagDB, IDisposable
+    class LuceneTagDB :  IDisposable
     {
         
         const string F_TAGNAME = "tname";
@@ -217,7 +217,7 @@ namespace TagExplorer.TagMgr
 
         public List<string> QueryTagChildren(string tag)
         {
-            if (!TagSwitchDB.Ins.Get(tag)) return new List<string>();
+            //if (!TagSwitchDB.Ins.Get(tag)) return new List<string>();
 
             //TODO 自己不能关联自己,现在临时规避一下，正式方案需要在用户输入时保证不会出现这种情况
             List<string> result = GetByField(tag, F_TAGNAME, F_TAGCHILD);
@@ -332,28 +332,28 @@ namespace TagExplorer.TagMgr
         public void TranslateToJson()
         {
             //return;
-            System.IO.TextWriter w = new System.IO.StreamWriter(@".\tagdb.json");
-            int max = search.MaxDoc;
+            //System.IO.TextWriter w = new System.IO.StreamWriter(@".\tagdb.json");
+            //int max = search.MaxDoc;
             
-            for (int i = 0; i < max; i++)
-            {
-                Document doc = search.Doc(i);
-                if (doc != null)
-                {
-                    string mainTag = doc.Get(F_TAGNAME);
-                    JTagInf tag = new JTagInf(mainTag);
-                    foreach (Field f in doc.GetFields(F_TAGCHILD))
-                    {
-                        tag.AddChild(f.StringValue);
-                    }
-                    if (tag.Children.Count > 0)
-                    {
-                        w.WriteLine(JsonConvert.SerializeObject(tag));
-                    }
+            //for (int i = 0; i < max; i++)
+            //{
+            //    Document doc = search.Doc(i);
+            //    if (doc != null)
+            //    {
+            //        string mainTag = doc.Get(F_TAGNAME);
+            //        GUTagRelation tag = new GUTagRelation(mainTag);
+            //        foreach (Field f in doc.GetFields(F_TAGCHILD))
+            //        {
+            //            tag.AddChild(f.StringValue);
+            //        }
+            //        if (tag.Children.Count > 0)
+            //        {
+            //            w.WriteLine(JsonConvert.SerializeObject(tag));
+            //        }
                     
-                }
-            }
-            w.Close();
+            //    }
+            //}
+            //w.Close();
 
         }
 

@@ -17,18 +17,18 @@ namespace UTLT
             UTestCfg.Ins.IsUTest = true;
             
         }
-        [TestMethod]
-        public void TestLayout_Base()
-        {
-            GLayoutMode.mode = LayoutMode.GRAPH_UPDOWN;
-            ITagDB tagdb = TagDBFactory.CreateTagDB();
-            tagdb.AddTag("parent", "child");
+        //[TestMethod]
+        //public void TestLayout_Base()
+        //{
+        //    GLayoutMode.mode = LayoutMode.GRAPH_UPDOWN;
+        //    ITagDB tagdb = TagDBFactory.CreateTagDB();
+        //    tagdb.AddTag("parent", "child");
 
-            ITagLayout lay = TagLayoutFactory.CreateLayout();
-            lay.Layout(tagdb, "parent",new System.Windows.Size(1000,1000),null);
+        //    ITagLayout lay = TagLayoutFactory.CreateLayout();
+        //    lay.Layout(tagdb, "parent",new System.Windows.Size(1000,1000),null);
 
-            Assert.AreEqual(2, lay.Lines.Count());
-            Assert.AreEqual(2, lay.TagArea.Count());
-        }
+        //    Assert.AreEqual(2, lay.Lines.Count());
+        //    Assert.AreEqual(2, lay.TagArea.Count());
+        //}
     }
 }

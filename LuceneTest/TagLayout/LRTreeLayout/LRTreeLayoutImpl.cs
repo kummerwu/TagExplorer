@@ -43,7 +43,7 @@ namespace TagExplorer.TagLayout.LRTreeLayout
         private Size oriSize;
         public List<TagBox> tags = new List<TagBox>();
         public IEnumerable<UIElement> lines = null;
-        public void Layout(ITagDB db, string tag,Size size,TreeLayoutEnv env)
+        public void Layout(ITagDB db, GUTag tag,Size size,TreeLayoutEnv env)
         {
             oriSize = size;
             this.db = db;
@@ -52,7 +52,7 @@ namespace TagExplorer.TagLayout.LRTreeLayout
             tags.Clear();
             GTagBoxTree subTree = null;
             double y = 0;
-            List<string> allChild = db.QueryTagChildren(tag);
+            List<GUTag> allChild = db.QueryTagChildren(tag);
             
             
             //double x = 600;
@@ -76,7 +76,7 @@ namespace TagExplorer.TagLayout.LRTreeLayout
             GTagBoxTree[] children = new GTagBoxTree[cnt];
 
             int direct = 1;
-            foreach (string c in allChild)
+            foreach (GUTag c in allChild)
             {
                 if (c == tag) continue;//临时规避数据上的一个问题，有些节点自己成环了。
                 //半数放在左边，半数放在右边

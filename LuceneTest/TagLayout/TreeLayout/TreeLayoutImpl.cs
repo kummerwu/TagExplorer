@@ -34,7 +34,7 @@ namespace TagExplorer.TagLayout.TreeLayout
         private Size oriSize;
         public List<TagBox> tags = null;
         public IEnumerable<UIElement> lines = null;
-        public void Layout(ITagDB db, string tag,Size size,TreeLayoutEnv env)
+        public void Layout(ITagDB db, GUTag tag,Size size,TreeLayoutEnv env)
         {
             oriSize = size;
             env.Reset();

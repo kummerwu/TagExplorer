@@ -45,12 +45,12 @@ namespace TagExplorer
 
 
         }
-        private void MainCanvasSelectedTagChanged_Callback(string tag)
+        private void MainCanvasSelectedTagChanged_Callback(GUTag tag)
         {
             SelectedTagChanged?.Invoke(tag);
             SubCanvas.ChangeRoot(tag,tag);
         }
-        private void SubCanvasSelectedTagChanged_Callback(string tag)
+        private void SubCanvasSelectedTagChanged_Callback(GUTag tag)
         {
             SelectedTagChanged?.Invoke(tag);
 
@@ -122,7 +122,7 @@ namespace TagExplorer
             MainCanvas.RedrawGraph();
             SubCanvas.RedrawGraph();
         }
-        public void ShowGraph(string root,string sub,string subsel)
+        public void ShowGraph(GUTag root,GUTag sub,GUTag subsel)
         {
             if (root != null)
             {
@@ -151,16 +151,16 @@ namespace TagExplorer
             }
 
         }
-        private List<string> QueryParents(string tag)
+        private List<GUTag> QueryParentHistory(GUTag tag)
         {
-            List<string> ret = new List<string>();
+            List<GUTag> ret = new List<GUTag>();
             int MAX = 6;
-            string child = tag;
-            while(ret.Count<MAX)
+            GUTag child = tag;
+            while (ret.Count < MAX)
             {
                 ret.Add(child);
-                List<string> tmp = tagDB.QueryTagParent(child);
-                if(tmp.Count>0)
+                List<GUTag> tmp = tagDB.QueryTagParent(child);
+                if (tmp.Count > 0)
                 {
                     child = tmp[0];
                 }
@@ -174,23 +174,26 @@ namespace TagExplorer
         internal void SearchByTxt(string text)
         {
             //先在main中查找，如果有，切换焦点后返回
-            if(MainCanvas.ChangeSelectd(text)!=null)
+            if(MainCanvas.ChangeSelectedByTxt(text)!=null)
             {
                 return;
             }
             //再在sub中查找，如果有，切换焦点后返回
-            if(SubCanvas.ChangeSelectd(text)!=null)
+            if(SubCanvas.ChangeSelectedByTxt(text)!=null)
             {
                 MainCanvas.ClearSelected();
                 return;
             }
+            List<GUTag> tags = tagDB.GetTags(text);
+
             //如果不在视图中，但数据库中存在，TODO：如何有效的切换？？是一个需要考虑的问题
-            if(tagDB.QueryTagAlias(text).Count>0)
+            if(tags.Count>0)
             {
-                string mainRoot = StaticCfg.Ins.DefaultTag;
-                string subRoot = mainRoot;
-                string subSel = subRoot;
-                List<string> parents = QueryParents(text);
+                GUTag tag = tags[0];
+                GUTag mainRoot = tagDB.GetTag(StaticCfg.Ins.DefaultTagID);
+                GUTag subRoot = mainRoot;
+                GUTag subSel = subRoot;
+                List<GUTag> parents = QueryParentHistory(tag);
                 int cnt = parents.Count;
                 if(cnt>0)
                 {
@@ -254,7 +257,8 @@ namespace TagExplorer
 
         internal void HomeTag()
         {
-            ShowGraph(StaticCfg.Ins.DefaultTag, null,null);
+            GUTag defaultTag = GUTag.Parse(StaticCfg.Ins.DefaultTagID.ToString(), tagDB);
+            ShowGraph(defaultTag, null,null);
         }
 
 

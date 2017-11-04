@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TagExplorer.TagMgr;
 
 namespace TagExplorer.Utils.Cfg
 {
@@ -56,15 +57,15 @@ namespace TagExplorer.Utils.Cfg
         }
 
         public string MainCanvasRoot = "我的大脑";
-        public void ChangeMainCanvasRoot(string v)
+        public void ChangeMainCanvasRoot(GUTag v)
         {
-            MainCanvasRoot = v;
+            MainCanvasRoot = v.ToString();
             Save();
         }
         public string SubCanvasRoot = "我的大脑";
-        public void ChangeSubCanvasRoot(string v)
+        public void ChangeSubCanvasRoot(GUTag v)
         {
-            SubCanvasRoot = v;
+            SubCanvasRoot = v.ToString();
             Save();
         }
 

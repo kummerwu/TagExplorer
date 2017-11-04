@@ -61,7 +61,9 @@ namespace TagExplorer
             autoTextBox.SearchDataProvider = tagDB;
             tagCanvas.InitDB(tagDB,uriDB);
             tagCanvas.SelectedTagChanged += SelectedTagChanged_Callback;
-            ShowTagGraph(DynamicCfg.Ins.MainCanvasRoot, DynamicCfg.Ins.SubCanvasRoot);
+            GUTag mroot = GUTag.Parse(DynamicCfg.Ins.MainCanvasRoot,tagDB);
+            GUTag sroot = GUTag.Parse(DynamicCfg.Ins.SubCanvasRoot,tagDB);
+            ShowTagGraph(mroot,sroot);
 
             IDisposableFactory.New<MainWindow>(this);
 
@@ -83,18 +85,18 @@ namespace TagExplorer
             //ShowUrlListByText();
         }
 
-        public void SelectedTagChanged_Callback(string tag)
+        public void SelectedTagChanged_Callback(GUTag tag)
         {
-            autoTextBox.Text = tag;
+            autoTextBox.Text = tag.Title;
             //现在自己的这个richtextbox非常不好用，将其暂时废除，除非有一个好用的再说
-            string uri = CfgPath.GetFileByTag(tag,"note.rtf");
+            string uri = CfgPath.GetFileByTag(tag.Title,"note.rtf");
             richTxt.Load(uri);
             ShowUrlListByText();
             //修改text后，会自动触发 TextBox_TextChanged
             //进一步触发             ShowUrlListByText
         }
 
-        public void ShowTagGraph(string root,string subroot)
+        public void ShowTagGraph(GUTag root,GUTag subroot)
         {
             Logger.I("Show Tag " + root);
             //CalcCanvasHeight();
@@ -141,11 +143,14 @@ namespace TagExplorer
         //TODO:这个地方需要优化，用户任意搜索一个单词，就直接把root tag切换过去，实际上不合理
         private void SearchByTxt()
         {
-            if (tagDB.QueryTagAlias(autoTextBox.Text).Count > 0)
-            {
-                //ShowTagGraph(autoTextBox.Text, null);
-                tagCanvas.SearchByTxt(autoTextBox.Text);
-            }
+            //如果输入的txt是一个tag的title，才进行视图切换。//TODO
+            //if (tagDB.QueryTagAlias(autoTextBox.Text).Count > 0)
+            //{
+            //    //ShowTagGraph(autoTextBox.Text, null);
+            //    tagCanvas.SearchByTxt(autoTextBox.Text);
+            //}
+
+            tagCanvas.SearchByTxt(autoTextBox.Text);
             ShowUrlListByText();
         }
 
@@ -225,7 +230,10 @@ namespace TagExplorer
             if (GLayoutMode.mode == LayoutMode.GRAPH_UPDOWN)
                 GLayoutMode.mode = 0;
             else GLayoutMode.mode = (GLayoutMode.mode + 1);
-            ShowTagGraph(DynamicCfg.Ins.MainCanvasRoot, DynamicCfg.Ins.SubCanvasRoot);
+            //GUTODO:将字符串转换为gutag
+            GUTag mroot = GUTag.Parse(DynamicCfg.Ins.MainCanvasRoot, tagDB);
+            GUTag sroot = GUTag.Parse(DynamicCfg.Ins.SubCanvasRoot, tagDB);
+            ShowTagGraph(mroot,sroot);
         }
 
         public void Dispose()
@@ -284,7 +292,8 @@ namespace TagExplorer
                 DateTime t1 = DateTime.Now;
                 for (int i = 0; i < 20; i++)
                 {
-                    ShowTagGraph(StaticCfg.Ins.DefaultTag, StaticCfg.Ins.DefaultTag);
+                    GUTag tag = GUTag.Parse(StaticCfg.Ins.DefaultTagID.ToString(), tagDB);
+                    ShowTagGraph(tag,tag);
                 }
                 DateTime t2 = DateTime.Now;
                 MessageBox.Show("总共耗时:" + (t2 - t1).TotalSeconds+TreeLayoutEnv.StatInf);

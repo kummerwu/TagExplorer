@@ -9,37 +9,27 @@ using TagExplorer.Utils;
 using Newtonsoft.Json;
 using System.IO;
 using System.Xml.Serialization;
+using System.Diagnostics;
 
 namespace TagExplorer.TagMgr
 {
     class JsonTagDB:ITagDB
     {
         //维护所有tag=》taginf（有可能有别名，存在多个tag对应一个tagInf）
-        Hashtable Str2TagIdx = new Hashtable();
-        HashSet<JTagInf> GetAllJTagInf()
-        {
-            HashSet<JTagInf> ret = new HashSet<JTagInf>();
-            foreach(JTagInf j in Str2TagIdx.Values)
-            {
-                if (!ret.Contains(j)) ret.Add(j);
-            }
-            return ret;
-        }
+        Hashtable id2Gutag = new Hashtable(); //Guid ==> Gutag
+        
         private void Save()
         {
             Save(null);
         }
-        private void Save(string tag)
+        private void Save(GUTag tag)
         {
-            HashSet<JTagInf> AllTagSet = GetAllJTagInf();
+            
             using (StreamWriter w = new StreamWriter(CfgPath.TagDBPath_Json))
             {
-                foreach(JTagInf j in AllTagSet)
+                foreach(GUTag j in id2Gutag.Values)
                 {
-                    if (j.Children.Count > 0)
-                    {
-                        w.WriteLine(JsonConvert.SerializeObject(j));
-                    }
+                    w.WriteLine(JsonConvert.SerializeObject(j));
                 }
             }
             
@@ -54,85 +44,42 @@ namespace TagExplorer.TagMgr
                 string[] lns = File.ReadAllLines(jFile);
                 foreach(string ln in lns)
                 {
-                    JTagInf j = JsonConvert.DeserializeObject<JTagInf>(ln);
+                    GUTag j = JsonConvert.DeserializeObject<GUTag>(ln);
                     db.UpdateIndex(j);
-                    //db.AllTagSet.Add(j);
                 }
             }
-            HashSet<JTagInf> AllTagSet = db.GetAllJTagInf();
-            //叶子节点没有存储，但内存索引中需要，在这儿自动恢复出来
-            List<string> leafNotExist = new List<string>();
-            foreach(JTagInf j in AllTagSet)
-            {
-                foreach(string a in j.Alias)
-                {
-                    if (!db.Str2TagIdx.Contains(a))
-                    {
-                        leafNotExist.Add(a);
-                    }
-                }
-                foreach(string c in j.Children)
-                {
-                    if (!db.Str2TagIdx.Contains(c))
-                    {
-                        leafNotExist.Add(c);
-                    }
-                }
-            }
-            foreach(string leaf in leafNotExist)
-            {
-                db.NewTag(leaf);
-            }
+            
             return db;
         }
         
         //////////////////////////////////////////////////////////
-        private JTagInf NewTag(string stag)
+        public GUTag NewTag(string stag)
         {
-            JTagInf tag = Str2TagIdx[stag] as JTagInf;
-            if (tag == null)
-            {
-                tag = new JTagInf(stag);
-                Str2TagIdx.Add(stag, tag);
-                //AllTagSet.Add(tag);
-            }
+            GUTag tag = new GUTag(stag);
+            UpdateIndex(tag);
             return tag;
         }
-        private void DeleteTag(JTagInf j)
+        private void DeleteTag(GUTag j)
         {
-            foreach (string a in j.Alias)
-            {
-                Str2TagIdx.Remove(a);
-            }
+            id2Gutag.Remove(j.Id);
             //AllTagSet.Remove(j);
         }
-        private void UpdateIndex(JTagInf j)
+        private void UpdateIndex(GUTag j)
         {
-            foreach (string a in j.Alias)
-            {
-                Str2TagIdx.Remove(a);
-                Str2TagIdx[a] = j;
-            }
+            id2Gutag[j.Id] = j;
+            
         }
         //////////////////////////////////////////////////////////
 
-        public int AddTag(string parent, string child)
+        public int AddTag(GUTag parent, GUTag child)
         {
-            JTagInf tag= Str2TagIdx[parent] as JTagInf;
-            if(tag==null)
-            {
-                tag = NewTag(parent);
-            }
+            GUTag tag= id2Gutag[parent.Id] as GUTag;
+            System.Diagnostics.Debug.Assert(tag != null);
+            GUTag cTag = id2Gutag[child.Id] as GUTag;
+            System.Diagnostics.Debug.Assert(cTag != null);
+
             tag.AddChild(child);
-
-            JTagInf cTag = Str2TagIdx[child] as JTagInf;
-            if (cTag == null)
-            {
-                cTag = NewTag(child);
-            }
             
-
-
             Save(parent);
             //Save(child);  parent保存实际上已经保存所有了，这儿就不需要保存了。
             return ITagDBConst.R_OK;
@@ -140,34 +87,25 @@ namespace TagExplorer.TagMgr
 
         public void Dispose()
         {
-            Str2TagIdx.Clear();
+            id2Gutag.Clear();
         }
 
-        public int QueryChildrenCount(string tag)
+        public int QueryChildrenCount(GUTag tag)
         {
-            JTagInf tmp = Str2TagIdx[tag] as JTagInf;
+            GUTag tmp = id2Gutag[tag.Id] as GUTag;
             return tmp == null ? 0 : tmp.Children.Count;
 
         }
         
         
-        public int MergeAlias(string mainTag, string aliasTag)
+        public int MergeAlias(GUTag mainTag, GUTag aliasTag)
         {
-            JTagInf jMain = Str2TagIdx[mainTag] as JTagInf;
-            if(jMain==null)
-            {
-                jMain = NewTag(mainTag);
-            }
-            JTagInf jAlias = Str2TagIdx[aliasTag] as JTagInf;
-            if (jAlias == null)
-            {
-                jAlias = NewTag(aliasTag);
-            }
-
             
-            DeleteTag(jAlias);
-            jMain.Merge(jAlias);
-            UpdateIndex(jMain);
+            Debug.Assert(id2Gutag[mainTag.Id] == mainTag);
+            Debug.Assert(id2Gutag[aliasTag.Id] == aliasTag);
+            DeleteTag(aliasTag);
+            mainTag.Merge(aliasTag);
+            UpdateIndex(mainTag);
             //allTag.Add(tag2, tmp1);//别名也需要快速索引
             return ITagDBConst.R_OK;
         }
@@ -176,60 +114,65 @@ namespace TagExplorer.TagMgr
         {
             string ls = searchTerm.ToLower();
             List<string> ret = new List<string>();
-            foreach(string s in Str2TagIdx.Keys)
+            foreach(GUTag s in id2Gutag.Values)
             {
-                if(s.ToLower().Contains(ls))
+                if(s.Title.ToLower().Contains(ls))
                 {
-                    ret.Add(s);
+                    ret.Add(s.Title);
                 }
             }
             return ret;
         }
 
-        public List<string> QueryTagAlias(string tag)
+        public List<string> QueryTagAlias(GUTag tag)
         {
-            JTagInf tmp = Str2TagIdx[tag] as JTagInf;
-            return tmp == null ? EMPTY_LIST : tmp.Alias;
+            if (id2Gutag[tag.Id] != tag) return new List<string>();
+            else return tag.Alias;
         }
         private static List<string> EMPTY_LIST = new List<string>();
-        public List<string> QueryTagChildren(string tag)
+        public List<GUTag> QueryTagChildren(GUTag tag)
         {
-            JTagInf tmp = Str2TagIdx[tag] as JTagInf;
-            return tmp == null ? EMPTY_LIST : tmp.Children;
+            if (id2Gutag[tag.Id] != tag) return new List<GUTag>();
+
+            List<GUTag> gutagChildren= new List<GUTag>();
+            foreach(Guid id in tag.Children)
+            {
+                GUTag c = id2Gutag[id] as GUTag;
+                if(c!=null)
+                {
+                    gutagChildren.Add(c);
+                }
+            }
+            return gutagChildren;
         }
 
-        public List<string> QueryTagParent(string tag)
+        public List<GUTag> QueryTagParent(GUTag tag)
         {
-            List<string> ret = new List<string>();
-            var AllTagSet = GetAllJTagInf();
-            foreach (JTagInf j in AllTagSet)
+            if (id2Gutag[tag.Id] != tag) return new List<GUTag>();
+
+
+            List<GUTag> ret = new List<GUTag>();
+            
+            foreach (GUTag j in id2Gutag.Values)
             {
-                if(j.Children.Contains(tag))
+                if(j.Children.Contains(tag.Id))
                 {
-                    ret.Add(j.Title);
+                    ret.Add(j);
                 }
             }
             return ret;
-            //return tmp == null ? EMPTY_LIST : tmp.Parents;
+            
         }
 
-        public int RemoveTag(string tag)
+        public int RemoveTag(GUTag tag)
         {
-            JTagInf tmp = Str2TagIdx[tag] as JTagInf;
-            if (tmp != null)
-            {
-                //所有自己的别名索引页需要删除
-                DeleteTag(tmp);
-                
-            }
-            //删除所有Parent的索引
-            RemoveParentsRef(tag);
+            id2Gutag.Remove(tag.Id);
             Save(tag);
             return ITagDBConst.R_OK;
         }
 
         //将child原来所有parent删除，并与新的parent建立关系
-        public int ResetParent(string parent, string child)
+        public int ResetParent(GUTag parent,GUTag child)
         {
             RemoveParentsRef(child);
             AddTag(parent, child);
@@ -237,209 +180,105 @@ namespace TagExplorer.TagMgr
             return ITagDBConst.R_OK;
         }
 
-        private void RemoveParentsRef(string child)
+        private void RemoveParentsRef(GUTag child)
         {
-            var AllTagSet = GetAllJTagInf();
-            foreach (JTagInf j in AllTagSet)
+            
+            foreach (GUTag j in id2Gutag.Values)
             {
                 j.RemoveChild(child);
             }
-            //JTagInf tmp = tagIdx[child] as JTagInf;
-            //if (tmp != null)
-            //{
-            //    foreach (string oldP in tmp.Parents)
-            //    {
-            //        JTagInf op = tagIdx[oldP] as JTagInf;
-            //        if (op != null)
-            //        {
-            //            op.RemoveChild(child);
-            //        }
-            //    }
-            //    tmp.Parents.Clear();
-            //}
+            
         }
 
-        public int ChangePos(string tag, int direct)
+        public int ChangePos(GUTag tag, int direct)
         {
-            List<string> parents = QueryTagParent(tag);
+            List<GUTag> parents = QueryTagParent(tag);
+            Debug.Assert(parents.Count == 1);
             if(parents.Count==1)
             {
-                JTagInf parent = Str2TagIdx[parents[0]] as JTagInf;
-                if(parent!=null)
-                {
-                    parent.ChangePos(tag, direct);
-                    Save(tag);
-                }
-
+                GUTag parent = parents[0];
+                parent.ChangePos(tag, direct);
+                Save(tag);
             }
             return ITagDBConst.R_OK;
 
         }
-
+        public List<GUTag> GetTags(string title)
+        {
+            List<GUTag> ret = new List<GUTag>();
+            foreach(GUTag tag in id2Gutag.Values)
+            {
+                if (tag.Title == title) ret.Add(tag);
+            }
+            return ret;
+        }
         public int Import(string importInf)
         {
             int ret = 0;
+            Hashtable title2GUtag = new Hashtable();
             if (File.Exists(importInf))
             {
                 string[] lns = File.ReadAllLines(importInf);
+                //第一遍，恢复tag本身的信息
                 foreach (string ln in lns)
                 {
                     JTagInf j = JsonConvert.DeserializeObject<JTagInf>(ln);
-                    if(j.Alias.Count>0)
-                    {
-                        string title = j.Alias[0];
-                        foreach(string a in j.Alias)
-                        {
-                            if(a!=title)
-                            {
-                                ret++;
-                                MergeAlias(title, a);
-                            }
-                        }
-                        foreach(string c in j.Children)
-                        {
-                            ret++;
-                            AddTag(title, c);
 
+                    GUTag tag = title2GUtag[j.Title] as GUTag;
+                    if(tag==null)
+                    {
+                        tag = NewTag(j.Title);
+                    }
+                    foreach (string a in j.Alias)
+                    {
+                        tag.AddAlias(a);
+                        title2GUtag.Add(a, tag);
+                    }
+                    //把子节点先创建出来
+                    foreach (string c in j.Children)
+                    {
+                        if (title2GUtag[c] == null)
+                        {
+                            GUTag ctag = NewTag(c);
+                            title2GUtag.Add(c, ctag);
                         }
                     }
+                    
+                }
+                //第二步，恢复child信息
+                foreach (string ln in lns)
+                {
+                    JTagInf j = JsonConvert.DeserializeObject<JTagInf>(ln);
+
+                    GUTag tag = title2GUtag[j.Title] as GUTag;
+                    Debug.Assert(tag != null);
+                    
+                    //把子节点先创建出来
+                    foreach (string c in j.Children)
+                    {
+                        GUTag ctag = title2GUtag[c] as GUTag;
+                        Debug.Assert(ctag != null);
+                        tag.AddChild(ctag);
+                    }
+
                 }
             }
             Save();
             return ret;
         }
 
-        public int UpdateTag(string oldTag, string newTag)
+        public GUTag GetTag(Guid id)
         {
-            
-            List<string> parents = QueryTagParent(oldTag);
-            if (parents.Count == 0) return ITagDBConst.R_OK;
-
-
-            string parent = parents[0];
-            JTagInf jParent = Str2TagIdx[parent] as JTagInf;
-            if (jParent == null) return ITagDBConst.R_OK;
-
-
-            JTagInf jOld = Str2TagIdx[oldTag] as JTagInf;
-            if (jOld == null) return ITagDBConst.R_OK;
-
-            jParent.UpdateChild(oldTag, newTag);
-            jOld.UpdateAlias(oldTag, newTag);
-            Str2TagIdx.Remove(oldTag);
-            UpdateIndex(jOld);
-
-            Save();
-            return ITagDBConst.R_OK;
+            return id2Gutag[id] as GUTag;
         }
+
+        public List<GUTag> QueryTags(string title)
+        {
+            throw new NotImplementedException();
+        }
+
+        
     }
-    [Serializable]
-    class JTagInf
-    {
-        public JTagInf(string n)
-        {
-            AddAlias(n);
-        }
-        [JsonIgnore]
-        public string Title { get { return Alias.Count>0?Alias[0]:""; } }
-        public List<string> Alias = new List<string>();
-        //public List<string> Parents = new List<string>();
-        public List<string> Children = new List<string>();
-        public void ChangePos(string c,int direct)
-        {
-            int idx = Children.IndexOf(c);
-            int newIdx= idx + direct;
-            if(newIdx>=0 && newIdx<Children.Count)
-            {
-                Children.RemoveAt(idx);
-                Children.Insert(newIdx, c);
-            }
-        }
-        public int GetPos(string c)
-        {
-            return Children.IndexOf(c);
-        }
-        private void Check()
-        {
-            foreach(string a in Alias)
-            {
-                //foreach(string p in Parents)
-                //{
-                //    System.Diagnostics.Debug.Assert(a != p);
-                //}
-                foreach (string c in Children)
-                {
-                    System.Diagnostics.Debug.Assert(a != c);
-                }
-            }
-        }
-        public void Add(string s,List<string> l)
-        {
-            if (!l.Contains(s)) l.Add(s);
-            Check();
-        }
-        public void AddChild(string c)
-        {
-            if (Alias.Contains(c)) return;
-            Add(c, Children);
-        }
-        //public void AddParent(string p)
-        //{
-        //    Add(p, Parents);
-        //}
-        public void AddAlias(string a)
-        {
-            if(Children.Contains(a))
-            {
-                Children.Remove(a);
-            }
-            Add(a, Alias);
-        }
-        public void SetMainName(string n)
-        {
-            if(Alias.Contains(n))
-            {
-                Alias.Remove(n);
-            }
-            Alias.Insert(0, n);
-        }
-        public void RemoveChild(string c)
-        {
-            if (Children.Contains(c)) Children.Remove(c);
-        }
-        public void Merge(JTagInf tag)
-        {
-            foreach (string a in tag.Alias) AddAlias(a);
-            foreach (string c in tag.Children) AddChild(c);
-            //foreach (string p in tag.Parents) AddParent(p);
-        }
-
-        public void UpdateChild(string oldChild, string newChild)
-        {
-            for (int i = 0;i<Children.Count;i++)
-            {
-                if(Children[i]==oldChild)
-                {
-                    Children[i] = newChild;
-                }
-            }
-        }
-        public void UpdateAlias(string oldTag, string newTag)
-        {
-            if (Alias.Contains(oldTag))
-            {
-                for (int i = 0; i < Alias.Count; i++)
-                {
-                    if (Alias[i] == oldTag)
-                    {
-                        Alias[i] = newTag;
-                    }
-                }
-            }
-            else
-            {
-                Alias.Add(newTag);
-            }
-        }
-    }
+    
+    
 }

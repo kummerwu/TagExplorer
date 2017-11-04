@@ -5,11 +5,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Shapes;
 using TagExplorer.TagLayout.LayoutCommon;
+using TagExplorer.TagMgr;
 
 namespace TagExplorer.TagLayout.TreeLayout
 {
     public class TreeLayoutEnv
     {
+        public Hashtable all = new Hashtable();
+
+
         public void Reset()
         {
             all.Clear();
@@ -19,32 +23,27 @@ namespace TagExplorer.TagLayout.TreeLayout
         {
             get { return all.Values.Cast<GTagBoxTree>(); }
         }
-        public Hashtable all = new Hashtable();
-        public GTagBoxTree Get(string tag)
+        
+        public GTagBoxTree Get(GUTag tag)
         {
             return all[tag] as GTagBoxTree;
         }
-        public void Add(string tag, GTagBoxTree obj)
+        public void Add(GUTag tag, GTagBoxTree obj)
         {
             if (null == Get(tag))
             {
                 all.Add(tag, obj);
             }
         }
+
+
+
         private List<Tuple<GTagBoxTree, GTagBoxTree, int>> Lines = new List<Tuple<GTagBoxTree, GTagBoxTree, int>>();
         public void AddLine(GTagBoxTree parent, GTagBoxTree child, int direct)
         {
             Lines.Add(new Tuple<GTagBoxTree, GTagBoxTree, int>(parent, child, direct));
         }
-        //private static TreeLayoutEnv ins = null;
-        //private static TreeLayoutEnv Ins
-        //{
-        //    get
-        //    {
-        //        if (ins == null) ins = new TreeLayoutEnv();
-        //        return ins;
-        //    }
-        //}
+        
 
         public static string StatInf {
             get {
@@ -56,14 +55,16 @@ namespace TagExplorer.TagLayout.TreeLayout
 
         // ////
         private List<TagBox> TagBoxGarbage = new List<TagBox>();
+        private static int sttNewTag = 0;
+        private static int sttRetTag = 0;
+        private static int sttReuseTag = 0;
+
+
         public void Return(List<TagBox> lst)
         {
             sttRetTag += lst.Count;
             TagBoxGarbage.AddRange(lst);
         }
-        private static int sttNewTag = 0;
-        private static int sttRetTag = 0;
-        private static int sttReuseTag = 0;
         public TagBox New(GTagBox g)
         {
             if(TagBoxGarbage.Count>0)
@@ -84,8 +85,9 @@ namespace TagExplorer.TagLayout.TreeLayout
         private static int sttNewLine = 0;
         private static int sttRetLine = 0;
         private static int sttReuseLine = 0;
-
         private List<Path> LineGarbage = new List<Path>();
+
+
         public void Return(List<Path> lst)
         {
             sttRetLine += lst.Count;

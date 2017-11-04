@@ -24,7 +24,7 @@ namespace AnyTagNet
             b.Width1 = g.InnerBox.Width;
             b.Margin = new Thickness(g.InnerBox.X-10, g.InnerBox.Y, 0, 0);
             b.TextAlignment = TextAlignment.Center;
-            b.Text = g.Tag;
+            b.GUTag = g.Tag;
             b.Background1 = g.Distance;//new SolidColorBrush(GetColor(g.Distance,g.Level));
             //if (g.Distance >= 5) b.Foreground1 = g.Distance;// new SolidColorBrush(Colors.White);
             b.Foreground1 = g.Distance;
@@ -32,28 +32,28 @@ namespace AnyTagNet
         }
 
 
-        public static Line CreateLine(GBoxObj parent, GBoxObj child)
-        {
-            Line l = new Line();
-            l.X1 = parent.ColorBox.X + parent.ColorBox.Width / 2;
-            l.Y1 = parent.ColorBox.Y + parent.ColorBox.Height;
-            l.X2 = child.ColorBox.X + child.ColorBox.Width / 2;
-            l.Y2 = child.ColorBox.Y;
-            l.Tag = parent.Tag.ToString() + StaticCfg.Ins.ParentChildSplit + child.Tag.ToString();
-            if (Math.Min(parent.GTagBox.Level, child.GTagBox.Level) == 0)
-            {
-                l.Stroke = new SolidColorBrush(GetColor(parent.GTagBox.Distance + 1, parent.GTagBox.Level + 1));
-                l.StrokeThickness = StaticCfg.Ins.StrokeThickness * 1.5;
-                l.StrokeDashArray = StaticCfg.Ins.StrokeDashArray;
-            }
-            else
-            {
-                l.Stroke = new SolidColorBrush(GetColor(parent.GTagBox.Distance + 1, parent.GTagBox.Level + 1));
-                l.StrokeThickness = StaticCfg.Ins.StrokeThickness;
-                l.StrokeDashArray = StaticCfg.Ins.StrokeDashArray;
-            }
-            return l;
-        }
+        //public static Line CreateLine(GBoxObj parent, GBoxObj child)
+        //{
+        //    Line l = new Line();
+        //    l.X1 = parent.ColorBox.X + parent.ColorBox.Width / 2;
+        //    l.Y1 = parent.ColorBox.Y + parent.ColorBox.Height;
+        //    l.X2 = child.ColorBox.X + child.ColorBox.Width / 2;
+        //    l.Y2 = child.ColorBox.Y;
+        //    l.Tag = parent.Tag.ToString() + StaticCfg.Ins.ParentChildSplit + child.Tag.ToString();
+        //    if (Math.Min(parent.GTagBox.Level, child.GTagBox.Level) == 0)
+        //    {
+        //        l.Stroke = new SolidColorBrush(GetColor(parent.GTagBox.Distance + 1, parent.GTagBox.Level + 1));
+        //        l.StrokeThickness = StaticCfg.Ins.StrokeThickness * 1.5;
+        //        l.StrokeDashArray = StaticCfg.Ins.StrokeDashArray;
+        //    }
+        //    else
+        //    {
+        //        l.Stroke = new SolidColorBrush(GetColor(parent.GTagBox.Distance + 1, parent.GTagBox.Level + 1));
+        //        l.StrokeThickness = StaticCfg.Ins.StrokeThickness;
+        //        l.StrokeDashArray = StaticCfg.Ins.StrokeDashArray;
+        //    }
+        //    return l;
+        //}
         public static Path CreateBezier(Tuple<GTagBoxTree, GTagBoxTree, int> p_c,TreeLayoutEnv env)
         {
             GTagBoxTree p = p_c.Item1;

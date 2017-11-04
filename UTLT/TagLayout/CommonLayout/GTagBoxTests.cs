@@ -17,23 +17,23 @@ namespace UTLT
 
         }
 
-        [TestMethod()]
-        public void GTagBoxTest_一个节点()
-        {
-            GTagBox box;
-            box = new GTagBox(1,"我的大脑",0,0,1);
-            CheckBox(box, new Point(13, 5), new Point(0, 0));
+        //[TestMethod()]
+        //public void GTagBoxTest_一个节点()
+        //{
+        //    GTagBox box;
+        //    box = new GTagBox(1,"我的大脑",0,0,1);
+        //    CheckBox(box, new Point(13, 5), new Point(0, 0));
 
-            box = new GTagBox(1, "我的大脑", 100, 100, 1);
-            CheckBox(box, new Point(113, 105), new Point(100, 100));
+        //    box = new GTagBox(1, "我的大脑", 100, 100, 1);
+        //    CheckBox(box, new Point(113, 105), new Point(100, 100));
 
 
-            box = new GTagBox(1, "我的大脑", 0, 0, -1);
-            CheckBox(box, new Point(-84, 5), new Point(-97, 0));
+        //    box = new GTagBox(1, "我的大脑", 0, 0, -1);
+        //    CheckBox(box, new Point(-84, 5), new Point(-97, 0));
 
-            box = new GTagBox(1, "我的大脑", 100, 100, -1);
-            CheckBox(box, new Point(16, 105), new Point(3, 100));
+        //    box = new GTagBox(1, "我的大脑", 100, 100, -1);
+        //    CheckBox(box, new Point(16, 105), new Point(3, 100));
 
-        }
+        //}
     }
 }

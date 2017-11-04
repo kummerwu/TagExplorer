@@ -59,13 +59,23 @@ namespace TagExplorer
                 
             }
         }
-
+        private GUTag tagID;
+        public GUTag GUTag
+        {
+            get
+            {
+                return tagID;
+            }
+            internal set
+            {
+                tagID = value;
+                txt.Text = value.Title;
+            }
+        }
         public string Text
         {
-            get {return txt.Text; }
-            internal set {txt.Text = value; }
+            get { return txt.Text; }
         }
-
         public TextAlignment TextAlignment
         {
             get { return txt.TextAlignment; }
@@ -81,7 +91,7 @@ namespace TagExplorer
                 bdr.Background = b;
 
                 //确定小圆圈的颜色
-                int childCount = TagDBFactory.Ins == null ? 10 : TagDBFactory.Ins.QueryChildrenCount(Text);
+                int childCount = TagDBFactory.Ins == null ? 10 : TagDBFactory.Ins.QueryChildrenCount(GUTag);
                 
                 if(childCount==0)//无child，不显示小圆圈
                 {
@@ -152,7 +162,7 @@ namespace TagExplorer
 
         private void ExpandSwitchButton_Click(object sender, RoutedEventArgs e)
         {
-            TagSwitchDB.Ins.Swtich(Text);
+            TagSwitchDB.Ins.Swtich(GUTag);
         }
     }
 }

@@ -6,12 +6,13 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using TagExplorer.TagMgr;
 
 namespace TagExplorer.TagCanvas
 {
     class FloatTextBox
     {
-        public delegate void TextChanged(Canvas Parent,string oldString,string NewString);
+        public delegate void TextChanged(Canvas Parent,GUTag tag,string NewString);
         public TextChanged TextChangedCallback;
 
 
@@ -40,25 +41,28 @@ namespace TagExplorer.TagCanvas
         }
         private void HideEdit()
         {
-            Canvas tmpP = Parent;
-            string oldS = NoEdit?.Text;
-            string newS = Edit?.Text;
+            if (Parent == null || Edit == null || NoEdit == null) return;
 
-            NoEdit = null;
-            if (Parent != null )
+
+            try
             {
-                
                 Parent.Children.Remove(Edit);
-                Parent.Focus();
-                Parent = null;
                 System.Diagnostics.Debug.WriteLine("HideFloat1");
-
-
+                string oldTitle = NoEdit.Text;
+                string newTitle = Edit.Text;
+                if (oldTitle != newTitle && oldTitle != null && newTitle != null)
+                {
+                    
+                    TextChangedCallback?.Invoke(Parent, NoEdit.GUTag, newTitle);
+                    System.Diagnostics.Debug.WriteLine("HideFloat2");
+                }
             }
-            if (oldS != newS && oldS!=null && newS!=null)
+            finally
             {
-                TextChangedCallback?.Invoke(tmpP, oldS, newS);
-                System.Diagnostics.Debug.WriteLine("HideFloat2");
+                Canvas tmp = Parent;
+                NoEdit = null;
+                Parent = null;
+                tmp?.Focus();
             }
         }
         private void InitEdit()

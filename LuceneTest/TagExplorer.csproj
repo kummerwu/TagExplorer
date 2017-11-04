@@ -226,7 +226,10 @@
     <Compile Include="TagLayout\TreeLayout\GTagBoxTree.cs" />
     <Compile Include="TagLayout\TreeLayout\TreeLayoutEnv.cs" />
     <Compile Include="TagLayout\TreeLayout\TreeLayoutImpl.cs" />
+    <Compile Include="TagMgr\GUTag.cs" />
+    <Compile Include="TagMgr\GUTagRelation.cs" />
     <Compile Include="TagMgr\JsonTagDB.cs" />
+    <Compile Include="TagMgr\JTagInf.cs" />
     <Compile Include="TagMgr\TagInf.cs" />
     <Compile Include="TagMgr\TagSwitchDB.cs" />
     <Compile Include="TagsBar\TagsPanel.xaml.cs">

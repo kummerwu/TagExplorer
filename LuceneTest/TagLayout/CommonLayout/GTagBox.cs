@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Windows;
 using System.Windows.Media;
+using TagExplorer.TagMgr;
 using TagExplorer.Utils;
 
 namespace TagExplorer.TagLayout.LayoutCommon
@@ -15,12 +16,12 @@ namespace TagExplorer.TagLayout.LayoutCommon
         //公有成员变量(只读)******************************************************
         public double FontSize { get; private set; }
         public int Distance { get; private set; } //本节点离根节点（树层次上的距离）
-        public string Tag { get; private set; }
+        public GUTag Tag { get; private set; }
         public double InnerBoxXPadding { get; private set; }// GConfig.InnerBoxXPadding_MAX;
         public double InnerBoxYPadding { get; private set; }// GConfig.InnerBoxYPadding_MAX;
         //私有成员变量************************************************************
         //公有成员方法************************************************************
-        public TagBoxSizeInf(string tag, int dis,string fname)
+        public TagBoxSizeInf(GUTag tag, int dis,string fname)
         {
             Tag = tag;
             Distance = dis;
@@ -77,9 +78,10 @@ namespace TagExplorer.TagLayout.LayoutCommon
                 return ins;
             }
         }
-        public Size Calc(string tag,double fsize,string fname)
+        public Size Calc(GUTag gutag,double fsize,string fname)
         {
             Size tmp;
+            string tag = gutag.Title;
             if (cache[tag] == null)
             {
                 //cache内容过多，直接将所有数据全部老化。
@@ -121,12 +123,12 @@ namespace TagExplorer.TagLayout.LayoutCommon
         //计算只读属性
         public Rect OutterBox{get{return new Rect(OutterBoxLeftTop, Inf.OutterBoxSize);}}
         public Rect InnerBox{get{return new Rect(InnerBoxLeftTop, Inf.InnerBoxSize);}}
-        public string Tag{get { return Inf.Tag; }}
+        public GUTag Tag{get { return Inf.Tag; }}
         public double FontSize{get { return Inf.FontSize; }}
         public int Distance { get { return Inf.Distance; } }
         public int Level { get { return Inf.Distance; } }
         
-        public GTagBox(int distance,string tag,double x,double y,int direct)
+        public GTagBox(int distance,GUTag tag,double x,double y,int direct)
         {
             //记录展开方向（1：向右 -1：向左）
             Direct = direct;

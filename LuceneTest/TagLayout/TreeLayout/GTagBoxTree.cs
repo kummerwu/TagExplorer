@@ -44,11 +44,11 @@ namespace TagExplorer.TagLayout.TreeLayout
         {
             GTagBox.CenterRootY(totalRange);
         }
-        public static GTagBoxTree ExpandNode(string tag, int level, ITagDB db, double x, double y,int direct,Size size,TreeLayoutEnv env)
+        public static GTagBoxTree ExpandNode(GUTag tag, int level, ITagDB db, double x, double y,int direct,Size size,TreeLayoutEnv env)
         {
             
 
-            Logger.IN(tag);
+            Logger.IN(tag.Title);
             Logger.D("Expand " + tag + " " + x + " " + y);
             //已经展开过，直接返回
             if (env.Get(tag) != null)
@@ -66,7 +66,7 @@ namespace TagExplorer.TagLayout.TreeLayout
             root.D("计算自身大小（不包括子节点）" + root.GTagBox.Tag);
             env.Add(tag, root);//这个特别需要注意，在递归展开之前，先要将该节点加入DB，否则可能会出现无限递归
 
-            List<string> children = db.QueryTagChildren(tag);
+            List<GUTag> children = db.QueryTagChildren(tag);
             List<Size> childrenSize = new List<Size>();
             
             GTagBoxTree pre = null;
@@ -80,7 +80,7 @@ namespace TagExplorer.TagLayout.TreeLayout
             if (level < MaxLevel)
             {
                 //遍历展开所有子节点
-                foreach (string ctag in children)
+                foreach (GUTag ctag in children)
                 {
                     if (env.Get(ctag) != null) continue;
                     cur = null;
@@ -129,7 +129,7 @@ namespace TagExplorer.TagLayout.TreeLayout
             return root;
         }
 
-        private static GTagBoxTree ExpandChildMoreCompact(int level, ITagDB db, GTagBoxTree root, GTagBoxTree pre, string ctag,int direct,Size size,TreeLayoutEnv env)
+        private static GTagBoxTree ExpandChildMoreCompact(int level, ITagDB db, GTagBoxTree root, GTagBoxTree pre, GUTag ctag,int direct,Size size,TreeLayoutEnv env)
         {
             GTagBoxTree cur;
             Logger.D("ChoosePos:pre:{0}-{1}-{2} cur:{0}-{1},",
@@ -173,7 +173,7 @@ namespace TagExplorer.TagLayout.TreeLayout
 
             return cur;
         }
-        private static GTagBoxTree ExpandChildCompact(int rootLevel, ITagDB db, GTagBoxTree root, GTagBoxTree pre, string ctag,int direct,Size size,TreeLayoutEnv env)
+        private static GTagBoxTree ExpandChildCompact(int rootLevel, ITagDB db, GTagBoxTree root, GTagBoxTree pre, GUTag ctag,int direct,Size size,TreeLayoutEnv env)
         {
             GTagBoxTree cur;
             Logger.D("ChoosePos:pre:{0}-{1}-{2} cur:{0}-{1},",
@@ -218,7 +218,7 @@ namespace TagExplorer.TagLayout.TreeLayout
             return cur;
         }
 
-        private static GTagBoxTree ExpandChildNoCompact(int level, ITagDB db, GTagBoxTree root, GTagBoxTree pre, string ctag,int direct,Size size,TreeLayoutEnv env)
+        private static GTagBoxTree ExpandChildNoCompact(int level, ITagDB db, GTagBoxTree root, GTagBoxTree pre, GUTag ctag,int direct,Size size,TreeLayoutEnv env)
         {
             GTagBoxTree cur;
             Logger.D("ChoosePos:pre:{0}-{1}-{2} cur:{0}-{1},",

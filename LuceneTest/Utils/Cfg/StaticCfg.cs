@@ -93,6 +93,7 @@ namespace TagExplorer.Utils
         //public string MainCanvasRoot = "我的大脑";
         //public string SubCanvasRoot = "我的大脑";
         public string DefaultTag = "我的大脑";
+        public Guid DefaultTagID = Guid.Empty;
         public string DefaultNewTag = "请输入标签名称";
 
         

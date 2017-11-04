@@ -12,7 +12,7 @@ namespace TagExplorer.TagMgr
     {
         public SwitchChanged SwitchChanged { get; set; }
         Hashtable switchs = new Hashtable();
-        public void Swtich(string tag)
+        public void Swtich(GUTag tag)
         {
             if (switchs[tag] == null)
             {
@@ -27,7 +27,7 @@ namespace TagExplorer.TagMgr
             if (null != SwitchChanged) SwitchChanged();
         }
 
-        public bool Get(string tag)
+        public bool Get(GUTag tag)
         {
             object o = switchs[tag];
             if(o==null)

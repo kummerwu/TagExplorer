@@ -17,15 +17,15 @@ namespace UTLT
             Assert.IsTrue(inf.OutterBoxSize.Height > outt.Height - delta && inf.OutterBoxSize.Height < outt.Height + delta);
 
         }
-        [TestMethod()]
-        public void TagBoxSizeInf_Test()
-        {
-            TagBoxSizeInf inf = null;
-            inf = new TagBoxSizeInf("我的大脑",0, @"Microsoft YaHei");
-            CheckInf(inf, new Size(77, 26), new Size(107, 38));
+        //[TestMethod()]
+        //public void TagBoxSizeInf_Test()
+        //{
+        //    TagBoxSizeInf inf = null;
+        //    inf = new TagBoxSizeInf("我的大脑",0, @"Microsoft YaHei");
+        //    CheckInf(inf, new Size(77, 26), new Size(107, 38));
 
-            inf = new TagBoxSizeInf("我的大脑", 1, @"Microsoft YaHei");
-            CheckInf(inf, new Size(70, 24), new Size(97, 35));
-        }
+        //    inf = new TagBoxSizeInf("我的大脑", 1, @"Microsoft YaHei");
+        //    CheckInf(inf, new Size(70, 24), new Size(97, 35));
+        //}
     }
 }
