@@ -82,6 +82,7 @@ namespace TagExplorer.Utils.Cfg
         {
             MainCanvasLayoutMode = v;
             Save();
+
         }
     }
 }
