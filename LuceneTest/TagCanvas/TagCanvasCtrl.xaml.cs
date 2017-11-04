@@ -57,6 +57,7 @@ namespace TagExplorer.TagCanvas
         }
         private void TextChanged(Canvas Parent, GUTag tag, string NewString)
         {
+            
             if(canvas == Parent && tag!=null &&NewString!=null)
             {
                 TagDB.ChangeTitle(tag,NewString);

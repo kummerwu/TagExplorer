@@ -152,7 +152,7 @@
                         </avalonDock:LayoutAnchorablePane>
 
                         <avalonDock:LayoutAnchorablePane DockWidth="50" x:Name="apane3">
-                            <avalonDock:LayoutAnchorable Title="文档编辑" CanClose="False" CanHide="False" x:Name="ID_EditDocument">
+                            <avalonDock:LayoutAnchorable Title="标签笔记" CanClose="False" CanHide="False" x:Name="ID_EditDocument">
                                 <richtxt:RichTxtBox x:Name="richTxt"></richtxt:RichTxtBox>
                             </avalonDock:LayoutAnchorable>
                         </avalonDock:LayoutAnchorablePane>

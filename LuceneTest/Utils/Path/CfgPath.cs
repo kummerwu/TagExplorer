@@ -1,4 +1,5 @@
-﻿using System.Configuration;
+﻿using System.Collections.Generic;
+using System.Configuration;
 using System.IO;
 using System.Text.RegularExpressions;
 
@@ -19,7 +20,33 @@ namespace TagExplorer.Utils
 
        */
 
-
+        private static string InvalidChar(string tag)
+        {
+            bool hasErr = false;
+            string err = "标签不允许包含下面特殊字符\r\n   ";
+            List<char> chars = new List<char>(Path.GetInvalidFileNameChars());
+            chars.AddRange(Path.GetInvalidPathChars());
+            foreach(char c in chars)
+            {
+                if(tag.IndexOf(c)!=-1)
+                {
+                    err += c;
+                    hasErr = true;
+                }
+            }
+            if (hasErr) return err;
+            else return null;
+            
+        }
+        //返回null，则是合法的，
+        //非null，则表示错误提示信息
+        public static string CheckTagFormat(string tag)
+        {
+            if (string.IsNullOrEmpty(tag)) return "标签不能为空";
+            else if (tag.Length > 64) return "标签长度不能超过64个字符，具体内容建议记录在标签笔记中。";
+            else return InvalidChar(tag);
+            
+        }
         private static string rootPath = null;
         public static string RootPath
         {
@@ -90,15 +117,7 @@ namespace TagExplorer.Utils
             }
             
         }
-        //public static string GetOneFileByTag(string tag)
-        //{
-        //    return GetTemplateFileByTag(tag, ".one");
-        //}
-        //public static string GetRtfFileByTag(string tag)
-        //{
-        //    return GetTemplateFileByTag(tag, ".rtf");
-
-        //}
+        
         public static string GetVDirByTag(string tag)
         {
             return Path.Combine(CfgPath.VDir, tag);
