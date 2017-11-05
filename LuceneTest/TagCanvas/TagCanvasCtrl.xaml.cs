@@ -79,7 +79,9 @@ namespace TagExplorer.TagCanvas
         {
             get
             {
-                return scrollViewer.RenderSize;
+                Size s1 = scrollViewer.RenderSize;
+                Size s2 = this.RenderSize;
+                return s2;
             }
         }
         
@@ -123,6 +125,14 @@ namespace TagExplorer.TagCanvas
         private List<TagBox> allTagBox = new List<TagBox>();
         private List<System.Windows.Shapes.Path> allLine = new List<System.Windows.Shapes.Path>();
         private TreeLayoutEnv env = new TreeLayoutEnv();
+        private void AdjustCanvasSize(double w,double h)
+        {
+            Size s = oriSize;
+            double cw = Math.Max(w, s.Width-30);
+            double ch = Math.Max(h, s.Height-30);
+            canvas.Width = cw;
+            canvas.Height = ch;
+        }
         private void RedrawGraph_()
         {
             if (TagDB != null && rootTag != null && oriSize.Height!=0 && oriSize.Width!=0 && !oriSize.IsEmpty)
@@ -148,9 +158,10 @@ namespace TagExplorer.TagCanvas
                 IEnumerable<UIElement> allTxt = tagLayout.TagArea;
                 allTagBox = allTxt as List<TagBox>;
                 allLine = lines as List<System.Windows.Shapes.Path>;
-                canvas.Width = tagLayout.Size.Width;
-                layoutHeight = tagLayout.Size.Height;
-                SetHeight();
+                AdjustCanvasSize(tagLayout.Size.Width, tagLayout.Size.Height);
+                //canvas.Width = tagLayout.Size.Width;
+                //canvas.Height = tagLayout.Size.Height;
+                //SetHeight();
 
                 foreach (UIElement l in lines)
                 {
@@ -178,25 +189,25 @@ namespace TagExplorer.TagCanvas
         }
         
        
-        private double canvasMinHeight = 0;
-        private double layoutHeight = 0;
-        private double CanvasMinHeight
-        {
-            set
-            {
-                canvasMinHeight = value;
-                SetHeight();
-            }
-        }
+        //private double canvasMinHeight = 0;
+        //private double layoutHeight = 0;
+        //private double CanvasMinHeight
+        //{
+        //    set
+        //    {
+        //        canvasMinHeight = value;
+        //        SetHeight();
+        //    }
+        //}
 
-        private void SetHeight()
-        {
-            if (double.IsNaN(canvasMinHeight) || double.IsInfinity(canvasMinHeight))
-            {
-                canvasMinHeight = 0;
-            }
-            canvas.Height = Math.Max(layoutHeight, canvasMinHeight);
-        }
+        //private void SetHeight()
+        //{
+        //    if (double.IsNaN(canvasMinHeight) || double.IsInfinity(canvasMinHeight))
+        //    {
+        //        canvasMinHeight = 0;
+        //    }
+        //    canvas.Height = Math.Max(layoutHeight, canvasMinHeight);
+        //}
         
         private GUTag NavigateTagBox(Key direction)
         {
@@ -760,17 +771,17 @@ namespace TagExplorer.TagCanvas
             UpdateCurrentTagByContextMenu();
         }
 
-        private void scrollViewer_SizeChanged(object sender, SizeChangedEventArgs e)
-        {
-            double h = e.NewSize.Height;
+        //private void scrollViewer_SizeChanged(object sender, SizeChangedEventArgs e)
+        //{
+        //    double h = e.NewSize.Height;
             
 
-            canvasMinHeight = this.ActualHeight - 60;
-            SetHeight();
+        //    //canvasMinHeight = this.ActualHeight - 60;
+        //    //SetHeight();
             
-            System.Diagnostics.Debug.WriteLine(e.NewSize.Height+" "+e.NewSize.Width + " "+rootTag + " "+currentTag);
-            RedrawGraph();
-        }
+        //    System.Diagnostics.Debug.WriteLine(e.NewSize.Height+" "+e.NewSize.Width + " "+rootTag + " "+currentTag);
+        //    RedrawGraph();
+        //}
 
         private void miNewFile_Click(object sender, RoutedEventArgs e)
         {
@@ -1199,6 +1210,11 @@ namespace TagExplorer.TagCanvas
             ChangeLayoutMode(LayoutMode.LRTREE_COMPACT_MORE);
         }
         #endregion
+
+        private void UserControl_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            RedrawGraph();
+        }
     }
     
     

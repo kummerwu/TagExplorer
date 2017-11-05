@@ -49,6 +49,7 @@ namespace TagExplorer
             //TAG DB初始化
             Logger.I("InitializeComponent Finished!，init tagdb");
             tagDB = TagDBFactory.CreateTagDB();
+            tagDB.TagDBChanged += TagDBChanged;
 
             //查询输入框初始化
             SearchBox.textBox.TextChanged += SearchBoxTextChanged_Callback;
@@ -108,7 +109,10 @@ namespace TagExplorer
         #endregion
 
 
-
+        private void TagDBChanged()
+        {
+            tagCanvas.RedrawGraph();
+        }
         public void ShowUrlListByText()
         {
             uriList.ShowQueryResult(SearchBox.Text, uriDB,tagDB);

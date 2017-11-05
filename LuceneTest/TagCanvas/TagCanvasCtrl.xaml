@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:TagExplorer.TagCanvas"
              mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="300">
+             d:DesignHeight="300" d:DesignWidth="300" SizeChanged="UserControl_SizeChanged">
     <UserControl.Resources>
         <!--===============================================================
         定义各种命令、以及命令的快捷键
@@ -210,18 +210,21 @@
         <CommandBinding Command="{StaticResource NavigateTagRight}" Executed="NavigateTagRight_Executed"/>
 
     </UserControl.CommandBindings>
+    <DockPanel>
     <ScrollViewer LostFocus="scrollViewer_LostFocus" 
                   GotFocus="scrollViewer_GotFocus" 
                   x:Name="scrollViewer" 
-                  DockPanel.Dock="Bottom" 
+                  DockPanel.Dock="Top"
+                  
                   VerticalAlignment="Top"  
                   Background="White" VerticalScrollBarVisibility="Auto" 
-                  HorizontalScrollBarVisibility="Auto"  SizeChanged="scrollViewer_SizeChanged"
+                  HorizontalScrollBarVisibility="Auto"  
                    PreviewKeyDown="precanvas_KeyDown"  FocusVisualStyle="{x:Null}"
                   ContextMenu="{StaticResource canvasMenu}">
         <Canvas Focusable="True" KeyDown="canvas_KeyDown" x:Name="canvas"
                 HorizontalAlignment="Left"  VerticalAlignment="Top"  
-                Background="White"  Margin="10,10,10,10" FocusVisualStyle="{x:Null}" >
+                Background="White" FocusVisualStyle="{x:Null}" >
         </Canvas>
     </ScrollViewer>
+    </DockPanel>
 </UserControl>

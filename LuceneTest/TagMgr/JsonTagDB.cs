@@ -10,14 +10,33 @@ using Newtonsoft.Json;
 using System.IO;
 using System.Xml.Serialization;
 using System.Diagnostics;
+using TagExplorer.UriMgr;
 
 namespace TagExplorer.TagMgr
 {
     class JsonTagDB:ITagDB
     {
+        DataChanged dbChangedHandler;
+        public DataChanged TagDBChanged
+        {
+            get
+            {
+                return dbChangedHandler;
+            }
+
+            set
+            {
+                dbChangedHandler += value;
+            }
+        }
+
+
         //维护所有tag=》taginf（有可能有别名，存在多个tag对应一个tagInf）
         Hashtable id2Gutag = new Hashtable(); //Guid ==> Gutag
-        
+        private void ChangeNotify()
+        {
+            dbChangedHandler?.Invoke();
+        }
         private void Save()
         {
             Save(null);
@@ -32,8 +51,8 @@ namespace TagExplorer.TagMgr
                     w.WriteLine(JsonConvert.SerializeObject(j));
                 }
             }
-            
 
+            ChangeNotify();
         }
         public static JsonTagDB Load()
         {
@@ -45,7 +64,7 @@ namespace TagExplorer.TagMgr
                 foreach(string ln in lns)
                 {
                     GUTag j = JsonConvert.DeserializeObject<GUTag>(ln);
-                    db.AddToDB(j);
+                    db.AddToHash(j);
                 }
             }
             
@@ -60,16 +79,16 @@ namespace TagExplorer.TagMgr
         {
 
             GUTag tag = new GUTag(stag);
-            AddToDB(tag);
+            AddToHash(tag);
             return tag;
         }
-        private void DeleteTag(GUTag j)
+        private void RemoveFromHash(GUTag j)
         {
             AssertValid(j);
             id2Gutag.Remove(j.Id);
             //AllTagSet.Remove(j);
         }
-        private void AddToDB(GUTag j)
+        private void AddToHash(GUTag j)
         {
             Debug.Assert(id2Gutag[j.Id] == null);
             id2Gutag[j.Id] = j;
@@ -79,16 +98,19 @@ namespace TagExplorer.TagMgr
 
         public int AddTag(GUTag parent, GUTag child)
         {
+            //添加的tag必须是有效节点
             AssertValid(parent);
             AssertValid(child);
-            GUTag tag= id2Gutag[parent.Id] as GUTag;
+            GUTag pTag= id2Gutag[parent.Id] as GUTag;
             GUTag cTag = id2Gutag[child.Id] as GUTag;
-            
 
-            tag.AddChild(child);
-            
-            Save(parent);
-            //Save(child);  parent保存实际上已经保存所有了，这儿就不需要保存了。
+            //保护性检查，防止调用无效
+            if (pTag != null && cTag != null)
+            {
+                pTag.AddChild(cTag);
+                Save(pTag);
+                //Save(child);  parent保存实际上已经保存所有了，这儿就不需要保存了。
+            }
             return ITagDBConst.R_OK;
         }
 
@@ -97,27 +119,30 @@ namespace TagExplorer.TagMgr
             id2Gutag.Clear();
         }
 
-        public int QueryChildrenCount(GUTag tag)
-        {
-            AssertValid(tag);
-            GUTag tmp = id2Gutag[tag.Id] as GUTag;
-            return tmp == null ? 0 : tmp.Children.Count;
-
-        }
+        
         
         
         public int MergeAlias(GUTag mainTag, GUTag aliasTag)
         {
             AssertValid(mainTag);
             AssertValid(aliasTag);
-            DeleteTag(aliasTag);
+            RemoveFromHash(aliasTag);
             mainTag.Merge(aliasTag);
-            AddToDB(mainTag);
+            AddToHash(mainTag);
             //allTag.Add(tag2, tmp1);//别名也需要快速索引
             Save();
             return ITagDBConst.R_OK;
         }
 
+
+        #region  查询函数实现
+        public int QueryChildrenCount(GUTag tag)
+        {
+            //AssertValid(tag);
+            GUTag tmp = id2Gutag[tag.Id] as GUTag;
+            return tmp == null ? 0 : tmp.Children.Count;
+
+        }
         public List<string> QueryAutoComplete(string searchTerm)
         {
             string ls = searchTerm.ToLower();
@@ -134,14 +159,14 @@ namespace TagExplorer.TagMgr
 
         public List<string> QueryTagAlias(GUTag tag)
         {
-            AssertValid(tag);
+            //AssertValid(tag);
             if (id2Gutag[tag.Id] != tag) return new List<string>();
             else return tag.Alias;
         }
-        private static List<string> EMPTY_LIST = new List<string>();
+        
         public List<GUTag> QueryTagChildren(GUTag tag)
         {
-            AssertValid(tag);
+            //AssertValid(tag);
             if (id2Gutag[tag.Id] != tag) return new List<GUTag>();
 
             List<GUTag> gutagChildren= new List<GUTag>();
@@ -158,7 +183,7 @@ namespace TagExplorer.TagMgr
 
         public List<GUTag> QueryTagParent(GUTag tag)
         {
-            AssertValid(tag);
+            //AssertValid(tag); 由于有两个视图，可能会用一个已经失效的GUTag进行查询。
             if (id2Gutag[tag.Id] != tag) return new List<GUTag>();
 
 
@@ -174,6 +199,17 @@ namespace TagExplorer.TagMgr
             return ret;
             
         }
+        public List<GUTag> QueryTags(string title)
+        {
+            List<GUTag> ret = new List<GUTag>();
+            foreach (GUTag tag in id2Gutag.Values)
+            {
+                if (tag.Title == title) ret.Add(tag);
+            }
+            return ret;
+        }
+        #endregion
+
 
         public int RemoveTag(GUTag tag)
         {
@@ -286,15 +322,7 @@ namespace TagExplorer.TagMgr
             return id2Gutag[id] as GUTag;
         }
 
-        public List<GUTag> QueryTags(string title)
-        {
-            List<GUTag> ret = new List<GUTag>();
-            foreach (GUTag tag in id2Gutag.Values)
-            {
-                if (tag.Title == title) ret.Add(tag);
-            }
-            return ret;
-        }
+        
 
         public int ChangeTitle(GUTag tag, string newTitle)
         {

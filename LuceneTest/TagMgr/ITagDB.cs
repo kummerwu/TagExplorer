@@ -1,6 +1,7 @@
 ﻿using TagExplorer.AutoComplete;
 using System;
 using System.Collections.Generic;
+using TagExplorer.UriMgr;
 
 namespace TagExplorer.TagMgr
 {
@@ -26,6 +27,8 @@ namespace TagExplorer.TagMgr
         List<GUTag> QueryTagParent(GUTag tag);
         List<string> QueryTagAlias(GUTag tag);
         int Import(string importInf);
+
+        DataChanged TagDBChanged { get; set; }
     }
     public class ITagDBConst
     {
