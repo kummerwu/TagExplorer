@@ -19,23 +19,95 @@ namespace TagExplorer
     /// </summary>
     public partial class TagGraphCanvas : UserControl
     {
+        #region 文件变更监听处理相关流程
         private FileWatcherSafe fileWather;
-        private ITagDB tagDB = null;
-        private IUriDB UriDB = null;
-
-        public void InitDB(ITagDB db,IUriDB uridb)
+        //监听到文件变更后的处理总入口函数（BackThread为后缀的函数，都是在file变更观察后台线程中运行，）
+        private bool FileChanged_BackThread(FileSystemEventArgs e)
         {
-            tagDB = db;
-            UriDB = uridb;
-            MainCanvas.Initial(db,uridb, LayoutCanvas.MAIN_CANVAS);
-            SubCanvas.Initial(db,uridb,LayoutCanvas.SUB_CANVAS);
+            switch (e.ChangeType)
+            {
+                case WatcherChangeTypes.Created: FileCreated_BackThread(null, e); break;
+                case WatcherChangeTypes.Deleted: FileDeleted_BackThread(null, e); break;
+                case WatcherChangeTypes.Renamed: FileCreated_BackThread(null, e); break;
+            }
+            return true;
         }
-        
+        //观察文件变化==添加处理
+        private void FileCreated_BackThread(object sender, FileSystemEventArgs e)
+        {
+            Logger.I("file watch create : {0}", e.FullPath);
+            AddFileToDB_BackThread(e.FullPath);
+        }
+        //观察文件变化==删除处理(TODO 真正的删除）
+        private void FileDeleted_BackThread(object sender, FileSystemEventArgs e)
+        {
 
+            Logger.I("file watch delete : {0}", e.FullPath);
+            int tryTimes = 0;
+            while (File.Exists(e.FullPath) || Directory.Exists(e.FullPath))
+            {
+                System.Threading.Thread.Sleep(100);
+                tryTimes++;
+                if (tryTimes > 100)
+                {
+                    Logger.E("del file failed! -{0}", e.FullPath);
+                    return; //尝试100次后，该文件仍然存在，放弃本次操作
+                }
+            }
+            this.Dispatcher.Invoke(new Action(NotifyList));
+        }
+        //观察文件变化==重命名处理   TODO：重命名后，实际上需要删除原来老的doc，暂时没有处理
+        private void FileRename_BackThread(object sender, RenamedEventArgs e)
+        {
+            Logger.I("file watch rename : {1}=>{0}", e.FullPath, e.OldFullPath);
+            AddFileToDB_BackThread(e.FullPath);
+        }
+        //由于文件变更通知是在一个后台线程中进行的，所以需要通过Invoke机制调用UI主线程中的函数
+        private void AddFileToDB_BackThread(string uri)
+        {
+            if (!CfgPath.NeedSkip(uri))//过滤一些不需要观察的文件
+            {
+                this.Dispatcher.Invoke(new Action<string>(AddFileToDB_UIThread), uri);
+            }
+            else
+            {
+                this.Dispatcher.Invoke(new Action(NotifyList));//有一个bug，当ie保存一个文件时，总是先create，然后delete，然后再次create。
+            }
+        }
+        //UI主线程中的方法调用
+        private void AddFileToDB_UIThread(string uri)
+        {
+            Logger.I("AddFileInDoc={0}", uri);
+            string tag = CfgPath.GetTagByPath(uri);
+            if (tag != null)
+            {
+                UriDB.AddUri(new List<string>() { uri }, new List<string>() { tag });
+            }
+            else
+            {
+                Logger.E("观察到文件变化，但该文件不在文件仓库中=={0}", uri);
+            }
+
+        }
+        #endregion
+
+
+
+
+        #region 控件的私有成员和初始化
+        private ITagDB TagDB = null;
+        private IUriDB UriDB = null;
+        public void InitDB(ITagDB tagDB,IUriDB uriDB)
+        {
+            TagDB = tagDB;
+            UriDB = uriDB;
+            MainCanvas.Initial(tagDB,uriDB, LayoutCanvas.MAIN_CANVAS);
+            SubCanvas.Initial(tagDB,uriDB,LayoutCanvas.SUB_CANVAS);
+        }
         public TagGraphCanvas()
         {
             InitializeComponent();
-            fileWather = new FileWatcherSafe(FileWather_Changed);
+            fileWather = new FileWatcherSafe(FileChanged_BackThread);
 
             MainCanvas.SelectedTagChanged += MainCanvasSelectedTagChanged_Callback;
             SubCanvas.SelectedTagChanged += SubCanvasSelectedTagChanged_Callback;
@@ -48,6 +120,11 @@ namespace TagExplorer
 
 
         }
+        #endregion
+
+
+        #region 切换Tag，显示Tag
+        public CurrentTagChanged SelectedTagChanged = null;
         private void MainCanvasSelectedTagChanged_Callback(GUTag tag)
         {
             SelectedTagChanged?.Invoke(tag);
@@ -58,123 +135,39 @@ namespace TagExplorer
             SelectedTagChanged?.Invoke(tag);
 
         }
-
-
-        private void NotifyList()
-        {
-            UriDB.Notify();
-        }
-
-        //观察文件变化==删除处理(TODO 真正的删除）
-        private void FileWather_Deleted(object sender, FileSystemEventArgs e)
-        {
-            
-            Logger.I("file watch delete : {0}", e.FullPath);
-            int tryTimes = 0;
-            while(File.Exists(e.FullPath) || Directory.Exists(e.FullPath))
-            {
-                System.Threading.Thread.Sleep(100);
-                tryTimes++;
-                if (tryTimes > 100)
-                {
-                    Logger.E("del file failed! -{0}", e.FullPath);
-                    return; //尝试100次后，该文件仍然存在，放弃本次操作
-                }
-            }
-            this.Dispatcher.Invoke(new Action(NotifyList));
-        }
-        //观察文件变化==添加处理
-        private void FileWather_Created(object sender, FileSystemEventArgs e)
-        {
-            Logger.I("file watch create : {0}", e.FullPath);
-            AddFileInDoc_BackThread(e.FullPath);
-        }
-        private bool FileWather_Changed( FileSystemEventArgs e)
-        {
-            switch(e.ChangeType)
-            {
-                case WatcherChangeTypes.Created: FileWather_Created(null, e);break;
-                case WatcherChangeTypes.Deleted: FileWather_Deleted(null, e); break;
-                case WatcherChangeTypes.Renamed: FileWather_Created(null, e); break;
-            }
-
-            return true;
-        }
-
-        //观察文件变化==重命名处理   TODO：重命名后，实际上需要删除原来老的doc，暂时没有处理
-        private void FileWather_Renamed(object sender, RenamedEventArgs e)
-        {
-            Logger.I("file watch rename : {1}=>{0}", e.FullPath,e.OldFullPath);
-            AddFileInDoc_BackThread(e.FullPath);
-        }
-
-        //由于文件变更通知是在一个后台线程中进行的，所以需要通过Invoke机制调用UI主线程中的函数
-        private void AddFileInDoc_BackThread(string uri)
-        {
-            if (!CfgPath.NeedSkip(uri))//过滤一些不需要观察的文件
-            {
-                this.Dispatcher.Invoke(new Action<string>(AddFileInDoc), uri);
-            }
-            else
-            {
-                this.Dispatcher.Invoke(new Action(NotifyList));//有一个bug，当ie保存一个文件时，总是先create，然后delete，然后再次create。
-            }
-        }
         public void RedrawGraph()
         {
             MainCanvas.RedrawGraph();
             SubCanvas.RedrawGraph();
         }
-        public void ShowGraph(GUTag root,GUTag sub,GUTag subsel)
+        public void ChangeRoot(GUTag root, GUTag sub, GUTag subsel)
         {
             if (root != null)
             {
-                MainCanvas.ChangeRoot(root,sub);
+                MainCanvas.ChangeRoot(root, sub);
             }
             if (sub != null)
             {
                 MainCanvas.ClearSelected();
-                SubCanvas.ChangeRoot(sub,subsel);
-            }
-            
-        }
-
-        //UI主线程中的方法调用
-        private void AddFileInDoc(string uri)
-        {
-            Logger.I("AddFileInDoc={0}", uri);
-            string tag = CfgPath.GetTagByPath(uri);
-            if (tag != null)
-            {
-                UriDB.AddUri(new List<string>() { uri }, new List<string>() { tag });
-            }
-            else
-            { 
-                Logger.E("观察到文件变化，但该文件不在文件仓库中=={0}", uri);
+                SubCanvas.ChangeRoot(sub, subsel);
             }
 
         }
-        private List<GUTag> QueryParentHistory(GUTag tag)
+        public void UpTag()
         {
-            List<GUTag> ret = new List<GUTag>();
-            int MAX = 6;
-            GUTag child = tag;
-            while (ret.Count < MAX)
-            {
-                ret.Add(child);
-                List<GUTag> tmp = tagDB.QueryTagParent(child);
-                if (tmp.Count > 0)
-                {
-                    child = tmp[0];
-                }
-                else
-                {
-                    break;
-                }
-            }
-            return ret;
+            MainCanvas.UpTag();
         }
-        internal void SearchByTxt(string text)
+        internal void HomeTag()
+        {
+            GUTag defaultTag = GUTag.Parse(StaticCfg.Ins.DefaultTagID.ToString(), TagDB);
+            ChangeRoot(defaultTag, null, null);
+        }
+        #endregion
+
+        
+
+        #region 搜索Tag，更新文件列表
+        public void SearchByTxt(string text)
         {
             //先在main中查找，如果有，切换焦点后返回
             if(MainCanvas.ChangeSelectedByTxt(text)!=null)
@@ -187,13 +180,13 @@ namespace TagExplorer
                 MainCanvas.ClearSelected();
                 return;
             }
-            List<GUTag> tags = tagDB.QueryTags(text);
+            List<GUTag> tags = TagDB.QueryTags(text);
 
             //如果不在视图中，但数据库中存在，TODO：如何有效的切换？？是一个需要考虑的问题
             if(tags.Count>0)
             {
                 GUTag tag = tags[0];
-                GUTag mainRoot = tagDB.GetTag(StaticCfg.Ins.DefaultTagID);
+                GUTag mainRoot = TagDB.GetTag(StaticCfg.Ins.DefaultTagID);
                 GUTag subRoot = mainRoot;
                 GUTag subSel = subRoot;
                 List<GUTag> parents = QueryParentHistory(tag);
@@ -205,7 +198,7 @@ namespace TagExplorer
                     mainRoot = parents[Math.Min(6, cnt - 1)];
                 }
                 
-                ShowGraph(mainRoot, subRoot,subSel);
+                ChangeRoot(mainRoot, subRoot,subSel);
                 
             }
             //不存在精确匹配的tag
@@ -214,36 +207,35 @@ namespace TagExplorer
                 
             }
         }
-
-        
-
-
-        public CurrentTagChanged SelectedTagChanged = null;
-        private void UpdateRecentTags(string tag)
+        private List<GUTag> QueryParentHistory(GUTag tag)
         {
-            List<UIElement> recentTags = new List<UIElement>();
-            TagVisitHistory.Ins.AddHistory(tag);
-            List<string> tags = TagVisitHistory.Ins.GetHistory();
-            double top = 0, left = 0;
-            for (int i = 0; i < tags.Count; i++)
+            List<GUTag> ret = new List<GUTag>();
+            int MAX = 6;
+            GUTag child = tag;
+            while (ret.Count < MAX)
             {
-                //TagBox box = UIElementFactory.CreateTagBox(new TagLayout.LayoutCommon.GTagBox(4,tags[i],left,top,1));//GStyle.Apply(left, top, tags[i]);
-                //recentTags.Add(box);
-                //left += box.Width1;
-                //left += 10;
+                ret.Add(child);
+                List<GUTag> tmp = TagDB.QueryTagParent(child);
+                if (tmp.Count > 0)
+                {
+                    child = tmp[0];
+                }
+                else
+                {
+                    break;
+                }
             }
-            //canvasRecentTags.Children.Clear();
-            foreach (TagBox t in recentTags)
-            {
-                //TODO 是否还需要recent tag？
-                //设置每一个tag的上下文菜单和事件响应钩子
-                //t.ContextMenu = TagAreaMenu;
-                //t.MouseLeftButtonDown += Tag_MouseLeftButtonDown;
-                //t.MouseDoubleClick += Tag_MouseDoubleClick;
-                //canvasRecentTags.Children.Add(t);
-            }
+            return ret;
         }
+        private void NotifyList()
+        {
+            UriDB.Notify();
+        }
+        #endregion
 
+
+
+        #region 窗口大小变化，保存布局
         private void MainCanvas_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             GridLengthConverter c = new GridLengthConverter();
@@ -251,17 +243,8 @@ namespace TagExplorer
             DynamicCfg.Ins.ChangeMainCanvasHeight(c.ConvertToString(new GridLength(mainGridRow.ActualHeight,GridUnitType.Pixel)));
             //AppCfg.Ins.SubCanvasHeight = c.ConvertToString(new GridLength(subGridRow.ActualHeight, GridUnitType.Star));
         }
+        #endregion
 
-        public void UpTag()
-        {
-            MainCanvas.UpTag();
-        }
 
-        internal void HomeTag()
-        {
-            GUTag defaultTag = GUTag.Parse(StaticCfg.Ins.DefaultTagID.ToString(), tagDB);
-            ShowGraph(defaultTag, null,null);
-        }
-        
     }
 }

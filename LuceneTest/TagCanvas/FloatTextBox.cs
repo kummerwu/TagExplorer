@@ -13,15 +13,20 @@ namespace TagExplorer.TagCanvas
 {
     class FloatTextBox
     {
+        #region 公共事件：编辑完成后的TextChanged事件
         //公有事件*************************************
         public delegate void TextChanged(Canvas Parent,GUTag tag,string NewString);
         public TextChanged TextChangedCallback;
+        #endregion
 
+        #region 私有成员变量
         //私有成员*****************************************
         private TextBox Edit = null;        //用于编辑的TextBox
         private Canvas Parent = null;       //该编辑TextBox所在的Canvas
         private TagBox NoEdit = null;       //该编辑TextBox对应的TagBox（标签显示框）
+        #endregion
 
+        #region 初始化编辑框
         //浮动TextBox是一个单实例控件
         private static FloatTextBox ins = null;
         public static FloatTextBox Ins
@@ -36,6 +41,40 @@ namespace TagExplorer.TagCanvas
                 return ins;
             }
         }
+        //初始化编辑框（仅仅初始化，并不显示编辑框）
+        private void InitEdit()
+        {
+            Edit = new TextBox();
+            Edit.BorderThickness = new Thickness(0);
+            Edit.LostFocus += Edit_LostFocus;
+            Edit.KeyDown += Edit_KeyDown;
+
+        }
+        #endregion
+
+        #region 显示编辑框
+        //显示编辑框
+        public void ShowEdit(Canvas c, TagBox brother)
+        {
+            if (c == null || brother == null) return;
+
+            ComplateEdit();
+            Parent = c;
+            NoEdit = brother;
+            //设置好编辑框的各种属性
+            Edit.Text = brother.Text;
+            Edit.Width = Math.Max(500, brother.Width + 10);
+            Thickness m = brother.Margin;
+            Edit.Margin = new Thickness(m.Left + 20, m.Top + 5, 0, 0);
+            Edit.FontFamily = brother.txt.FontFamily;
+            Edit.FontSize = brother.txt.FontSize;
+            Edit.FontStretch = brother.txt.FontStretch;
+            Edit.FontStyle = brother.txt.FontStyle;
+            //显示该编辑框
+            Parent.Children.Add(Edit);
+            Edit.Focus();
+            Edit.SelectAll();
+        }
         //当前编辑框是否正在显示中
         public bool IsVisible
         {
@@ -44,6 +83,9 @@ namespace TagExplorer.TagCanvas
                 return Parent != null && NoEdit != null;
             }
         }
+        #endregion
+
+        #region 关闭编辑框
         private void CancelEdit()
         {
             if(Parent!=null)
@@ -101,23 +143,12 @@ namespace TagExplorer.TagCanvas
                                 //否则可能形成递归调用
             }
         }
-
-        //初始化编辑框（仅仅初始化，并不显示编辑框）
-        private void InitEdit()
-        {
-            Edit = new TextBox();
-            Edit.BorderThickness = new Thickness(0);
-            Edit.LostFocus += Edit_LostFocus;
-            Edit.KeyDown += Edit_KeyDown;
-            
-        }
-
         //改为KeyDown事件，如果使用KeyUp事件，会导致与输入法的回车选择冲突。
         private void Edit_KeyDown(object sender, KeyEventArgs e)
         {
             //编辑框中输入回车，表示输入结束，关闭编辑框并通知变更
-            if ( IsVisible &&
-                (e.Key == Key.Enter) && 
+            if (IsVisible &&
+                (e.Key == Key.Enter) &&
                 (e.KeyboardDevice.Modifiers & ModifierKeys.Control) != ModifierKeys.Control)
             {
                 ComplateEdit();
@@ -130,8 +161,8 @@ namespace TagExplorer.TagCanvas
             string err = CfgPath.CheckTagFormat(Edit.Text);
             if (err != null)
             {
-                MessageBox.Show(err, "标签不合法，请重新输入", MessageBoxButton.OK, MessageBoxImage.Error);
                 CancelEdit();
+                MessageBox.Show(err, "标签不合法，请重新输入", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
             else
@@ -139,28 +170,13 @@ namespace TagExplorer.TagCanvas
                 ComplateEdit();
             }
         }
+        #endregion
 
-        //显示编辑框
-        public void ShowEdit(Canvas c, TagBox brother)
-        {
-            if (c == null || brother == null) return;
-            
-            ComplateEdit();
-            Parent = c;
-            NoEdit = brother;
-            //设置好编辑框的各种属性
-            Edit.Text = brother.Text;
-            Edit.Width = Math.Max(500, brother.Width + 10);
-            Thickness m = brother.Margin;
-            Edit.Margin = new Thickness(m.Left + 20, m.Top + 5, 0, 0);
-            Edit.FontFamily = brother.txt.FontFamily;
-            Edit.FontSize = brother.txt.FontSize;
-            Edit.FontStretch = brother.txt.FontStretch;
-            Edit.FontStyle = brother.txt.FontStyle;
-            //显示该编辑框
-            Parent.Children.Add(Edit);
-            Edit.Focus();
-            Edit.SelectAll();
-        }
+
+        
+
+        
+
+        
     }
 }

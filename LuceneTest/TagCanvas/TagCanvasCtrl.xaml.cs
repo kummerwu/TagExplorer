@@ -22,88 +22,54 @@ namespace TagExplorer.TagCanvas
     /// </summary>
     public partial class TagCanvasCtrl : UserControl
     {
+        #region 私有成员与初始化相关
         private ITagDB TagDB = null;
         private IUriDB UriDB = null;
-        private LayoutCanvas CanvasType;
-        private LayoutMode myMode
-        {
-            get
-            {
-                switch(CanvasType)
-                {
-                    case LayoutCanvas.MAIN_CANVAS:
-                        return DynamicCfg.Ins.MainCanvasLayoutMode;
-                    case LayoutCanvas.SUB_CANVAS:
-                        return DynamicCfg.Ins.SubCanvasLayoutMode;
-                    default:
-                        return LayoutMode.TREE_NO_COMPACT;
-                }
-            }
-        }
+        private LayoutCanvas MyCanvasType;
         //初始化TagDB，该函数必须在空间初始化时就指定
-        public void Initial(ITagDB db, IUriDB uridb,LayoutCanvas canvasType)
+        public void Initial(ITagDB db, IUriDB uridb, LayoutCanvas canvasType)
         {
 
             TagDB = db;
             UriDB = uridb;
-            CanvasType = canvasType;
+            MyCanvasType = canvasType;
         }
         public TagCanvasCtrl()
         {
             InitializeComponent();
             TagSwitchDB.Ins.SwitchChanged += SwitchChangedCallback;
-            FloatTextBox.Ins.TextChangedCallback += TextChanged;
+            FloatTextBox.Ins.TextChangedCallback += TagEdit_TitleChanged;
 
         }
-        private void TextChanged(Canvas Parent, GUTag tag, string NewString)
-        {
-            
-            if(canvas == Parent && tag!=null &&NewString!=null)
-            {
-                TagDB.ChangeTitle(tag,NewString);
-                RedrawGraph();
-                SetCurrentTag(tag);
-            }
-        }
-        private void SwitchChangedCallback()
-        {
-            RedrawGraph();
-        }
+        #endregion
+
+        #region 当前根节点和选中节点的管理
+        //显示的根节点和当前（选中）节点
         //currentTag和root的区别： 
         //root是当前有向图显示的中心节点，
         //currentTag是当前选中的节点
-        //
         private GUTag rootTag = null;
         private GUTag currentTag = null;
-        private Size oriSize
+        //当根节点或选中节点变化时，需要保存下来，以便程序重启后能恢复重启前的状态
+        public void ChangeRoot(GUTag rootTag, GUTag selectTag)
         {
-            get
+            if (rootTag != null)
             {
-                Size s1 = scrollViewer.RenderSize;
-                Size s2 = this.RenderSize;
-                return s2;
-            }
-        }
-        
-        public void ChangeRoot(GUTag rootTag,GUTag selectTag)
-        {
-            if (rootTag!=null)
-            {
-                if(CanvasType == LayoutCanvas.MAIN_CANVAS)
+                if (MyCanvasType == LayoutCanvas.MAIN_CANVAS)
                 {
-                    DynamicCfg.Ins.ChangeMainCanvasRoot( rootTag);
+                    DynamicCfg.Ins.ChangeMainCanvasRoot(rootTag);
                 }
                 else
                 {
-                    DynamicCfg.Ins.ChangeSubCanvasRoot( rootTag);
+                    DynamicCfg.Ins.ChangeSubCanvasRoot(rootTag);
                 }
             }
             else
             {
-                if (CanvasType == LayoutCanvas.MAIN_CANVAS)
+                if (MyCanvasType == LayoutCanvas.MAIN_CANVAS)
                 {
-                    rootTag  = TagDB.GetTag(Guid.Parse(DynamicCfg.Ins.MainCanvasRoot));
-                    
+                    rootTag = TagDB.GetTag(Guid.Parse(DynamicCfg.Ins.MainCanvasRoot));
+
                 }
                 else
                 {
@@ -114,36 +80,74 @@ namespace TagExplorer.TagCanvas
             currentTag = selectTag == null ? rootTag : selectTag;
             RedrawGraph();
         }
-        public void RedrawGraph()
-        {
-            LayoutMode bak = GLayoutMode.mode;
-            GLayoutMode.mode = myMode;
-            RedrawGraph_();
-            GLayoutMode.mode = bak;
-        }
+        #endregion
 
+        #region 显示tag视图
+        //所有显示的元素（TagBox-标签和Path-标签间的连线）
         private List<TagBox> allTagBox = new List<TagBox>();
         private List<System.Windows.Shapes.Path> allLine = new List<System.Windows.Shapes.Path>();
         private TreeLayoutEnv env = new TreeLayoutEnv();
-        private void AdjustCanvasSize(double w,double h)
+
+
+        //显示的大小
+        private Size oriSize
+        {
+            get
+            {
+                Size s1 = scrollViewer.RenderSize;
+                Size s2 = this.RenderSize;
+                return s2;
+            }
+        }
+        private void UserControl_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            RedrawGraph();
+        }
+        //根据当前大小，调整canvas的大小。
+        private void AdjustCanvasSize(double w, double h)
         {
             Size s = oriSize;
-            double cw = Math.Max(w, s.Width-30);
-            double ch = Math.Max(h, s.Height-30);
+            double cw = Math.Max(w, s.Width - 30);
+            double ch = Math.Max(h, s.Height - 30);
             canvas.Width = cw;
             canvas.Height = ch;
         }
+
+        //显示的模式
+        private LayoutMode MyLayoutMode
+        {
+            get
+            {
+                switch(MyCanvasType)
+                {
+                    case LayoutCanvas.MAIN_CANVAS:
+                        return DynamicCfg.Ins.MainCanvasLayoutMode;
+                    case LayoutCanvas.SUB_CANVAS:
+                        return DynamicCfg.Ins.SubCanvasLayoutMode;
+                    default:
+                        return LayoutMode.TREE_NO_COMPACT;
+                }
+            }
+        }
+        
+        public void RedrawGraph()
+        {
+            LayoutMode bak = GLayoutMode.mode;
+            GLayoutMode.mode = MyLayoutMode;
+            RedrawGraph_();
+            GLayoutMode.mode = bak;
+        }
         private void RedrawGraph_()
         {
-            if (TagDB != null && rootTag != null && oriSize.Height!=0 && oriSize.Width!=0 && !oriSize.IsEmpty)
+            if (TagDB != null && rootTag != null && oriSize.Height != 0 && oriSize.Width != 0 && !oriSize.IsEmpty)
             {
                 Logger.I("ShowGraph at " + rootTag);
-               
+
                 if (allTagBox != null)
                 {
                     env.Return(allTagBox);
                 }
-                if(allLine!=null)
+                if (allLine != null)
                 {
                     env.Return(allLine);
                 }
@@ -151,7 +155,7 @@ namespace TagExplorer.TagCanvas
 
                 //计算有向图布局
                 ITagLayout tagLayout = TagLayoutFactory.CreateLayout();
-                tagLayout.Layout(TagDB, rootTag,oriSize,env);
+                tagLayout.Layout(TagDB, rootTag, oriSize, env);
 
                 //将有向图中的元素显示在界面上
                 IEnumerable<UIElement> lines = tagLayout.Lines;
@@ -180,34 +184,34 @@ namespace TagExplorer.TagCanvas
                         t.MouseDoubleClick += Tag_MouseDoubleClick;
                         canvas.Children.Add(t);
                     }
-                    
+
                 }
                 //UpdateRecentTags(root);
                 //SetCurrentTag(root);
                 SetCurrentTag();
             }
         }
-        
-       
-        //private double canvasMinHeight = 0;
-        //private double layoutHeight = 0;
-        //private double CanvasMinHeight
-        //{
-        //    set
-        //    {
-        //        canvasMinHeight = value;
-        //        SetHeight();
-        //    }
-        //}
+        #endregion
+        #region tag的展开与不展开切换
+        private void SwitchChangedCallback()
+        {
+            RedrawGraph();
+        }
+        #endregion
 
-        //private void SetHeight()
-        //{
-        //    if (double.IsNaN(canvasMinHeight) || double.IsInfinity(canvasMinHeight))
-        //    {
-        //        canvasMinHeight = 0;
-        //    }
-        //    canvas.Height = Math.Max(layoutHeight, canvasMinHeight);
-        //}
+        #region Tag的增删改
+        private void TagEdit_TitleChanged(Canvas Parent, GUTag tag, string NewString)
+        {
+            
+            if(canvas == Parent && tag!=null &&NewString!=null)
+            {
+                TagDB.ChangeTitle(tag,NewString);
+                RedrawGraph();
+                SetCurrentTag(tag);
+            }
+        }
+        #endregion
+        
         
         private GUTag NavigateTagBox(Key direction)
         {
@@ -337,7 +341,7 @@ namespace TagExplorer.TagCanvas
 
         private void DbgShowTagBox()
         {
-            Logger.D("\r\n\r\n  BeginDbgShowTagBox {0}=====================", CanvasType);
+            Logger.D("\r\n\r\n  BeginDbgShowTagBox {0}=====================", MyCanvasType);
 
             foreach(UIElement u in canvas.Children)
             {
@@ -347,7 +351,7 @@ namespace TagExplorer.TagCanvas
                     Logger.D("DbgShowTagBox:{0} - POS:{1}-{2}，Visibility={3}", t.GUTag, t.Margin.Left, t.Margin.Top,t.Visibility);
                 }
             }
-            Logger.D("EndDbgShowTagBox {0}=====================\r\n\r\n  ", CanvasType);
+            Logger.D("EndDbgShowTagBox {0}=====================\r\n\r\n  ", MyCanvasType);
         }
         private TagBox FindTagBox(GUTag tag)
         {
@@ -495,15 +499,13 @@ namespace TagExplorer.TagCanvas
             }
 
         }
-        
 
 
+        public CurrentTagChanged SelectedTagChanged = null;
         private void SetCurrentTag()
         {
             SetCurrentTag(currentTag);
         }
-        
-        public CurrentTagChanged SelectedTagChanged = null;
         private void SetCurrentTag(GUTag tag)
         {
             UpdateSelectedStatus(tag, TagBox.Status.Selected); //这一句必须放在下面检查并return之前，
@@ -521,15 +523,6 @@ namespace TagExplorer.TagCanvas
             TagVirtualDir.Ins.KeepVDir(tag.Title);
 
         }
-        
-        
-
-       
-
-        
-
-        
-
         private string GetTagInf(GUTag tag, ITagDB db)
         {
             StringBuilder sb = new StringBuilder();
@@ -1167,7 +1160,7 @@ namespace TagExplorer.TagCanvas
         #region 修改Tag布局
         private void ChangeLayoutMode(LayoutMode m)
         {
-            switch (CanvasType)
+            switch (MyCanvasType)
             {
                 case LayoutCanvas.MAIN_CANVAS:
                     DynamicCfg.Ins.ChangeMainCanvasLayoutMode(m);
@@ -1184,37 +1177,29 @@ namespace TagExplorer.TagCanvas
         {
             ChangeLayoutMode(LayoutMode.TREE_NO_COMPACT);
         }
-
         private void miCompactTree_Click(object sender, RoutedEventArgs e)
         {
             ChangeLayoutMode(LayoutMode.TREE_COMPACT);
         }
-
         private void miCompactMoreTree_Click(object sender, RoutedEventArgs e)
         {
             ChangeLayoutMode(LayoutMode.TREE_COMPACT_MORE);
         }
-
         private void miNormalLRTree_Click(object sender, RoutedEventArgs e)
         {
             ChangeLayoutMode(LayoutMode.LRTREE_NO_COMPACT);
         }
-
         private void miCompactLRTree_Click(object sender, RoutedEventArgs e)
         {
             ChangeLayoutMode(LayoutMode.LRTREE_COMPACT);
         }
-
         private void miCompactMoreLRTree_Click(object sender, RoutedEventArgs e)
         {
             ChangeLayoutMode(LayoutMode.LRTREE_COMPACT_MORE);
         }
         #endregion
 
-        private void UserControl_SizeChanged(object sender, SizeChangedEventArgs e)
-        {
-            RedrawGraph();
-        }
+        
     }
     
     

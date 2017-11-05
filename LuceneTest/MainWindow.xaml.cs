@@ -132,7 +132,7 @@ namespace TagExplorer
         public void ShowTagGraph(GUTag root,GUTag subroot)
         {
             Logger.I("Show Tag " + root);
-            tagCanvas.ShowGraph(root,subroot,subroot);
+            tagCanvas.ChangeRoot(root,subroot,subroot);
         }
 
 
