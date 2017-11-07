@@ -74,7 +74,11 @@ namespace TagExplorer.TagLayout.TreeLayout
             double childX = x + direct*root.GTagBox.OutterBox.Width;
             double childY = y;
 
-            int MaxLevel = GLayoutMode.mode == LayoutMode.LRTREE_COMPACT || GLayoutMode.mode == LayoutMode.LRTREE_COMPACT_MORE ? 2 : 100;
+            int MaxLevel = StaticCfg.Ins.TREE_LAYOUT_MAX_LEVEL;
+            if (GLayoutMode.mode == LayoutMode.LRTREE_COMPACT || GLayoutMode.mode == LayoutMode.LRTREE_COMPACT_MORE || GLayoutMode.mode == LayoutMode.LRTREE_NO_COMPACT)
+            {
+                MaxLevel = StaticCfg.Ins.LR_TREE_LAYOUT_MAX_LEVEL;
+            }
             //double h = 0;
             //double w = 0;
             if (level < MaxLevel)

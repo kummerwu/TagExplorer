@@ -96,7 +96,8 @@ namespace TagExplorer.Utils
         public Guid DefaultTagID = Guid.Empty;
         public string DefaultNewTag = "请输入标签名称";
 
-        
+        public int LR_TREE_LAYOUT_MAX_LEVEL = 2;
+        public int TREE_LAYOUT_MAX_LEVEL = 4;
 
         
 

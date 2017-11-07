@@ -91,7 +91,7 @@ namespace TagExplorer.TagCanvas
                 }
             }
             this.rootTag = rootTag;
-            currentTag = selectTag == null ? rootTag : selectTag;
+            SetCurrentTag(selectTag == null ? rootTag : selectTag);
             RedrawGraph();
             ShowConnect();
         }
