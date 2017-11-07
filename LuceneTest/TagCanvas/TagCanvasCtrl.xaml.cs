@@ -1,4 +1,5 @@
-﻿using Microsoft.Win32;
+﻿using AnyTagNet;
+using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -8,6 +9,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using TagExplorer.TagLayout;
 using TagExplorer.TagLayout.CommonLayout;
+using TagExplorer.TagLayout.LayoutCommon;
 using TagExplorer.TagLayout.TreeLayout;
 using TagExplorer.TagMgr;
 using TagExplorer.UriMgr;
@@ -33,7 +35,14 @@ namespace TagExplorer.TagCanvas
             TagDB = db;
             UriDB = uridb;
             MyCanvasType = canvasType;
+            if(canvasType == LayoutCanvas.MAIN_CANVAS)
+            {
+                //connectCanvas.Visibility = Visibility.Collapsed;
+                connect.Height = new GridLength(0);
+            }
         }
+
+
         public TagCanvasCtrl()
         {
             InitializeComponent();
@@ -50,6 +59,11 @@ namespace TagExplorer.TagCanvas
         //currentTag是当前选中的节点
         private GUTag rootTag = null;
         private GUTag currentTag = null;
+        private GUTag maincanvasSel = null;
+        public void ChangeMainSelected(GUTag mainSel)
+        {
+            maincanvasSel = mainSel;
+        }
         //当根节点或选中节点变化时，需要保存下来，以便程序重启后能恢复重启前的状态
         public void ChangeRoot(GUTag rootTag, GUTag selectTag)
         {
@@ -79,6 +93,52 @@ namespace TagExplorer.TagCanvas
             this.rootTag = rootTag;
             currentTag = selectTag == null ? rootTag : selectTag;
             RedrawGraph();
+            ShowConnect();
+        }
+
+        private void ShowConnect()
+        {
+            List<GUTag> connect = new List<GUTag>();
+            GUTag from = rootTag;
+            GUTag to = maincanvasSel;
+            GUTag tmp = from;
+            double X = 0;
+            connectCanvas.Children.Clear();
+            if (from == null || to == null || MyCanvasType != LayoutCanvas.SUB_CANVAS) return;
+
+            connect.Add(from);
+            while(connect.Count<20 && tmp!=null && tmp!=to)
+            {
+                List<GUTag> ps = TagDB.QueryTagParent(tmp);
+                if (ps.Count > 0)
+                {
+                    tmp = ps[0];
+                    connect.Add(tmp);
+                    
+                }
+                else
+                {
+                    tmp = null;
+                }
+            }
+            connect.Reverse();
+            foreach(GUTag u in connect)
+            {
+                GTagBox gt = new GTagBox(5, u, X, 0, 1);
+                TagBox tx = UIElementFactory.CreateTagBox(gt, null);
+                tx.HideCircle();
+                
+                X += gt.OutterBox.Width;
+                if (tx.ContextMenu == null)
+                {
+                    tx.ContextMenu = TagAreaMenu;
+                    tx.MouseLeftButtonDown += Tag_MouseLeftButtonDown;
+                    tx.MouseDoubleClick += Tag_MouseDoubleClick;
+                    
+                }
+                connectCanvas.Children.Add(tx);
+            }
+
         }
         #endregion
 
@@ -480,7 +540,16 @@ namespace TagExplorer.TagCanvas
         }
         public void ClearSelected()
         {
-            UpdateSelectedStatus(null, TagBox.Status.None);
+            
+            foreach (UIElement u in allTagBox)
+            {
+                TagBox tb = u as TagBox;
+
+                if (tb != null)
+                {
+                    tb.Stat = (tb.GUTag == currentTag)? TagBox.Status.SelectedLostFocus : TagBox.Status.None;
+                }
+            }
         }
         private void UpdateSelectedStatus(GUTag tag, TagBox.Status stat)
         {
@@ -495,6 +564,7 @@ namespace TagExplorer.TagCanvas
                     {
                         tb.Stat = stat;
                     }
+                    
                 }
             }
 

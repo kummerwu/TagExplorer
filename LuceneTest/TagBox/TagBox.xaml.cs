@@ -22,7 +22,7 @@ namespace TagExplorer
         }
         public enum Status
         {
-            None,Selected,Copy,Cut
+            None,Selected,Copy,Cut,SelectedLostFocus
         }
         Status stat = Status.None;
         public Status Stat
@@ -41,8 +41,10 @@ namespace TagExplorer
                         txt.Opacity = 1;
                         break;
                     case Status.Selected:
-                        bdr.BorderThickness = new Thickness(2);
-                        bdr.BorderBrush = new SolidColorBrush(Colors.Black);
+                    case Status.SelectedLostFocus:
+                        bdr.BorderThickness = new Thickness(stat == Status.Selected ? 2 : 2);
+                        bdr.BorderBrush = new SolidColorBrush(stat== Status.Selected?Colors.Black:Colors.Gray);
+
                         txt.Opacity = 1;
                         break;
                     case Status.Cut:
@@ -81,7 +83,10 @@ namespace TagExplorer
             get { return txt.TextAlignment; }
             internal set { txt.TextAlignment = value; }
         }
-
+        public void HideCircle()
+        {
+            circle.Background = circleLeft.Background = null;
+        }
         public int Background1
         {
             set

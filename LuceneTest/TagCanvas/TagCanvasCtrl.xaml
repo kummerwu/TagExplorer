@@ -210,21 +210,27 @@
         <CommandBinding Command="{StaticResource NavigateTagRight}" Executed="NavigateTagRight_Executed"/>
 
     </UserControl.CommandBindings>
-    <DockPanel>
-    <ScrollViewer LostFocus="scrollViewer_LostFocus" 
-                  GotFocus="scrollViewer_GotFocus" 
-                  x:Name="scrollViewer" 
-                  DockPanel.Dock="Top"
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="30" Name="connect"></RowDefinition>
+            <RowDefinition Height="*" Name="content"></RowDefinition>
+        </Grid.RowDefinitions>
+        <Canvas Grid.Row="0" Focusable="True" x:Name="connectCanvas"
+                 ></Canvas>
+        <ScrollViewer LostFocus="scrollViewer_LostFocus" 
+                      GotFocus="scrollViewer_GotFocus" 
+                      x:Name="scrollViewer" 
+                      Grid.Row="1"
                   
-                  VerticalAlignment="Top"  
-                  Background="White" VerticalScrollBarVisibility="Auto" 
-                  HorizontalScrollBarVisibility="Auto"  
-                   PreviewKeyDown="precanvas_KeyDown"  FocusVisualStyle="{x:Null}"
-                  ContextMenu="{StaticResource canvasMenu}">
-        <Canvas Focusable="True" KeyDown="canvas_KeyDown" x:Name="canvas"
-                HorizontalAlignment="Left"  VerticalAlignment="Top"  
-                Background="White" FocusVisualStyle="{x:Null}" >
-        </Canvas>
-    </ScrollViewer>
-    </DockPanel>
+                      VerticalAlignment="Top"  
+                      Background="White" VerticalScrollBarVisibility="Auto" 
+                      HorizontalScrollBarVisibility="Auto"  
+                       PreviewKeyDown="precanvas_KeyDown"  FocusVisualStyle="{x:Null}"
+                      ContextMenu="{StaticResource canvasMenu}">
+            <Canvas Focusable="True" KeyDown="canvas_KeyDown" x:Name="canvas"
+                    HorizontalAlignment="Left"  VerticalAlignment="Top"  
+                    Background="White" FocusVisualStyle="{x:Null}" >
+            </Canvas>
+        </ScrollViewer>
+    </Grid>
 </UserControl>
