@@ -513,7 +513,7 @@ namespace TagExplorer.TagCanvas
                                                                //bug现象：在curtag没有变化的时候，重新绘制整个graph，
                                                                //会出现所有的tag都不显示边框（包括curtag），因为直接返回了。
 
-            //if (currentTag == tag) return;  //原来在tag没有变化时不通知变更，导致有些问题，后面将该语句取消了。
+            if (currentTag == tag) return;  //原来在tag没有变化时不通知变更，导致有些问题，后面将该语句取消了。
             GUTag oldTag = currentTag;
             currentTag = tag;
 
@@ -1123,7 +1123,7 @@ namespace TagExplorer.TagCanvas
 
         private void scrollViewer_LostFocus(object sender, RoutedEventArgs e)
         {
-            ClearSelected();
+            //ClearSelected();
         }
 
         private void ModifyTag_Executed(object sender, ExecutedRoutedEventArgs e)
