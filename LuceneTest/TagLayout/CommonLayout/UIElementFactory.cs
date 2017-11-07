@@ -28,6 +28,7 @@ namespace AnyTagNet
             b.Background1 = g.Distance;//new SolidColorBrush(GetColor(g.Distance,g.Level));
             //if (g.Distance >= 5) b.Foreground1 = g.Distance;// new SolidColorBrush(Colors.White);
             b.Foreground1 = g.Distance;
+            
             return b;
         }
 

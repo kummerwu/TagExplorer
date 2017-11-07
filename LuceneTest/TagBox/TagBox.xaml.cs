@@ -81,7 +81,10 @@ namespace TagExplorer
             get { return txt.TextAlignment; }
             internal set { txt.TextAlignment = value; }
         }
-
+        public void HideCircle()
+        {
+            circle.Background = circleLeft.Background = null;
+        }
         public int Background1
         {
             set

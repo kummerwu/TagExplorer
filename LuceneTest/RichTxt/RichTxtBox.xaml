@@ -18,7 +18,7 @@
                          ScrollViewer.CanContentScroll="True"
                          ScrollViewer.HorizontalScrollBarVisibility="Visible"
                          ScrollViewer.VerticalScrollBarVisibility="Visible"
-                         SpellCheck.IsEnabled="True"
+                         SpellCheck.IsEnabled="False"
                          AcceptsReturn="True"
                          AcceptsTab="True" >
             <RichTextBox.CommandBindings>
