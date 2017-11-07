@@ -22,7 +22,7 @@ namespace TagExplorer
         }
         public enum Status
         {
-            None,Selected,Copy,Cut
+            None,Selected,Copy,Cut,SelectedLostFocus
         }
         Status stat = Status.None;
         public Status Stat
@@ -41,8 +41,10 @@ namespace TagExplorer
                         txt.Opacity = 1;
                         break;
                     case Status.Selected:
-                        bdr.BorderThickness = new Thickness(2);
-                        bdr.BorderBrush = new SolidColorBrush(Colors.Black);
+                    case Status.SelectedLostFocus:
+                        bdr.BorderThickness = new Thickness(stat == Status.Selected ? 2 : 2);
+                        bdr.BorderBrush = new SolidColorBrush(stat== Status.Selected?Colors.Black:Colors.Gray);
+
                         txt.Opacity = 1;
                         break;
                     case Status.Cut:

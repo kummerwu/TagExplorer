@@ -540,7 +540,16 @@ namespace TagExplorer.TagCanvas
         }
         public void ClearSelected()
         {
-            UpdateSelectedStatus(null, TagBox.Status.None);
+            
+            foreach (UIElement u in allTagBox)
+            {
+                TagBox tb = u as TagBox;
+
+                if (tb != null)
+                {
+                    tb.Stat = (tb.GUTag == currentTag)? TagBox.Status.SelectedLostFocus : TagBox.Status.None;
+                }
+            }
         }
         private void UpdateSelectedStatus(GUTag tag, TagBox.Status stat)
         {
@@ -555,6 +564,7 @@ namespace TagExplorer.TagCanvas
                     {
                         tb.Stat = stat;
                     }
+                    
                 }
             }
 
