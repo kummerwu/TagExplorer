@@ -107,7 +107,7 @@ namespace TagExplorer.TagCanvas
             if (from == null || to == null || MyCanvasType != LayoutCanvas.SUB_CANVAS) return;
 
             connect.Add(from);
-            while(connect.Count<20 && tmp!=null && tmp!=to)
+            while(connect.Count<20 && tmp!=null)
             {
                 List<GUTag> ps = TagDB.QueryTagParent(tmp);
                 if (ps.Count > 0)
