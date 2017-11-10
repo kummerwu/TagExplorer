@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace TagExplorer.Utils
 {
@@ -55,16 +52,7 @@ namespace TagExplorer.Utils
             OnFileChanged(sender, ee);
         }
 
-
-
-        //public FileWatcherSafe(FileChangedHandler watchHandler, int timerInterval)
-        //{
-        //    m_timer = new System.Threading.Timer(new TimerCallback(OnTimer),
-        //                null, Timeout.Infinite, Timeout.Infinite);
-        //    TimeoutMillis = timerInterval;
-        //    fswHandler = watchHandler;
-
-        //}
+        
 
         public void OnFileChanged(object sender, FileSystemEventArgs e)
         {
@@ -73,15 +61,7 @@ namespace TagExplorer.Utils
             {
                 Push(e);
             }
-            //lock (this)
-            //{
-            //    Push(e);
-            //    //if (!files.Contains(e))
-            //    //{
-            //    //    files.Add(e);
-            //    //}
-            //    //m_timer.Change(TimeoutMillis, Timeout.Infinite);
-            //}
+            
         }
         private bool CanProcessNow(FileSystemEventArgs e)
         {

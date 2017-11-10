@@ -40,6 +40,12 @@ namespace TagExplorer.Utils
         }
 
         #region 公有方法
+        /// <summary>
+        /// 移动文件（如果文件比较多的话，会出现Window Shell的文件拷贝进度条）
+        /// </summary>
+        /// <param name="srcList"></param>
+        /// <param name="dstList"></param>
+        /// <returns></returns>
         public static bool SHMoveFiles(string[] srcList, string[] dstList)
         {
 
@@ -59,6 +65,13 @@ namespace TagExplorer.Utils
             fileop.fFlags = FILEOP_FLAGS.FOF_SIMPLEPROGRESS | FILEOP_FLAGS.FOF_MULTIDESTFILES;
             return SHFileOperation(ref fileop) == 0;
         }
+
+        /// <summary>
+        /// 移动文件（如果文件比较多的话，会出现Window Shell的文件拷贝进度条）
+        /// </summary>
+        /// <param name="srcList"></param>
+        /// <param name="dstList"></param>
+        /// <returns></returns>
         public static bool SHCopyFile(string[] srcList, string[] dstList)
         {
             string src, dst;
@@ -77,6 +90,11 @@ namespace TagExplorer.Utils
             fileop.fFlags = FILEOP_FLAGS.FOF_SIMPLEPROGRESS | FILEOP_FLAGS.FOF_MULTIDESTFILES;//注意，如果是多个文件，需要有| FILEOP_FLAGS.FOF_MULTIDESTFILES，否则会出现奇怪的拷贝出一个目录的现象
             return SHFileOperation(ref fileop) == 0;
         }
+
+        /// <summary>
+        /// 打开Explorer，并选中指定文件
+        /// </summary>
+        /// <param name="f"></param>
         public static void OpenExplorerByFile(string f)
         {
 
@@ -89,13 +107,18 @@ namespace TagExplorer.Utils
             }
             else if(PathHelper.IsValidHttps(f))
             {
-                StartFile(f);
+                OpenFile(f);
             }
             else
             {
                 Logger.D(string.Format("LocateFile not validFileUrl: [{0}]", f));
             }
         }
+
+        /// <summary>
+        /// 打开Tag所在的目录
+        /// </summary>
+        /// <param name="title"></param>
         public static void OpenExplorerByTag(string title)
         {
             if (title != null)
@@ -124,7 +147,12 @@ namespace TagExplorer.Utils
                 Logger.E(e);
             }
         }
-        public static void StartWithFile(string file)
+
+        /// <summary>
+        /// 打开文件（让用户选择文件打开方式）
+        /// </summary>
+        /// <param name="file"></param>
+        public static void OpenFileWith(string file)
         {
             if(File.Exists(file))
             {
@@ -136,11 +164,16 @@ namespace TagExplorer.Utils
                 MessageBox.Show("目前仅支持文件选择打开方式!");
             }
         }
+        //是不是标签笔记文件
         public static bool IsNoteFile(string file)
         {
             return file.EndsWith(".note.rtf");
         }
-        public static void StartFile(string file)
+        /// <summary>
+        /// 打开文件
+        /// </summary>
+        /// <param name="file"></param>
+        public static void OpenFile(string file)
         {
             if (IsNoteFile(file))
             {
@@ -172,6 +205,11 @@ namespace TagExplorer.Utils
                 Process.Start(file);
             }
         }
+
+        /// <summary>
+        /// 获得当前剪贴板中的文件列表
+        /// </summary>
+        /// <returns></returns>
         public static List<string> GetFileListFromClipboard()
         {
             List<string> files = new List<string>();

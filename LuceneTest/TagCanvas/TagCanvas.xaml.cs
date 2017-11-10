@@ -241,7 +241,7 @@ namespace TagExplorer
         {
             GridLengthConverter c = new GridLengthConverter();
 
-            DynamicCfg.Ins.ChangeMainCanvasHeight(c.ConvertToString(new GridLength(mainGridRow.ActualHeight,GridUnitType.Pixel)));
+            DynamicCfg.Ins.MainCanvasHeight = (c.ConvertToString(new GridLength(mainGridRow.ActualHeight,GridUnitType.Pixel)));
             //AppCfg.Ins.SubCanvasHeight = c.ConvertToString(new GridLength(subGridRow.ActualHeight, GridUnitType.Star));
         }
         #endregion

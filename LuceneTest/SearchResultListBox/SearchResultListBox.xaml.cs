@@ -113,7 +113,7 @@ namespace TagExplorer.UriInfList
         private void OpenSelectedUri()
         {
             CheckSelectedItem();
-            FileShell.StartFile(CurrentUri);
+            FileShell.OpenFile(CurrentUri);
             
         }
         private void miOpenPath_Click(object sender, RoutedEventArgs e)
@@ -171,7 +171,7 @@ namespace TagExplorer.UriInfList
         private void miOpenWith_Click(object sender, RoutedEventArgs e)
         {
             CheckSelectedItem();
-            FileShell.StartWithFile(CurrentUri);
+            FileShell.OpenFileWith(CurrentUri);
         }
 
         private void miCopyPath_Click(object sender, RoutedEventArgs e)
