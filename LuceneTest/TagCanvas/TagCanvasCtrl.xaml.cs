@@ -71,11 +71,11 @@ namespace TagExplorer.TagCanvas
             {
                 if (MyCanvasType == LayoutCanvas.MAIN_CANVAS)
                 {
-                    DynamicCfg.Ins.ChangeMainCanvasRoot(rootTag);
+                    DynamicCfg.Ins.MainCanvasRoot = (rootTag.ToString());
                 }
                 else
                 {
-                    DynamicCfg.Ins.ChangeSubCanvasRoot(rootTag);
+                    DynamicCfg.Ins.SubCanvasRoot = (rootTag.ToString());
                 }
             }
             else
@@ -91,7 +91,7 @@ namespace TagExplorer.TagCanvas
                 }
             }
             this.rootTag = rootTag;
-            SetCurrentTag(selectTag == null ? rootTag : selectTag);
+            SetCurrentTag(selectTag == null ? rootTag : selectTag,false);
             RedrawGraph();
             ShowConnect();
         }
@@ -248,7 +248,7 @@ namespace TagExplorer.TagCanvas
                 }
                 //UpdateRecentTags(root);
                 //SetCurrentTag(root);
-                SetCurrentTag();
+                SetCurrentTag(false);
             }
         }
         #endregion
@@ -267,7 +267,7 @@ namespace TagExplorer.TagCanvas
             {
                 TagDB.ChangeTitle(tag,NewString);
                 RedrawGraph();
-                SetCurrentTag(tag);
+                SetCurrentTag(tag,true);
             }
         }
         #endregion
@@ -375,11 +375,11 @@ namespace TagExplorer.TagCanvas
             }
             if (resultBetter != null)
             {
-                SetCurrentTag(resultBetter);
+                SetCurrentTag(resultBetter,true);
             }
             else if (result != null)
             {
-                SetCurrentTag(result);
+                SetCurrentTag(result,true);
             }
             //如果当前节点时根节点，则向上退一级
             else if ((direction == Key.Left || direction == Key.Up) && currentTag == rootTag)
@@ -395,7 +395,7 @@ namespace TagExplorer.TagCanvas
             if (parents.Count > 0)
             {
                 ChangeRoot(parents[0], rootTag);
-                SetCurrentTag(parents[0]);
+                SetCurrentTag(parents[0],true);
             }
         }
 
@@ -453,7 +453,7 @@ namespace TagExplorer.TagCanvas
             TagBox target = FindTagBoxByTxt(txt);
             if (target != null)
             {
-                SetCurrentTag(target.GUTag);
+                SetCurrentTag(target.GUTag,true);
             }
             return target;
         }
@@ -463,7 +463,7 @@ namespace TagExplorer.TagCanvas
             TagBox target = FindTagBox(tag);
             if(target!=null)
             {
-                SetCurrentTag(tag);
+                SetCurrentTag(tag,false);
             }
             return target;
             
@@ -520,7 +520,7 @@ namespace TagExplorer.TagCanvas
             if (sender is TagBox)
             {
                 DateTime t1 = DateTime.Now;
-                SetCurrentTag((sender as TagBox).GUTag);
+                SetCurrentTag((sender as TagBox).GUTag,true);
                 DateTime t2 = DateTime.Now;
                 //MessageBox.Show("ts=" + (t2 - t1).TotalSeconds);
             }
@@ -572,18 +572,18 @@ namespace TagExplorer.TagCanvas
 
 
         public CurrentTagChanged SelectedTagChanged = null;
-        private void SetCurrentTag()
+        private void SetCurrentTag(bool force)
         {
-            SetCurrentTag(currentTag);
+            SetCurrentTag(currentTag,force);
         }
-        private void SetCurrentTag(GUTag tag)
+        private void SetCurrentTag(GUTag tag,bool force)
         {
             UpdateSelectedStatus(tag, TagBox.Status.Selected); //这一句必须放在下面检查并return之前，
                                                                //即无论currentTag是否变化，都需要更新一下border，否则会有bug；
                                                                //bug现象：在curtag没有变化的时候，重新绘制整个graph，
                                                                //会出现所有的tag都不显示边框（包括curtag），因为直接返回了。
 
-            if (currentTag == tag) return;  //原来在tag没有变化时不通知变更，导致有些问题，后面将该语句取消了。
+            if (currentTag == tag && !force) return;  //原来在tag没有变化时不通知变更，导致有些问题，后面将该语句取消了。
             GUTag oldTag = currentTag;
             currentTag = tag;
 
@@ -719,7 +719,7 @@ namespace TagExplorer.TagCanvas
             TagBox t = TagAreaMenu.PlacementTarget as TagBox;
             if (t != null && t.GUTag!=null)
             {
-                SetCurrentTag(t.GUTag);
+                SetCurrentTag(t.GUTag,true);
             }
         }
         private void AddUri(List<string> files) { AddUri(files, true); }
@@ -869,7 +869,7 @@ namespace TagExplorer.TagCanvas
                     {
                         File.Copy(tmplateFile, sf.FileName);
                         AddUri(new List<string>() { sf.FileName });
-                        FileShell.StartFile(sf.FileName);
+                        FileShell.OpenFile(sf.FileName);
                     }
                     else
                     {
@@ -920,7 +920,7 @@ namespace TagExplorer.TagCanvas
                     TagBox t = u as TagBox;
                     if(t!=null && t.GUTag == newCurrentTag)
                     {
-                        SetCurrentTag(newCurrentTag);
+                        SetCurrentTag(newCurrentTag,true);
                         
 
                     }
@@ -1090,7 +1090,7 @@ namespace TagExplorer.TagCanvas
             string defaultFile = CfgPath.GetTemplateFileByTag(currentTag.Title, dotPostfix);
             if (defaultFile == null) return;
 
-            FileShell.StartFile(defaultFile);
+            FileShell.OpenFile(defaultFile);
         }
         private void EditFile_Executed(object sender, ExecutedRoutedEventArgs e)
         {
@@ -1188,7 +1188,7 @@ namespace TagExplorer.TagCanvas
 
         private void scrollViewer_GotFocus(object sender, RoutedEventArgs e)
         {
-            SetCurrentTag();
+            SetCurrentTag(false);
         }
 
         private void scrollViewer_LostFocus(object sender, RoutedEventArgs e)
@@ -1201,7 +1201,7 @@ namespace TagExplorer.TagCanvas
             TagBox t = TagAreaMenu.PlacementTarget as TagBox;
             if (t != null && t.GUTag!=null)
             {
-                SetCurrentTag(t.GUTag);
+                SetCurrentTag(t.GUTag,false);
                 FloatTextBox.Ins.ShowEdit(canvas, t);
             }
 
@@ -1233,10 +1233,10 @@ namespace TagExplorer.TagCanvas
             switch (MyCanvasType)
             {
                 case LayoutCanvas.MAIN_CANVAS:
-                    DynamicCfg.Ins.ChangeMainCanvasLayoutMode(m);
+                    DynamicCfg.Ins.MainCanvasLayoutMode = (m);
                     break;
                 case LayoutCanvas.SUB_CANVAS:
-                    DynamicCfg.Ins.ChangeSubCanvasLayoutMode(m);
+                    DynamicCfg.Ins.SubCanvasLayoutMode = (m);
                     break;
                 default:
                     break;

@@ -12,6 +12,7 @@ namespace TagExplorer.Utils.Cfg
 {
     public class DynamicCfg
     {
+        #region 配置的保存与恢复
         private static DynamicCfg ins = null;
         public static DynamicCfg Ins
         {
@@ -49,40 +50,24 @@ namespace TagExplorer.Utils.Cfg
             string tmp = JsonConvert.SerializeObject(this, Formatting.Indented); //将默认值保存到json中去
             File.WriteAllText(CfgPath.DynamicCfg, tmp);
         }
+        #endregion
 
-        public string MainCanvasHeight = "50*";
-        public void ChangeMainCanvasHeight(string v)
-        {
-            MainCanvasHeight = v;
-            Save();
-        }
+        #region 所有动态配置属性（会在程序中动态修改，并需要保存恢复的信息）
+        private string mainCanvasHeight = "50*";
+        public string MainCanvasHeight { get { return mainCanvasHeight; } set { mainCanvasHeight = value;Save(); } }
 
-        public string MainCanvasRoot = "我的大脑";
-        public void ChangeMainCanvasRoot(GUTag v)
-        {
-            MainCanvasRoot = v.ToString();
-            Save();
-        }
-        public string SubCanvasRoot = "我的大脑";
-        public void ChangeSubCanvasRoot(GUTag v)
-        {
-            SubCanvasRoot = v.ToString();
-            Save();
-        }
 
-        public LayoutMode SubCanvasLayoutMode = LayoutMode.TREE_COMPACT;
-        public void ChangeSubCanvasLayoutMode(LayoutMode v)
-        {
-            SubCanvasLayoutMode = v;
-            Save();
-        }
+        private string mainCanvasRoot = "我的大脑";
+        public string MainCanvasRoot { get { return mainCanvasRoot; } set { mainCanvasRoot = value; Save(); } }
 
-        public LayoutMode MainCanvasLayoutMode = LayoutMode.LRTREE_COMPACT_MORE;
-        public void ChangeMainCanvasLayoutMode(LayoutMode v)
-        {
-            MainCanvasLayoutMode = v;
-            Save();
+        private string subCanvasRoot = "我的大脑";
+        public string SubCanvasRoot { get { return subCanvasRoot; } set { subCanvasRoot = value; Save(); } }
 
-        }
+        private LayoutMode subCanvasLayoutMode = LayoutMode.TREE_COMPACT;
+        public LayoutMode SubCanvasLayoutMode { get { return subCanvasLayoutMode; } set { subCanvasLayoutMode = value; Save(); } }
+
+        private LayoutMode mainCanvasLayoutMode = LayoutMode.LRTREE_COMPACT_MORE;
+        public LayoutMode MainCanvasLayoutMode { get { return mainCanvasLayoutMode; } set { mainCanvasLayoutMode = value; Save(); } }
+        #endregion
     }
 }

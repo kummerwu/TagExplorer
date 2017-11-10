@@ -8,6 +8,7 @@ namespace TagExplorer.Utils
 {
     public class StaticCfg
     {
+        #region 配置的保存与恢复
         private static StaticCfg ins = null;
         public static StaticCfg Ins
         {
@@ -39,6 +40,9 @@ namespace TagExplorer.Utils
                 return ins;
             }
         }
+        #endregion
+
+        #region 静态配置参数列表
         //在图中显示两个tag之间的边时，使用Split将
         public char ParentChildSplit = '`';
         public string SpecialChar = "<>《》~?";
@@ -67,31 +71,18 @@ namespace TagExplorer.Utils
         public double LayoutXPadding = 10/2;
         public double LayoutYPadding = 10/2;
 
-        public class FuncOpt
-        {
-            public bool KeepVDir = false;
-        }
-        public FuncOpt Opt = new FuncOpt();
-
-
-        
-
-        
-
         //最小显示几层，最多几层，最少显示多少个tag
         public int MinLevel = 4;
         public int CurLevel = 4;
         public int MaxLevel = 8;
         public int MinTagCnt = 80;
 
-        //最后显示的Tag字符串
-        //public static string TitleDataFile = "title.dat";
+        
         public int TAG_MAX_RELATION = 1000;
         public int LRU_MAX_CNT = 8;
         public int MAX_TAG_VDIR = 6;
 
-        //public string MainCanvasRoot = "我的大脑";
-        //public string SubCanvasRoot = "我的大脑";
+        
         public string DefaultTag = "我的大脑";
         public Guid DefaultTagID = Guid.Empty;
         public string DefaultNewTag = "请输入标签名称";
@@ -102,35 +93,12 @@ namespace TagExplorer.Utils
         
 
 
-        //颜色配置：
-        private static Color C(int c) { return Color.FromRgb((byte)((c & 0xFF0000) >> 16), (byte)((c & 0xFF00) >> 8), (byte)(c & 0xFF)); }
-        private Color[] ColorsParse(string s)
-        {
-            string[] cs = s.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-            Color[] all = new Color[cs.Length];
-            for (int i = 0; i < all.Length; i++)
-            {
-                all[i] = (Color)ColorConverter.ConvertFromString(cs[i]);
-            }
-            return all;
-
-        }
+        
 
 
         public string RootDir = @"J:\00TagExplorerBase";
         
-        public Color[] TagBoxBackColor = new Color[] {
-            C(0xFF6666),            C(0x99CC00),            C(0x99CCFF),            C(0xFFD39B),
-            C(0xFF99CC),            C(0x9933FF),            C(0x0066CC),
-        };
-
-
-
-
-        public Color[] TagBoxForeColor = new Color[] {
-            C(0x000000),            C(0x000000),            C(0x000000),            C(0x000000),
-            C(0x000000),            C(0xFFFFFF),            C(0xFFFFFF),
-        };
+        
 
 
 
@@ -150,9 +118,45 @@ namespace TagExplorer.Utils
                 return gfontf;
             }
         }
+        #endregion
 
+        #region Tag显示颜色相关的配置
+        public Color[] TagBoxBackColor = new Color[] {
+            C(0xFF6666),            C(0x99CC00),            C(0x99CCFF),            C(0xFFD39B),
+            C(0xFF99CC),            C(0x9933FF),            C(0x0066CC),
+        };
+
+        public Color[] TagBoxForeColor = new Color[] {
+            C(0x000000),            C(0x000000),            C(0x000000),            C(0x000000),
+            C(0x000000),            C(0xFFFFFF),            C(0xFFFFFF),
+        };
+        #endregion
+
+        #region 功能开关
+        public class FuncOpt
+        {
+            public bool KeepVDir = false;
+        }
+        public FuncOpt Opt = new FuncOpt();
+        #endregion
+
+        #region 辅助函数
+        //颜色配置：
+        private static Color C(int c) { return Color.FromRgb((byte)((c & 0xFF0000) >> 16), (byte)((c & 0xFF00) >> 8), (byte)(c & 0xFF)); }
+        private Color[] ColorsParse(string s)
+        {
+            string[] cs = s.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+            Color[] all = new Color[cs.Length];
+            for (int i = 0; i < all.Length; i++)
+            {
+                all[i] = (Color)ColorConverter.ConvertFromString(cs[i]);
+            }
+            return all;
+
+        }
+        #endregion
 
     }
 
-    
+
 }
