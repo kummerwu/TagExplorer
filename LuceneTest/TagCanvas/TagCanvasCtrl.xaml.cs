@@ -91,7 +91,7 @@ namespace TagExplorer.TagCanvas
                 }
             }
             this.rootTag = rootTag;
-            SetCurrentTag(selectTag == null ? rootTag : selectTag,false);
+            SetCurrentTag(selectTag == null ? rootTag : selectTag);
             RedrawGraph();
             ShowConnect();
         }
@@ -248,7 +248,7 @@ namespace TagExplorer.TagCanvas
                 }
                 //UpdateRecentTags(root);
                 //SetCurrentTag(root);
-                SetCurrentTag(false);
+                SetCurrentTag();
             }
         }
         #endregion
@@ -453,7 +453,7 @@ namespace TagExplorer.TagCanvas
             TagBox target = FindTagBoxByTxt(txt);
             if (target != null)
             {
-                SetCurrentTag(target.GUTag,true);
+                SetCurrentTag(target.GUTag);
             }
             return target;
         }
@@ -463,7 +463,7 @@ namespace TagExplorer.TagCanvas
             TagBox target = FindTagBox(tag);
             if(target!=null)
             {
-                SetCurrentTag(tag,false);
+                SetCurrentTag(tag);
             }
             return target;
             
@@ -572,18 +572,18 @@ namespace TagExplorer.TagCanvas
 
 
         public CurrentTagChanged SelectedTagChanged = null;
-        private void SetCurrentTag(bool force)
+        private void SetCurrentTag()
         {
-            SetCurrentTag(currentTag,force);
+            SetCurrentTag(currentTag);
         }
-        private void SetCurrentTag(GUTag tag,bool force)
+        private void SetCurrentTag(GUTag tag,bool forceNotify = false)
         {
             UpdateSelectedStatus(tag, TagBox.Status.Selected); //这一句必须放在下面检查并return之前，
                                                                //即无论currentTag是否变化，都需要更新一下border，否则会有bug；
                                                                //bug现象：在curtag没有变化的时候，重新绘制整个graph，
                                                                //会出现所有的tag都不显示边框（包括curtag），因为直接返回了。
 
-            if (currentTag == tag && !force) return;  //原来在tag没有变化时不通知变更，导致有些问题，后面将该语句取消了。
+            if (currentTag == tag && !forceNotify) return;  //原来在tag没有变化时不通知变更，导致有些问题，后面将该语句取消了。
             GUTag oldTag = currentTag;
             currentTag = tag;
 
@@ -1188,7 +1188,7 @@ namespace TagExplorer.TagCanvas
 
         private void scrollViewer_GotFocus(object sender, RoutedEventArgs e)
         {
-            SetCurrentTag(false);
+            SetCurrentTag();
         }
 
         private void scrollViewer_LostFocus(object sender, RoutedEventArgs e)
@@ -1201,7 +1201,7 @@ namespace TagExplorer.TagCanvas
             TagBox t = TagAreaMenu.PlacementTarget as TagBox;
             if (t != null && t.GUTag!=null)
             {
-                SetCurrentTag(t.GUTag,false);
+                SetCurrentTag(t.GUTag);
                 FloatTextBox.Ins.ShowEdit(canvas, t);
             }
 
