@@ -267,7 +267,7 @@ namespace TagExplorer.TagCanvas
             {
                 TagDB.ChangeTitle(tag,NewString);
                 RedrawGraph();
-                SetCurrentTag(tag);
+                SetCurrentTag(tag,true);
             }
         }
         #endregion
@@ -520,7 +520,7 @@ namespace TagExplorer.TagCanvas
             if (sender is TagBox)
             {
                 DateTime t1 = DateTime.Now;
-                SetCurrentTag((sender as TagBox).GUTag);
+                SetCurrentTag((sender as TagBox).GUTag,true);
                 DateTime t2 = DateTime.Now;
                 //MessageBox.Show("ts=" + (t2 - t1).TotalSeconds);
             }
@@ -576,14 +576,16 @@ namespace TagExplorer.TagCanvas
         {
             SetCurrentTag(currentTag);
         }
-        private void SetCurrentTag(GUTag tag)
+        
+        private void SetCurrentTag(GUTag tag,bool forceNotify = false)
         {
             UpdateSelectedStatus(tag, TagBox.Status.Selected); //这一句必须放在下面检查并return之前，
                                                                //即无论currentTag是否变化，都需要更新一下border，否则会有bug；
                                                                //bug现象：在curtag没有变化的时候，重新绘制整个graph，
                                                                //会出现所有的tag都不显示边框（包括curtag），因为直接返回了。
 
-            if (currentTag == tag) return;  //原来在tag没有变化时不通知变更，导致有些问题，后面将该语句取消了。
+            if (currentTag == tag && !forceNotify) return;  //原来在tag没有变化时不通知变更，导致有些问题，后面将该语句取消了。
+                                            //具体问题：比如新建一个Tag，然后修改该Tag的标题，这儿返回了，导致文件列表无法更新。
             GUTag oldTag = currentTag;
             currentTag = tag;
 
