@@ -1193,7 +1193,7 @@ namespace TagExplorer.TagCanvas
 
         private void scrollViewer_LostFocus(object sender, RoutedEventArgs e)
         {
-            //ClearSelected();
+            ClearSelected();
         }
 
         private void ModifyTag_Executed(object sender, ExecutedRoutedEventArgs e)
