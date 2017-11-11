@@ -161,7 +161,7 @@ namespace TagExplorer.TagMgr
             }
             return ret;
         }
-        public List<AutoCompleteTipsItem> QueryAutoComplete(string searchTerm)
+        public List<AutoCompleteTipsItem> QueryAutoComplete(string searchTerm,bool forceOne = false)
         {
             string ls = searchTerm.ToLower();
             List<AutoCompleteTipsItem> ret = new List<AutoCompleteTipsItem>();
@@ -187,6 +187,16 @@ namespace TagExplorer.TagMgr
                 }
             }
             ret.Sort((x,y)=>y.Score.CompareTo(x.Score));//Score越大越好
+
+            //如果没有找到对应Tag，而且需要保证非空时，返回一个非空的内容
+            if(forceOne && ret.Count==0)
+            {
+                AutoCompleteTipsItem a = new AutoCompleteTipsItem();
+                a.Content = searchTerm;
+                a.Tip = searchTerm;
+                //a.Data = GUTag.Parse(StaticCfg.Ins.DefaultTagID.ToString(), this);
+                ret.Add(a);
+            }
             return ret;
         }
 

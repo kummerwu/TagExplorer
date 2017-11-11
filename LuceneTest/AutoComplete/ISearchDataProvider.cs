@@ -7,7 +7,7 @@ namespace TagExplorer.AutoComplete
 
     public interface ISearchDataProvider
     {
-        List<AutoCompleteTipsItem> QueryAutoComplete(string searchTerm);
+        List<AutoCompleteTipsItem> QueryAutoComplete(string searchTerm,bool forceOne = false);
     }
 
     public class AutoCompleteTipsItem

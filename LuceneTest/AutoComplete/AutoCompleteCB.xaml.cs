@@ -153,7 +153,7 @@ namespace TagExplorer.AutoComplete
             {
                 if(item==null)
                 {
-                    List < AutoCompleteTipsItem > words = search.QueryAutoComplete(Text);
+                    List < AutoCompleteTipsItem > words = search.QueryAutoComplete(Text,true);
                     if (words.Count > 0) item = words[0];
                 }
                 return item;
