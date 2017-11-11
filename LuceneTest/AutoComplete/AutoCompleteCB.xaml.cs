@@ -145,7 +145,18 @@ namespace TagExplorer.AutoComplete
             return matchToken;
         }
 
-        public AutoCompleteTipsItem Item { get; private set; }
+        private AutoCompleteTipsItem item = null;
+        public AutoCompleteTipsItem Item {
+            get
+            {
+                if(item==null)
+                {
+                    List < AutoCompleteTipsItem > words = search.QueryAutoComplete(Text);
+                    if (words.Count > 0) item = words[0];
+                }
+                return item;
+            }
+            private set { item = value;  } }
         private void SetCurrentToken(AutoCompleteTipsItem t)
         {
             Item = t;
