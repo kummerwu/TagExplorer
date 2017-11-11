@@ -1255,6 +1255,7 @@ namespace TagExplorer.TagCanvas
                 default:
                     break;
             }
+            
             RedrawGraph();
         }
         private void miNormalTree_Click(object sender, RoutedEventArgs e)
