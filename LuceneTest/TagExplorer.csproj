@@ -185,6 +185,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="AutoComplete\AutoCompleteCB.xaml.cs">
+      <DependentUpon>AutoCompleteCB.xaml</DependentUpon>
+    </Compile>
     <Compile Include="AutoComplete\AutoTextbox.xaml.cs">
       <DependentUpon>AutoTextbox.xaml</DependentUpon>
     </Compile>
@@ -267,6 +270,10 @@
     <Compile Include="Utils\Path\TemplateHelper.cs" />
     <Compile Include="Utils\TipsCenter.cs" />
     <Compile Include="Utils\Net\WebHelper.cs" />
+    <Page Include="AutoComplete\AutoCompleteCB.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="AutoComplete\AutoTextbox.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

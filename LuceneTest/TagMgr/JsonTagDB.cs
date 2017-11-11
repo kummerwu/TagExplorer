@@ -11,6 +11,7 @@ using System.IO;
 using System.Xml.Serialization;
 using System.Diagnostics;
 using TagExplorer.UriMgr;
+using TagExplorer.AutoComplete;
 
 namespace TagExplorer.TagMgr
 {
@@ -143,15 +144,36 @@ namespace TagExplorer.TagMgr
             return tmp == null ? 0 : tmp.Children.Count;
 
         }
-        public List<string> QueryAutoComplete(string searchTerm)
+
+        private string ParentHistory(GUTag a)
+        {
+            string ret = a.Title;
+            
+            while(a!=null)
+            {
+                var parents = QueryTagParent(a);
+                if (parents.Count == 0) break;
+                else
+                {
+                    a = parents[0];
+                    ret = ret + ">" + a.Title;
+                }
+            }
+            return ret;
+        }
+        public List<AutoCompleteTipsItem> QueryAutoComplete(string searchTerm)
         {
             string ls = searchTerm.ToLower();
-            List<string> ret = new List<string>();
+            List<AutoCompleteTipsItem> ret = new List<AutoCompleteTipsItem>();
             foreach(GUTag s in id2Gutag.Values)
             {
                 if(s.Title.ToLower().Contains(ls))
                 {
-                    ret.Add(s.Title);
+                    AutoCompleteTipsItem a = new AutoCompleteTipsItem();
+                    a.Content = s.Title;
+                    a.Tip = ParentHistory(s);
+                    a.Data = s;
+                    ret.Add(a);
                 }
             }
             return ret;

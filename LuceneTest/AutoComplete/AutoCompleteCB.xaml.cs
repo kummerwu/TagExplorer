@@ -1,18 +1,37 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Threading;
+using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
+using System.Windows.Shapes;
 
 namespace TagExplorer.AutoComplete
 {
     /// <summary>
-    /// AutoTextbox.xaml 的交互逻辑
+    /// AutoCompleteCB.xaml 的交互逻辑
     /// </summary>
-    public partial class AutoTextbox 
+    public partial class AutoCompleteCB : UserControl
     {
+        public AutoCompleteCB()
+        {
+            InitializeComponent();
+            comboBoxStateChanged();
+            //最小输入提示，小于2个字符，不给出提示
+            searchThreshold = 2;        // default threshold to 2 char
+
+            // 提示延时定时器
+            keypressTimer = new System.Timers.Timer();
+            keypressTimer.Elapsed += new System.Timers.ElapsedEventHandler(OnTimedEvent);
+        }
+
         #region 私有变量
         //private VisualCollection controls;
         //public TextBox textBox;
@@ -30,43 +49,6 @@ namespace TagExplorer.AutoComplete
         }
         #endregion
 
-        #region 构造函数
-        public AutoTextbox()
-        {
-
-            //InitializeComponent();
-
-            //autoCompletionList = new ObservableCollection<AutoCompleteEntry>();
-            
-            //最小输入提示，小于2个字符，不给出提示
-            searchThreshold = 2;        // default threshold to 2 char
-
-            // 提示延时定时器
-            keypressTimer = new System.Timers.Timer();
-            keypressTimer.Elapsed += new System.Timers.ElapsedEventHandler(OnTimedEvent);
-
-            ////控件集合
-            //controls = new VisualCollection(this);
-            //// set up the text box and the combo box
-            //comboBox = new ComboBox();
-            //comboBox.IsSynchronizedWithCurrentItem = true;
-            //comboBox.IsTabStop = false;
-            //comboBox.SelectionChanged += new SelectionChangedEventHandler(comboBox_SelectionChanged);
-            //comboBox.DropDownClosed += ComboBox_DropDownClosed;
-            //comboBox.Background = null;
-            //comboBoxStateChanged();
-            ////comboBox.KeyDown += ComboBox_KeyDown;
-            //textBox = new TextBox();
-            //textBox.TextChanged += new TextChangedEventHandler(textBox_TextChanged);
-            //textBox.KeyDown += TextBox_KeyDown;
-            //textBox.VerticalContentAlignment = VerticalAlignment.Center;
-            //textBox.PreviewKeyDown += TextBox_PreviewKeyDown;
-            
-            //controls.Add(comboBox);
-            //controls.Add(textBox);
-
-        }
-        #endregion
         //键盘操作的劫持，在ComboBox处于Open状态时，需要对键盘做一些特殊的相应
         //主要是UP、Down键盘操作转换为ComboBox不同项的选择操作
         //protected override void OnPreviewKeyDown(KeyEventArgs e)
@@ -77,10 +59,18 @@ namespace TagExplorer.AutoComplete
         //}
         private void TextBox_PreviewKeyDown(object sender, KeyEventArgs e)
         {
+            if(!comboBox.IsDropDownOpen)
+            {
+                if(e.Key == Key.Down)
+                {
+                    e.Handled = true;
+                    TextChanged();
+                }
+            }
             TextBox_KeyDown(sender, e);
         }
-        
-            
+
+
         private void ComboBox_KeyDown(object sender, KeyEventArgs e)
         {
             TextBox_KeyDown(sender, e);
@@ -178,7 +168,7 @@ namespace TagExplorer.AutoComplete
         }
 
 
-        
+
 
         #region Methods
         public string Text
@@ -254,7 +244,7 @@ namespace TagExplorer.AutoComplete
         private void OnTimedEvent(object source, System.Timers.ElapsedEventArgs e)
         {
             keypressTimer.Stop();
-            Dispatcher.CurrentDispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal,
+            Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal,
                 new TextChangedCallback(this.TextChanged));
         }
 
@@ -274,7 +264,7 @@ namespace TagExplorer.AutoComplete
                 else TextChanged();
             }
         }
-        
+
         //protected override Size ArrangeOverride(Size arrangeSize)
         //{
         //    textBox.Arrange(new Rect(arrangeSize));
@@ -292,5 +282,6 @@ namespace TagExplorer.AutoComplete
         //    get { return controls.Count; }
         //}
         #endregion
+
     }
 }

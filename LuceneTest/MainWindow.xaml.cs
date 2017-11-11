@@ -95,7 +95,7 @@ namespace TagExplorer
         //TODO:这个地方需要优化，用户任意搜索一个单词，就直接把root tag切换过去，实际上不合理
         private void SearchByTxt()
         {
-            tagCanvas.SearchByTxt(SearchBox.Text);
+            tagCanvas.SearchByTxt(SearchBox.Item);
             ShowUrlListByText();
         }
         private void SearchBoxTextChanged_Callback(object sender, TextChangedEventArgs e)

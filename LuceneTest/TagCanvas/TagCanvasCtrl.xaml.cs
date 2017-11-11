@@ -7,6 +7,7 @@ using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using TagExplorer.AutoComplete;
 using TagExplorer.TagLayout;
 using TagExplorer.TagLayout.CommonLayout;
 using TagExplorer.TagLayout.LayoutCommon;
@@ -429,14 +430,27 @@ namespace TagExplorer.TagCanvas
             }
             return null;
         }
-        private TagBox FindTagBoxByTxt(string tag)
+        private bool Match(TagBox t,AutoCompleteTipsItem aItem)
+        {
+            GUTag tag = aItem.Data as GUTag;
+            if(tag!=null)
+            {
+                return tag == t.GUTag;
+            }
+            else
+            {
+                return t.Text == aItem.Content;
+            }
+        }
+        private TagBox FindTagBoxByTxt(AutoCompleteTipsItem tag)
         {
             foreach (UIElement u in allTagBox)//此处不能在Canvas.Children中查找，因为为了性能做了特殊优化，一些不可见的tagbox仍然存在于Canvas.Children中。
             {
                 TagBox t = u as TagBox;
                 if (t != null)
                 {
-                    if (t.Text == tag)
+
+                    if (Match(t,tag))
                     {
                         Logger.D("FindTagBox:{0} - POS:{1}-{2}", tag, t.Margin.Left, t.Margin.Top);
                         return t;
@@ -447,7 +461,7 @@ namespace TagExplorer.TagCanvas
         }
         //在当前图中的所有tag查找，看看当前是否已经显示，如果已经显示，直接切换节点
         //如果没有显示，返回null
-        public TagBox ChangeSelectedByTxt(string txt)
+        public TagBox ChangeSelectedByTxt(AutoCompleteTipsItem txt)
         {
             DbgShowTagBox();
             TagBox target = FindTagBoxByTxt(txt);

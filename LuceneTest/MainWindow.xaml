@@ -55,7 +55,7 @@
                     </Setter>
                 </Style>
                 </StackPanel.Resources>
-                <autoTextbox:AutoTextbox x:Name="SearchBox"    Width="250" KeyUp="SearchBoxKeyUp_Callback" ></autoTextbox:AutoTextbox>
+                <autoTextbox:AutoCompleteCB x:Name="SearchBox"     Width="250" KeyUp="SearchBoxKeyUp_Callback" ></autoTextbox:AutoCompleteCB>
                 <Button Margin="-50,0,0,0" Name="btSearch" Click="btSearch_Click" Content="搜索" Width="50" DockPanel.Dock="Right">
                     <Button.Template>
                         <ControlTemplate TargetType="{x:Type Button}">

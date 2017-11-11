@@ -10,6 +10,7 @@ using AnyTagNet;
 using TagExplorer.TagCanvas;
 using TagExplorer.TagLayout.CommonLayout;
 using TagExplorer.Utils.Cfg;
+using TagExplorer.AutoComplete;
 
 namespace TagExplorer
 {
@@ -168,25 +169,31 @@ namespace TagExplorer
         
 
         #region 搜索Tag，更新文件列表
-        public void SearchByTxt(string text)
+        public void SearchByTxt(AutoCompleteTipsItem aItem)
         {
             //先在main中查找，如果有，切换焦点后返回
-            if(MainCanvas.ChangeSelectedByTxt(text)!=null)
+            if(MainCanvas.ChangeSelectedByTxt(aItem)!=null)
             {
                 return;
             }
             //再在sub中查找，如果有，切换焦点后返回
-            if(SubCanvas.ChangeSelectedByTxt(text)!=null)
+            if(SubCanvas.ChangeSelectedByTxt(aItem)!=null)
             {
                 MainCanvas.ClearSelected();
                 return;
             }
-            List<GUTag> tags = TagDB.QueryTags(text);
 
-            //如果不在视图中，但数据库中存在，TODO：如何有效的切换？？是一个需要考虑的问题
-            if(tags.Count>0)
+            //如果item精确对应到一个GUTag，直接使用该GUTag
+            GUTag tag = aItem.Data as GUTag;
+            if (tag == null)
             {
-                GUTag tag = tags[0];
+                List<GUTag> tags = TagDB.QueryTags(aItem.Content);
+                if (tags.Count > 0) tag = tags[0];
+            }
+            
+            //如果不在视图中，但数据库中存在，TODO：如何有效的切换？？是一个需要考虑的问题
+            if(tag!=null)
+            {
                 GUTag mainRoot = TagDB.GetTag(StaticCfg.Ins.DefaultTagID);
                 GUTag subRoot = mainRoot;
                 GUTag subSel = subRoot;

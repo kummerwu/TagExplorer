@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using TagExplorer.TagMgr;
 
 namespace TagExplorer.AutoComplete
 {
@@ -6,8 +7,13 @@ namespace TagExplorer.AutoComplete
 
     public interface ISearchDataProvider
     {
-        List<string> QueryAutoComplete(string searchTerm);
+        List<AutoCompleteTipsItem> QueryAutoComplete(string searchTerm);
     }
 
-    
+    public class AutoCompleteTipsItem
+    {
+        public string Tip;
+        public string Content;
+        public object Data;
+    }
 }
