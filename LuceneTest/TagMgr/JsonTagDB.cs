@@ -173,9 +173,20 @@ namespace TagExplorer.TagMgr
                     a.Content = s.Title;
                     a.Tip = ParentHistory(s);
                     a.Data = s;
+
+                    //完全匹配，奖励1000分
+                    if (searchTerm == s.Title)
+                    {
+                        a.Score += 10000;
+                    }
+                    //惩罚：长度差越大，惩罚越多
+                    a.Score -= Math.Abs(a.Content.Length - searchTerm.Length);
+                    //惩罚：路径越长，惩罚越多
+                    a.Score -= (a.Tip.Length)*10;
                     ret.Add(a);
                 }
             }
+            ret.Sort((x,y)=>y.Score.CompareTo(x.Score));//Score越大越好
             return ret;
         }
 
