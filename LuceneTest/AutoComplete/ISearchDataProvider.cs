@@ -15,5 +15,6 @@ namespace TagExplorer.AutoComplete
         public string Tip;
         public string Content;
         public object Data;
+        public int Score;
     }
 }
