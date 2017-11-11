@@ -142,17 +142,23 @@ namespace TagExplorer.TagLayout.TreeLayout
                     pre == null ? 0 : pre.totalRange.Right,
                     ctag, db.QueryTagChildren(ctag).Count);
             //只有满足严格条件的情况下，才放在兄弟节点的后面，否则在父节点后展开
+            TagBoxSizeInf sizeinf =new TagBoxSizeInf(ctag, level+1, StaticCfg.Ins.GFontName);
+            bool leftOK = true, rightOK = true;
+            if (pre!=null && direct == 1 ) { rightOK = pre.totalRange.Right + sizeinf.OutterBoxSize.Width < size.Width; }
+            if (pre!=null && direct == -1) { leftOK = sizeinf.OutterBoxSize.Width < pre.totalRange.Left; }
             if (pre != null &&
                 /*(db.QueryTagChildren(ctag).Count == 0 && db.QueryTagChildren(pre.box.Tag).Count == 0)*/
-                pre.totalRange.Right < size.Width - 70 && pre.totalRange.Left>70)
+                rightOK  &&
+                leftOK)    
             {
                 Logger.D("Place {0} after {1}:follow", ctag, pre.GTagBox.Tag);
+                //这种情况下不换行
                 cur = ExpandNode(ctag, level + 1, db, 
-                    direct==1?pre.totalRange.Right:pre.totalRange.Left, 
-                    pre.totalRange.Top,direct,size,env);
+                                direct==1?pre.totalRange.Right:pre.totalRange.Left,  //X
+                                pre.totalRange.Top,                                  //Y
+                                direct,size,env);
 
             }
-
             //第一个节点，没有兄弟节点，放在父节点后面   ==== > 放在父节点的同一行
             //非叶子节点，也直接放在父节点后面 or        ==== > 放在父节点的下一行
             //前一个兄弟已经把这一行占完了               ==== > 放在父节点的下一行
@@ -161,16 +167,20 @@ namespace TagExplorer.TagLayout.TreeLayout
                 if (pre == null)
                 {
                     Logger.D("Place {0} after {1}:follow", ctag, root.GTagBox.Tag);
+                    //不换行，跟在根节点后面
                     cur = ExpandNode(ctag, level + 1, db,
-                        direct == 1 ? root.GTagBox.OutterBox.Right : root.GTagBox.OutterBox.Left,
-                        root.totalRange.Top,direct,size,env);
+                                    direct == 1 ? root.GTagBox.OutterBox.Right : root.GTagBox.OutterBox.Left,   //X
+                                    root.totalRange.Top,                                                        //Y
+                                    direct,size,env);
                 }
                 else
                 {
                     Logger.D("Place {0} after {1}:newline", ctag, root.GTagBox.Tag);
+                    //换行，也是跟在根节点后面
                     cur = ExpandNode(ctag, level + 1, db,
-                        direct == 1 ? root.GTagBox.OutterBox.Right : root.GTagBox.OutterBox.Left,
-                        root.totalRange.Bottom,direct,size,env);
+                                    direct == 1 ? root.GTagBox.OutterBox.Right : root.GTagBox.OutterBox.Left,   //X
+                                    root.totalRange.Bottom,                                                     //Y
+                                    direct,size,env);
                 }
                 env.AddLine(root, cur,direct);
             }
@@ -185,15 +195,23 @@ namespace TagExplorer.TagLayout.TreeLayout
                     pre == null ? 0 : db.QueryTagChildren(pre.GTagBox.Tag).Count,
                     pre == null ? 0 : pre.totalRange.Right,
                     ctag, db.QueryTagChildren(ctag).Count);
+
+            TagBoxSizeInf sizeinf = new TagBoxSizeInf(ctag, rootLevel + 1, StaticCfg.Ins.GFontName);
+
+            bool leftOK = true, rightOK = true;
+            if (pre != null && direct == 1) { rightOK = pre.totalRange.Right + sizeinf.OutterBoxSize.Width < size.Width; }
+            if (pre != null && direct == -1) { leftOK = sizeinf.OutterBoxSize.Width < pre.totalRange.Left; }
             //只有满足严格条件的情况下，才放在兄弟节点的后面，否则在父节点后展开
             if (pre != null &&
                 (db.QueryTagChildren(pre.GTagBox.Tag).Count == 0) &&
-                pre.totalRange.Right< size.Width-70)
+                rightOK && 
+                leftOK)    
             {
                 Logger.D("Place {0} after {1}:follow", ctag, pre.GTagBox.Tag);
                 cur = ExpandNode(ctag, rootLevel + 1, db,
-                    direct == 1 ? pre.totalRange.Right : pre.totalRange.Left,
-                    pre.totalRange.Top,direct,size,env);
+                                direct == 1 ? pre.totalRange.Right : pre.totalRange.Left,   //X
+                                pre.totalRange.Top,                                         //Y
+                                direct,size,env);
 
             }
 

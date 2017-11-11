@@ -78,6 +78,7 @@ namespace TagExplorer.TagLayout.LayoutCommon
                 return ins;
             }
         }
+
         public Size Calc(GUTag gutag,double fsize,string fname)
         {
             Size tmp;
