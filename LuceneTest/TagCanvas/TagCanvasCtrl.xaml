@@ -129,14 +129,14 @@
         <!-- ===============================================================
         定义菜单资源
         =============================================================== -->
-        <ContextMenu x:Key="canvasMenu" x:Name="canvasMenu">
-            <MenuItem  Name="miNormalTree"       Header="树形布局-标准" Click="miNormalTree_Click"></MenuItem>
-            <MenuItem Name="miCompactTree"  Header="树形布局-压缩" Click="miCompactTree_Click"></MenuItem>
-            <MenuItem Name="miCompactMoreTree" Header="树形布局-紧凑" Click="miCompactMoreTree_Click"></MenuItem>
+        <ContextMenu x:Key="layoutModeMenu" x:Name="layoutModeMenu">
+            <MenuItem  Name="miNormalTree"     IsCheckable="True"  Header="树形布局-标准" Click="miNormalTree_Click"></MenuItem>
+            <MenuItem Name="miCompactTree"     IsCheckable="True" Header="树形布局-压缩" Click="miCompactTree_Click"></MenuItem>
+            <MenuItem Name="miCompactMoreTree" IsCheckable="True" Header="树形布局-紧凑" Click="miCompactMoreTree_Click"></MenuItem>
             <Separator></Separator>
-            <MenuItem Name="miNormalLRTree"    Header="左右布局-标准" Click="miNormalLRTree_Click"></MenuItem>
-            <MenuItem Name="miCompactLRTree"   Header="左右布局-压缩" Click="miCompactLRTree_Click"></MenuItem>
-            <MenuItem Name="miCompactMoreLRTree" Header="左右布局-紧凑" Click="miCompactMoreLRTree_Click"></MenuItem>
+            <MenuItem Name="miNormalLRTree"    IsCheckable="True" Header="左右布局-标准" Click="miNormalLRTree_Click"></MenuItem>
+            <MenuItem Name="miCompactLRTree"   IsCheckable="True" Header="左右布局-压缩" Click="miCompactLRTree_Click"></MenuItem>
+            <MenuItem Name="miCompactMoreLRTree" IsCheckable="True" Header="左右布局-紧凑" Click="miCompactMoreLRTree_Click"></MenuItem>
         </ContextMenu>
         
         
@@ -227,7 +227,7 @@
                       Background="White" VerticalScrollBarVisibility="Auto" 
                       HorizontalScrollBarVisibility="Auto"  
                        PreviewKeyDown="precanvas_KeyDown"  FocusVisualStyle="{x:Null}"
-                      ContextMenu="{StaticResource canvasMenu}">
+                      ContextMenu="{StaticResource layoutModeMenu}">
             <Canvas Focusable="True" KeyDown="canvas_KeyDown" x:Name="canvas"
                     HorizontalAlignment="Left"  VerticalAlignment="Top"  
                     Background="White" FocusVisualStyle="{x:Null}" >

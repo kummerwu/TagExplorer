@@ -28,7 +28,9 @@ namespace TagExplorer.TagCanvas
         #region 私有成员与初始化相关
         private ITagDB TagDB = null;
         private IUriDB UriDB = null;
+
         private LayoutCanvas MyCanvasType;
+        
         //初始化TagDB，该函数必须在空间初始化时就指定
         public void Initial(ITagDB db, IUriDB uridb, LayoutCanvas canvasType)
         {
@@ -41,6 +43,7 @@ namespace TagExplorer.TagCanvas
                 //connectCanvas.Visibility = Visibility.Collapsed;
                 connect.Height = new GridLength(0);
             }
+            UpdateMenuItemCheckStatus();
         }
 
 
@@ -1255,9 +1258,32 @@ namespace TagExplorer.TagCanvas
                 default:
                     break;
             }
-            
+            UpdateMenuItemCheckStatus();
             RedrawGraph();
         }
+
+        private void UpdateMenuItemCheckStatus()
+        {
+            LayoutMode m = MyLayoutMode;
+            ContextMenu cm = Resources["layoutModeMenu"] as ContextMenu;
+            for (int i = 0; i < cm.Items.Count; i++)
+            {
+                MenuItem it = cm.Items[i] as MenuItem;
+                if (it != null)
+                {
+                    it.IsChecked = (
+                                    (m == LayoutMode.TREE_NO_COMPACT && it.Name == "miNormalTree") ||
+                                    (m == LayoutMode.TREE_COMPACT && it.Name == "miCompactTree") ||
+                                    (m == LayoutMode.TREE_COMPACT_MORE && it.Name == "miCompactMoreTree") ||
+
+                                    (m == LayoutMode.LRTREE_NO_COMPACT && it.Name == "miNormalLRTree") ||
+                                    (m == LayoutMode.LRTREE_COMPACT && it.Name == "miCompactLRTree") ||
+                                    (m == LayoutMode.LRTREE_COMPACT_MORE && it.Name == "miCompactMoreLRTree")
+                                  );
+                }
+            }
+        }
+
         private void miNormalTree_Click(object sender, RoutedEventArgs e)
         {
             ChangeLayoutMode(LayoutMode.TREE_NO_COMPACT);
