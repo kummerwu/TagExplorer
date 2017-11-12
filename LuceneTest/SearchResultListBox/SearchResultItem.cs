@@ -119,7 +119,7 @@ namespace TagExplorer.UriInfList
         {
             fullUri = fullPath;
             //http链接
-            if (PathHelper.IsValidHttps(fullUri))
+            if (PathHelper.IsValidWebLink(fullUri))
             {
                 string title = db.GetTitle(fullUri);
                 //指定了标题的http链接
@@ -132,19 +132,7 @@ namespace TagExplorer.UriInfList
                 else
                 {
                     System.Uri uri = new System.Uri(fullUri); //TODO 获取http文档的名称和路径
-                    int lastIdx = fullUri.LastIndexOf('/');
-                    if (lastIdx < 1) lastIdx = fullUri.LastIndexOf('\\');
-
-                    if (lastIdx > 1)
-                    {
-                        name = fullUri.Substring(lastIdx + 1); //TODO 更好的获得http文档标题的方法
-                        dir = fullUri.Substring(0, lastIdx);
-                    }
-                    else
-                    {
-                        name = fullUri;
-                        dir = fullUri;
-                    }
+                    GetNameTitle();
                 }
             }
             //文件
@@ -156,5 +144,38 @@ namespace TagExplorer.UriInfList
             _icon = GIconHelper.GetBitmapFromFile(fullUri);
         }
 
+        private void GetNameTitle()
+        {
+            int lastIdx = fullUri.LastIndexOf('/');
+            if (lastIdx < 1) lastIdx = fullUri.LastIndexOf('\\');
+
+            if (lastIdx > 1)
+            {
+                name = fullUri.Substring(lastIdx + 1); //TODO 更好的获得http文档标题的方法
+                dir = fullUri.Substring(0, lastIdx);
+            }
+            else
+            {
+                name = fullUri;
+                dir = fullUri;
+            }
+        }
+
+        public static string GetTitle(string fullUri)
+        {
+            string title = "";
+            int lastIdx = fullUri.LastIndexOf('/');
+            if (lastIdx < 1) lastIdx = fullUri.LastIndexOf('\\');
+
+            if (lastIdx > 1)
+            {
+                title = fullUri.Substring(lastIdx + 1); //TODO 更好的获得http文档标题的方法
+            }
+            else
+            {
+                title = fullUri;
+            }
+            return title;
+        }
     }
 }

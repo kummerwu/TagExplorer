@@ -38,6 +38,17 @@ namespace TagExplorer.Utils
             else return null;
             
         }
+
+        public static string FormatPathName(string name)
+        {
+            string newN = name;
+            char[] chars = Path.GetInvalidFileNameChars();
+            foreach (char c in chars)
+            {
+                newN = newN.Replace(c, '_');
+            }
+            return newN;
+        }
         //返回null，则是合法的，
         //非null，则表示错误提示信息
         public static string CheckTagFormat(string tag)
@@ -129,6 +140,14 @@ namespace TagExplorer.Utils
             {
                 return GetResFile("http.html");
             }
+        }
+
+        public static string DownlodPdfCmd()
+        {
+            string d = CfgPath.Res_Path;
+            string cmd = Path.Combine(d, "pdfdownload", "pdfdownload.bat");
+            if (File.Exists(cmd)) return cmd;
+            else return null;
         }
         public static string GetWordPadExeFile()
         {

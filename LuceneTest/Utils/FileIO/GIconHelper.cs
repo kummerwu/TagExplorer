@@ -56,7 +56,7 @@ namespace TagExplorer.Utils
 
         private static string FileToType(string f)
         {
-            if (PathHelper.IsValidHttps(f))
+            if (PathHelper.IsValidWebLink(f))
             {
                 return ".http_icon";
             }
@@ -89,7 +89,7 @@ namespace TagExplorer.Utils
         {
             Logger.I("GetBitmapFromFileNoCache for {0} level {1}", f, level);
             if (level > 5) return null; //防止递归调用死循环，将堆栈耗尽
-            if (PathHelper.IsValidHttps(f))
+            if (PathHelper.IsValidWebLink(f))
             {
                 return GetBitmapFromFileNoCache(CfgPath.Res_HTTP_Path,level+1);
             }
@@ -141,7 +141,7 @@ namespace TagExplorer.Utils
         /// /// 文件的默认图标 
         private static Icon GetFileIcon(string fileName, bool largeIcon)
         {
-            if(PathHelper.IsValidHttps(fileName))
+            if(PathHelper.IsValidWebLink(fileName))
             {
                 fileName = CfgPath.Res_HTTP_Path;
             }

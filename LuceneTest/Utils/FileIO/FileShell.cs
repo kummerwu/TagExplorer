@@ -105,7 +105,7 @@ namespace TagExplorer.Utils
                 Logger.D("LocateFile: [{0}]", cmd);
                 System.Diagnostics.Process.Start("explorer.exe", "/select," + f);
             }
-            else if(PathHelper.IsValidHttps(f))
+            else if(PathHelper.IsValidWebLink(f))
             {
                 OpenFile(f);
             }

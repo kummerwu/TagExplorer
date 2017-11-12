@@ -759,12 +759,16 @@ namespace TagExplorer.TagCanvas
             UriDB.AddUri(dst, tags);
             foreach (string uri in dst)
             {
-                if (PathHelper.IsValidHttps(uri))
+                if (PathHelper.IsValidWebLink(uri))
                 {
                     string title = WebHelper.GetWebTitle(uri);
                     if (title != null)
                     {
                         UriDB.UpdateUri(uri, title);
+                    }
+                    if (StaticCfg.Ins.Opt.AutoDownloadUrl)
+                    {
+                        WebHelper.Download(uri, currentTag.Title, title);
                     }
                 }
             }
@@ -785,7 +789,7 @@ namespace TagExplorer.TagCanvas
             List<string> dstList = new List<string>();
             foreach (string f in list)
             {
-                if (PathHelper.IsValidHttps(f))
+                if (PathHelper.IsValidWebLink(f))
                 {
                     ret.Add(f);
                 }

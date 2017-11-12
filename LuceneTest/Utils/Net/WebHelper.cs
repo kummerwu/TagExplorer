@@ -1,6 +1,8 @@
 ﻿using System;
+using System.IO;
 using System.Net;
 using System.Text.RegularExpressions;
+using TagExplorer.UriInfList;
 
 namespace TagExplorer.Utils
 {
@@ -72,6 +74,31 @@ namespace TagExplorer.Utils
             }
         }
 
+        /// <summary>
+        /// 下载url文件，。
+        /// </summary>
+        /// <param name="url"></param>
+        /// <param name="fileDst"></param>
+        public static void Download(string url,string tag,string title)
+        {
+            if (PathHelper.IsValidHttp(url))
+            {
+                string d = CfgPath.GetDirByTag(tag);
+                if (string.IsNullOrEmpty(title))
+                {
+                    title = SearchResultItem.GetTitle(url);
+                }
+                if (string.IsNullOrEmpty(title)) return;
+
+
+                title = CfgPath.FormatPathName(title);
+
+                string file = Path.Combine(d, title + ".note.pdf");
+                string cmd = string.Format(@"""{0}"" ""{1}"" ""{2}""", 
+                    CfgPath.DownlodPdfCmd(), url, file);
+                PathHelper.RunCmd(cmd);
+            }
+        }
         public static void Save(string url,string dst)
         {
             //CDO.Message msg = new CDO.Message();

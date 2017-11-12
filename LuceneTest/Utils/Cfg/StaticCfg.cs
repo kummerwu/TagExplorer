@@ -136,6 +136,7 @@ namespace TagExplorer.Utils
         public class FuncOpt
         {
             public bool KeepVDir = false;
+            public bool AutoDownloadUrl = false;
         }
         public FuncOpt Opt = new FuncOpt();
         #endregion

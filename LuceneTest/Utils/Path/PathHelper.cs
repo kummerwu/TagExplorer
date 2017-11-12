@@ -16,7 +16,7 @@ namespace TagExplorer.Utils
             {
                 
                 string s = srcs[i];
-                if (PathHelper.IsValidHttps(s))
+                if (PathHelper.IsValidWebLink(s))
                 {
                     dsts[i] = s;
                 }
@@ -33,7 +33,7 @@ namespace TagExplorer.Utils
         }
 
         
-        private static void RunCmd(string str)
+        public static void RunCmd(string str)
         {
             Process p = new Process();
             p.StartInfo.FileName = "cmd.exe";
@@ -89,7 +89,7 @@ namespace TagExplorer.Utils
         public static bool IsValidUri(string txt)
         {
             if (txt == null) return false;
-            return IsValidFS(txt) || IsValidHttps(txt);
+            return IsValidFS(txt) || IsValidWebLink(txt);
         }
         public static bool IsValidFS(string txt)
         {
@@ -106,7 +106,7 @@ namespace TagExplorer.Utils
             if (txt == null) return false;
             return Directory.Exists(txt);
         }
-        public static bool IsValidHttps(string txt)
+        public static bool IsValidWebLink(string txt)
         {
             if (txt == null) return false;
             return (txt.StartsWith("http://", StringComparison.CurrentCultureIgnoreCase) ||
@@ -114,7 +114,12 @@ namespace TagExplorer.Utils
                     txt.StartsWith(@"onenote:///",StringComparison.CurrentCultureIgnoreCase));
         }
 
-
+        public static bool IsValidHttp(string txt)
+        {
+            if (txt == null) return false;
+            return (txt.StartsWith("http://", StringComparison.CurrentCultureIgnoreCase) ||
+                    txt.StartsWith("https://", StringComparison.CurrentCultureIgnoreCase) );
+        }
 
         
 
