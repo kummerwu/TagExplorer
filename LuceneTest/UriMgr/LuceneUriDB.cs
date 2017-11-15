@@ -13,6 +13,7 @@ namespace TagExplorer.UriMgr
 {
     class LuceneUriDB : IUriDB
     {
+        
         #region 公有方法和接口实现
         public DataChanged UriDBChanged
         {
@@ -57,14 +58,15 @@ namespace TagExplorer.UriMgr
             reader = writer.GetReader();
             search = new IndexSearcher(reader);
 
+            //搜索查询：从哪些字段中进行搜索查询
             parser = new MultiFieldQueryParser(Lucene.Net.Util.Version.LUCENE_30,
-                new string[] { F_URI, F_URI_TAGS, F_URI_TITLE },
+                new string[] { URIItem.F_URI, URIItem.F_URI_TAGS, URIItem.F_URI_TITLE },
                 new UriQueryAnalyser());
 
             DBChanged();
             //Dbg();
         }
-        public int AddUri(IEnumerable< string> Uris, List<string> tags)
+        public int AddUris(IEnumerable< string> Uris, List<string> tags)
         {
             lock (this)
             {
@@ -73,7 +75,7 @@ namespace TagExplorer.UriMgr
                     Document doc = AddUriDocument(Uri, tags);
                     if (doc != null)
                     {
-                        writer.UpdateDocument(new Term(F_KEY, Uri.ToLower()), doc); //没有指定分析器，导致大小写有bug，相同的Uri会存在两个
+                        writer.UpdateDocument(new Term(URIItem.F_KEY, Uri.ToLower()), doc); //没有指定分析器，导致大小写有bug，相同的Uri会存在两个
                     }
                 }
                 //Commit(Uri, doc);
@@ -81,7 +83,7 @@ namespace TagExplorer.UriMgr
                 return 0;
             }
         }
-        public int AddUri(string Uri, List<string> tags, string Title)
+        public int AddUriWithTitle(string Uri, List<string> tags, string Title)
         {
             lock (this)
             {
@@ -99,11 +101,11 @@ namespace TagExplorer.UriMgr
                 return 0;
             }
         }
-        public int DelUri(IEnumerable<string> Uris, bool Delete)
+        public int DelUris(IEnumerable<string> Uris, bool Delete)
         {
             foreach (string Uri in Uris)
             {
-                writer.DeleteDocuments(new Term(F_KEY, Uri.ToLower()));
+                writer.DeleteDocuments(new Term(URIItem.F_KEY, Uri.ToLower()));
             }
             Commit();
             if (Delete)
@@ -131,7 +133,7 @@ namespace TagExplorer.UriMgr
                     Document doc = search.Doc(docs[i].Doc);
                     if (!reader.IsDeleted(docs[i].Doc))
                     {
-                        ret.Add(doc.GetField(F_URI).StringValue);
+                        ret.Add(doc.GetField(URIItem.F_URI).StringValue);
                     }
                     else
                     {
@@ -146,11 +148,11 @@ namespace TagExplorer.UriMgr
             }
             return ret;
         }
-        public int DelUri(string Uri, List<string> tags)
+        public int DelTags(string Uri, List<string> tags)
         {
             Document doc = GetDoc(Uri);
-            Field[] fs = doc.GetFields(F_URI_TAGS);
-            doc.RemoveFields(F_URI_TAGS);
+            Field[] fs = doc.GetFields(URIItem.F_URI_TAGS);
+            doc.RemoveFields(URIItem.F_URI_TAGS);
             foreach (Field f in fs)
             {
                 if (!tags.Contains(f.StringValue))
@@ -163,11 +165,11 @@ namespace TagExplorer.UriMgr
 
             return 0;
         }
-        public int UpdateUri(string Uri, string Title)
+        public int UpdateTitle(string Uri, string Title)
         {
             Document doc = GetDoc(Uri);
-            doc.RemoveFields(F_URI_TITLE);
-            doc.Add(new Field(F_URI_TITLE, Title, Field.Store.YES, Field.Index.ANALYZED));
+            doc.RemoveFields(URIItem.F_URI_TITLE);
+            doc.Add(new Field(URIItem.F_URI_TITLE, Title, Field.Store.YES, Field.Index.ANALYZED));
             Commit(Uri, doc);
             return 0;
         }
@@ -177,7 +179,7 @@ namespace TagExplorer.UriMgr
             Document doc = GetDoc(Uri);
             if (doc != null)
             {
-                ret = doc.GetField(F_URI_TITLE)?.StringValue;
+                ret = doc.GetField(URIItem.F_URI_TITLE)?.StringValue;
             }
             return ret;
         }
@@ -189,7 +191,7 @@ namespace TagExplorer.UriMgr
             Document doc = GetDoc(Uri);
             if (doc != null)
             {
-                Field[] fields = doc.GetFields(F_URI_TAGS);
+                Field[] fields = doc.GetFields(URIItem.F_URI_TAGS);
 
                 foreach (Field f in fields)
                 {
@@ -206,13 +208,28 @@ namespace TagExplorer.UriMgr
 
 
         #region 私有方法
-        const string F_URI = "furi";
-        const string F_KEY = "key";
-        //const string F_ID = "guid";
-        const string F_URI_TITLE = "ftitle";
-        const string F_URI_TAGS = "ftags";
-        const string F_CREATE_TIME = "fctime";
-        const string F_ACCESS_TIME = "fatime";
+        private class URIItem
+        {
+            public Guid ID;
+            public string Key;
+            public string Uri;
+            public string Title;
+            public List<string> Tags;
+            public DateTime CreateTime;
+            public DateTime AccessTime;
+
+            public const string F_ID = "fguid";
+            public const string F_KEY = "key";
+            public const string F_URI = "furi";
+            public const string F_URI_TITLE = "ftitle";
+            public const string F_URI_TAGS = "ftags";
+            public const string F_CREATE_TIME = "fctime";
+            public const string F_ACCESS_TIME = "fatime";
+
+            public string[] SearchFields = {F_KEY,F_URI,F_URI_TAGS,F_URI_TITLE };
+
+        }
+        
 
         IndexWriter writer = null;
         IndexReader reader = null;
@@ -246,7 +263,7 @@ namespace TagExplorer.UriMgr
         }
         private Document GetDoc(string uri)
         {
-            Term term = new Term(F_KEY, uri.ToLower()); //kummer:能用分词器吗，这儿暂时没有找到方法，只好手工将uri转换为小写
+            Term term = new Term(URIItem.F_KEY, uri.ToLower()); //kummer:能用分词器吗，这儿暂时没有找到方法，只好手工将uri转换为小写
             Query query = new TermQuery(term);
             ScoreDoc[] docs = search.Search(query, 1).ScoreDocs;
             Document doc = null;
@@ -294,7 +311,7 @@ namespace TagExplorer.UriMgr
             else
             {
                 //Field fid = doc.GetField(F_ID);
-                Field fkey = doc.GetField(F_KEY);
+                Field fkey = doc.GetField(URIItem.F_KEY);
                 System.Diagnostics.Debug.Assert(fkey != null);
                 needUpdate = (fkey == null || fkey.StringValue != Uri.ToLower());
             }
@@ -315,15 +332,15 @@ namespace TagExplorer.UriMgr
             }
             else //doc已经存在，需要更新
             {
-                writer.DeleteDocuments(new Term(F_KEY, Uri.ToLower()));
+                writer.DeleteDocuments(new Term(URIItem.F_KEY, Uri.ToLower()));
                 //writer.DeleteDocuments(new Term(F_ID, id.ToString()));
                 //doc.RemoveField(F_ID);
-                doc.RemoveField(F_KEY);
-                doc.RemoveField(F_URI);
+                doc.RemoveField(URIItem.F_KEY);
+                doc.RemoveField(URIItem.F_URI);
                 
             }
-            doc.Add(new Field(F_URI, Uri, Field.Store.YES, Field.Index.ANALYZED));
-            doc.Add(new Field(F_KEY, Uri.ToLower(), Field.Store.YES, Field.Index.NOT_ANALYZED));
+            doc.Add(new Field(URIItem.F_URI, Uri, Field.Store.YES, Field.Index.ANALYZED));
+            doc.Add(new Field(URIItem.F_KEY, Uri.ToLower(), Field.Store.YES, Field.Index.NOT_ANALYZED));
             //doc.Add(new Field(F_ID, id.ToString(), Field.Store.YES, Field.Index.NOT_ANALYZED));
             writer.AddDocument(doc);
             return doc;
@@ -332,7 +349,7 @@ namespace TagExplorer.UriMgr
         {
             if (doc != null)
             {
-                writer.UpdateDocument(new Term(F_KEY, Uri.ToLower()), doc); //没有指定分析器，导致大小写有bug，相同的Uri会存在两个
+                writer.UpdateDocument(new Term(URIItem.F_KEY, Uri.ToLower()), doc); //没有指定分析器，导致大小写有bug，相同的Uri会存在两个
                 //writer.UpdateDocument(new Term(F_URI, Uri), doc,new UriQueryAnalyser());
 
                 //writer.DeleteDocuments(new Term(F_URI, Uri));
@@ -344,7 +361,7 @@ namespace TagExplorer.UriMgr
             Document doc = AddUriDocument(Uri);
             if (doc != null)
             {
-                Field[] fs = doc.GetFields(F_URI_TAGS);
+                Field[] fs = doc.GetFields(URIItem.F_URI_TAGS);
                 HashSet<string> htag = new HashSet<string>();
                 foreach (Field f in fs)
                 {
@@ -355,7 +372,7 @@ namespace TagExplorer.UriMgr
                     if (!htag.Contains(tag))
                     {
                         htag.Add(tag);
-                        doc.Add(new Field(F_URI_TAGS, tag, Field.Store.YES, Field.Index.ANALYZED));
+                        doc.Add(new Field(URIItem.F_URI_TAGS, tag, Field.Store.YES, Field.Index.ANALYZED));
                     }
                 }
             }
@@ -365,12 +382,12 @@ namespace TagExplorer.UriMgr
         private Document AddUriDocument(string Uri, List<string> tags, string Title)
         {
             Document doc = AddUriDocument(Uri, tags);
-            Field f = doc.GetField(F_URI_TITLE);
+            Field f = doc.GetField(URIItem.F_URI_TITLE);
             if(f!=null)
             {
-                doc.RemoveFields(F_URI_TITLE);
+                doc.RemoveFields(URIItem.F_URI_TITLE);
             }
-            doc.Add(new Field(F_URI_TITLE, Title, Field.Store.YES, Field.Index.ANALYZED));
+            doc.Add(new Field(URIItem.F_URI_TITLE, Title, Field.Store.YES, Field.Index.ANALYZED));
            
             return doc;
 
@@ -389,18 +406,18 @@ namespace TagExplorer.UriMgr
                     
                     w.Write(string.Format("{0},{1},{2},{3}",
                                             i,  
-                                            doc.Get(F_KEY), 
-                                            doc.Get(F_URI),
+                                            doc.Get(URIItem.F_KEY), 
+                                            doc.Get(URIItem.F_URI),
                                             reader.IsDeleted(i)?"DEL":"OK"
                                             )
                                 );
                     
-                    foreach (Field f in doc.GetFields(F_URI_TAGS))
+                    foreach (Field f in doc.GetFields(URIItem.F_URI_TAGS))
                     {
                         w.Write(","+f.StringValue);
                     }
 
-                    string path = doc.Get(F_URI);
+                    string path = doc.Get(URIItem.F_URI);
                     //if(!System.IO.File.Exists(path) && !System.IO.Directory.Exists(path))
                     //{
                     //    reader.DeleteDocument(i);

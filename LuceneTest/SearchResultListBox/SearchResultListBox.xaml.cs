@@ -232,7 +232,7 @@ namespace TagExplorer.UriInfList
             string newTitle = InputBoxWindow.ShowDlg("条目重命名", CurrentUri, "");
             if (newTitle != null && newTitle.Length > 0)
             {
-                uriDB.UpdateUri(CurrentUri, newTitle);
+                uriDB.UpdateTitle(CurrentUri, newTitle);
             }
             
         }

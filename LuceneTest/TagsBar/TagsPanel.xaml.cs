@@ -54,7 +54,7 @@ namespace TagExplorer.TagsBar
         {
             if (e.Key == Key.Enter && currentUri != null && uriDB != null && tagDB != null)
             {
-                uriDB.AddUri(new List<string>(){ currentUri}, new List<string>() { autoTextBox.Text.Trim() });
+                uriDB.AddUris(new List<string>(){ currentUri}, new List<string>() { autoTextBox.Text.Trim() });
                 ChangeCurrentUri(currentUri, uriDB, tagDB);
                 autoTextBox.Text = "";
             }

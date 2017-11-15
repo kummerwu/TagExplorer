@@ -676,7 +676,7 @@ namespace TagExplorer.TagCanvas
                         MoveUris(args);
                         break;
                     case ClipboardConst.KUMMERWU_URI_COPY:
-                        UriDB.AddUri(args, new List<string>() { currentTag.Title });
+                        UriDB.AddUris(args, new List<string>() { currentTag.Title });
                         //foreach (string uri in args)
                         //{
                         //    UriDB.AddUri(uri, new List<string>() { currentTag });
@@ -700,12 +700,12 @@ namespace TagExplorer.TagCanvas
             string[] src = args;
             string[] dst = PathHelper.MapFilesToTagDir(src, currentTag.Title);
             FileShell.SHMoveFiles(src, dst);
-            UriDB.DelUri(src, false);  //TODO bug2:对于http链接，删除后，标题就没有了。
+            UriDB.DelUris(src, false);  //TODO bug2:对于http链接，删除后，标题就没有了。
             //foreach (string uri in src)
             //{
             //    UriDB.DelUri(uri, false); 
             //}
-            UriDB.AddUri(dst, new List<string>() { currentTag.Title });
+            UriDB.AddUris(dst, new List<string>() { currentTag.Title });
             //foreach(string uri in dst)
             //{
             //    UriDB.AddUri(uri, new List<string>() { currentTag });
@@ -756,7 +756,7 @@ namespace TagExplorer.TagCanvas
             }
 
             //TODO,这个动作时间很长，整个过程中界面没有响应。
-            UriDB.AddUri(dst, tags);
+            UriDB.AddUris(dst, tags);
             foreach (string uri in dst)
             {
                 if (PathHelper.IsValidWebLink(uri))
@@ -764,7 +764,7 @@ namespace TagExplorer.TagCanvas
                     string title = WebHelper.GetWebTitle(uri);
                     if (title != null)
                     {
-                        UriDB.UpdateUri(uri, title);
+                        UriDB.UpdateTitle(uri, title);
                     }
                     if (StaticCfg.Ins.Opt.AutoDownloadUrl)
                     {

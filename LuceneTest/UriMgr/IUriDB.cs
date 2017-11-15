@@ -17,7 +17,7 @@ namespace TagExplorer.UriMgr
         /// <param name="Uris">uri：如果是文件，uri为全路径，如果是http，uri这位url</param>
         /// <param name="tags">为每一个uri添加tag列表</param>
         /// <returns></returns>
-        int AddUri(IEnumerable<string> Uris, List<string> tags);
+        int AddUris(IEnumerable<string> Uris, List<string> tags);
         /// <summary>
         /// 添加URI
         /// </summary>
@@ -25,7 +25,7 @@ namespace TagExplorer.UriMgr
         /// <param name="tags">为每一个uri添加tag列表</param>
         /// <param name="Title">为该uri增加一个标题</param>
         /// <returns></returns>
-        int AddUri(string Uri, List<string> tags,string Title);
+        int AddUriWithTitle(string Uri, List<string> tags,string Title);
 
         /// <summary>
         /// 删除一组uri
@@ -33,7 +33,7 @@ namespace TagExplorer.UriMgr
         /// <param name="Uri">待删除的uri列表</param>
         /// <param name="Delete">是否删除对应的文件</param>
         /// <returns></returns>
-        int DelUri(IEnumerable<string> Uri,bool Delete);
+        int DelUris(IEnumerable<string> Uri,bool Delete);
 
         /// <summary>
         /// 删除URI的tag
@@ -41,7 +41,7 @@ namespace TagExplorer.UriMgr
         /// <param name="Uri"></param>
         /// <param name="tags"></param>
         /// <returns></returns>
-        int DelUri(string Uri, List<string> tags);
+        int DelTags(string Uri, List<string> tags);
 
         /// <summary>
         /// 更新URI的标题
@@ -49,7 +49,7 @@ namespace TagExplorer.UriMgr
         /// <param name="Uri"></param>
         /// <param name="Title"></param>
         /// <returns></returns>
-        int UpdateUri(string Uri, string Title);
+        int UpdateTitle(string Uri, string Title);
 
         /// <summary>
         /// 查询获得URI列表

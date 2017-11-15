@@ -82,7 +82,7 @@ namespace TagExplorer
             string tag = CfgPath.GetTagByPath(uri);
             if (tag != null)
             {
-                UriDB.AddUri(new List<string>() { uri }, new List<string>() { tag });
+                UriDB.AddUris(new List<string>() { uri }, new List<string>() { tag });
             }
             else
             {
