@@ -137,6 +137,8 @@ namespace TagExplorer.Utils
         {
             public bool KeepVDir = false;
             public bool AutoDownloadUrl = false;
+            public bool ShowMainCanvasRootPath = true;
+            public bool ShowSubCanvasRootPath = true;
         }
         public FuncOpt Opt = new FuncOpt();
         #endregion

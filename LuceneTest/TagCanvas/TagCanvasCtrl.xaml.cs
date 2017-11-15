@@ -30,7 +30,12 @@ namespace TagExplorer.TagCanvas
         private IUriDB UriDB = null;
 
         private LayoutCanvas MyCanvasType;
-        
+        public bool NeedShowConnect()
+        {
+            
+            return (MyCanvasType == LayoutCanvas.MAIN_CANVAS && StaticCfg.Ins.Opt.ShowMainCanvasRootPath) ||
+               (MyCanvasType == LayoutCanvas.SUB_CANVAS && StaticCfg.Ins.Opt.ShowSubCanvasRootPath);
+        }
         //初始化TagDB，该函数必须在空间初始化时就指定
         public void Initial(ITagDB db, IUriDB uridb, LayoutCanvas canvasType)
         {
@@ -38,11 +43,12 @@ namespace TagExplorer.TagCanvas
             TagDB = db;
             UriDB = uridb;
             MyCanvasType = canvasType;
-            if(canvasType == LayoutCanvas.MAIN_CANVAS)
+            if(!NeedShowConnect())
             {
                 //connectCanvas.Visibility = Visibility.Collapsed;
                 connect.Height = new GridLength(0);
             }
+            
             UpdateMenuItemCheckStatus();
         }
 
@@ -102,13 +108,14 @@ namespace TagExplorer.TagCanvas
 
         private void ShowConnect()
         {
+            if (!NeedShowConnect()) return;
             List<GUTag> connect = new List<GUTag>();
             GUTag from = rootTag;
-            GUTag to = maincanvasSel;
+            //GUTag to = maincanvasSel;
             GUTag tmp = from;
             double X = 0;
             connectCanvas.Children.Clear();
-            if (from == null || to == null || MyCanvasType != LayoutCanvas.SUB_CANVAS) return;
+            if (from == null ) return;
 
             connect.Add(from);
             while(connect.Count<20 && tmp!=null)
