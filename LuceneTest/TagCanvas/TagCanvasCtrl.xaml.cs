@@ -775,7 +775,8 @@ namespace TagExplorer.TagCanvas
                     }
                     if (StaticCfg.Ins.Opt.AutoDownloadUrl)
                     {
-                        WebHelper.Download(uri, currentTag.Title, title);
+                        //WebHelper.Download(uri, currentTag.Title, title);
+                        BackTask.Ins.Add(new DownloadTaskInf(uri, currentTag.Title, title));
                     }
                 }
             }

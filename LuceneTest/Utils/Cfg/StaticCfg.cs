@@ -8,6 +8,9 @@ namespace TagExplorer.Utils
 {
     public class StaticCfg
     {
+        [JsonIgnore]
+        private const string CURRENT_VERSION = "1.0";
+
         #region 配置的保存与恢复
         private static StaticCfg ins = null;
         public static StaticCfg Ins
@@ -23,6 +26,10 @@ namespace TagExplorer.Utils
                         {
                             string tmp = File.ReadAllText(CfgPath.StaticCfg);
                             ins = JsonConvert.DeserializeObject<StaticCfg>(tmp);
+                            if(ins!=null && ins.Version!=CURRENT_VERSION)
+                            {
+                                ins.Save();
+                            }
                         }
                     }catch(Exception e)
                     {
@@ -34,15 +41,22 @@ namespace TagExplorer.Utils
                 if(ins == null)
                 {
                     ins = new StaticCfg();//JsonConvert.DeserializeObject<CfgTagGraph>(App)
-                    string tmp= JsonConvert.SerializeObject(ins,Formatting.Indented); //将默认值保存到json中去
-                    File.WriteAllText(CfgPath.StaticCfg, tmp);
+                    ins.Save();
                 }
                 return ins;
             }
         }
+
+        private void Save()
+        {
+            this.Version = CURRENT_VERSION;
+            string tmp = JsonConvert.SerializeObject(this, Formatting.Indented); //将默认值保存到json中去
+            File.WriteAllText(CfgPath.StaticCfg, tmp);
+        }
         #endregion
 
         #region 静态配置参数列表
+        public string Version = CURRENT_VERSION;
         //在图中显示两个tag之间的边时，使用Split将
         public char ParentChildSplit = '`';
         public string SpecialChar = "<>《》~?";

@@ -136,15 +136,16 @@ namespace TagExplorer.AutoComplete
          ***********************************************************/
         private string GetCurrentToken()
         {
-            int s = textBox.SelectionStart;
-            int e = textBox.SelectionStart + textBox.SelectionLength;
-            int first = textBox.Text.LastIndexOf('#', e - 1);
-            string matchToken = textBox.Text;
-            if (first != -1 && e > first + 1)
-            {
-                matchToken = textBox.Text.Substring(first + 1, e - first - 1);
-            }
-            return matchToken;
+            return textBox.Text;
+            //int s = textBox.SelectionStart;
+            //int e = textBox.SelectionStart + textBox.SelectionLength;
+            //int first = textBox.Text.LastIndexOf('#', e - 1);
+            //string matchToken = textBox.Text;
+            //if (first != -1 && e > first + 1)
+            //{
+            //    matchToken = textBox.Text.Substring(first + 1, e - first - 1);
+            //}
+            //return matchToken;
         }
 
         private AutoCompleteTipsItem item = null;
@@ -162,21 +163,22 @@ namespace TagExplorer.AutoComplete
         private void SetCurrentToken(AutoCompleteTipsItem t)
         {
             Item = t;
-            int s = textBox.SelectionStart;
-            int e = textBox.SelectionStart + textBox.SelectionLength;
-            int first = -1;
-            if (e > 1)
-            {
-                first = textBox.Text.LastIndexOf('#', e - 1);
-            }
-            if (first == -1)
-            {
-                textBox.Text = t.Content;
-            }
-            else
-            {
-                textBox.Text = textBox.Text.Substring(0, first + 1) + t;
-            }
+            //int s = textBox.SelectionStart;
+            //int e = textBox.SelectionStart + textBox.SelectionLength;
+            //int first = -1;
+            //if (e > 1)
+            //{
+            //    first = textBox.Text.LastIndexOf('#', e - 1);
+            //}
+            //if (first == -1)
+            //{
+            //    textBox.Text = t.Content;
+            //}
+            //else
+            //{
+            //    textBox.Text = textBox.Text.Substring(0, first + 1) + t;
+            //}
+            textBox.Text = t.Content;
             textBox.Select(textBox.Text.Length, 0);
         }
 
