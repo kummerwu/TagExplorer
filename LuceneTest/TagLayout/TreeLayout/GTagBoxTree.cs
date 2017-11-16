@@ -134,10 +134,22 @@ namespace TagExplorer.TagLayout.TreeLayout
         }
         private static int GetTagTreeWidth(GUTag tag,ITagDB db,int level,int maxlevel)
         {
-            if (level > maxlevel) return 0;
-            else if (level == maxlevel) return 1;
-
             int ret = 1;
+
+            if (level > maxlevel)
+            {
+                ret = 0;
+                Logger.D("GetTagTreeWidth : {0} {1}", tag.ToString(), ret);
+                return ret;
+            }
+            else if (level == maxlevel)
+            {
+                ret = 1;
+                Logger.D("GetTagTreeWidth : {0} {1}", tag.ToString(), ret);
+                return ret;
+            }
+
+            
             //只有一层子节点，所有子节点都是叶子
             List<GUTag> children = db.QueryTagChildren(tag);
             foreach(GUTag ctag in children)
@@ -148,7 +160,11 @@ namespace TagExplorer.TagLayout.TreeLayout
                     break;
                 }
             }
-            if (ret == 1) return ret;
+            if (ret == 1)
+            {
+                Logger.D("GetTagTreeWidth : {0} {1}", tag.ToString(), ret);
+                return ret;
+            }
 
 
             //只有一列子孙节点，所有都是独生子
@@ -172,8 +188,8 @@ namespace TagExplorer.TagLayout.TreeLayout
                 }
 
             }
-            
-            
+
+            Logger.D("GetTagTreeWidth : {0} {1}", tag.ToString(), ret);
             return ret;
         }
         private static GTagBoxTree ExpandChildMoreCompact(int level, int MaxLevel,ITagDB db, GTagBoxTree root, GTagBoxTree pre, GUTag ctag,int direct,Size size,TreeLayoutEnv env)
@@ -251,7 +267,7 @@ namespace TagExplorer.TagLayout.TreeLayout
             if (pre != null && direct == -1) { leftOK = sizeinf.OutterBoxSize.Width < pre.totalRange.Left; }
             //只有满足严格条件的情况下，才放在兄弟节点的后面，否则在父节点后展开
             if (pre != null &&
-                (db.QueryTagChildren(pre.GTagBox.Tag).Count == 0) &&
+                (db.QueryTagChildren(pre.GTagBox.Tag).Count == 0 || rootLevel + 1 == MaxLevel) &&
                 rightOK && 
                 leftOK &&
                 (GetTagTreeWidth(ctag, db,rootLevel+1,MaxLevel) <= 1 ))    

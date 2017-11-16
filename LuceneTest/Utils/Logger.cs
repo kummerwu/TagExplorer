@@ -6,6 +6,7 @@ namespace TagExplorer.Utils
 
     public class Logger
     {
+
         public const bool on = true;
         #region 公有方法
         [Conditional("LOGGER")]
@@ -23,6 +24,7 @@ namespace TagExplorer.Utils
             {
                 string s = string.Format(PREFIX + fmt, par);
                 log.Debug(s);
+                System.Diagnostics.Debug.WriteLine(s);
             }
         }
         [Conditional("LOGGER")]
@@ -42,7 +44,7 @@ namespace TagExplorer.Utils
                 log.Error(string.Format(fmt, par));
             }
         }
-        [Conditional("LOGGER")]
+        
         public static void E(Exception e)
         {
             if (on)

@@ -39,7 +39,27 @@ namespace TagExplorer.TagLayout.LRTreeLayout
             get { return tags; }
         }
         private ITagDB tagDB = null;
-
+        private int CalcMid(List<GUTag> allChild,ITagDB db)
+        {
+            int rootChildrenCount = allChild.Count;
+            int total = 0;
+            foreach(GUTag c in allChild)
+            {
+                total +=Math.Max(1, db.QueryChildrenCount(c));
+            }
+            
+            int tmpTotal = 0;
+            for(int i = 0;i<rootChildrenCount;i++)
+            {
+                if (tmpTotal >= ((total +0.5)/ 2)) return i;
+                else
+                {
+                    tmpTotal +=Math.Max(1, db.QueryChildrenCount(allChild[i]));
+                }
+            }
+            
+            return 0;
+        }
         private Size oriSize;
         public List<TagBox> tags = new List<TagBox>();
         public IEnumerable<UIElement> lines = null;
@@ -69,10 +89,11 @@ namespace TagExplorer.TagLayout.LRTreeLayout
             outterbox = Rect.Empty;
 
             List<GUTag> allChild = db.QueryTagChildren(rootTag);
+            allChild.Remove(rootTag);
+
             int idx = 0;
-            int rootChildrenCount = allChild.Count((item) => item != rootTag);
-            int mid = Math.Max((rootChildrenCount + 1) / 2 , 2);
-            GTagBoxTree[] children = new GTagBoxTree[rootChildrenCount];
+            int mid = CalcMid(allChild, db);
+            GTagBoxTree[] children = new GTagBoxTree[allChild.Count];
 
             int direct = 1;
             foreach (GUTag c in allChild)
