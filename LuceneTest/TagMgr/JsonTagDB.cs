@@ -257,6 +257,7 @@ namespace TagExplorer.TagMgr
         public int RemoveTag(GUTag tag)
         {
             AssertValid(tag);
+            RemoveParentsRef(tag);
             id2Gutag.Remove(tag.Id);
             Save(tag);
             return ITagDBConst.R_OK;
