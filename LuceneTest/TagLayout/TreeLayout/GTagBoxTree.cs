@@ -96,15 +96,15 @@ namespace TagExplorer.TagLayout.TreeLayout
                     {
                         case LayoutMode.TREE_COMPACT_MORE:
                         case LayoutMode.LRTREE_COMPACT_MORE:
-                            cur = ExpandChildMoreCompact(level, db, root, pre, ctag,direct,size,env);
+                            cur = ExpandChildMoreCompact(level,MaxLevel, db, root, pre, ctag,direct,size,env);
                             break;
                         case LayoutMode.TREE_COMPACT:
                         case LayoutMode.LRTREE_COMPACT:
-                            cur = ExpandChildCompact(level, db, root, pre, ctag,direct,size,env);
+                            cur = ExpandChildCompact(level, MaxLevel, db, root, pre, ctag,direct,size,env);
                             break;
                         case LayoutMode.TREE_NO_COMPACT:
                         case LayoutMode.LRTREE_NO_COMPACT:
-                            cur = ExpandChildNoCompact(level, db, root, pre, ctag,direct,size,env);
+                            cur = ExpandChildNoCompact(level, MaxLevel, db, root, pre, ctag,direct,size,env);
                             break;
                         default:
                             break;
@@ -132,8 +132,51 @@ namespace TagExplorer.TagLayout.TreeLayout
             Logger.OUT();
             return root;
         }
+        private static int GetTagTreeWidth(GUTag tag,ITagDB db,int level,int maxlevel)
+        {
+            if (level > maxlevel) return 0;
+            else if (level == maxlevel) return 1;
 
-        private static GTagBoxTree ExpandChildMoreCompact(int level, ITagDB db, GTagBoxTree root, GTagBoxTree pre, GUTag ctag,int direct,Size size,TreeLayoutEnv env)
+            int ret = 1;
+            //只有一层子节点，所有子节点都是叶子
+            List<GUTag> children = db.QueryTagChildren(tag);
+            foreach(GUTag ctag in children)
+            {
+                if(db.QueryChildrenCount(ctag)>0)
+                {
+                    ret = 2;
+                    break;
+                }
+            }
+            if (ret == 1) return ret;
+
+
+            //只有一列子孙节点，所有都是独生子
+            ret = 1;
+            GUTag tmp = tag;
+            for(int i = level;i<maxlevel;i++)
+            {
+                children = db.QueryTagChildren(tmp);
+                if(children.Count>1)
+                {
+                    ret = 2;
+                    break;
+                }
+                else if(children.Count==0)
+                {
+                    break;
+                }
+                else if(children.Count==1)
+                {
+                    tmp = children[0];
+                }
+
+            }
+            
+            
+            return ret;
+        }
+        private static GTagBoxTree ExpandChildMoreCompact(int level, int MaxLevel,ITagDB db, GTagBoxTree root, GTagBoxTree pre, GUTag ctag,int direct,Size size,TreeLayoutEnv env)
         {
             GTagBoxTree cur;
             Logger.D("ChoosePos:pre:{0}-{1}-{2} cur:{0}-{1},",
@@ -144,12 +187,17 @@ namespace TagExplorer.TagLayout.TreeLayout
             //只有满足严格条件的情况下，才放在兄弟节点的后面，否则在父节点后展开
             TagBoxSizeInf sizeinf =new TagBoxSizeInf(ctag, level+1, StaticCfg.Ins.GFontName);
             bool leftOK = true, rightOK = true;
+            //右边是否有足够空间
             if (pre!=null && direct == 1 ) { rightOK = pre.totalRange.Right + sizeinf.OutterBoxSize.Width < size.Width; }
+            //左边是否有足够空间
             if (pre!=null && direct == -1) { leftOK = sizeinf.OutterBoxSize.Width < pre.totalRange.Left; }
+            
+
             if (pre != null &&
                 /*(db.QueryTagChildren(ctag).Count == 0 && db.QueryTagChildren(pre.box.Tag).Count == 0)*/
                 rightOK  &&
-                leftOK)    
+                leftOK &&
+                (GetTagTreeWidth(ctag, db,level+1,MaxLevel)<=1))    
             {
                 Logger.D("Place {0} after {1}:follow", ctag, pre.GTagBox.Tag);
                 //这种情况下不换行
@@ -187,7 +235,7 @@ namespace TagExplorer.TagLayout.TreeLayout
 
             return cur;
         }
-        private static GTagBoxTree ExpandChildCompact(int rootLevel, ITagDB db, GTagBoxTree root, GTagBoxTree pre, GUTag ctag,int direct,Size size,TreeLayoutEnv env)
+        private static GTagBoxTree ExpandChildCompact(int rootLevel, int MaxLevel,ITagDB db, GTagBoxTree root, GTagBoxTree pre, GUTag ctag,int direct,Size size,TreeLayoutEnv env)
         {
             GTagBoxTree cur;
             Logger.D("ChoosePos:pre:{0}-{1}-{2} cur:{0}-{1},",
@@ -205,7 +253,8 @@ namespace TagExplorer.TagLayout.TreeLayout
             if (pre != null &&
                 (db.QueryTagChildren(pre.GTagBox.Tag).Count == 0) &&
                 rightOK && 
-                leftOK)    
+                leftOK &&
+                (GetTagTreeWidth(ctag, db,rootLevel+1,MaxLevel) <= 1 ))    
             {
                 Logger.D("Place {0} after {1}:follow", ctag, pre.GTagBox.Tag);
                 cur = ExpandNode(ctag, rootLevel + 1, db,
@@ -240,7 +289,7 @@ namespace TagExplorer.TagLayout.TreeLayout
             return cur;
         }
 
-        private static GTagBoxTree ExpandChildNoCompact(int level, ITagDB db, GTagBoxTree root, GTagBoxTree pre, GUTag ctag,int direct,Size size,TreeLayoutEnv env)
+        private static GTagBoxTree ExpandChildNoCompact(int level, int MaxLevel,ITagDB db, GTagBoxTree root, GTagBoxTree pre, GUTag ctag,int direct,Size size,TreeLayoutEnv env)
         {
             GTagBoxTree cur;
             Logger.D("ChoosePos:pre:{0}-{1}-{2} cur:{0}-{1},",
