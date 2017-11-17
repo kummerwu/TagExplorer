@@ -1,39 +1,60 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.IO;
 using System.Threading.Tasks;
 
 namespace TagExplorer.Utils
 {
-    class BackTaskInf
+    interface IRunable
     {
-        public string Type = null;
-        public string[] Args = null;
-        virtual public void Run()
-        {
-            throw new NotImplementedException();
-        }
+        void Run();
     }
-    class DownloadTaskInf:BackTaskInf
+    class DownloadTaskInf:IRunable
     {
+        string Url, Tag, Title;
         public DownloadTaskInf(string url, string tag, string title)
         {
-            Type = nameof(DownloadTaskInf);
-            Args = new string[3];
-            Args[0] = url;
-            Args[1] = tag;
-            Args[2] = title;
+            Url = url;
+            Tag = tag;
+            Title = title;
         }
 
-        public override void Run()
+        public void Run()
         {
-            WebHelper.Download(Args[0], Args[1], Args[2]);
+            WebHelper.Download(Url, Tag, Title);
+        }
+    }
+    class DelTagTaskInf:IRunable
+    {
+        string Tag;
+        public DelTagTaskInf(string tag)
+        {
+            Tag = tag;
+        }
+        public void Run()
+        {
+            string src = CfgPath.GetDirByTag(Tag);
+            string dst = Path.Combine(CfgPath.RecycleDir,Tag);
+            if(Directory.Exists(src))
+            {
+                while(Directory.Exists(dst))
+                {
+                    dst = dst + "$" + Guid.NewGuid().ToString();
+                }
+                try
+                {
+                    Directory.Move(src, dst);
+                }
+                catch(Exception e)
+                {
+                    Logger.E(e);
+                }
+            }
         }
     }
     class BackTask:IDisposable
     {
-        private List<BackTaskInf> tasks = new List<BackTaskInf>();
+        private List<IRunable> tasks = new List<IRunable>();
         private static BackTask ins = null;
         Task backTask = null;
         public BackTask()
@@ -52,7 +73,7 @@ namespace TagExplorer.Utils
                 return ins;
             }
         }
-        public void Add(BackTaskInf t)
+        public void Add(IRunable t)
         {
             lock(this)
             {
@@ -64,7 +85,7 @@ namespace TagExplorer.Utils
         {
             while(true)
             {
-                BackTaskInf t = null;
+                IRunable t = null;
                 lock(this)
                 {
                     if (tasks.Count > 0)
