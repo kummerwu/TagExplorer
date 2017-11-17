@@ -52,7 +52,7 @@ namespace TagExplorer.TagMgr
                 {
                     tokens.Add(m.Value);
                 }
-                string[] tagRelation = tokens.ToArray<string>();
+                string[] tagRelation = tokens.ToArray();
                 return ParseRelation(self,tagRelation);
             }
             else
