@@ -950,8 +950,6 @@ namespace TagExplorer.TagCanvas
                     if(t!=null && t.GUTag == newCurrentTag)
                     {
                         SetCurrentTag(newCurrentTag,true);
-                        
-
                     }
                 }
                 //当新选出来的tag不再视图中时，才需要切换视图的根节点
@@ -963,6 +961,11 @@ namespace TagExplorer.TagCanvas
                 {
                     RedrawGraph();
                 }
+                //这个调用之所以放在这儿，而不放在TagDB.RemoveTag时调用，
+                //是因为在彻底删除该tag后（转到其他tag后），程序打开的标签笔记才会被关闭。
+                //这个时候才能删除tag的目录（否则会有文件正在使用无法移动目录）
+
+                BackTask.Ins.Add(new DelTagTaskInf(oldCurrentTag.Title));
             }
             else
             {
