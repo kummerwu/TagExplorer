@@ -47,10 +47,18 @@ namespace TagExplorer.TagMgr
             
             using (StreamWriter w = new StreamWriter(CfgPath.TagDBPath_Json))
             {
+                List<GUTag> all = new List<GUTag>();
+                
                 foreach(GUTag j in id2Gutag.Values)
+                {
+                    all.Add(j);
+                }
+                all.Sort((x, y) => x.Id.CompareTo(y.Id));
+                foreach (GUTag j in all)
                 {
                     w.WriteLine(JsonConvert.SerializeObject(j));
                 }
+                
             }
 
             ChangeNotify();
