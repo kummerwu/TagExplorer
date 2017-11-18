@@ -481,7 +481,7 @@ VALUES (@ID,@Title,@Alias,@PID,@Children)",Conn);
             AssertValid(tag);
             RemoveParentsRef(tag);
             id2Gutag?.Remove(tag.Id);
-            Save(tag);
+            DelSqlDB(tag);
             return ITagDBConst.R_OK;
         }
 
