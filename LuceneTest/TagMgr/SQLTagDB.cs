@@ -328,6 +328,8 @@ VALUES (@ID,@Title,@Alias,@PID,@Children)",Conn);
         {
             AssertValid(mainTag);
             AssertValid(aliasTag);
+            mainTag = QueryTag(mainTag.Id);
+            aliasTag = QueryTag(aliasTag.Id);
             RemoveFromHash(aliasTag);
             mainTag.Merge(aliasTag);
             AddToHash(mainTag);
@@ -368,6 +370,7 @@ VALUES (@ID,@Title,@Alias,@PID,@Children)",Conn);
 
         private string ParentHistory(GUTag a)
         {
+            a = QueryTag(a.Id);
             string ret = a.Title;
 
             while (a != null)
@@ -428,14 +431,17 @@ VALUES (@ID,@Title,@Alias,@PID,@Children)",Conn);
         public List<string> QueryTagAlias(GUTag tag)
         {
             //AssertValid(tag);
-            if (QueryTag(tag.Id) != tag) return new List<string>();
+            tag = QueryTag(tag.Id);
+            if(tag== null) return new List<string>();
+            
             else return tag.Alias;
         }
 
         public List<GUTag> QueryTagChildren(GUTag tag)
         {
             //AssertValid(tag);
-            if (QueryTag(tag.Id) != tag) return new List<GUTag>();
+            tag = QueryTag(tag.Id);
+            if (tag == null) return new List<GUTag>();
 
             List<GUTag> gutagChildren = new List<GUTag>();
             foreach (Guid id in tag.Children)
@@ -452,7 +458,8 @@ VALUES (@ID,@Title,@Alias,@PID,@Children)",Conn);
         public List<GUTag> QueryTagParent(GUTag tag)
         {
             //AssertValid(tag); 由于有两个视图，可能会用一个已经失效的GUTag进行查询。
-            if (QueryTag(tag.Id) != tag) return new List<GUTag>();
+            tag = QueryTag(tag.Id);
+            if (null== tag) return new List<GUTag>();
             if(tag.Id == StaticCfg.Ins.DefaultTagID) return new List<GUTag>();
 
 
@@ -478,6 +485,9 @@ VALUES (@ID,@Title,@Alias,@PID,@Children)",Conn);
 
         public int RemoveTag(GUTag tag)
         {
+            tag = QueryTag(tag.Id);
+            if (tag == null) return ITagDBConst.R_OK;
+
             AssertValid(tag);
             RemoveParentsRef(tag);
             id2Gutag?.Remove(tag.Id);
@@ -488,6 +498,9 @@ VALUES (@ID,@Title,@Alias,@PID,@Children)",Conn);
         //将child原来所有parent删除，并与新的parent建立关系
         public int ResetParent(GUTag parent, GUTag child)
         {
+            parent = QueryTag(parent.Id);
+            child = QueryTag(child.Id);
+            if (parent == null || child == null) return ITagDBConst.R_OK;
             AssertValid(parent);
             AssertValid(child);
             RemoveParentsRef(child);
@@ -513,6 +526,9 @@ VALUES (@ID,@Title,@Alias,@PID,@Children)",Conn);
 
         public int ChangePos(GUTag tag, int direct)
         {
+            tag = QueryTag(tag.Id);
+            if (tag == null) return ITagDBConst.R_OK;
+
             AssertValid(tag);
             List<GUTag> parents = QueryTagParent(tag);
             Debug.Assert(parents.Count == 1);
@@ -562,6 +578,9 @@ VALUES (@ID,@Title,@Alias,@PID,@Children)",Conn);
 
         public int ChangeTitle(GUTag tag, string newTitle)
         {
+            tag = QueryTag(tag.Id);
+            if (tag == null) return ITagDBConst.R_OK;
+
             AssertValid(tag);
             tag.ChangeTitle(newTitle);
             Save(tag);
