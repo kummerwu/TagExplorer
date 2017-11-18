@@ -17,6 +17,13 @@ namespace TagExplorer.TagMgr
 {
     public class SQLTagDB:IDisposable,ITagDB
     {
+        public SQLTagDB()
+        {
+            if(StaticCfg.Ins.Opt.SqliteTagCacheOn)
+            {
+                id2Gutag = new Hashtable();
+            }
+        }
         DataChanged dbChangedHandler;
         public DataChanged TagDBChanged
         {
@@ -206,7 +213,9 @@ VALUES (@ID,@Title,@Alias,@PID,@Children)",Conn);
         }
         public void Dispose()
         {
-            id2Gutag.Clear();
+            
+            id2Gutag?.Clear();
+            
             if (adduptCmd!=null)
             {
                 adduptCmd.Dispose();
@@ -240,7 +249,7 @@ VALUES (@ID,@Title,@Alias,@PID,@Children)",Conn);
         /// </summary>
 
         //维护所有tag=》taginf（有可能有别名，存在多个tag对应一个tagInf）
-        Hashtable id2Gutag = new Hashtable(); //Guid ==> Gutag
+        Hashtable id2Gutag = null;// new Hashtable(); //Guid ==> Gutag
         private void ChangeNotify()
         {
             dbChangedHandler?.Invoke();
@@ -269,14 +278,19 @@ VALUES (@ID,@Title,@Alias,@PID,@Children)",Conn);
         private void AddToHash(GUTag j)
         {
             //Debug.Assert(id2Gutag[j.Id] == null);
-            id2Gutag[j.Id] = j;
+            if (id2Gutag!=null)
+            {
+                id2Gutag[j.Id] = j;
+            }
             AddUptSqlDB(j);
 
         }
         private void RemoveFromHash(GUTag j)
         {
             AssertValid(j);
-            id2Gutag.Remove(j.Id);
+            
+            id2Gutag?.Remove(j.Id);
+            
             DelSqlDB(j);
             //AllTagSet.Remove(j);
         }
@@ -326,16 +340,23 @@ VALUES (@ID,@Title,@Alias,@PID,@Children)",Conn);
         #region  查询函数实现
         public GUTag QueryTag(Guid id)
         {
-            GUTag tmp = id2Gutag[id] as GUTag;
-            if(tmp==null)
+            if (id2Gutag!=null)
             {
-                tmp = QuerySqlDB(id);
-                if(tmp!=null)
+                GUTag tmp = id2Gutag[id] as GUTag;
+                if (tmp == null)
                 {
-                    id2Gutag[id] = tmp;
+                    tmp = QuerySqlDB(id);
+                    if (tmp != null)
+                    {
+                        id2Gutag[id] = tmp;
+                    }
                 }
+                return tmp;
             }
-            return tmp;
+            else
+            {
+                return QuerySqlDB(id);
+            }
         }
         public int QueryChildrenCount(GUTag tag)
         {
@@ -459,7 +480,7 @@ VALUES (@ID,@Title,@Alias,@PID,@Children)",Conn);
         {
             AssertValid(tag);
             RemoveParentsRef(tag);
-            id2Gutag.Remove(tag.Id);
+            id2Gutag?.Remove(tag.Id);
             Save(tag);
             return ITagDBConst.R_OK;
         }

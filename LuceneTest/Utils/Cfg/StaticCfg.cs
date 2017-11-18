@@ -9,7 +9,7 @@ namespace TagExplorer.Utils
     public class StaticCfg
     {
         [JsonIgnore]
-        private const string CURRENT_VERSION = "1.0";
+        private const string CURRENT_VERSION = "1.1";
 
         #region 配置的保存与恢复
         private static StaticCfg ins = null;
@@ -153,6 +153,7 @@ namespace TagExplorer.Utils
             public bool AutoDownloadUrl = false;
             public bool ShowMainCanvasRootPath = true;
             public bool ShowSubCanvasRootPath = true;
+            public bool SqliteTagCacheOn = false;
         }
         public FuncOpt Opt = new FuncOpt();
         #endregion
