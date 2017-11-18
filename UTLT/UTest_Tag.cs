@@ -3,6 +3,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
 using TagExplorer.Utils;
 using System.IO;
+using TagExplorer.UriMgr;
 
 namespace UTLT
 {
@@ -18,12 +19,12 @@ namespace UTLT
             //{
             //    System.IO.Directory.CreateDirectory(Cfg.Ins.TagDB);
             //}
-            db = TagDBFactory.CreateTagDB();
+            db = TagDBFactory.CreateTagDB("sql");
         }
         [TestCleanup]
         public void teardown()
         {
-            db.Dispose();
+            IDisposableFactory.DisposeAll();
             db = null;
             //为了安全，直接硬编码，防止把真是数据删除
             Directory.Delete(@"B:\00TagExplorerBase", true);
@@ -80,21 +81,24 @@ namespace UTLT
             Assert.AreEqual(0, db.QueryTagParent(c1).Count);
 
         }
-        [TestMethod]
-        public void ITagDB_Test_Remove_一个子节点有两个父节点()//添加后删除
-        {
-            GUTag p1 = db.NewTag("p1");
-            GUTag p2 = db.NewTag("p2");
-            GUTag c1 = db.NewTag("c1");
-            db.AddTag(p1, c1);
-            db.AddTag(p2, c1);
+        //[TestMethod]
+        //public void ITagDB_Test_Remove_一个子节点有两个父节点()//添加后删除
+        //{
+        //    //Sql不再支持多个父节点
+        //    if (db.GetType().Name.Contains("Sql")) return;
 
-            db.RemoveTag(c1);
-            AssertListEqual(new List<string>(), db.QueryTagChildren(p1));
-            AssertListEqual(new List<string>(), db.QueryTagChildren(p2));
+        //    GUTag p1 = db.NewTag("p1");
+        //    GUTag p2 = db.NewTag("p2");
+        //    GUTag c1 = db.NewTag("c1");
+        //    db.AddTag(p1, c1);
+        //    db.AddTag(p2, c1);
+
+        //    db.RemoveTag(c1);
+        //    AssertListEqual(new List<string>(), db.QueryTagChildren(p1));
+        //    AssertListEqual(new List<string>(), db.QueryTagChildren(p2));
 
 
-        }
+        //}
         [TestMethod]
         public void ITagDB_Test_AddMultiChildren()//父节点，有多个子节点
         {
@@ -115,47 +119,47 @@ namespace UTLT
             Assert.AreEqual(c2, c[1]);
         }
 
-        [TestMethod]
-        public void ITagDB_Test_AddMultiParent()//子节点，有多个父节点
-        {
-            GUTag p1 = db.NewTag("p1");
-            GUTag p2 = db.NewTag("p2");
-            GUTag c = db.NewTag("c");
+        //[TestMethod]
+        //public void ITagDB_Test_AddMultiParent()//子节点，有多个父节点
+        //{
+        //    GUTag p1 = db.NewTag("p1");
+        //    GUTag p2 = db.NewTag("p2");
+        //    GUTag c = db.NewTag("c");
 
-            db.AddTag(p1, c);
-            List<GUTag> p = db.QueryTagParent(c);
-            Assert.AreEqual(1, p.Count);
-            Assert.AreEqual(p1, p[0]);
+        //    db.AddTag(p1, c);
+        //    List<GUTag> p = db.QueryTagParent(c);
+        //    Assert.AreEqual(1, p.Count);
+        //    Assert.AreEqual(p1, p[0]);
 
 
-            db.AddTag(p2, c);
-            p = db.QueryTagParent(c);
-            Assert.AreEqual(2, p.Count);
-            Assert.AreEqual(p1, p[0]);
-            Assert.AreEqual(p2, p[1]);
-        }
+        //    db.AddTag(p2, c);
+        //    p = db.QueryTagParent(c);
+        //    Assert.AreEqual(2, p.Count);
+        //    Assert.AreEqual(p1, p[0]);
+        //    Assert.AreEqual(p2, p[1]);
+        //}
 
-        [TestMethod]
-        public void ITagDB_Test_Add100Parent()//一个节点添加100个父节点
-        {
-            int i = 0;
-            GUTag c = db.NewTag("c");
-            GUTag []ps = new GUTag[100];
-            for (i = 0; i < 100; i++)
-            {
-                ps[i] = db.NewTag("p" + i);
-                db.AddTag(ps[i], c);
-                List<GUTag> p = db.QueryTagParent(c);
-                Assert.AreEqual(i + 1, p.Count);
-                for (int j = 0; j <= i; j++)
-                {
-                    Assert.IsTrue(p.Contains(ps[j]));
+        //[TestMethod]
+        //public void ITagDB_Test_Add100Parent()//一个节点添加100个父节点
+        //{
+        //    int i = 0;
+        //    GUTag c = db.NewTag("c");
+        //    GUTag []ps = new GUTag[100];
+        //    for (i = 0; i < 100; i++)
+        //    {
+        //        ps[i] = db.NewTag("p" + i);
+        //        db.AddTag(ps[i], c);
+        //        List<GUTag> p = db.QueryTagParent(c);
+        //        Assert.AreEqual(i + 1, p.Count);
+        //        for (int j = 0; j <= i; j++)
+        //        {
+        //            Assert.IsTrue(p.Contains(ps[j]));
                     
-                }
-            }
+        //        }
+        //    }
 
 
-        }
+        //}
 
 
         [TestMethod]
@@ -210,9 +214,11 @@ namespace UTLT
             Assert.AreEqual(1, alias.Count);
             Assert.AreEqual("p1", alias[0]);
             Logger.D("end test reopen");
-            db.Dispose();
 
-            db = TagDBFactory.CreateTagDB();
+            IDisposableFactory.DisposeAll();
+            db = null;
+
+            db = TagDBFactory.CreateTagDB("sql");
             List<GUTag> p1new = db.QueryTags("p1");
             alias = db.QueryTagAlias(p1new[0]);
             Assert.AreEqual(1, alias.Count);

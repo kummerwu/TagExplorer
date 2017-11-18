@@ -13,9 +13,20 @@ namespace TagExplorer.TagMgr
         //}
         public static ITagDB CreateTagDB()
         {
-            Ins = IDisposableFactory.New<ITagDB>(JsonTagDB.Load());
+            Ins = IDisposableFactory.New<ITagDB>(SQLTagDB.Load());
             return Ins;
         }
-
+        public static ITagDB CreateTagDB(string t)
+        {
+            if (t.Contains("json"))
+            {
+                Ins = IDisposableFactory.New<ITagDB>(JsonTagDB.Load());
+            }
+            else if(t.Contains("sql"))
+            {
+                Ins = IDisposableFactory.New<ITagDB>(SQLTagDB.Load());
+            }
+            return Ins;
+        }
     }
 }

@@ -101,6 +101,15 @@ namespace TagExplorer.Utils
                 return Path.Combine(tdbDir, "Tags3.json");
             }
         }
+
+        public static string TagDBPath_SQLite
+        {
+            get
+            {
+                string tdbDir = RootSubDir("TagDBSQL");
+                return Path.Combine(tdbDir, "sqlite.db");
+            }
+        }
         public static string UriDBPath { get { return Path.Combine(RootPath, "UriDB"); } }
         public static string VDir { get { return RootSubDir("VirtualDir"); } }
         public static string DocBasePath { get { return RootSubDir("DocumentBase"); } }
