@@ -128,7 +128,7 @@ namespace TagExplorer
         private void MainCanvasSelectedTagChanged_Callback(GUTag tag)
         {
             SelectedTagChanged?.Invoke(tag);
-            SubCanvas.ChangeMainSelected(tag);
+            //SubCanvas.ChangeMainSelected(tag);
             SubCanvas.ChangeRoot(tag,tag);
         }
         private void SubCanvasSelectedTagChanged_Callback(GUTag tag)

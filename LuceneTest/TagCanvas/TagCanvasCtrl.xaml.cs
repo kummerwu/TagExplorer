@@ -71,11 +71,11 @@ namespace TagExplorer.TagCanvas
         //currentTag是当前选中的节点
         private GUTag rootTag = null;
         private GUTag currentTag = null;
-        private GUTag maincanvasSel = null;
-        public void ChangeMainSelected(GUTag mainSel)
-        {
-            maincanvasSel = mainSel;
-        }
+        
+        //public void ChangeMainSelected(GUTag mainSel)
+        //{
+        //    maincanvasSel = mainSel;
+        //}
         //当根节点或选中节点变化时，需要保存下来，以便程序重启后能恢复重启前的状态
         public void ChangeRoot(GUTag rootTag, GUTag selectTag)
         {
