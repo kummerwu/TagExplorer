@@ -8,10 +8,31 @@ namespace TagExplorer.TagMgr
     [Serializable]
     public class GUTag
     {
+        #region 构造函数和简单数据
+        //自身信息：ID，Title，别名（其中Title在实现上就是Alias[0]
         public Guid Id;
+        //父节点信息
         public Guid PId;
+
+        public GUTag() { }
+        public GUTag(string title)
+        {
+            if (title == StaticCfg.Ins.DefaultTag) Id = StaticCfg.Ins.DefaultTagID;
+            else Id = Guid.NewGuid();
+            Alias.Add(title);
+        }
+        public GUTag(string title, Guid id)
+        {
+            Id = id;
+            Alias.Add(title);
+        }
+        #endregion
+
+        #region 别名和标题
         public List<string> Alias = new List<string>();
-        public List<Guid> Children = new List<Guid>();
+        [JsonIgnore]
+        public string Title { get { return Alias.Count > 0 ? Alias[0] : ""; } }
+
         public string AliasString()
         {
             string ret = "";
@@ -21,36 +42,16 @@ namespace TagExplorer.TagMgr
             }
             return ret.Trim();
         }
-        public string ChildrenString()
-        {
-            string ret = "";
-            for (int i = 0; i < Children.Count; i++)
-            {
-                ret += Children[i] + "\n";
-            }
-            return ret.Trim();
-        }
-        [JsonIgnore]
-        public string Title { get { return Alias.Count > 0 ? Alias[0] : ""; } }
-        public GUTag() { }
-        public GUTag(string title)
-        {
-            if (title == StaticCfg.Ins.DefaultTag) Id = StaticCfg.Ins.DefaultTagID;
-            else Id = Guid.NewGuid();
-            Alias.Add(title);
-        }
-        public GUTag(string title,Guid id)
-        {
-            Id = id;
-            Alias.Add(title);
-        }
+
+        //添加一个别名
         public void AddAlias(string title)
         {
-            if(!Alias.Contains(title))
+            if (!Alias.Contains(title))
             {
                 Alias.Add(title);
             }
         }
+        //修改Title
         public void ChangeTitle(string title)
         {
             if (title == Title) return;
@@ -61,6 +62,25 @@ namespace TagExplorer.TagMgr
             }
             Alias.Insert(0, title);
         }
+        #endregion
+
+        #region 子节点列表管理
+        //子节点信息
+        public List<Guid> Children = new List<Guid>();
+        public string ChildrenString()
+        {
+            string ret = "";
+            for (int i = 0; i < Children.Count; i++)
+            {
+                ret += Children[i] + "\n";
+            }
+            return ret.Trim();
+        }
+        
+        
+        
+
+        //修改Child节点的位置（direct=-1：下移一个，1：上移一个）
         public void ChangePos(GUTag child, int direct)
         {
             int idx = Children.IndexOf(child.Id);
@@ -72,7 +92,7 @@ namespace TagExplorer.TagMgr
             }
         }
 
-        public int GetChildPos(GUTag child)
+        private int GetChildPos(GUTag child)
         {
             return Children.IndexOf(child.Id);
         }
@@ -93,42 +113,16 @@ namespace TagExplorer.TagMgr
         {
             if (Children.Contains(c.Id)) Children.Remove(c.Id);
         }
+
         public void Merge(GUTag other)
         {
             foreach (string a in other.Alias) AddAlias(a);
             foreach (Guid c in other.Children) AddChild(c);
             //foreach (string p in tag.Parents) AddParent(p);
         }
+        #endregion
 
-        //public void UpdateChild(GUTag oldChild, GUTag newChild)
-        //{
-        //    for (int i = 0; i < Children.Count; i++)
-        //    {
-        //        if (Children[i] == oldChild.Id)
-        //        {
-        //            Children[i] = newChild.Id;
-        //        }
-        //    }
-        //}
-        //public void UpdateAlias(string oldTag, string newTag)
-        //{
-        //    if (Alias.Contains(oldTag))
-        //    {
-        //        for (int i = 0; i < Alias.Count; i++)
-        //        {
-        //            if (Alias[i] == oldTag)
-        //            {
-        //                Alias[i] = newTag;
-        //            }
-        //        }
-        //    }
-        //    else
-        //    {
-        //        Alias.Add(newTag);
-        //    }
-        //}
-
-
+        #region 序列化和反序列化
         const char SplitToken = '→';
         public override string ToString()
         {
@@ -146,9 +140,20 @@ namespace TagExplorer.TagMgr
             }
             return db.GetTag(id);
         }
+        #endregion
 
+        #region 比较函数
+        public override bool Equals(object obj)
+        {
+            return this == obj as GUTag;
+        }
+        public override int GetHashCode()
+        {
+            return Id.GetHashCode();
+        }
         public static bool operator == (GUTag l,GUTag r)
         {
+            //需要强制转换，否则==会递归死循环。
             if (null == (object)l && null == (object)r) return true;
             else if (null != (object)l && null != (object)r) return l.Id == r.Id;
             else return false;
@@ -157,5 +162,6 @@ namespace TagExplorer.TagMgr
         {
             return !(l==r);
         }
+        #endregion
     }
 }
