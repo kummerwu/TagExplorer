@@ -47,16 +47,21 @@ namespace TagExplorer.TagLayout.LRTreeLayout
             }
             //找到子节点中间分割线
             int tmpTotal = 0;
+            double best = 1;
+            int bestMid = 0;
+
             for(int i = 0;i<rootChildrenCount;i++)
             {
-                if (tmpTotal >= ((total +0.5)/ 2)) return Math.Max(1,i);
-                else
+                tmpTotal += Math.Max(1, db.QueryChildrenCount(allChild[i]));
+                double radio = ((double)tmpTotal )/ total;
+                if(Math.Abs(radio-0.5) < best )//离一半最近
                 {
-                    tmpTotal +=Math.Max(1, db.QueryChildrenCount(allChild[i]));
+                    best = Math.Abs(radio - 0.5);
+                    bestMid = i + 1;
                 }
             }
             
-            return Math.Max(1,rootChildrenCount-1);
+            return Math.Max(1,bestMid);
         }
         private Size oriSize;
         public List<TagBox> tags = new List<TagBox>();

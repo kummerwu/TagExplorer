@@ -994,6 +994,29 @@ namespace TagExplorer.TagCanvas
         //    }
         //    return tag;
         //}
+        private void EnsureVisible(GUTag newTag,GUTag currentRoot)
+        {
+            int MaxLevel = GTagBoxTree.CalcMaxLevel(MyLayoutMode);
+            GUTag tmp = newTag;
+            for(int i = 0;i<MaxLevel;i++)
+            {
+                List<GUTag> tmpP = TagDB.QueryTagParent(tmp);
+                if(tmpP.Count>0)
+                {
+                    tmp = tmpP[0];
+                }
+                else //无法回溯，直接返回
+                {
+                    return;
+                }
+
+                if(tmp==currentRoot) //根节点已经可见，直接返回。
+                {
+                    return;
+                }
+            }
+            ChangeRoot(tmp, newTag);
+        }
         private void miNewTag_Click(object sender, RoutedEventArgs e)
         {
             UpdateCurrentTagByContextMenu();
@@ -1001,7 +1024,10 @@ namespace TagExplorer.TagCanvas
             //TODO 如果有多个创建子标签如何正确处理？
             GUTag newTag = TagDB.NewTag(StaticCfg.Ins.DefaultNewTag);
             TagDB.AddTag(currentTag, newTag);
-            RedrawGraph();
+            //完善：如果新建Tag不在可见范围内，更新根节点。
+
+            //RedrawGraph();
+            EnsureVisible(newTag, rootTag);
 
             //BUG20171031: 子标签如果没有在图中显示出来（比如mainCanvas中因为深度的限制，并没有将其显示出来，下面b可能为null
             TagBox b = ChangeSelectd(newTag);

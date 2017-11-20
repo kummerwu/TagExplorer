@@ -244,18 +244,29 @@ namespace TagExplorer
             System.Diagnostics.Debug.WriteLine(tagCanvas.ActualWidth + " " + tagCanvas.ActualHeight);
         }
 
-        
-
-        private void btImport_Click(object sender, RoutedEventArgs e)
+        private void Import1_0()
         {
             var fd = new System.Windows.Forms.OpenFileDialog();
             fd.Title = "导入Tag文件";
-            if(fd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            if (fd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
                 int cnt = tagDB.Import(fd.FileName);
                 tagCanvas.RedrawGraph();
-                MessageBox.Show("成功导入"+cnt+"条Tag关系","Tag关系导入",MessageBoxButton.OK);
+                MessageBox.Show("成功导入" + cnt + "条Tag关系", "Tag关系导入", MessageBoxButton.OK);
             }
+        }
+        private void Import1_1()
+        {
+            tagDB.Import(CfgPath.TagDBPath_Json);
+        }
+        private void btImport_Click(object sender, RoutedEventArgs e)
+        {
+            switch(StaticCfg.CURRENT_VERSION)
+            {
+                case "1.0":Import1_0();break;
+                case "1.1":Import1_1();break;
+            }
+            
         }
 
         private void test_Click(object sender, RoutedEventArgs e)

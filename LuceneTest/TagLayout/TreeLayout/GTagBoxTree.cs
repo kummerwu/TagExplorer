@@ -46,7 +46,7 @@ namespace TagExplorer.TagLayout.TreeLayout
         }
         public static GTagBoxTree ExpandNode(GUTag tag, int level, ITagDB db, double x, double y,int direct,Size size,TreeLayoutEnv env)
         {
-            
+
 
             Logger.IN(tag.Title);
             Logger.D("Expand " + tag + " " + x + " " + y);
@@ -61,24 +61,19 @@ namespace TagExplorer.TagLayout.TreeLayout
 
             //创建子树的根对象
             GTagBoxTree root = new GTagBoxTree();
-            root.GTagBox = new GTagBox(level, tag,x,y,direct);
+            root.GTagBox = new GTagBox(level, tag, x, y, direct);
             root.totalRange = root.GTagBox.OutterBox;
             root.D("计算自身大小（不包括子节点）" + root.GTagBox.Tag);
             env.Add(tag, root);//这个特别需要注意，在递归展开之前，先要将该节点加入DB，否则可能会出现无限递归
 
             List<GUTag> children = db.QueryTagChildren(tag);
             List<Size> childrenSize = new List<Size>();
-            
+
             GTagBoxTree pre = null;
             GTagBoxTree cur = null;
-            double childX = x + direct*root.GTagBox.OutterBox.Width;
+            double childX = x + direct * root.GTagBox.OutterBox.Width;
             double childY = y;
-
-            int MaxLevel = StaticCfg.Ins.TREE_LAYOUT_MAX_LEVEL;
-            if (GLayoutMode.mode == LayoutMode.LRTREE_COMPACT || GLayoutMode.mode == LayoutMode.LRTREE_COMPACT_MORE || GLayoutMode.mode == LayoutMode.LRTREE_NO_COMPACT)
-            {
-                MaxLevel = StaticCfg.Ins.LR_TREE_LAYOUT_MAX_LEVEL;
-            }
+            int MaxLevel = CalcMaxLevel(GLayoutMode.mode);
             //double h = 0;
             //double w = 0;
             if (level < MaxLevel)
@@ -96,15 +91,15 @@ namespace TagExplorer.TagLayout.TreeLayout
                     {
                         case LayoutMode.TREE_COMPACT_MORE:
                         case LayoutMode.LRTREE_COMPACT_MORE:
-                            cur = ExpandChildMoreCompact(level,MaxLevel, db, root, pre, ctag,direct,size,env);
+                            cur = ExpandChildMoreCompact(level, MaxLevel, db, root, pre, ctag, direct, size, env);
                             break;
                         case LayoutMode.TREE_COMPACT:
                         case LayoutMode.LRTREE_COMPACT:
-                            cur = ExpandChildCompact(level, MaxLevel, db, root, pre, ctag,direct,size,env);
+                            cur = ExpandChildCompact(level, MaxLevel, db, root, pre, ctag, direct, size, env);
                             break;
                         case LayoutMode.TREE_NO_COMPACT:
                         case LayoutMode.LRTREE_NO_COMPACT:
-                            cur = ExpandChildNoCompact(level, MaxLevel, db, root, pre, ctag,direct,size,env);
+                            cur = ExpandChildNoCompact(level, MaxLevel, db, root, pre, ctag, direct, size, env);
                             break;
                         default:
                             break;
@@ -132,6 +127,18 @@ namespace TagExplorer.TagLayout.TreeLayout
             Logger.OUT();
             return root;
         }
+
+        public static int CalcMaxLevel(LayoutMode mode)
+        {
+            int MaxLevel = StaticCfg.Ins.TREE_LAYOUT_MAX_LEVEL;
+            if (mode == LayoutMode.LRTREE_COMPACT || mode == LayoutMode.LRTREE_COMPACT_MORE || mode == LayoutMode.LRTREE_NO_COMPACT)
+            {
+                MaxLevel = StaticCfg.Ins.LR_TREE_LAYOUT_MAX_LEVEL;
+            }
+
+            return MaxLevel;
+        }
+
         private static int GetTagTreeWidth(GUTag tag,ITagDB db,int level,int maxlevel)
         {
             int ret = 1;

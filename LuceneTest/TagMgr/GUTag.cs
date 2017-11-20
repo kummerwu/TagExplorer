@@ -149,8 +149,8 @@ namespace TagExplorer.TagMgr
 
         public static bool operator == (GUTag l,GUTag r)
         {
-            if (l is null && r is null) return true;
-            else if (!(l is  null) && !(r is null)) return l.Id == r.Id;
+            if (null == (object)l && null == (object)r) return true;
+            else if (null != (object)l && null != (object)r) return l.Id == r.Id;
             else return false;
         }
         public static bool operator != (GUTag l,GUTag r)

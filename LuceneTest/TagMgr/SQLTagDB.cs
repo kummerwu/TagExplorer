@@ -263,6 +263,7 @@ VALUES (@ID,@Title,@Alias,@PID,@Children)",Conn);
         public static SQLTagDB Load()
         {
             return IDisposableFactory.New<SQLTagDB>(new SQLTagDB());
+            //数据库连接惰性打开
         }
         private void AssertValid(GUTag tag)
         {
@@ -552,12 +553,14 @@ VALUES (@ID,@Title,@Alias,@PID,@Children)",Conn);
             title2GUtag.Add(StaticCfg.Ins.DefaultTag, dtag);
             AddUptSqlDB(dtag);
             string[] lns = File.ReadAllLines(importInf);
+            List<GUTag> oldGUTags = new List<GUTag>();
             foreach (string ln in lns)
             {
                 GUTag j = JsonConvert.DeserializeObject<GUTag>(ln);
                 AddToHash(j);
+                oldGUTags.Add(j);
             }
-            foreach(GUTag t in id2Gutag.Values)
+            foreach(GUTag t in oldGUTags)
             {
                 foreach(Guid cid in t.Children)
                 {
