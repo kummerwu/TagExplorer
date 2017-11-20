@@ -109,7 +109,6 @@ namespace TagExplorer
         {
             InitializeComponent();
             fileWather = new FileWatcherSafe(FileChanged_BackThread);
-
             MainCanvas.SelectedTagChanged += MainCanvasSelectedTagChanged_Callback;
             SubCanvas.SelectedTagChanged += SubCanvasSelectedTagChanged_Callback;
 

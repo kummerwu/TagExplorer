@@ -30,6 +30,8 @@ namespace TagExplorer.TagCanvas
         private IUriDB UriDB = null;
 
         private LayoutCanvas MyCanvasType;
+
+        //根据配置，决定是否显示根节点路径
         public bool NeedShowConnect()
         {
             
@@ -48,7 +50,7 @@ namespace TagExplorer.TagCanvas
                 //connectCanvas.Visibility = Visibility.Collapsed;
                 connect.Height = new GridLength(0);
             }
-            
+            //更新上下文菜单的Check选项（选中哪个模式，就在该模式上打一个勾）
             UpdateMenuItemCheckStatus();
         }
 
@@ -56,8 +58,8 @@ namespace TagExplorer.TagCanvas
         public TagCanvasCtrl()
         {
             InitializeComponent();
-            TagSwitchDB.Ins.SwitchChanged += SwitchChangedCallback;
-            FloatTextBox.Ins.TextChangedCallback += TagEdit_TitleChanged;
+            TagSwitchDB.Ins.SwitchChanged += SwitchChangedCallback;//该功能目前已经没有再使用了。
+            FloatTextBox.Ins.TextChangedCallback += TagEdit_TitleChanged;   //修改tag title完成后的回调。
 
         }
         #endregion
