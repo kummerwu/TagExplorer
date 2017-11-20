@@ -44,7 +44,7 @@ namespace TagExplorer.TagLayout.TreeLayout
         {
             GTagBox.CenterRootY(totalRange);
         }
-        public static GTagBoxTree ExpandNode(GUTag tag, int level, ITagDB db, double x, double y,int direct,Size size,TreeLayoutEnv env)
+        public static GTagBoxTree ExpandNode(GUTag tag, int level, ITagDB db, double x, double y,int direct,Size size,TreeLayoutEnv env,LayoutMode mode)
         {
 
 
@@ -73,7 +73,7 @@ namespace TagExplorer.TagLayout.TreeLayout
             GTagBoxTree cur = null;
             double childX = x + direct * root.GTagBox.OutterBox.Width;
             double childY = y;
-            int MaxLevel = CalcMaxLevel(GLayoutMode.mode);
+            int MaxLevel = CalcMaxLevel(mode);
             //double h = 0;
             //double w = 0;
             if (level < MaxLevel)
@@ -87,19 +87,19 @@ namespace TagExplorer.TagLayout.TreeLayout
                     //GTreeObj child = ExpandNode(ctag, level + 1, db, x + root.box.InnerBox.Width, y + h);
                     //h += child.OutBox.Height;
                     //w = Math.Max(w, child.OutBox.Width);
-                    switch (GLayoutMode.mode)
+                    switch (mode)
                     {
                         case LayoutMode.TREE_COMPACT_MORE:
                         case LayoutMode.LRTREE_COMPACT_MORE:
-                            cur = ExpandChildMoreCompact(level, MaxLevel, db, root, pre, ctag, direct, size, env);
+                            cur = ExpandChildMoreCompact(level, MaxLevel, db, root, pre, ctag, direct, size, env,mode);
                             break;
                         case LayoutMode.TREE_COMPACT:
                         case LayoutMode.LRTREE_COMPACT:
-                            cur = ExpandChildCompact(level, MaxLevel, db, root, pre, ctag, direct, size, env);
+                            cur = ExpandChildCompact(level, MaxLevel, db, root, pre, ctag, direct, size, env,mode);
                             break;
                         case LayoutMode.TREE_NO_COMPACT:
                         case LayoutMode.LRTREE_NO_COMPACT:
-                            cur = ExpandChildNoCompact(level, MaxLevel, db, root, pre, ctag, direct, size, env);
+                            cur = ExpandChildNoCompact(level, MaxLevel, db, root, pre, ctag, direct, size, env,mode);
                             break;
                         default:
                             break;
@@ -199,7 +199,7 @@ namespace TagExplorer.TagLayout.TreeLayout
             Logger.D("GetTagTreeWidth : {0} {1}", tag.ToString(), ret);
             return ret;
         }
-        private static GTagBoxTree ExpandChildMoreCompact(int level, int MaxLevel,ITagDB db, GTagBoxTree root, GTagBoxTree pre, GUTag ctag,int direct,Size size,TreeLayoutEnv env)
+        private static GTagBoxTree ExpandChildMoreCompact(int level, int MaxLevel,ITagDB db, GTagBoxTree root, GTagBoxTree pre, GUTag ctag,int direct,Size size,TreeLayoutEnv env,LayoutMode mode)
         {
             GTagBoxTree cur;
             Logger.D("ChoosePos:pre:{0}-{1}-{2} cur:{0}-{1},",
@@ -227,7 +227,7 @@ namespace TagExplorer.TagLayout.TreeLayout
                 cur = ExpandNode(ctag, level + 1, db, 
                                 direct==1?pre.totalRange.Right:pre.totalRange.Left,  //X
                                 pre.totalRange.Top,                                  //Y
-                                direct,size,env);
+                                direct,size,env,mode);
 
             }
             //第一个节点，没有兄弟节点，放在父节点后面   ==== > 放在父节点的同一行
@@ -242,7 +242,7 @@ namespace TagExplorer.TagLayout.TreeLayout
                     cur = ExpandNode(ctag, level + 1, db,
                                     direct == 1 ? root.GTagBox.OutterBox.Right : root.GTagBox.OutterBox.Left,   //X
                                     root.totalRange.Top,                                                        //Y
-                                    direct,size,env);
+                                    direct,size,env,mode);
                 }
                 else
                 {
@@ -251,14 +251,14 @@ namespace TagExplorer.TagLayout.TreeLayout
                     cur = ExpandNode(ctag, level + 1, db,
                                     direct == 1 ? root.GTagBox.OutterBox.Right : root.GTagBox.OutterBox.Left,   //X
                                     root.totalRange.Bottom,                                                     //Y
-                                    direct,size,env);
+                                    direct,size,env,mode);
                 }
                 env.AddLine(root, cur,direct);
             }
 
             return cur;
         }
-        private static GTagBoxTree ExpandChildCompact(int rootLevel, int MaxLevel,ITagDB db, GTagBoxTree root, GTagBoxTree pre, GUTag ctag,int direct,Size size,TreeLayoutEnv env)
+        private static GTagBoxTree ExpandChildCompact(int rootLevel, int MaxLevel,ITagDB db, GTagBoxTree root, GTagBoxTree pre, GUTag ctag,int direct,Size size,TreeLayoutEnv env,LayoutMode mode)
         {
             GTagBoxTree cur;
             Logger.D("ChoosePos:pre:{0}-{1}-{2} cur:{0}-{1},",
@@ -283,7 +283,7 @@ namespace TagExplorer.TagLayout.TreeLayout
                 cur = ExpandNode(ctag, rootLevel + 1, db,
                                 direct == 1 ? pre.totalRange.Right : pre.totalRange.Left,   //X
                                 pre.totalRange.Top,                                         //Y
-                                direct,size,env);
+                                direct,size,env,mode);
 
             }
 
@@ -297,14 +297,14 @@ namespace TagExplorer.TagLayout.TreeLayout
                     Logger.D("Place {0} after {1}:follow", ctag, root.GTagBox.Tag);
                     cur = ExpandNode(ctag, rootLevel + 1, db,
                         direct == 1 ? root.GTagBox.OutterBox.Right : root.GTagBox.OutterBox.Left,
-                        root.totalRange.Top,direct,size,env);
+                        root.totalRange.Top,direct,size,env,mode);
                 }
                 else
                 {
                     Logger.D("Place {0} after {1}:newline", ctag, root.GTagBox.Tag);
                     cur = ExpandNode(ctag, rootLevel + 1, db,
                         direct == 1 ? root.GTagBox.OutterBox.Right : root.GTagBox.OutterBox.Left,
-                        root.totalRange.Bottom,direct,size,env);
+                        root.totalRange.Bottom,direct,size,env,mode);
                 }
                 env.AddLine(root, cur,direct);
             }
@@ -312,7 +312,7 @@ namespace TagExplorer.TagLayout.TreeLayout
             return cur;
         }
 
-        private static GTagBoxTree ExpandChildNoCompact(int level, int MaxLevel,ITagDB db, GTagBoxTree root, GTagBoxTree pre, GUTag ctag,int direct,Size size,TreeLayoutEnv env)
+        private static GTagBoxTree ExpandChildNoCompact(int level, int MaxLevel,ITagDB db, GTagBoxTree root, GTagBoxTree pre, GUTag ctag,int direct,Size size,TreeLayoutEnv env,LayoutMode mode)
         {
             GTagBoxTree cur;
             Logger.D("ChoosePos:pre:{0}-{1}-{2} cur:{0}-{1},",
@@ -326,14 +326,14 @@ namespace TagExplorer.TagLayout.TreeLayout
                 Logger.D("Place {0} after {1}:follow", ctag, root.GTagBox.Tag);
                 cur = ExpandNode(ctag, level + 1, db,
                     direct == 1 ? root.GTagBox.OutterBox.Right : root.GTagBox.OutterBox.Left, 
-                    root.totalRange.Top,direct,size,env);
+                    root.totalRange.Top,direct,size,env,mode);
             }
             else
             {
                 Logger.D("Place {0} after {1}:newline", ctag, root.GTagBox.Tag);
                 cur = ExpandNode(ctag, level + 1, db,
                     direct == 1 ? root.GTagBox.OutterBox.Right : root.GTagBox.OutterBox.Left,
-                    root.totalRange.Bottom,direct,size,env);
+                    root.totalRange.Bottom,direct,size,env,mode);
             }
 
             env.AddLine(root, cur,direct);

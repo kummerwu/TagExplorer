@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
+using TagExplorer.TagLayout.CommonLayout;
 using TagExplorer.TagLayout.LayoutCommon;
 using TagExplorer.TagLayout.TreeLayout;
 using TagExplorer.TagMgr;
@@ -9,33 +10,43 @@ using TagExplorer.Utils;
 
 namespace TagExplorer.TagLayout.LRTreeLayout
 {
-    class LRTreeLayoutImpl : ITagLayout
+    class LRTreeLayoutImpl : TagLayoutBase
     {
-        private Rect outterbox;
-        
-        public Size Size
+        public LRTreeLayoutImpl(LayoutMode mode) : base(mode)
         {
-            get { return outterbox.Size; }
-        }
-        
-        public Point RootPos
-        {
-            get
-            {
-                return new Point(outterbox.Left, (outterbox.Top + outterbox.Height / 2));
-            }
         }
 
-        public IEnumerable<UIElement> Lines
-        {
-            get { return lines; }
-        }
+        /*
+private Rect outterbox;
 
-        public IEnumerable<UIElement> TagArea
-        {
-            get { return tags; }
-        }
-        private ITagDB tagDB = null;
+public Size Size
+{
+   get { return outterbox.Size; }
+}
+
+public Point RootPos
+{
+   get
+   {
+       return new Point(outterbox.Left, (outterbox.Top + outterbox.Height / 2));
+   }
+}
+
+public IEnumerable<UIElement> Lines
+{
+   get { return lines; }
+}
+
+public IEnumerable<UIElement> TagArea
+{
+   get { return tags; }
+}
+private ITagDB tagDB = null;
+private Size oriSize;
+public List<TagBox> tags = new List<TagBox>();
+public IEnumerable<UIElement> lines = null;
+*/
+
         private int CalcMid(List<GUTag> allChild,ITagDB db)
         {
             int rootChildrenCount = allChild.Count;
@@ -63,24 +74,22 @@ namespace TagExplorer.TagLayout.LRTreeLayout
             
             return Math.Max(1,bestMid);
         }
-        private Size oriSize;
-        public List<TagBox> tags = new List<TagBox>();
-        public IEnumerable<UIElement> lines = null;
-        public void Layout(ITagDB db, GUTag rootTag,Size size,TreeLayoutEnv env)
+        
+        public override void Layout(ITagDB db, GUTag rootTag,Size size,TreeLayoutEnv env)
         {
             //初始化准备工作
             GTagBoxTree subTree = null;
             double y = 0;
             oriSize = size;
-            tagDB = db;
+            this.db = db;
             env.Reset();
-            tags.Clear();
+            tags = new List<TagBox>();
             
             
 
             //计算出Root节点的位置信息
             double rootTagBoxX = size.Width / 2;
-            GTagBoxTree root = new GTagBoxTree();
+            root = new GTagBoxTree();
             root.GTagBox = new GTagBox(0, rootTag, rootTagBoxX, 0, 1);
             root.Move(-1 * root.GTagBox.InnerBox.Width / 2, 0);
             env.Add(rootTag, root);
@@ -89,7 +98,7 @@ namespace TagExplorer.TagLayout.LRTreeLayout
             double l, r;
             l = root.GTagBox.InnerBoxLeftTop.X - StaticCfg.Ins.LayoutXPadding*5;
             r = root.GTagBox.InnerBoxLeftTop.X + root.GTagBox.InnerBox.Width + StaticCfg.Ins.LayoutXPadding*5;
-            outterbox = Rect.Empty;
+            Rect outterbox = Rect.Empty;
 
             List<GUTag> allChild = db.QueryTagChildren(rootTag);
             allChild.Remove(rootTag);
@@ -109,7 +118,7 @@ namespace TagExplorer.TagLayout.LRTreeLayout
                     direct = -1;
                 }
                 //展开第idx个子节点
-                subTree = GTagBoxTree.ExpandNode(c, 1, db, direct==1?r:l, y, direct,size,env);
+                subTree = GTagBoxTree.ExpandNode(c, 1, db, direct==1?r:l, y, direct,size,env,myLayoutMode);
                 children[idx] = subTree;
 
                 //更新整个显示区的大小。(outterBox)

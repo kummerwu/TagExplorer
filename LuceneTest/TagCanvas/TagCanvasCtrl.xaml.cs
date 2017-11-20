@@ -25,19 +25,79 @@ namespace TagExplorer.TagCanvas
     /// </summary>
     public partial class TagCanvasCtrl : UserControl
     {
+        #region 顶层视图与底层视图处理差异的地方（主要是两个视图的配置存储在不同的字段中，这一块写的比较丑，后面有空再优化）
+        private LayoutCanvas MyCanvasType;
+        //根据配置，决定是否显示根节点路径
+        public bool NeedShowRootPath()
+        {
+
+            return (MyCanvasType == LayoutCanvas.MAIN_CANVAS && StaticCfg.Ins.Opt.ShowMainCanvasRootPath) ||
+               (MyCanvasType == LayoutCanvas.SUB_CANVAS && StaticCfg.Ins.Opt.ShowSubCanvasRootPath);
+        }
+        private void SaveRootTag(GUTag rootTag)
+        {
+            if (MyCanvasType == LayoutCanvas.MAIN_CANVAS)
+            {
+                DynamicCfg.Ins.MainCanvasRoot = (rootTag.ToString());
+            }
+            else
+            {
+                DynamicCfg.Ins.SubCanvasRoot = (rootTag.ToString());
+            }
+        }
+        private GUTag LoadRootTag()
+        {
+            GUTag rootTag;
+            if (MyCanvasType == LayoutCanvas.MAIN_CANVAS)
+            {
+                rootTag = TagDB.GetTag(Guid.Parse(DynamicCfg.Ins.MainCanvasRoot));
+
+            }
+            else
+            {
+                rootTag = TagDB.GetTag(Guid.Parse(DynamicCfg.Ins.SubCanvasRoot));
+            }
+
+            return rootTag;
+        }
+        //显示的模式
+        private LayoutMode MyLayoutMode
+        {
+            get
+            {
+                switch (MyCanvasType)
+                {
+                    case LayoutCanvas.MAIN_CANVAS:
+                        return DynamicCfg.Ins.MainCanvasLayoutMode;
+                    case LayoutCanvas.SUB_CANVAS:
+                        return DynamicCfg.Ins.SubCanvasLayoutMode;
+                    default:
+                        return LayoutMode.TREE_NO_COMPACT;
+                }
+            }
+        }
+        private void SaveLayoutMode(LayoutMode m)
+        {
+            switch (MyCanvasType)
+            {
+                case LayoutCanvas.MAIN_CANVAS:
+                    DynamicCfg.Ins.MainCanvasLayoutMode = (m);
+                    break;
+                case LayoutCanvas.SUB_CANVAS:
+                    DynamicCfg.Ins.SubCanvasLayoutMode = (m);
+                    break;
+                default:
+                    break;
+            }
+        }
+        #endregion
+
+
         #region 私有成员与初始化相关
         private ITagDB TagDB = null;
         private IUriDB UriDB = null;
 
-        private LayoutCanvas MyCanvasType;
-
-        //根据配置，决定是否显示根节点路径
-        public bool NeedShowConnect()
-        {
-            
-            return (MyCanvasType == LayoutCanvas.MAIN_CANVAS && StaticCfg.Ins.Opt.ShowMainCanvasRootPath) ||
-               (MyCanvasType == LayoutCanvas.SUB_CANVAS && StaticCfg.Ins.Opt.ShowSubCanvasRootPath);
-        }
+        
         //初始化TagDB，该函数必须在空间初始化时就指定
         public void Initial(ITagDB db, IUriDB uridb, LayoutCanvas canvasType)
         {
@@ -45,7 +105,7 @@ namespace TagExplorer.TagCanvas
             TagDB = db;
             UriDB = uridb;
             MyCanvasType = canvasType;
-            if(!NeedShowConnect())
+            if(!NeedShowRootPath())
             {
                 //connectCanvas.Visibility = Visibility.Collapsed;
                 connect.Height = new GridLength(0);
@@ -69,73 +129,54 @@ namespace TagExplorer.TagCanvas
         //currentTag和root的区别： 
         //root是当前有向图显示的中心节点，
         //currentTag是当前选中的节点
-        private GUTag rootTag = null;
-        private GUTag currentTag = null;
+        private GUTag RootTag = null;
+        private GUTag SelectedTag = null;
         
-        //public void ChangeMainSelected(GUTag mainSel)
-        //{
-        //    maincanvasSel = mainSel;
-        //}
         //当根节点或选中节点变化时，需要保存下来，以便程序重启后能恢复重启前的状态
-        public void ChangeRoot(GUTag rootTag, GUTag selectTag)
+        public void ChangeRoot(GUTag aRoot, GUTag aSelect)
         {
-            if (rootTag != null)
+            if (aRoot != null)
             {
-                if (MyCanvasType == LayoutCanvas.MAIN_CANVAS)
-                {
-                    DynamicCfg.Ins.MainCanvasRoot = (rootTag.ToString());
-                }
-                else
-                {
-                    DynamicCfg.Ins.SubCanvasRoot = (rootTag.ToString());
-                }
+                SaveRootTag(aRoot);
             }
             else
             {
-                if (MyCanvasType == LayoutCanvas.MAIN_CANVAS)
-                {
-                    rootTag = TagDB.GetTag(Guid.Parse(DynamicCfg.Ins.MainCanvasRoot));
-
-                }
-                else
-                {
-                    rootTag = TagDB.GetTag(Guid.Parse(DynamicCfg.Ins.SubCanvasRoot));
-                }
+                aRoot = LoadRootTag();
             }
-            this.rootTag = rootTag;
-            SetCurrentTag(selectTag == null ? rootTag : selectTag);
+            RootTag = aRoot;
+            SetCurrentTag(aSelect == null ? aRoot : aSelect);
             RedrawGraph();
-            ShowConnect();
+            ShowRootPath();
         }
 
-        private void ShowConnect()
-        {
-            if (!NeedShowConnect()) return;
-            List<GUTag> connect = new List<GUTag>();
-            GUTag from = rootTag;
-            //GUTag to = maincanvasSel;
-            GUTag tmp = from;
-            double X = 0;
-            connectCanvas.Children.Clear();
-            if (from == null ) return;
+        
 
+
+        private void ShowRootPath()
+        {
+            //如果配置不需要显示，则直接返回
+            if (!NeedShowRootPath()) return;
+            if (RootTag == null) return;
+
+            connectCanvas.Children.Clear();
+
+            //需要显示从全局根到当前视图根节点之间的路径
+            //查找出所有从当前视图根节点到全局根节点之间的中间节点
+            List<GUTag> connect = new List<GUTag>();
+            GUTag from = RootTag;
+            GUTag tmp = from;
             connect.Add(from);
             while(connect.Count<20 && tmp!=null)
             {
                 List<GUTag> ps = TagDB.QueryTagParent(tmp);
-                if (ps.Count > 0)
-                {
-                    tmp = ps[0];
-                    connect.Add(tmp);
-                    
-                }
-                else
-                {
-                    tmp = null;
-                }
+                if (ps.Count > 0) connect.Add(ps[0]);
+                else break; 
             }
             connect.Reverse();
-            foreach(GUTag u in connect)
+
+            //显示所有中间节点
+            double X = 0;
+            foreach (GUTag u in connect)
             {
                 GTagBox gt = new GTagBox(5, u, X, 0, 1);
                 TagBox tx = UIElementFactory.CreateTagBox(gt, null);
@@ -162,7 +203,7 @@ namespace TagExplorer.TagCanvas
         private TreeLayoutEnv env = new TreeLayoutEnv();
 
 
-        //显示的大小
+        //显示的tag视图大小
         private Size oriSize
         {
             get
@@ -172,6 +213,7 @@ namespace TagExplorer.TagCanvas
                 return s2;
             }
         }
+        //大小变化后需要重绘视图
         private void UserControl_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             RedrawGraph();
@@ -186,35 +228,20 @@ namespace TagExplorer.TagCanvas
             canvas.Height = ch;
         }
 
-        //显示的模式
-        private LayoutMode MyLayoutMode
-        {
-            get
-            {
-                switch(MyCanvasType)
-                {
-                    case LayoutCanvas.MAIN_CANVAS:
-                        return DynamicCfg.Ins.MainCanvasLayoutMode;
-                    case LayoutCanvas.SUB_CANVAS:
-                        return DynamicCfg.Ins.SubCanvasLayoutMode;
-                    default:
-                        return LayoutMode.TREE_NO_COMPACT;
-                }
-            }
-        }
         
+        
+        //public void RedrawGraph()
+        //{
+        //    //LayoutMode bak = GLayoutMode.mode;
+        //    //GLayoutMode.mode = MyLayoutMode;
+        //    RedrawGraph_();
+        //    //GLayoutMode.mode = bak;
+        //}
         public void RedrawGraph()
         {
-            LayoutMode bak = GLayoutMode.mode;
-            GLayoutMode.mode = MyLayoutMode;
-            RedrawGraph_();
-            GLayoutMode.mode = bak;
-        }
-        private void RedrawGraph_()
-        {
-            if (TagDB != null && rootTag != null && oriSize.Height != 0 && oriSize.Width != 0 && !oriSize.IsEmpty)
+            if (TagDB != null && RootTag != null && oriSize.Height != 0 && oriSize.Width != 0 && !oriSize.IsEmpty)
             {
-                Logger.I("ShowGraph at " + rootTag);
+                Logger.I("ShowGraph at " + RootTag);
 
                 if (allTagBox != null)
                 {
@@ -227,8 +254,8 @@ namespace TagExplorer.TagCanvas
                 //canvasRecentTags.Children.Clear();
 
                 //计算有向图布局
-                ITagLayout tagLayout = TagLayoutFactory.CreateLayout();
-                tagLayout.Layout(TagDB, rootTag, oriSize, env);
+                ITagLayout tagLayout = TagLayoutFactory.CreateLayout(MyLayoutMode);
+                tagLayout.Layout(TagDB, RootTag, oriSize, env);
 
                 //将有向图中的元素显示在界面上
                 IEnumerable<UIElement> lines = tagLayout.Lines;
@@ -293,7 +320,7 @@ namespace TagExplorer.TagCanvas
             foreach (UIElement b in allTagBox)//Bug:不能使用Children，Children中有些事不可见的（为了性能优化，没有将所有无用的TagBox从Canvas.Children中删除
             {
                 TagBox tmp = b as TagBox;
-                if (tmp != null && tmp.GUTag == currentTag)
+                if (tmp != null && tmp.GUTag == SelectedTag)
                 {
                     curB = tmp;
                     break;
@@ -395,7 +422,7 @@ namespace TagExplorer.TagCanvas
                 SetCurrentTag(result,true);
             }
             //如果当前节点时根节点，则向上退一级
-            else if ((direction == Key.Left || direction == Key.Up) && currentTag == rootTag)
+            else if ((direction == Key.Left || direction == Key.Up) && SelectedTag == RootTag)
             {
                 UpTag();
             }
@@ -404,10 +431,10 @@ namespace TagExplorer.TagCanvas
 
         public void UpTag()
         {
-            List<GUTag> parents = TagDB.QueryTagParent(rootTag);
+            List<GUTag> parents = TagDB.QueryTagParent(RootTag);
             if (parents.Count > 0)
             {
-                ChangeRoot(parents[0], rootTag);
+                ChangeRoot(parents[0], RootTag);
                 SetCurrentTag(parents[0],true);
             }
         }
@@ -561,7 +588,7 @@ namespace TagExplorer.TagCanvas
         private void miOpenTagDir_Click(object sender, RoutedEventArgs e)
         {
             UpdateCurrentTagByContextMenu();
-            FileShell.OpenExplorerByTag(currentTag.Title);
+            FileShell.OpenExplorerByTag(SelectedTag.Title);
 
         }
         public void ClearSelected()
@@ -573,7 +600,7 @@ namespace TagExplorer.TagCanvas
 
                 if (tb != null)
                 {
-                    tb.Stat = (tb.GUTag == currentTag)? TagBox.Status.SelectedLostFocus : TagBox.Status.None;
+                    tb.Stat = (tb.GUTag == SelectedTag)? TagBox.Status.SelectedLostFocus : TagBox.Status.None;
                 }
             }
         }
@@ -600,7 +627,7 @@ namespace TagExplorer.TagCanvas
         public CurrentTagChanged SelectedTagChanged = null;
         private void SetCurrentTag()
         {
-            SetCurrentTag(currentTag);
+            SetCurrentTag(SelectedTag);
         }
         private void SetCurrentTag(GUTag tag,bool forceNotify = false)
         {
@@ -609,9 +636,9 @@ namespace TagExplorer.TagCanvas
                                                                //bug现象：在curtag没有变化的时候，重新绘制整个graph，
                                                                //会出现所有的tag都不显示边框（包括curtag），因为直接返回了。
 
-            if (currentTag == tag && !forceNotify) return;  //原来在tag没有变化时不通知变更，导致有些问题，后面将该语句取消了。
-            GUTag oldTag = currentTag;
-            currentTag = tag;
+            if (SelectedTag == tag && !forceNotify) return;  //原来在tag没有变化时不通知变更，导致有些问题，后面将该语句取消了。
+            GUTag oldTag = SelectedTag;
+            SelectedTag = tag;
 
 
             ShowCurrentTagInf();
@@ -642,7 +669,7 @@ namespace TagExplorer.TagCanvas
         }
         private void ShowCurrentTagInf()
         {
-            TipsCenter.Ins.TagInf = GetTagInf(currentTag, TagDB);
+            TipsCenter.Ins.TagInf = GetTagInf(SelectedTag, TagDB);
             //TipsCenter.Ins.Tips = GetTagInf(currentTag,tagDB);
             //CurrentTagInf.Text = GetTagInf(currentTag, tagDB);
         }
@@ -666,7 +693,7 @@ namespace TagExplorer.TagCanvas
                             GUTag argTag = TagDB.GetTag(Guid.Parse(arg));
                             if (argTag != null)
                             {
-                                TagDB.AddTag(currentTag, argTag);
+                                TagDB.AddTag(SelectedTag, argTag);
                                 RedrawGraph();
                             }
                         }
@@ -676,7 +703,7 @@ namespace TagExplorer.TagCanvas
                             GUTag argTag = TagDB.GetTag(Guid.Parse(arg));
                             if (argTag != null)
                             {
-                                TagDB.ResetParent(currentTag, argTag);
+                                TagDB.ResetParent(SelectedTag, argTag);
                                 RedrawGraph();
                             }
                         }
@@ -685,7 +712,7 @@ namespace TagExplorer.TagCanvas
                         MoveUris(args);
                         break;
                     case ClipboardConst.KUMMERWU_URI_COPY:
-                        UriDB.AddUris(args, new List<string>() { currentTag.Title });
+                        UriDB.AddUris(args, new List<string>() { SelectedTag.Title });
                         //foreach (string uri in args)
                         //{
                         //    UriDB.AddUri(uri, new List<string>() { currentTag });
@@ -707,14 +734,14 @@ namespace TagExplorer.TagCanvas
         private void MoveUris(string[] args)
         {
             string[] src = args;
-            string[] dst = PathHelper.MapFilesToTagDir(src, currentTag.Title);
+            string[] dst = PathHelper.MapFilesToTagDir(src, SelectedTag.Title);
             FileShell.SHMoveFiles(src, dst);
             UriDB.DelUris(src, false);  //TODO bug2:对于http链接，删除后，标题就没有了。
             //foreach (string uri in src)
             //{
             //    UriDB.DelUri(uri, false); 
             //}
-            UriDB.AddUris(dst, new List<string>() { currentTag.Title });
+            UriDB.AddUris(dst, new List<string>() { SelectedTag.Title });
             //foreach(string uri in dst)
             //{
             //    UriDB.AddUri(uri, new List<string>() { currentTag });
@@ -751,13 +778,13 @@ namespace TagExplorer.TagCanvas
         private void AddUri(List<string> files) { AddUri(files, true); }
         private void AddUri(List<string> files, bool NeedCopy)
         {
-            if (UriDB == null || currentTag == null ||currentTag.Title==null || currentTag.Title.Length == 0) return;
+            if (UriDB == null || SelectedTag == null ||SelectedTag.Title==null || SelectedTag.Title.Length == 0) return;
 
-            List<string> tags = new List<string>() { currentTag.Title };
+            List<string> tags = new List<string>() { SelectedTag.Title };
             IEnumerable<string> dst = null;
             if (NeedCopy)
             {
-                dst = CopyToHouse(files.ToArray(), currentTag.Title);
+                dst = CopyToHouse(files.ToArray(), SelectedTag.Title);
             }
             else
             {
@@ -778,7 +805,7 @@ namespace TagExplorer.TagCanvas
                     if (StaticCfg.Ins.Opt.AutoDownloadUrl)
                     {
                         //WebHelper.Download(uri, currentTag.Title, title);
-                        BackTask.Ins.Add(new DownloadTaskInf(uri, currentTag.Title, title));
+                        BackTask.Ins.Add(new DownloadTaskInf(uri, SelectedTag.Title, title));
                     }
                 }
             }
@@ -850,14 +877,14 @@ namespace TagExplorer.TagCanvas
         private void miCopyTagName_Click(object sender, RoutedEventArgs e)
         {
             UpdateCurrentTagByContextMenu();
-            ClipBoardSafe.SetText(currentTag.Title);
+            ClipBoardSafe.SetText(SelectedTag.Title);
 
         }
 
         private void miCopyTagFullPath_Click(object sender, RoutedEventArgs e)
         {
             UpdateCurrentTagByContextMenu();
-            ClipBoardSafe.SetText(CfgPath.GetDirByTag(currentTag.Title));
+            ClipBoardSafe.SetText(CfgPath.GetDirByTag(SelectedTag.Title));
         }
 
         private void tagAreaMenu_ContextMenuOpening(object sender, ContextMenuEventArgs e)
@@ -880,7 +907,7 @@ namespace TagExplorer.TagCanvas
         private void miNewFile_Click(object sender, RoutedEventArgs e)
         {
             UpdateCurrentTagByContextMenu();
-            string initDir = CfgPath.GetDirByTag(currentTag.Title);
+            string initDir = CfgPath.GetDirByTag(SelectedTag.Title);
             SaveFileDialog sf = new SaveFileDialog();
             sf.InitialDirectory = initDir;
 
@@ -913,23 +940,23 @@ namespace TagExplorer.TagCanvas
         public void miCopyTag_Click(object sender, RoutedEventArgs e)
         {
             UpdateCurrentTagByContextMenu();
-            ClipBoardSafe.SetText(ClipboardConst.KUMMERWU_TAG_COPY + ClipboardConst.CommandSplitToken + currentTag.Id);
-            UpdateSelectedStatus(currentTag, TagBox.Status.Copy);
+            ClipBoardSafe.SetText(ClipboardConst.KUMMERWU_TAG_COPY + ClipboardConst.CommandSplitToken + SelectedTag.Id);
+            UpdateSelectedStatus(SelectedTag, TagBox.Status.Copy);
         }
 
         public void miCutTag_Click(object sender, RoutedEventArgs e)
         {
             UpdateCurrentTagByContextMenu();
-            ClipBoardSafe.SetText(ClipboardConst.KUMMERWU_TAG_CUT + ClipboardConst.CommandSplitToken + currentTag.Id);
-            UpdateSelectedStatus(currentTag, TagBox.Status.Cut);
+            ClipBoardSafe.SetText(ClipboardConst.KUMMERWU_TAG_CUT + ClipboardConst.CommandSplitToken + SelectedTag.Id);
+            UpdateSelectedStatus(SelectedTag, TagBox.Status.Cut);
         }
 
         private void miDeleteTag_Click(object sender, RoutedEventArgs e)
         {
             UpdateCurrentTagByContextMenu();
-            if (TagDB.QueryTagChildren(currentTag).Count == 0)
+            if (TagDB.QueryTagChildren(SelectedTag).Count == 0)
             {
-                GUTag oldCurrentTag = currentTag;
+                GUTag oldCurrentTag = SelectedTag;
                 List<GUTag> parents = TagDB.QueryTagParent(oldCurrentTag);
 
                 //找到一个合适的父节点
@@ -955,7 +982,7 @@ namespace TagExplorer.TagCanvas
                     }
                 }
                 //当新选出来的tag不再视图中时，才需要切换视图的根节点
-                if (currentTag != newCurrentTag)
+                if (SelectedTag != newCurrentTag)
                 {
                     ChangeRoot(newCurrentTag, newCurrentTag);
                 }
@@ -973,7 +1000,7 @@ namespace TagExplorer.TagCanvas
             }
             else
             {
-                MessageBox.Show(string.Format("[{0}]下还有其他子节点，如果确实需要删除该标签，请先删除所有子节点", currentTag), "提示：", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show(string.Format("[{0}]下还有其他子节点，如果确实需要删除该标签，请先删除所有子节点", SelectedTag), "提示：", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
 
         }
@@ -1022,14 +1049,14 @@ namespace TagExplorer.TagCanvas
         private void miNewTag_Click(object sender, RoutedEventArgs e)
         {
             UpdateCurrentTagByContextMenu();
-            if (currentTag == null) return;
+            if (SelectedTag == null) return;
             //TODO 如果有多个创建子标签如何正确处理？
             GUTag newTag = TagDB.NewTag(StaticCfg.Ins.DefaultNewTag);
-            TagDB.AddTag(currentTag, newTag);
+            TagDB.AddTag(SelectedTag, newTag);
             //完善：如果新建Tag不在可见范围内，更新根节点。
 
             //RedrawGraph();
-            EnsureVisible(newTag, rootTag);
+            EnsureVisible(newTag, RootTag);
 
             //BUG20171031: 子标签如果没有在图中显示出来（比如mainCanvas中因为深度的限制，并没有将其显示出来，下面b可能为null
             TagBox b = ChangeSelectd(newTag);
@@ -1057,7 +1084,7 @@ namespace TagExplorer.TagCanvas
                             GUTag argTag = TagDB.GetTag(Guid.Parse(arg));
                             if (argTag != null)
                             {
-                                TagDB.AddTag(currentTag, argTag);
+                                TagDB.AddTag(SelectedTag, argTag);
                                 RedrawGraph();
                             }
                         }
@@ -1067,7 +1094,7 @@ namespace TagExplorer.TagCanvas
                             GUTag argTag = TagDB.GetTag(Guid.Parse(arg));
                             if (argTag != null)
                             {
-                                TagDB.ResetParent(currentTag, argTag);
+                                TagDB.ResetParent(SelectedTag, argTag);
                                 RedrawGraph();
                             }
                         }
@@ -1080,7 +1107,7 @@ namespace TagExplorer.TagCanvas
         private void miCopyTagFullPathEx_Click(object sender, RoutedEventArgs e)
         {
             UpdateCurrentTagByContextMenu();
-            string dir = CfgPath.GetDirByTag(currentTag.Title);
+            string dir = CfgPath.GetDirByTag(SelectedTag.Title);
             dir = System.IO.Path.Combine(dir, DateTime.Now.ToString("yyyyMMdd") + "-");
             ClipBoardSafe.SetText(dir);
         }
@@ -1147,9 +1174,9 @@ namespace TagExplorer.TagCanvas
         private void EditFile(string dotPostfix)
         {
             UpdateCurrentTagByContextMenu();
-            if (currentTag == null ) return;
+            if (SelectedTag == null ) return;
 
-            string defaultFile = CfgPath.GetTemplateFileByTag(currentTag.Title, dotPostfix);
+            string defaultFile = CfgPath.GetTemplateFileByTag(SelectedTag.Title, dotPostfix);
             if (defaultFile == null) return;
 
             FileShell.OpenFile(defaultFile);
@@ -1185,7 +1212,7 @@ namespace TagExplorer.TagCanvas
                 }
                 else if(e.Key == Key.F2)
                 {
-                    TagBox t = FindTagBox(currentTag);
+                    TagBox t = FindTagBox(SelectedTag);
                     if (t != null)
                     {
                         FloatTextBox.Ins.ShowEdit(canvas, t);
@@ -1199,8 +1226,8 @@ namespace TagExplorer.TagCanvas
         private void ChangeTagPos(int direct)
         {
             UpdateCurrentTagByContextMenu();
-            if (currentTag == null ) return;
-            TagDB.ChangePos(currentTag, direct);
+            if (SelectedTag == null ) return;
+            TagDB.ChangePos(SelectedTag, direct);
             RedrawGraph();
         }
         private void UpTag_Executed(object sender, ExecutedRoutedEventArgs e)
@@ -1277,8 +1304,8 @@ namespace TagExplorer.TagCanvas
         private void NewBrotherTag()
         {
             UpdateCurrentTagByContextMenu();
-            if (currentTag == null ) return;
-            List<GUTag> ps = TagDB.QueryTagParent(currentTag);
+            if (SelectedTag == null ) return;
+            List<GUTag> ps = TagDB.QueryTagParent(SelectedTag);
             if (ps.Count == 0) return;
 
             GUTag parent = ps[0];
@@ -1292,20 +1319,12 @@ namespace TagExplorer.TagCanvas
         #region 修改Tag布局
         private void ChangeLayoutMode(LayoutMode m)
         {
-            switch (MyCanvasType)
-            {
-                case LayoutCanvas.MAIN_CANVAS:
-                    DynamicCfg.Ins.MainCanvasLayoutMode = (m);
-                    break;
-                case LayoutCanvas.SUB_CANVAS:
-                    DynamicCfg.Ins.SubCanvasLayoutMode = (m);
-                    break;
-                default:
-                    break;
-            }
+            SaveLayoutMode(m);
             UpdateMenuItemCheckStatus();
             RedrawGraph();
         }
+
+        
 
         private void UpdateMenuItemCheckStatus()
         {

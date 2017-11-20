@@ -203,13 +203,15 @@ namespace TagExplorer
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            if (GLayoutMode.mode == LayoutMode.GRAPH_UPDOWN)
-                GLayoutMode.mode = 0;
-            else GLayoutMode.mode = (GLayoutMode.mode + 1);
+            //测试按钮：该功能废除
+
+            //if (GLayoutMode.mode == LayoutMode.GRAPH_UPDOWN)
+            //    GLayoutMode.mode = 0;
+            //else GLayoutMode.mode = (GLayoutMode.mode + 1);
             //GUTODO:将字符串转换为gutag
-            GUTag mroot = GUTag.Parse(DynamicCfg.Ins.MainCanvasRoot, tagDB);
-            GUTag sroot = GUTag.Parse(DynamicCfg.Ins.SubCanvasRoot, tagDB);
-            ShowTagGraph(mroot,sroot);
+            //GUTag mroot = GUTag.Parse(DynamicCfg.Ins.MainCanvasRoot, tagDB);
+            //GUTag sroot = GUTag.Parse(DynamicCfg.Ins.SubCanvasRoot, tagDB);
+            //ShowTagGraph(mroot,sroot);
         }
 #region 布局相关的处理
         public void Dispose()

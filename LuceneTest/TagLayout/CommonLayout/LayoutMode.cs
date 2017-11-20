@@ -23,8 +23,8 @@
         MAX_CANVAS,
     }
     //当前的布局模式选择
-    public class GLayoutMode
-    {
-        public static LayoutMode mode = LayoutMode.LRTREE_COMPACT;
-    }
+    //public class GLayoutMode
+    //{
+    //    public static LayoutMode mode = LayoutMode.LRTREE_COMPACT;
+    //}
 }
