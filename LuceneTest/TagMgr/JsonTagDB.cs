@@ -76,7 +76,7 @@ namespace TagExplorer.TagMgr
         }
         private void AssertValid(GUTag tag)
         {
-            System.Diagnostics.Debug.Assert(id2Gutag[tag.Id] == tag);
+            System.Diagnostics.Debug.Assert(id2Gutag[tag.Id] as GUTag == tag);
         }
         //////////////////////////////////////////////////////////
         public GUTag NewTag(string stag)
@@ -206,14 +206,14 @@ namespace TagExplorer.TagMgr
         public List<string> QueryTagAlias(GUTag tag)
         {
             //AssertValid(tag);
-            if (id2Gutag[tag.Id] != tag) return new List<string>();
+            if (id2Gutag[tag.Id] as GUTag != tag) return new List<string>();
             else return tag.Alias;
         }
         
         public List<GUTag> QueryTagChildren(GUTag tag)
         {
             //AssertValid(tag);
-            if (id2Gutag[tag.Id] != tag) return new List<GUTag>();
+            if (id2Gutag[tag.Id] as GUTag != tag) return new List<GUTag>();
 
             List<GUTag> gutagChildren= new List<GUTag>();
             foreach(Guid id in tag.Children)
@@ -230,7 +230,7 @@ namespace TagExplorer.TagMgr
         public List<GUTag> QueryTagParent(GUTag tag)
         {
             //AssertValid(tag); 由于有两个视图，可能会用一个已经失效的GUTag进行查询。
-            if (id2Gutag[tag.Id] != tag) return new List<GUTag>();
+            if (id2Gutag[tag.Id] as GUTag != tag) return new List<GUTag>();
 
 
             List<GUTag> ret = new List<GUTag>();

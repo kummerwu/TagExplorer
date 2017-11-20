@@ -36,6 +36,7 @@ namespace TagExplorer.Utils
             }
             catch (Exception ex)
             {
+                Logger.E(ex);
                 return null;
             }
             return strWebData;
