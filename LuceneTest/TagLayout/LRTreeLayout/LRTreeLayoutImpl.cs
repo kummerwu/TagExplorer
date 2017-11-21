@@ -62,7 +62,7 @@ namespace TagExplorer.TagLayout.LRTreeLayout
             double rootTagBoxX = size.Width / 2;
             root = new GTagBoxTree();
             root.GTagBox = new GTagBox(0, rootTag, rootTagBoxX, 0, 1);
-            root.Move(-1 * root.GTagBox.InnerBox.Width / 2, 0);
+            root.Move(-1 * root.GTagBox.InnerBox.Width*3 / 4, 0);
             env.Add(rootTag, root);
 
             //计算左右子节点的开始位置（估算）
@@ -79,7 +79,27 @@ namespace TagExplorer.TagLayout.LRTreeLayout
             GTagBoxTree[] children = new GTagBoxTree[allChild.Count];
 
             int direct = 1;
-            foreach (GUTag c in allChild)
+            //希望现实是按照顺时针方向现实
+            List<GUTag> Left = new List<GUTag>();
+            List<GUTag> Right = new List<GUTag>();
+            
+            for(int i= 0;i<allChild.Count;i++)
+            {
+                if (i < mid)
+                {
+                    Right.Add(allChild[i]);
+                }
+                else
+                {
+                    Left.Add(allChild[i]);
+                }
+            }
+            List<GUTag> all = new List<GUTag>();
+            all.AddRange(Right);
+            Left.Reverse();
+            all.AddRange(Left);
+
+            foreach (GUTag c in all)
             {
                 if (c == rootTag) continue;//临时规避数据上的一个问题，有些节点自己成环了。
                 //确定当前子节点时放在左边，还是放在右边：半数放在左边，半数放在右边
