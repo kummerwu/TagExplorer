@@ -100,7 +100,7 @@ namespace TagExplorer.TagMgr
         }
         //////////////////////////////////////////////////////////
 
-        public int AddTag(GUTag parent, GUTag child)
+        public int SetParent(GUTag parent, GUTag child)
         {
             //添加的tag必须是有效节点
             AssertValid(parent);
@@ -272,7 +272,7 @@ namespace TagExplorer.TagMgr
             AssertValid(parent);
             AssertValid(child);
             RemoveParentsRef(child);
-            AddTag(parent, child);
+            SetParent(parent, child);
             Save(parent);
             return ITagDBConst.R_OK;
         }
@@ -287,7 +287,7 @@ namespace TagExplorer.TagMgr
             
         }
 
-        public int ChangePos(GUTag tag, int direct)
+        public int ChangeChildPos(GUTag tag, int direct)
         {
             AssertValid(tag);
             List<GUTag> parents = QueryTagParent(tag);

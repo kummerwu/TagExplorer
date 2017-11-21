@@ -39,7 +39,7 @@ namespace UTLT
         {
             GUTag p = db.NewTag("p");
             GUTag c1 = db.NewTag("c1");
-            db.AddTag(p,c1);
+            db.SetParent(p,c1);
            
             List<GUTag> c = db.QueryTagChildren(p);
             Assert.AreEqual(1, c.Count);
@@ -51,7 +51,7 @@ namespace UTLT
         {
             GUTag p = db.NewTag("p");
             GUTag c1 = db.NewTag("c1");
-            db.AddTag(p, c1);
+            db.SetParent(p, c1);
 
             List<string> a = db.QueryTagAlias(p);
             Assert.AreEqual(1, a.Count);
@@ -68,7 +68,7 @@ namespace UTLT
         {
             GUTag p = db.NewTag("p");
             GUTag c1 = db.NewTag("c1");
-            db.AddTag(p,c1);
+            db.SetParent(p,c1);
 
             List<string> a = db.QueryTagAlias(c1);
             Assert.AreEqual(1, a.Count);
@@ -106,13 +106,13 @@ namespace UTLT
             GUTag c1 = db.NewTag("c1");
             GUTag c2 = db.NewTag("c2");
 
-            db.AddTag(p, c1);
+            db.SetParent(p, c1);
             List<GUTag> c = db.QueryTagChildren(p);
             Assert.AreEqual(1, c.Count);
             Assert.AreEqual("c1", c[0].Title);
 
 
-            db.AddTag(p, c2);
+            db.SetParent(p, c2);
             c = db.QueryTagChildren(p);
             Assert.AreEqual(2, c.Count);
             Assert.AreEqual(c1, c[0]);
@@ -171,7 +171,7 @@ namespace UTLT
             for (i = 0; i < 100; i++)
             {
                 cs[i] = db.NewTag("c" + i);
-                db.AddTag(p, cs[i]);
+                db.SetParent(p, cs[i]);
                 List<GUTag> c = db.QueryTagChildren(p);
                 Assert.AreEqual(i + 1, c.Count);
                 for (int j = 0; j <= i; j++)
@@ -188,7 +188,7 @@ namespace UTLT
         {
             GUTag p1 = db.NewTag("p1");
             GUTag c1 = db.NewTag("c1");
-            db.AddTag(p1, c1);
+            db.SetParent(p1, c1);
             List<string> alias = db.QueryTagAlias(p1);
             Assert.AreEqual(1, alias.Count);
             Assert.AreEqual(p1.Title, alias[0]);
@@ -205,7 +205,7 @@ namespace UTLT
             
             GUTag p1 = db.NewTag("p1");
             GUTag c1 = db.NewTag("c1");
-            db.AddTag(p1, c1);
+            db.SetParent(p1, c1);
             List<string> alias = db.QueryTagAlias(p1);
             foreach (string a in alias)
             {
@@ -249,8 +249,8 @@ namespace UTLT
             GUTag c1 = db.NewTag("c1");
             GUTag c2 = db.NewTag("c2");
 
-            db.AddTag(p1, c1);
-            db.AddTag(p2, c2);
+            db.SetParent(p1, c1);
+            db.SetParent(p2, c2);
             db.MergeAlias(p1, p2);
             List<string> alias = db.QueryTagAlias(p1);
             Assert.AreEqual(2, alias.Count);
@@ -308,8 +308,8 @@ namespace UTLT
             GUTag C1 = db.NewTag("C1");
             GUTag C2 = db.NewTag("C2");
 
-            db.AddTag(P1, C1);
-            db.AddTag(P2, C1);
+            db.SetParent(P1, C1);
+            db.SetParent(P2, C1);
             List<GUTag> parents = db.QueryTagParent(C1);
             AssertListEqual(parents, new List<GUTag>() { P1, P2 });
 
@@ -341,8 +341,8 @@ namespace UTLT
             GUTag C2 = db.NewTag("C2");
 
 
-            db.AddTag(P1, C1);
-            db.AddTag(P2, C1);
+            db.SetParent(P1, C1);
+            db.SetParent(P2, C1);
             List<GUTag> parents = db.QueryTagParent(C1);
             AssertListEqual( new List<string>() { "P1", "P2" },parents);
 
@@ -388,9 +388,9 @@ namespace UTLT
             GUTag C1 = db.NewTag("C1");
             GUTag C2 = db.NewTag("C2");
 
-            db.AddTag(P1, C1);
-            db.AddTag(P2, C1);
-            db.AddTag(P3, C2);
+            db.SetParent(P1, C1);
+            db.SetParent(P2, C1);
+            db.SetParent(P3, C2);
             List<GUTag> parents = db.QueryTagParent(C1);
             AssertListEqual( new List<string>() { "P1", "P2" },parents);
 

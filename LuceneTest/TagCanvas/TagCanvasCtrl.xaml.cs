@@ -700,7 +700,7 @@ namespace TagExplorer.TagCanvas
                             GUTag argTag = TagDB.GetTag(Guid.Parse(arg));
                             if (argTag != null)
                             {
-                                TagDB.AddTag(SelectedTag, argTag);
+                                TagDB.SetParent(SelectedTag, argTag);
                                 RedrawGraph();
                             }
                         }
@@ -1083,7 +1083,7 @@ namespace TagExplorer.TagCanvas
             if (SelectedTag == null) return;
             //TODO 如果有多个创建子标签如何正确处理？
             GUTag newTag = TagDB.NewTag(StaticCfg.Ins.DefaultNewTag);
-            TagDB.AddTag(SelectedTag, newTag);
+            TagDB.SetParent(SelectedTag, newTag);
             //完善：如果新建Tag不在可见范围内，更新根节点。
 
             //RedrawGraph();
@@ -1115,7 +1115,7 @@ namespace TagExplorer.TagCanvas
                             GUTag argTag = TagDB.GetTag(Guid.Parse(arg));
                             if (argTag != null)
                             {
-                                TagDB.AddTag(SelectedTag, argTag);
+                                TagDB.SetParent(SelectedTag, argTag);
                                 RedrawGraph();
                             }
                         }
@@ -1258,7 +1258,7 @@ namespace TagExplorer.TagCanvas
         {
             UpdateCurrentTagByContextMenu();
             if (SelectedTag == null ) return;
-            TagDB.ChangePos(SelectedTag, direct);
+            TagDB.ChangeChildPos(SelectedTag, direct);
             RedrawGraph();
         }
         private void UpTag_Executed(object sender, ExecutedRoutedEventArgs e)
@@ -1341,7 +1341,7 @@ namespace TagExplorer.TagCanvas
 
             GUTag parent = ps[0];
             GUTag newTag = TagDB.NewTag(StaticCfg.Ins.DefaultNewTag);
-            TagDB.AddTag(parent, newTag);//TODO 如果有多个创建子标签如何正确处理？
+            TagDB.SetParent(parent, newTag);//TODO 如果有多个创建子标签如何正确处理？
             RedrawGraph();
             TagBox b = ChangeSelectd(newTag);
             FloatTextBox.Ins.ShowEdit(canvas, b);

@@ -6,9 +6,6 @@ using System.Data;
 using System.Data.SQLite;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TagExplorer.AutoComplete;
 using TagExplorer.UriMgr;
 using TagExplorer.Utils;
@@ -17,13 +14,57 @@ namespace TagExplorer.TagMgr
 {
     public class SQLTagDB:IDisposable,ITagDB
     {
+
+        #region 构造函数和析构函数
         public SQLTagDB()
         {
             if(StaticCfg.Ins.Opt.SqliteTagCacheOn)
             {
-                id2Gutag = new Hashtable();
+                id2TagCache = new Hashtable();
             }
         }
+        public static SQLTagDB Load()
+        {
+            return IDisposableFactory.New<SQLTagDB>(new SQLTagDB());
+            //数据库连接惰性打开
+        }
+        public void Dispose()
+        {
+
+            id2TagCache?.Clear();
+
+            if (adduptCmd != null)
+            {
+                adduptCmd.Dispose();
+                adduptCmd = null;
+            }
+            if (delCmd != null)
+            {
+                delCmd.Dispose();
+                delCmd = null;
+            }
+            if (queryCmd != null)
+            {
+                queryCmd.Dispose();
+                queryCmd = null;
+            }
+            if (con != null)
+            {
+                con.Close();
+                con.Dispose();
+                con = null;
+            }
+            if (SQLiteConnection.ConnectionPool != null)
+            {
+                SQLiteConnection.ConnectionPool.ClearAllPools();
+            }
+            SQLiteConnection.ClearAllPools();
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
+        }
+        #endregion
+
+        #region 变更通知
         DataChanged dbChangedHandler;
         public DataChanged TagDBChanged
         {
@@ -37,7 +78,13 @@ namespace TagExplorer.TagMgr
                 dbChangedHandler += value;
             }
         }
-        /// SQL数据库操作封装
+        private void ChangeNotify()
+        {
+            dbChangedHandler?.Invoke();
+        }
+        #endregion
+
+        #region  SQLite数据库封装
         SQLiteConnection con = null;
         SQLiteConnection Conn
         {
@@ -211,94 +258,75 @@ VALUES (@ID,@Title,@Alias,@PID,@Children)",Conn);
             }
             return ret;
         }
-        public void Dispose()
-        {
-            
-            id2Gutag?.Clear();
-            
-            if (adduptCmd!=null)
-            {
-                adduptCmd.Dispose();
-                adduptCmd = null;
-            }
-            if(delCmd!=null)
-            {
-                delCmd.Dispose();
-                delCmd = null;
-            }
-            if(queryCmd!=null)
-            {
-                queryCmd.Dispose();
-                queryCmd = null;
-            }
-            if(con!=null)
-            {
-                con.Close();
-                con.Dispose();
-                con = null;
-            }
-            if (SQLiteConnection.ConnectionPool != null)
-            {
-                SQLiteConnection.ConnectionPool.ClearAllPools();
-            }
-            SQLiteConnection.ClearAllPools();
-            GC.Collect();
-            GC.WaitForPendingFinalizers();
-        }
+
+        #endregion
+
+        
 
         /// </summary>
 
         //维护所有tag=》taginf（有可能有别名，存在多个tag对应一个tagInf）
-        Hashtable id2Gutag = null;// new Hashtable(); //Guid ==> Gutag
-        private void ChangeNotify()
-        {
-            dbChangedHandler?.Invoke();
-        }
+        Hashtable id2TagCache = null;// new Hashtable(); //Guid ==> Gutag
         
-        private void Save(GUTag tag)
-        {
-            AddUptSqlDB(tag);
-            ChangeNotify();
-        }
-        public static SQLTagDB Load()
-        {
-            return IDisposableFactory.New<SQLTagDB>(new SQLTagDB());
-            //数据库连接惰性打开
-        }
+        
+        //private void Save(GUTag tag)
+        //{
+        //    AddUptSqlDB(tag);
+        //    ChangeNotify();
+        //}
+        
         private void AssertValid(GUTag tag)
         {
             System.Diagnostics.Debug.Assert(QueryTag(tag.Id)== tag);
         }
-        //////////////////////////////////////////////////////////
-        public GUTag NewTag(string stag)
+        #region 新建Tag
+        public GUTag NewTag(string title)
         {
-            GUTag tag = new GUTag(stag);
+            GUTag tag = new GUTag(title);
             AddToHash(tag);
+            //ChangeNotify();//这个地方可以不用notify，在设置父子关系的时候再notify
             return tag;
         }
         private void AddToHash(GUTag j)
         {
             //Debug.Assert(id2Gutag[j.Id] == null);
-            if (id2Gutag!=null)
+            if (id2TagCache!=null)
             {
-                id2Gutag[j.Id] = j;
+                id2TagCache[j.Id] = j;
             }
             AddUptSqlDB(j);
 
         }
+        #endregion
+
+        #region 删除Tag
         private void RemoveFromHash(GUTag j)
         {
             AssertValid(j);
             
-            id2Gutag?.Remove(j.Id);
+            id2TagCache?.Remove(j.Id);
             
             DelSqlDB(j);
             //AllTagSet.Remove(j);
         }
-        
+        public int RemoveTag(GUTag tag)
+        {
+            tag = QueryTag(tag.Id);
+            if (tag == null) return ITagDBConst.R_OK;
+
+            AssertValid(tag);
+            RemoveChild(tag);
+            id2TagCache?.Remove(tag.Id);
+            DelSqlDB(tag);
+            ChangeNotify();
+            return ITagDBConst.R_OK;
+        }
+        #endregion
         //////////////////////////////////////////////////////////
 
-        public int AddTag(GUTag parent, GUTag child)
+        #region 修改Tag：父子关系
+        //建立两个Tag之间的父子关系
+        public int SetParent(GUTag parent, GUTag child)
         {
             //添加的tag必须是有效节点
             AssertValid(parent);
@@ -319,11 +347,59 @@ VALUES (@ID,@Title,@Alias,@PID,@Children)",Conn);
             }
             return ITagDBConst.R_OK;
         }
+        //解除原来child所有parent，并与新的parent建立关系
+        public int ResetParent(GUTag parent, GUTag child)
+        {
+            parent = QueryTag(parent.Id);
+            child = QueryTag(child.Id);
+            if (parent == null || child == null) return ITagDBConst.R_OK;
+            AssertValid(parent);
+            AssertValid(child);
+            RemoveChild(child);
+            SetParent(parent, child);
+            AddUptSqlDB(parent);
+            ChangeNotify();
+            return ITagDBConst.R_OK;
+        }
 
-        
+        private void RemoveChild(GUTag child)
+        {
+            AssertValid(child);
+            GUTag pTag = QueryTag(child.PId);
+            if (pTag != null)
+            {
+                pTag.RemoveChild(child);
+                AddUptSqlDB(pTag);
+            }
+            child.PId = Guid.Empty;
 
 
 
+        }
+
+        public int ChangeChildPos(GUTag tag, int direct)
+        {
+            tag = QueryTag(tag.Id);
+            if (tag == null) return ITagDBConst.R_OK;
+
+            AssertValid(tag);
+            List<GUTag> parents = QueryTagParent(tag);
+            Debug.Assert(parents.Count == 1);
+            if (parents.Count == 1)
+            {
+                GUTag parent = parents[0];
+                parent.ChangePos(tag, direct);
+                AddUptSqlDB(parent);
+                AddUptSqlDB(tag);
+                ChangeNotify();
+            }
+            return ITagDBConst.R_OK;
+
+        }
+        #endregion
+
+
+        #region 修改Tag：标题和别名
 
         public int MergeAlias(GUTag mainTag, GUTag aliasTag)
         {
@@ -338,20 +414,36 @@ VALUES (@ID,@Title,@Alias,@PID,@Children)",Conn);
             ChangeNotify();
             return ITagDBConst.R_OK;
         }
+        public GUTag ChangeTitle(GUTag tag, string newTitle)
+        {
+            tag = QueryTag(tag.Id);
+            if (tag == null) return null;
 
+            AssertValid(tag);
+            tag.ChangeTitle(newTitle);
+            AddUptSqlDB(tag);
+            ChangeNotify();
+            return tag;
+        }
+
+        #endregion
 
         #region  查询函数实现
+        public GUTag GetTag(Guid id)
+        {
+            return QueryTag(id);
+        }
         public GUTag QueryTag(Guid id)
         {
-            if (id2Gutag!=null)
+            if (id2TagCache!=null)
             {
-                GUTag tmp = id2Gutag[id] as GUTag;
+                GUTag tmp = id2TagCache[id] as GUTag;
                 if (tmp == null)
                 {
                     tmp = QuerySqlDB(id);
                     if (tmp != null)
                     {
-                        id2Gutag[id] = tmp;
+                        id2TagCache[id] = tmp;
                     }
                 }
                 return tmp;
@@ -483,68 +575,7 @@ VALUES (@ID,@Title,@Alias,@PID,@Children)",Conn);
         }
         #endregion
 
-
-        public int RemoveTag(GUTag tag)
-        {
-            tag = QueryTag(tag.Id);
-            if (tag == null) return ITagDBConst.R_OK;
-
-            AssertValid(tag);
-            RemoveParentsRef(tag);
-            id2Gutag?.Remove(tag.Id);
-            DelSqlDB(tag);
-            ChangeNotify();
-            return ITagDBConst.R_OK;
-        }
-
-        //将child原来所有parent删除，并与新的parent建立关系
-        public int ResetParent(GUTag parent, GUTag child)
-        {
-            parent = QueryTag(parent.Id);
-            child = QueryTag(child.Id);
-            if (parent == null || child == null) return ITagDBConst.R_OK;
-            AssertValid(parent);
-            AssertValid(child);
-            RemoveParentsRef(child);
-            AddTag(parent, child);
-            Save(parent);
-            return ITagDBConst.R_OK;
-        }
-
-        private void RemoveParentsRef(GUTag child)
-        {
-            AssertValid(child);
-            GUTag pTag = QueryTag(child.PId);
-            if (pTag != null)
-            {
-                pTag.RemoveChild(child);
-                AddUptSqlDB(pTag);
-            }
-            child.PId = Guid.Empty;
-            
-            
-
-        }
-
-        public int ChangePos(GUTag tag, int direct)
-        {
-            tag = QueryTag(tag.Id);
-            if (tag == null) return ITagDBConst.R_OK;
-
-            AssertValid(tag);
-            List<GUTag> parents = QueryTagParent(tag);
-            Debug.Assert(parents.Count == 1);
-            if (parents.Count == 1)
-            {
-                GUTag parent = parents[0];
-                parent.ChangePos(tag, direct);
-                AddUptSqlDB(parent);
-                Save(tag);
-            }
-            return ITagDBConst.R_OK;
-
-        }
-
+        #region 从老的json数据导出数据库
         public int Import(string importInf)
         {
             int ret = 0;
@@ -576,24 +607,6 @@ VALUES (@ID,@Title,@Alias,@PID,@Children)",Conn);
             
             return ret;
         }
-
-        
-
-
-        public GUTag ChangeTitle(GUTag tag, string newTitle)
-        {
-            tag = QueryTag(tag.Id);
-            if (tag == null) return null;
-
-            AssertValid(tag);
-            tag.ChangeTitle(newTitle);
-            Save(tag);
-            return tag;
-        }
-
-        public GUTag GetTag(Guid id)
-        {
-            return QueryTag(id);
-        }
+        #endregion
     }
 }
