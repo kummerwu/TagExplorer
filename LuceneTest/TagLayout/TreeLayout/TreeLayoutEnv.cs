@@ -38,11 +38,7 @@ namespace TagExplorer.TagLayout.TreeLayout
 
 
 
-        private List<Tuple<GTagBoxTree, GTagBoxTree, int>> Lines = new List<Tuple<GTagBoxTree, GTagBoxTree, int>>();
-        public void AddLine(GTagBoxTree parent, GTagBoxTree child, int direct)
-        {
-            Lines.Add(new Tuple<GTagBoxTree, GTagBoxTree, int>(parent, child, direct));
-        }
+        
         
 
         public static string StatInf {
@@ -53,7 +49,7 @@ namespace TagExplorer.TagLayout.TreeLayout
             }
         }
 
-        // ////
+        #region TagBox Cache：由于WPF从Canvas中添加和删除UI元素性能比较低，为了优化，就不删除这些元素了，只是将这些元素置为不可见
         private List<TagBox> TagBoxGarbage = new List<TagBox>();
         private static int sttNewTag = 0;
         private static int sttRetTag = 0;
@@ -80,6 +76,32 @@ namespace TagExplorer.TagLayout.TreeLayout
                 sttNewTag++;
                 return new TagBox(g);
             }
+        }
+
+        public List<TagBox> GetAllTagBox()
+        {
+            List<TagBox> result = new List<TagBox>();
+            //还处于垃圾箱中的TagBox，将其设置为不可见
+            foreach (TagBox b in TagBoxGarbage)
+            {
+                b.Visibility = System.Windows.Visibility.Collapsed;
+            }
+            //对于每一个节点，创建TagBox（）
+            foreach (GTagBoxTree obj in All)
+            {
+                result.Add(UIElementFactory.CreateTagBox(obj.GTagBox, this));
+            }
+            return result;
+        }
+
+
+        #endregion
+
+        #region 节点之间的连线（B曲线）：由于WPF从Canvas中添加和删除UI元素性能比较低，为了优化，就不删除这些元素了，只是将这些元素置为不可见
+        private List<Tuple<GTagBoxTree, GTagBoxTree, int>> Lines = new List<Tuple<GTagBoxTree, GTagBoxTree, int>>();
+        public void AddLine(GTagBoxTree parent, GTagBoxTree child, int direct)
+        {
+            Lines.Add(new Tuple<GTagBoxTree, GTagBoxTree, int>(parent, child, direct));
         }
         ///////////////
         private static int sttNewLine = 0;
@@ -110,23 +132,6 @@ namespace TagExplorer.TagLayout.TreeLayout
                 return new Path();
             }
         }
-
-        
-        // ///////////////////////////////
-        public List<TagBox> GetAllTagBox()
-        {
-            List<TagBox> result = new List<TagBox>();
-            foreach(TagBox b in TagBoxGarbage)
-            {
-                b.Visibility = System.Windows.Visibility.Collapsed;
-            }
-            foreach (GTagBoxTree obj in All)
-            {
-                result.Add(UIElementFactory.CreateTagBox(obj.GTagBox,this));
-            }
-            return result;
-        }
-
         public List<Path> GetAllLines()
         {
             List<Path> result = new List<Path>();
@@ -134,13 +139,19 @@ namespace TagExplorer.TagLayout.TreeLayout
             {
                 b.Visibility = System.Windows.Visibility.Collapsed;
             }
-            foreach (Tuple<GTagBoxTree, GTagBoxTree,int> p_c in Lines)
+            foreach (Tuple<GTagBoxTree, GTagBoxTree, int> p_c in Lines)
             {
-                result.Add(UIElementFactory.CreateBezier(p_c,this));
+                result.Add(UIElementFactory.CreateBezier(p_c, this));
             }
             return result;
         }
+        #endregion
 
-        
+        // ///////////////////////////////
+
+
+
+
+
     }
 }

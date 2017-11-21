@@ -16,36 +16,7 @@ namespace TagExplorer.TagLayout.LRTreeLayout
         {
         }
 
-        /*
-private Rect outterbox;
-
-public Size Size
-{
-   get { return outterbox.Size; }
-}
-
-public Point RootPos
-{
-   get
-   {
-       return new Point(outterbox.Left, (outterbox.Top + outterbox.Height / 2));
-   }
-}
-
-public IEnumerable<UIElement> Lines
-{
-   get { return lines; }
-}
-
-public IEnumerable<UIElement> TagArea
-{
-   get { return tags; }
-}
-private ITagDB tagDB = null;
-private Size oriSize;
-public List<TagBox> tags = new List<TagBox>();
-public IEnumerable<UIElement> lines = null;
-*/
+        
 
         private int CalcMid(List<GUTag> allChild,ITagDB db)
         {
