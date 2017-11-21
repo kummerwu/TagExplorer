@@ -963,29 +963,18 @@ namespace TagExplorer.TagCanvas
             UpdateCurrentTagByContextMenu();
             if (TagDB.QueryTagChildren(SelectedTag).Count == 0)
             {
-                GUTag oldCurrentTag = SelectedTag;
-                List<GUTag> parents = TagDB.QueryTagParent(oldCurrentTag);
-
-                //找到一个合适的父节点
-                GUTag newCurrentTag = NavigateTagBox(Key.Left);
-                if(parents.Count==1)
-                {
-                    newCurrentTag = parents[0];
-                }
-                if (newCurrentTag==null)
-                {
-                    newCurrentTag = TagDB.GetTag(StaticCfg.Ins.DefaultTagID);
-                }
+                GUTag oldCurrentTag, newCurrentTag;
+                GetNextTag(out oldCurrentTag, out newCurrentTag);
 
                 TagDB.RemoveTag(oldCurrentTag);
-                
+
                 //如果新选出来的当前节点在视图中，直接选中该tag
-                foreach(UIElement u in allTagBox)
+                foreach (UIElement u in allTagBox)
                 {
                     TagBox t = u as TagBox;
-                    if(t!=null && t.GUTag == newCurrentTag)
+                    if (t != null && t.GUTag == newCurrentTag)
                     {
-                        SetCurrentTag(newCurrentTag,true);
+                        SetCurrentTag(newCurrentTag, true);
                     }
                 }
                 //当新选出来的tag不再视图中时，才需要切换视图的根节点
@@ -997,6 +986,7 @@ namespace TagExplorer.TagCanvas
                 {
                     RedrawGraph();
                 }
+                //如果该title的所有tag全部被删除，则需要删除Tag所在目录：
                 //这个调用之所以放在这儿，而不放在TagDB.RemoveTag时调用，
                 //是因为在彻底删除该tag后（转到其他tag后），程序打开的标签笔记才会被关闭。
                 //这个时候才能删除tag的目录（否则会有文件正在使用无法移动目录）
@@ -1010,6 +1000,40 @@ namespace TagExplorer.TagCanvas
                 MessageBox.Show(string.Format("[{0}]下还有其他子节点，如果确实需要删除该标签，请先删除所有子节点", SelectedTag), "提示：", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
 
+        }
+
+        private void GetNextTag(out GUTag oldCurrentTag, out GUTag newCurrentTag)
+        {
+            oldCurrentTag = SelectedTag;
+            List<GUTag> parents = TagDB.QueryTagParent(oldCurrentTag);
+
+            //当前节点删除了，找到一个合适的节点作为删除后的新的当前节点
+            newCurrentTag = NavigateTagBox(Key.Left);
+            if (parents.Count == 1)
+            {
+                int i = parents[0].GetChildPos(oldCurrentTag);
+                newCurrentTag = null;
+                if (parents[0].Children.Count > 1)
+                {
+                    if (i >= parents[0].Children.Count - 1)//当前节点是所在父节点的最后一个节点
+                    {
+                        newCurrentTag = TagDB.GetTag(parents[0].Children[i - 1]);
+                    }
+                    else //i < count - 1 == 》 i<=count-2
+                    {
+                        newCurrentTag = TagDB.GetTag(parents[0].Children[i + 1]);
+                    }
+                }
+
+                if (newCurrentTag == null)
+                {
+                    newCurrentTag = parents[0];
+                }
+            }
+            if (newCurrentTag == null)
+            {
+                newCurrentTag = TagDB.GetTag(StaticCfg.Ins.DefaultTagID);
+            }
         }
 
         private void miLinkInFile_Click(object sender, RoutedEventArgs e)

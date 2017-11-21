@@ -92,11 +92,11 @@ namespace TagExplorer.TagMgr
             }
         }
 
-        private int GetChildPos(GUTag child)
+        public int GetChildPos(GUTag child)
         {
             return Children.IndexOf(child.Id);
         }
-
+        
         public void AddChild(GUTag c)
         {
             AddChild(c.Id);
