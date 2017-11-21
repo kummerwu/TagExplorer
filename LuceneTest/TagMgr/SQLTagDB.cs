@@ -493,6 +493,7 @@ VALUES (@ID,@Title,@Alias,@PID,@Children)",Conn);
             RemoveParentsRef(tag);
             id2Gutag?.Remove(tag.Id);
             DelSqlDB(tag);
+            ChangeNotify();
             return ITagDBConst.R_OK;
         }
 
