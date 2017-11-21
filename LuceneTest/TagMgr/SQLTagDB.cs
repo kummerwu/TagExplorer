@@ -579,15 +579,15 @@ VALUES (@ID,@Title,@Alias,@PID,@Children)",Conn);
         
 
 
-        public int ChangeTitle(GUTag tag, string newTitle)
+        public GUTag ChangeTitle(GUTag tag, string newTitle)
         {
             tag = QueryTag(tag.Id);
-            if (tag == null) return ITagDBConst.R_OK;
+            if (tag == null) return null;
 
             AssertValid(tag);
             tag.ChangeTitle(newTitle);
             Save(tag);
-            return ITagDBConst.R_OK;
+            return tag;
         }
 
         public GUTag GetTag(Guid id)

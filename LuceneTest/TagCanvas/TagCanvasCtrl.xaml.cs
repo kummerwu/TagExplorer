@@ -169,7 +169,11 @@ namespace TagExplorer.TagCanvas
             while(connect.Count<20 && tmp!=null)
             {
                 List<GUTag> ps = TagDB.QueryTagParent(tmp);
-                if (ps.Count > 0) connect.Add(ps[0]);
+                if (ps.Count > 0)
+                {
+                    tmp = ps[0];
+                    connect.Add(tmp);
+                }
                 else break; 
             }
             connect.Reverse();
@@ -305,9 +309,12 @@ namespace TagExplorer.TagCanvas
             
             if(canvas == Parent && tag!=null &&NewString!=null)
             {
-                TagDB.ChangeTitle(tag,NewString);
-                RedrawGraph();
-                SetCurrentTag(tag,true);
+                tag = TagDB.ChangeTitle(tag,NewString);
+                if (tag != null)
+                {
+                    RedrawGraph();
+                    SetCurrentTag(tag, true);
+                }
             }
         }
         #endregion
@@ -636,7 +643,7 @@ namespace TagExplorer.TagCanvas
                                                                //bug现象：在curtag没有变化的时候，重新绘制整个graph，
                                                                //会出现所有的tag都不显示边框（包括curtag），因为直接返回了。
 
-            if (SelectedTag == tag && !forceNotify) return;  //原来在tag没有变化时不通知变更，导致有些问题，后面将该语句取消了。
+            if (SelectedTag == tag && SelectedTag?.Title == tag?.Title && !forceNotify) return;  //原来在tag没有变化时不通知变更，导致有些问题，后面将该语句取消了。
             GUTag oldTag = SelectedTag;
             SelectedTag = tag;
 

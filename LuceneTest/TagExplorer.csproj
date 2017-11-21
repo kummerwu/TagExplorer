@@ -231,9 +231,11 @@
     <Compile Include="TagCanvas\TagCanvasCtrl.xaml.cs">
       <DependentUpon>TagCanvasCtrl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="TagLayout\CommonLayout\FastFontCalculator.cs" />
     <Compile Include="TagLayout\CommonLayout\GTagBox.cs" />
     <Compile Include="TagLayout\BoxLayout\BoxLayoutEnv.cs" />
     <Compile Include="TagLayout\BoxLayout\GObj.cs" />
+    <Compile Include="TagLayout\CommonLayout\TagBoxSizeInf.cs" />
     <Compile Include="TagLayout\CommonLayout\UIElementFactory.cs" />
     <Compile Include="TagLayout\BoxLayout\ICanvas.cs" />
     <Compile Include="TagLayout\BoxLayout\ITagGraphDB.cs" />

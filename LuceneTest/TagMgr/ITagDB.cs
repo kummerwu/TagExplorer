@@ -17,7 +17,7 @@ namespace TagExplorer.TagMgr
         //改：删除child的原来所有的parent，将parent切换到指定的新的parent
         int ResetParent(GUTag parent, GUTag child);
         //改：标题
-        int ChangeTitle(GUTag tag, string newTitle);
+        GUTag ChangeTitle(GUTag tag, string newTitle);
         int MergeAlias(GUTag tag1, GUTag tag2); //GUTAG:merge语义有变化，现在是将tag2合并到tag1，并删除tag2
         //改：本节点在父节点所有孩子中的位置
         int ChangePos(GUTag tag, int direct);

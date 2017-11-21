@@ -1,6 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Windows;
-using TagExplorer.TagLayout.LayoutCommon;
+using TagExplorer.TagLayout.CommonLayout;
 
 namespace UTLT
 {

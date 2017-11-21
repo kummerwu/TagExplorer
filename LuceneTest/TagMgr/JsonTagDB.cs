@@ -371,12 +371,12 @@ namespace TagExplorer.TagMgr
 
         
 
-        public int ChangeTitle(GUTag tag, string newTitle)
+        public GUTag ChangeTitle(GUTag tag, string newTitle)
         {
             AssertValid(tag);
             tag.ChangeTitle(newTitle);
             Save();
-            return ITagDBConst.R_OK;
+            return tag;
         }
     }
     
