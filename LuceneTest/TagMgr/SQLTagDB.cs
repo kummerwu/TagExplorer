@@ -106,6 +106,9 @@ namespace TagExplorer.TagMgr
                                     ";
                         SQLiteCommand cmd = new SQLiteCommand(sql, con);
                         cmd.ExecuteNonQuery();
+
+                        GUTag defaultTag = new GUTag(StaticCfg.Ins.DefaultTag, StaticCfg.Ins.DefaultTagID);
+                        AddUptSqlDB(defaultTag);
                     }
                     else
                     {
