@@ -96,29 +96,19 @@ namespace TagExplorer
 
         private void App_Startup(object sender, StartupEventArgs e)
         {
-            
-            Process process = GetRuningInstance();
-            if(process!=null)
-            {
-                BringToForeground(process);
-                Environment.Exit(0);
-            }
-        }
-        protected override void OnStartup(StartupEventArgs e)
-        {
-            retry:
-            if(CfgPath.RootPath==null)
+        retry:
+            if (CfgPath.RootPath == null)
             {
                 System.Windows.Forms.FolderBrowserDialog fd = new System.Windows.Forms.FolderBrowserDialog();
                 fd.ShowNewFolderButton = true;
                 fd.ShowDialog();
-                if(Directory.Exists( fd.SelectedPath))
+                if (Directory.Exists(fd.SelectedPath))
                 {
                     CfgPath.RootPath = fd.SelectedPath;
                 }
                 else
                 {
-                    if(System.Windows.MessageBox.Show("请选择一个文档存储的根目录","首次运行设置",MessageBoxButton.OKCancel,MessageBoxImage.Question) == MessageBoxResult.OK)
+                    if (System.Windows.MessageBox.Show("请选择一个文档存储的根目录", "首次运行设置", MessageBoxButton.OKCancel, MessageBoxImage.Question) == MessageBoxResult.OK)
                     {
                         goto retry;
                     }
@@ -128,8 +118,16 @@ namespace TagExplorer
                     }
                 }
             }
-            base.OnStartup(e);
+
+
+            Process process = GetRuningInstance();
+            if(process!=null)
+            {
+                BringToForeground(process);
+                Environment.Exit(0);
+            }
         }
+        
 
 
     }
