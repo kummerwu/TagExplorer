@@ -94,6 +94,7 @@ namespace TagExplorer
 
         private void App_Startup(object sender, StartupEventArgs e)
         {
+            
             Process process = GetRuningInstance();
             if(process!=null)
             {
@@ -101,8 +102,13 @@ namespace TagExplorer
                 Environment.Exit(0);
             }
         }
+        protected override void OnStartup(StartupEventArgs e)
+        {
+            //SplashScreen s = new SplashScreen("splashscreen.png");
+            //s.Show(true);
+            base.OnStartup(e);
+        }
 
-        
 
     }
 }
