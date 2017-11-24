@@ -430,6 +430,34 @@ namespace TagExplorer.UriMgr
             w.Close();
             
         }
+
+        public int MoveUris(string[] SrcUri, string[] DstUri, string NewTag)
+        {
+            if (SrcUri!=null && DstUri!=null &&  SrcUri.Length != DstUri.Length) return 0;
+
+            for (int i = 0; i < SrcUri.Length; i++)
+            {
+                Document doc = GetDoc(SrcUri[i]);
+                if (doc == null) continue;
+
+                if (DstUri != null)
+                {
+                    doc.RemoveFields(URIItem.F_KEY);
+                    doc.RemoveFields(URIItem.F_URI);
+                    doc.Add(new Field(URIItem.F_KEY, DstUri[i].ToLower(), Field.Store.YES, Field.Index.NOT_ANALYZED));
+                    doc.Add(new Field(URIItem.F_URI, DstUri[i], Field.Store.YES, Field.Index.ANALYZED));
+                }
+                if(NewTag!=null)
+                {
+                    doc.RemoveFields(URIItem.F_URI_TAGS);
+                    doc.Add(new Field(URIItem.F_URI_TAGS, NewTag, Field.Store.YES, Field.Index.ANALYZED));
+
+                }
+                writer.UpdateDocument(new Term(URIItem.F_KEY, SrcUri[i].ToLower()), doc); //没有指定分析器，导致大小写有bug，相同的Uri会存在两个
+            }
+            Commit();
+            return 0;
+        }
         #endregion
     }
 }

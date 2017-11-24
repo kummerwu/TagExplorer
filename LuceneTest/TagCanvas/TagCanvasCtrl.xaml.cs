@@ -735,24 +735,37 @@ namespace TagExplorer.TagCanvas
 
         }
 
-        //TODO:这儿有bug，moveuri时，src可能是文件，也可能是http链接。
-        //需要有一种机制，将文件和链接统一对待处理。
-
+        //《DEL》TODO:这儿有bug，moveuri时，src可能是文件，也可能是http链接。
+        //需要有一种机制，将文件和链接统一对待处理。《DEL》
+        //OK,处理干净：对于http和文件区分处理。
         private void MoveUris(string[] args)
         {
-            string[] src = args;
-            string[] dst = PathHelper.MapFilesToTagDir(src, SelectedTag.Title);
-            FileShell.SHMoveFiles(src, dst);
-            UriDB.DelUris(src, false);  //TODO bug2:对于http链接，删除后，标题就没有了。
-            //foreach (string uri in src)
-            //{
-            //    UriDB.DelUri(uri, false); 
-            //}
-            UriDB.AddUris(dst, new List<string>() { SelectedTag.Title });
-            //foreach(string uri in dst)
-            //{
-            //    UriDB.AddUri(uri, new List<string>() { currentTag });
-            //}
+            List<string> fsArgs = new List<string>();
+            List<string> httpArgs = new List<string>();
+            foreach(string a in args)
+            {
+                if(PathHelper.IsValidFS(a))
+                {
+                    fsArgs.Add(a);
+                }
+                else if(PathHelper.IsValidUri(a))
+                {
+                    httpArgs.Add(a);
+                }
+            }
+            
+            //如果是文件系统中的文件，需要移动文件
+            string[] fsSrc = fsArgs.ToArray();
+            string[] fsDst = PathHelper.MapFilesToTagDir(fsSrc, SelectedTag.Title);
+            FileShell.SHMoveFiles(fsSrc, fsDst);
+            UriDB.MoveUris(fsSrc, fsDst, SelectedTag.Title);
+
+            //如果是链接，只需要更新tag列表
+            UriDB.MoveUris(httpArgs.ToArray(), null, SelectedTag.Title);
+            //UriDB.DelUris(fsSrc, false);  //TODO bug2:对于http链接，删除后，标题就没有了。
+           
+            //UriDB.AddUris(fsDst, new List<string>() { SelectedTag.Title });
+           
         }
         private void PasteFiles() { PasteFiles(true); }
         private void PasteFiles(bool NeedCopy)

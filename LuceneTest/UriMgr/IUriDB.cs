@@ -34,7 +34,7 @@ namespace TagExplorer.UriMgr
         /// <param name="Delete">是否删除对应的文件</param>
         /// <returns></returns>
         int DelUris(IEnumerable<string> Uri,bool Delete);
-
+        int MoveUris(string[] SrcUri, string[] DstUri, string NewTag);
         /// <summary>
         /// 删除URI的tag
         /// </summary>
