@@ -6,6 +6,8 @@ using System.Runtime.InteropServices;
 using System.Windows;
 using TagExplorer.Utils;
 
+using System.IO;
+
 namespace TagExplorer
 {
     /// <summary>
@@ -94,7 +96,30 @@ namespace TagExplorer
 
         private void App_Startup(object sender, StartupEventArgs e)
         {
-            
+        retry:
+            if (CfgPath.RootPath == null)
+            {
+                System.Windows.Forms.FolderBrowserDialog fd = new System.Windows.Forms.FolderBrowserDialog();
+                fd.ShowNewFolderButton = true;
+                fd.ShowDialog();
+                if (Directory.Exists(fd.SelectedPath))
+                {
+                    CfgPath.RootPath = fd.SelectedPath;
+                }
+                else
+                {
+                    if (System.Windows.MessageBox.Show("请选择一个文档存储的根目录", "首次运行设置", MessageBoxButton.OKCancel, MessageBoxImage.Question) == MessageBoxResult.OK)
+                    {
+                        goto retry;
+                    }
+                    else
+                    {
+                        System.Windows.Application.Current.Shutdown();
+                    }
+                }
+            }
+
+
             Process process = GetRuningInstance();
             if(process!=null)
             {
@@ -102,12 +127,7 @@ namespace TagExplorer
                 Environment.Exit(0);
             }
         }
-        protected override void OnStartup(StartupEventArgs e)
-        {
-            //SplashScreen s = new SplashScreen("splashscreen.png");
-            //s.Show(true);
-            base.OnStartup(e);
-        }
+        
 
 
     }

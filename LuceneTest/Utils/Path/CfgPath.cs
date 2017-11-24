@@ -83,7 +83,19 @@ namespace TagExplorer.Utils
             }
             set
             {
-                rootPath = value;
+                if (Directory.Exists(value))
+                {
+                    rootPath = value;
+                    ConfigurationManager.AppSettings.Set("RootDir", value);
+
+                    System.Configuration.Configuration config =
+                    ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+                    config.AppSettings.Settings.Remove("RootDir");
+                    config.AppSettings.Settings.Add("RootDir", value);
+                    config.Save(ConfigurationSaveMode.Modified);
+                    
+
+                }
             }
         }
         //Root根目录下的一级目录下的文件
