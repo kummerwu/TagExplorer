@@ -817,16 +817,12 @@ namespace TagExplorer.TagCanvas
             {
                 if (PathHelper.IsValidWebLink(uri))
                 {
-                    string title = WebHelper.GetWebTitle(uri);
-                    if (title != null)
-                    {
-                        UriDB.UpdateTitle(uri, title);
-                    }
-                    if (StaticCfg.Ins.Opt.AutoDownloadUrl)
-                    {
-                        //WebHelper.Download(uri, currentTag.Title, title);
-                        BackTask.Ins.Add(new DownloadTaskInf(uri, SelectedTag.Title, title));
-                    }
+                    //string title = WebHelper.GetWebTitle(uri);
+                    //if (title != null)
+                    //{
+                    //    UriDB.UpdateTitle(uri, title);
+                    //}
+                    BackTask.Ins.Add(new UpdateTitleTaskInf(uri, UriDB, SelectedTag.Title));
                 }
             }
             //foreach(string f in dst)

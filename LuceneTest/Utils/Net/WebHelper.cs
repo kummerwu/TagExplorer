@@ -13,10 +13,24 @@ namespace TagExplorer.Utils
     {
         public static string GetHtml(string url, string charSet)
         {
+            string html = GetHtmlWebClient(url, charSet);
+            if(html==null)
+            {
+                html = GetHtmlHttpWebRequest(url, charSet);
+            }
+            return html;
+        }
+        private static string GetHtmlHttpWebRequest(string url, string charSet)
+        {
+            return null;
+        }
+        private static string GetHtmlWebClient(string url,string charSet)
+        {
             string strWebData = string.Empty;
             try
             {
-                WebClienTimeout myWebClient = new WebClienTimeout(50*1000); //创建WebClient实例
+                WebClienTimeout myWebClient = new WebClienTimeout(50 * 1000); //创建WebClient实例
+                myWebClient.Headers.Add("User-Agent", "Microsoft Internet Explorer");
                 byte[] myDataBuffer = myWebClient.DownloadData(url);
                 strWebData = System.Text.Encoding.Default.GetString(myDataBuffer);
                 //获取网页字符编码描述信息 
@@ -24,7 +38,7 @@ namespace TagExplorer.Utils
                 {
                     Match charSetMatch = Regex.Match(strWebData, "<meta([^>]*)charset=(\")?(.*)?\"", RegexOptions.IgnoreCase | RegexOptions.Multiline);
                     string webCharSet = charSetMatch.Groups[3].Value.Trim().ToLower();
-                    if (webCharSet != "gb2312" && webCharSet!= "gbk" )
+                    if (webCharSet != "gb2312" && webCharSet != "gbk")
                     {
                         webCharSet = "utf-8";
                     }
@@ -41,14 +55,35 @@ namespace TagExplorer.Utils
             }
             return strWebData;
         }
-
         public static string GetWebTitle(String url)
         {
             try
             {
                 //请求资源  
                 string html = GetHtml(url, null);
-                return GetHtmlTitle(html);
+                string title = GetHtmlTitle(html);
+                if(string.IsNullOrEmpty(title))
+                {
+                    int lastIdx = url.LastIndexOf('/');
+                    if (lastIdx < 1) lastIdx = url.LastIndexOf('\\');
+
+                    if (lastIdx > 1)
+                    {
+                        title = url.Substring(lastIdx + 1); //TODO 更好的获得http文档标题的方法
+                    }
+                    else
+                    {
+                        title = url;
+                    }
+                }
+
+                if(!string.IsNullOrEmpty(title))
+                {
+                    title = title.Replace("\r", "");
+                    title = title.Replace("\n", "");
+                    title = WebUtility.HtmlDecode(title);
+                }
+                return title;
             }
             catch (Exception e)
             {
@@ -61,7 +96,7 @@ namespace TagExplorer.Utils
         {
             
             //建立获取网页标题正则表达式  
-            String regex = @"<title>(?<TITLE>.+)</title>";
+            String regex = @"<title[^>]*>(?<TITLE>.+?)</title>";
 
             //返回网页标题  
             Match m = Regex.Match(str, regex,RegexOptions.IgnoreCase|RegexOptions.Singleline);

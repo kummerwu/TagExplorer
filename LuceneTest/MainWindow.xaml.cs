@@ -44,7 +44,7 @@ namespace TagExplorer
             //URI DB初始化
             Logger.I("InitializeComponent Finished!，init uridb");
             uriDB = UriDBFactory.CreateUriDB();
-            uriDB.UriDBChanged += ShowUrlListByText;
+            uriDB.UriDBChanged += UriDBChangedCallback;
             
             //TAG DB初始化
             Logger.I("InitializeComponent Finished!，init tagdb");
@@ -112,6 +112,10 @@ namespace TagExplorer
         private void TagDBChanged()
         {
             tagCanvas.RedrawGraph();
+        }
+        private void UriDBChangedCallback()
+        {
+            this.Dispatcher.Invoke(new Action(ShowUrlListByText));
         }
         public void ShowUrlListByText()
         {

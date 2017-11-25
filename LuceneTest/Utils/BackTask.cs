@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
+using TagExplorer.UriMgr;
 
 namespace TagExplorer.Utils
 {
@@ -22,6 +23,31 @@ namespace TagExplorer.Utils
         public void Run()
         {
             WebHelper.Download(Url, Tag, Title);
+        }
+    }
+    class UpdateTitleTaskInf:IRunable
+    {
+        string Uri = null;
+        IUriDB UriDB = null;
+        string Tag = null;
+        public UpdateTitleTaskInf(string uri,IUriDB db,string tag)
+        {
+            Uri = uri;
+            UriDB = db;
+            Tag = tag;
+        }
+        public void Run()
+        {
+            string title = WebHelper.GetWebTitle(Uri);
+            if(title!=null)
+            {
+                UriDB.UpdateTitle(Uri, title);
+                if (StaticCfg.Ins.Opt.AutoDownloadUrl)
+                {
+                    //WebHelper.Download(uri, currentTag.Title, title);
+                    BackTask.Ins.Add(new DownloadTaskInf(Uri, Tag, title));
+                }
+            }
         }
     }
     class DelTagTaskInf:IRunable
