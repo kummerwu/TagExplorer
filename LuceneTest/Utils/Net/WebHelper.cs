@@ -14,7 +14,7 @@ namespace TagExplorer.Utils
         public static string GetHtml(string url, string charSet)
         {
             string html = GetHtmlWebClient(url, charSet);
-            if(html==null)
+            if(string.IsNullOrEmpty(html))
             {
                 html = GetHtmlHttpWebRequest(url, charSet);
             }
@@ -36,8 +36,8 @@ namespace TagExplorer.Utils
                 //获取网页字符编码描述信息 
                 if (string.IsNullOrEmpty(charSet))
                 {
-                    Match charSetMatch = Regex.Match(strWebData, "<meta([^>]*)charset=(\")?(.*)?\"", RegexOptions.IgnoreCase | RegexOptions.Multiline);
-                    string webCharSet = charSetMatch.Groups[3].Value.Trim().ToLower();
+                    Match charSetMatch = Regex.Match(strWebData, @"<meta([^><]*)(charset\s*=\s*(?<CHARSET>[a-zA-Z-0-9]+))", RegexOptions.IgnoreCase | RegexOptions.Multiline);
+                    string webCharSet = charSetMatch.Groups["CHARSET"].Value.Trim().ToLower();
                     if (webCharSet != "gb2312" && webCharSet != "gbk")
                     {
                         webCharSet = "utf-8";
