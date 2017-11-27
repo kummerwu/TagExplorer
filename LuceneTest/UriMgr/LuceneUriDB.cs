@@ -110,10 +110,30 @@ namespace TagExplorer.UriMgr
             Commit();
             if (Delete)
             {
-                //TODO  删除文件
+                MoveToRecycle(Uris);
             }
             return 0;
         }
+
+        private static void MoveToRecycle(IEnumerable<string> Uris)
+        {
+            List<string> srcs = new List<string>();
+            srcs.AddRange(Uris);
+            List<string> dstList = new List<string>();
+            List<string> srcList = new List<string>();
+            foreach (string s in srcs)
+            {
+                if (PathHelper.IsValidFS(s))
+                {
+                    string name = System.IO.File.Exists(s) ? System.IO.Path.GetFileName(s) : new System.IO.DirectoryInfo(s).Name;
+                    string dst = CfgPath.GetRecycleName(name);
+                    dstList.Add(dst);
+                    srcList.Add(s);
+                }
+            }
+            FileShell.SHMoveFiles(srcList.ToArray(), dstList.ToArray());
+        }
+
         public void Dispose()
         {
             search.Dispose();

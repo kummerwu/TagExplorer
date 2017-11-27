@@ -60,13 +60,10 @@ namespace TagExplorer.Utils
         public void Run()
         {
             string src = CfgPath.GetDirByTag(Tag);
-            string dst = Path.Combine(CfgPath.RecycleDir,Tag);
+            
             if(Directory.Exists(src))
             {
-                while(Directory.Exists(dst))
-                {
-                    dst = dst + "$" + Guid.NewGuid().ToString();
-                }
+                string dst = CfgPath.GetRecycleName(Tag);
                 try
                 {
                     Directory.Move(src, dst);

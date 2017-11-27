@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
 using System.Text.RegularExpressions;
@@ -132,6 +133,15 @@ namespace TagExplorer.Utils
         public static string TemplatePath { get { return Path.Combine(DocBasePath, "Template"); } }
         public static string Res_Path { get { return SubDir(DocBasePath, "Res"); } }
         
+        public static string GetRecycleName(string name)
+        {
+            string dst = Path.Combine(CfgPath.RecycleDir, name);
+            while (Directory.Exists(dst) || File.Exists(dst) )
+            {
+                dst = dst + "$" + Guid.NewGuid().ToString();
+            }
+            return dst;
+        }
         public static string GetTemplateFileByTag(string tag,string dotPostfix)
         {
             string file = CfgPath.GetFileByTag(tag, "note"+dotPostfix);

@@ -39,7 +39,7 @@
                     <Separator></Separator>
                     <MenuItem Name="miCut" Header="剪切文件" Click="miCut_Click"/>
                     <MenuItem Name="miCopy" Header="复制文件" Click="miCopy_Click"/>
-                    
+                    <MenuItem Name="miDel" Header="删除文件" Click="miDel_Click"/>
                 </ContextMenu>
             </ListView.ContextMenu>
             

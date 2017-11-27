@@ -236,5 +236,23 @@ namespace TagExplorer.UriInfList
             }
             
         }
+
+        private void miDel_Click(object sender, RoutedEventArgs e)
+        {
+            int sel = lst.SelectedIndex;
+            List<string> toBeDel = new List<string>();
+            foreach (SearchResultItem it in lst.SelectedItems)
+            {
+                toBeDel.Add(it.FullUri);
+            }
+            uriDB.DelUris(toBeDel, true);
+            if (lst.Items.Count > 0)
+            {
+                if (sel < 0) sel = 0;
+                if (sel >= lst.Items.Count) sel = lst.Items.Count - 1;
+                lst.SelectedIndex = sel;
+                CheckSelectedItem();
+            }
+        }
     }
 }
