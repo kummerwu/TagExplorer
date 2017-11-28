@@ -23,9 +23,11 @@ namespace TagExplorer.UriInfList
         private string dir;
         
         private DateTime lastAccessTime = DateTime.MinValue;
-        private DateTime lastWriteTime = DateTime.MinValue;
+        private DateTime createTime = DateTime.MinValue;
         private DateTime InvalidTime = new DateTime(1);
         private int status = 0;
+
+        URIItem uriItem = null;
         //公有成员方法************************************************************
         public static List<SearchResultItem> QueryByTag(string tag, IUriDB db)
         {
@@ -82,6 +84,7 @@ namespace TagExplorer.UriInfList
         {
             get
             {
+                
                 if (lastAccessTime == DateTime.MinValue)
                 {
                     if (PathHelper.IsValidFS(fullUri))
@@ -93,35 +96,47 @@ namespace TagExplorer.UriInfList
                         lastAccessTime = InvalidTime;
                     }
                 }
+                if (uriItem != null && uriItem.AccessTime != null && lastAccessTime == InvalidTime)
+                {
+                    lastAccessTime =  uriItem.AccessTime;
+                }
                 return lastAccessTime;
             }
         }
-        public DateTime LastWriteTime
+        public DateTime CreateTime
         {
             get
             {
-                if (lastWriteTime == DateTime.MinValue)
+                
+                if (createTime == DateTime.MinValue)
                 {
                     if (PathHelper.IsValidFS(fullUri))
                     {
-                        lastWriteTime = File.GetLastWriteTime(fullUri);
+                        createTime = File.GetLastWriteTime(fullUri);
                     }
                     else
                     {
-                        lastWriteTime = InvalidTime;
+                        createTime = InvalidTime;
                     }
                 }
-                return lastWriteTime;
+                if (uriItem != null && uriItem.CreateTime != null && createTime == InvalidTime)
+                {
+                    createTime =  uriItem.CreateTime;
+                }
+                return createTime;
             }
         }
         //私有成员方法************************************************************
         private void Init(string fullPath, IUriDB db)//TODO 支持http图标
         {
             fullUri = fullPath;
+            uriItem = db.GetInf(fullUri);
+            if (uriItem == null) return;
+
             //http链接
             if (PathHelper.IsValidWebLink(fullUri))
             {
-                string title = db.GetTitle(fullUri);
+                string title = uriItem.Title;
                 //指定了标题的http链接
                 if (title != null && title.Length > 0)
                 {
@@ -131,14 +146,22 @@ namespace TagExplorer.UriInfList
                 //没有指定标题的http链接
                 else
                 {
-                    System.Uri uri = new System.Uri(fullUri); //TODO 获取http文档的名称和路径
+                    //System.Uri uri = new System.Uri(fullUri); //TODO 获取http文档的名称和路径
                     GetNameTitle();
                 }
             }
             //文件
             else
             {
-                name = Path.GetFileName(fullUri);
+                string name2 = Path.GetFileName(fullUri);
+                if (uriItem != null && !string.IsNullOrEmpty(uriItem.Title) && uriItem.Title!=name2)
+                {
+                    name = uriItem.Title + "("+name2+")";
+                }
+                else
+                {
+                    name = name2;
+                }
                 dir = Path.GetDirectoryName(fullUri);
             }
             _icon = GIconHelper.GetBitmapFromFile(fullUri);

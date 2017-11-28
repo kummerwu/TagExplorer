@@ -7,6 +7,7 @@ using Lucene.Net.Store;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Text;
 using TagExplorer.Utils;
 
@@ -195,13 +196,52 @@ namespace TagExplorer.UriMgr
             Commit(Uri, doc);
             return 0;
         }
-        public string GetTitle(string Uri)
+        private URIItem DocToURIItem(Document doc)
         {
-            string ret = "";
+            URIItem item = new URIItem();
+            item.Title = doc.GetField(URIItem.F_URI_TITLE)?.StringValue;
+            item.Key = doc.Get(URIItem.F_KEY);
+            item.Uri = doc.Get(URIItem.F_URI);
+            item.Tags = GetDocTags(doc);
+            string createT = doc.Get(URIItem.F_CREATE_TIME);
+            string accessT = doc.Get(URIItem.F_ACCESS_TIME);
+            if (string.IsNullOrEmpty(createT))
+            {
+                item.CreateTime = DateTime.Now;
+            }
+            else
+            {
+                item.CreateTime = DateTime.ParseExact(createT, TIME_FMT, CultureInfo.InvariantCulture);
+            }
+            if (string.IsNullOrEmpty(accessT))
+            {
+                item.AccessTime = DateTime.Now;
+            }
+            else
+            {
+                item.AccessTime = DateTime.ParseExact(accessT, TIME_FMT, CultureInfo.InvariantCulture);
+            }
+            if (!string.IsNullOrEmpty(item.Key) || !string.IsNullOrEmpty(item.Uri))
+            {
+                if (string.IsNullOrEmpty(item.Key))
+                {
+                    item.Key = item.Uri.ToLower();
+                }
+                else if (string.IsNullOrEmpty(item.Uri))
+                {
+                    item.Uri = item.Key;
+                }
+                //all.Add(item);
+            }
+            return item;
+        }
+        public URIItem GetInf(string Uri)
+        {
+            URIItem ret = null;
             Document doc = GetDoc(Uri);
             if (doc != null)
             {
-                ret = doc.GetField(URIItem.F_URI_TITLE)?.StringValue;
+                ret = DocToURIItem(doc);
             }
             return ret;
         }
@@ -230,31 +270,9 @@ namespace TagExplorer.UriMgr
 
 
         #region 私有方法
-        private class URIItem
-        {
-            //public Guid ID;
-            public string Key;
-            public string Uri;
-            public string Title;
-            public List<string> Tags;
-            public DateTime CreateTime;
-            public DateTime AccessTime;
-
-            public const string F_ID = "fguid";
-            public const string F_KEY = "key";
-            public const string F_URI = "furi";
-            public const string F_URI_TITLE = "ftitle";
-            public const string F_URI_TAGS = "ftags";
-            public const string F_CREATE_TIME = "fctime";
-            public const string F_ACCESS_TIME = "fatime";
-
-            [JsonIgnore]
-            public  string[] SearchFields = {F_KEY,F_URI,F_URI_TAGS,F_URI_TITLE };
-
-
-        }
         
 
+        private const string TIME_FMT = "yyyy-MM-dd HH:mm:ss";
         IndexWriter writer = null;
         IndexReader reader = null;
         IndexSearcher search = null;
@@ -352,7 +370,8 @@ namespace TagExplorer.UriMgr
             if (doc == null)
             {
                 doc = new Document();
-                
+                doc.Add(new Field(URIItem.F_CREATE_TIME, DateTime.Now.ToString(TIME_FMT, CultureInfo.InvariantCulture), Field.Store.YES, Field.Index.NOT_ANALYZED));
+                doc.Add(new Field(URIItem.F_ACCESS_TIME, DateTime.Now.ToString(TIME_FMT, CultureInfo.InvariantCulture), Field.Store.YES, Field.Index.NOT_ANALYZED));
             }
             else //doc已经存在，需要更新
             {
@@ -508,21 +527,10 @@ namespace TagExplorer.UriMgr
                     Document doc = search.Doc(i);
                     if (doc != null)
                     {
-                        URIItem item = new URIItem();
-                        item.Title = doc.GetField(URIItem.F_URI_TITLE)?.StringValue;
-                        item.Key = doc.Get(URIItem.F_KEY);
-                        item.Uri = doc.Get(URIItem.F_URI);
-                        item.Tags = GetDocTags(doc);
-                        if (!string.IsNullOrEmpty(item.Key)||!string.IsNullOrEmpty(item.Uri))
+
+                        URIItem item = DocToURIItem(doc);
+                        if(item!=null && !string.IsNullOrEmpty(item.Key) && !string.IsNullOrEmpty(item.Uri))
                         {
-                            if (string.IsNullOrEmpty(item.Key))
-                            {
-                                item.Key = item.Uri.ToLower();
-                            }
-                            else if(string.IsNullOrEmpty(item.Uri))
-                            {
-                                item.Uri = item.Key;
-                            }
                             all.Add(item);
                         }
                     }

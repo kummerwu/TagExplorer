@@ -219,8 +219,8 @@ namespace TagExplorer.UriInfList
                 case "访问时间":
                     dataList.Sort(delegate (SearchResultItem x, SearchResultItem y) { return SortType * x.LastAccessTime.CompareTo(y.LastAccessTime); });
                     break;
-                case "修改时间":
-                    dataList.Sort(delegate (SearchResultItem x, SearchResultItem y) { return SortType * x.LastWriteTime.CompareTo(y.LastWriteTime); });
+                case "创建时间":
+                    dataList.Sort(delegate (SearchResultItem x, SearchResultItem y) { return SortType * x.CreateTime.CompareTo(y.CreateTime); });
                     break;
             }
             SortType *= -1;

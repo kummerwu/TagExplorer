@@ -86,10 +86,10 @@
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
 
-                    <GridViewColumn Header="修改时间" >
+                    <GridViewColumn Header="创建时间" >
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
-                                <TextBlock  Text="{Binding Path=LastWriteTime,StringFormat='yy/MM/dd-HH:mm'}">
+                                <TextBlock  Text="{Binding Path=CreateTime,StringFormat='yy/MM/dd-HH:mm'}">
 
                                 </TextBlock>
                                 <DataTemplate.Triggers>

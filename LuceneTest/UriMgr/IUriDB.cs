@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 
 namespace TagExplorer.UriMgr
@@ -68,7 +69,7 @@ namespace TagExplorer.UriMgr
         /// </summary>
         /// <param name="Uri"></param>
         /// <returns></returns>
-        string GetTitle(string Uri);
+        URIItem GetInf(string Uri);
 
         /// <summary>
         /// 获得URI的所有tag列表
@@ -87,4 +88,28 @@ namespace TagExplorer.UriMgr
         int Export(string exportFile);
     }
     public delegate void DataChanged();
+
+    public class URIItem
+    {
+        //public Guid ID;
+        public string Key;
+        public string Uri;
+        public string Title;
+        public List<string> Tags;
+        public DateTime CreateTime;
+        public DateTime AccessTime;
+
+        public const string F_ID = "fguid";
+        public const string F_KEY = "key";
+        public const string F_URI = "furi";
+        public const string F_URI_TITLE = "ftitle";
+        public const string F_URI_TAGS = "ftags";
+        public const string F_CREATE_TIME = "fctime";
+        public const string F_ACCESS_TIME = "fatime";
+
+        [JsonIgnore]
+        public string[] SearchFields = { F_KEY, F_URI, F_URI_TAGS, F_URI_TITLE };
+
+
+    }
 }
