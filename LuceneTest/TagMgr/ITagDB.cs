@@ -34,7 +34,8 @@ namespace TagExplorer.TagMgr
         //查找tag的所有别名
         List<string> QueryTagAlias(GUTag tag);
         //版本升级时使用该函数导入老版本的数据。
-        int Import(string importInf);
+        int Import(string importFile);
+        int Export(string exportFile);
         //通知：数据库变更通知
         DataChanged TagDBChanged { get; set; }
     }

@@ -4,6 +4,7 @@ using Lucene.Net.Index;
 using Lucene.Net.QueryParsers;
 using Lucene.Net.Search;
 using Lucene.Net.Store;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -11,6 +12,7 @@ using TagExplorer.Utils;
 
 namespace TagExplorer.UriMgr
 {
+    
     class LuceneUriDB : IUriDB
     {
         
@@ -230,7 +232,7 @@ namespace TagExplorer.UriMgr
         #region 私有方法
         private class URIItem
         {
-            public Guid ID;
+            //public Guid ID;
             public string Key;
             public string Uri;
             public string Title;
@@ -246,7 +248,9 @@ namespace TagExplorer.UriMgr
             public const string F_CREATE_TIME = "fctime";
             public const string F_ACCESS_TIME = "fatime";
 
-            public string[] SearchFields = {F_KEY,F_URI,F_URI_TAGS,F_URI_TITLE };
+            [JsonIgnore]
+            public  string[] SearchFields = {F_KEY,F_URI,F_URI_TAGS,F_URI_TITLE };
+
 
         }
         
@@ -476,6 +480,61 @@ namespace TagExplorer.UriMgr
                 writer.UpdateDocument(new Term(URIItem.F_KEY, SrcUri[i].ToLower()), doc); //没有指定分析器，导致大小写有bug，相同的Uri会存在两个
             }
             Commit();
+            return 0;
+        }
+
+        public int Import(string importFile)
+        {
+            throw new NotImplementedException();
+        }
+        private List<string> GetDocTags(Document doc)
+        {
+            List<string> tags = new List<string>();
+            foreach (Field f in doc.GetFields(URIItem.F_URI_TAGS))
+            {
+                tags.Add(f.StringValue);
+            }
+            return tags;
+        }
+        public int Export(string exportFile)
+        {
+            List<URIItem> all = new List<URIItem>();
+            using (System.IO.TextWriter w = new System.IO.StreamWriter(exportFile))
+            {
+                int max = search.MaxDoc;
+                //w.WriteLine(@"IDX,F_ID,F_KEY,F_URI,DEL,TAGS");
+                for (int i = 0; i < max; i++)
+                {
+                    Document doc = search.Doc(i);
+                    if (doc != null)
+                    {
+                        URIItem item = new URIItem();
+                        item.Title = doc.GetField(URIItem.F_URI_TITLE)?.StringValue;
+                        item.Key = doc.Get(URIItem.F_KEY);
+                        item.Uri = doc.Get(URIItem.F_URI);
+                        item.Tags = GetDocTags(doc);
+                        if (!string.IsNullOrEmpty(item.Key)||!string.IsNullOrEmpty(item.Uri))
+                        {
+                            if (string.IsNullOrEmpty(item.Key))
+                            {
+                                item.Key = item.Uri.ToLower();
+                            }
+                            else if(string.IsNullOrEmpty(item.Uri))
+                            {
+                                item.Uri = item.Key;
+                            }
+                            all.Add(item);
+                        }
+                    }
+                }
+
+                all.Sort((x, y) => x.Key.CompareTo(y.Key));
+                foreach (URIItem item in all)
+                {
+                    w.WriteLine(JsonConvert.SerializeObject(item));
+                }
+
+            }
             return 0;
         }
         #endregion

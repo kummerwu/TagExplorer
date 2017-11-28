@@ -114,7 +114,22 @@ namespace TagExplorer.Utils
                 return Path.Combine(tdbDir, "Tags3.json");
             }
         }
-
+        public static string TagDBPath_Export
+        {
+            get
+            {
+                string tdbDir = RootSubDir("Exchange");
+                return Path.Combine(tdbDir, "Export-Tags.json");
+            }
+        }
+        public static string UriDBPath_Export
+        {
+            get
+            {
+                string tdbDir = RootSubDir("Exchange");
+                return Path.Combine(tdbDir, "Export-Uris.json");
+            }
+        }
         public static string TagDBPath_SQLite
         {
             get

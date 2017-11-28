@@ -192,15 +192,18 @@ namespace TagExplorer
             //    @"D:\00TagExplorerBase\DocumentBase\Doc\分布式架构\Raft 为什么是更易理解的分布式一致性算法 - mindwind - 博客园.mht");
             if (MessageBox.Show("导出所有Uri信息和tag信息？","",MessageBoxButton.OKCancel) == MessageBoxResult.OK)
             {
-                //Dead("导出完成！");
-                //throw new Exception("mock“）");
-                (uriDB as LuceneUriDB)?.Dbg();
-                (tagDB as LuceneTagDB)?.TranslateToJson();
-                if(!(tagDB is LuceneTagDB))
-                {
-                    LuceneTagDB ltb = new LuceneTagDB();
-                    ltb.TranslateToJson();
-                }
+                ////Dead("导出完成！");
+                ////throw new Exception("mock“）");
+                //(uriDB as LuceneUriDB)?.Dbg();
+                //(tagDB as LuceneTagDB)?.TranslateToJson();
+                //if(!(tagDB is LuceneTagDB))
+                //{
+                //    LuceneTagDB ltb = new LuceneTagDB();
+                //    ltb.TranslateToJson();
+                //}
+
+                tagDB.Export(CfgPath.TagDBPath_Export);
+                uriDB.Export(CfgPath.UriDBPath_Export);
                 MessageBox.Show("导出完成！");
             }
         }

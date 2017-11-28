@@ -81,7 +81,10 @@ namespace TagExplorer.UriMgr
         /// 主动触发数据库变更通知
         /// </summary>
         void Notify();
-        
+
+        //版本升级时使用该函数导入老版本的数据。
+        int Import(string importFile);
+        int Export(string exportFile);
     }
     public delegate void DataChanged();
 }

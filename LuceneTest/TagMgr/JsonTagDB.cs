@@ -378,6 +378,11 @@ namespace TagExplorer.TagMgr
             Save();
             return tag;
         }
+
+        public int Export(string exportFile)
+        {
+            throw new NotImplementedException();
+        }
     }
     
     

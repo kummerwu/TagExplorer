@@ -610,6 +610,36 @@ VALUES (@ID,@Title,@Alias,@PID,@Children)",Conn);
             
             return ret;
         }
+
+        public int Export(string exportFile)
+        {
+
+            using (StreamWriter w = new StreamWriter(exportFile))
+            {
+                List<GUTag> all = new List<GUTag>();
+                SQLiteCommand q = new SQLiteCommand(@"SELECT * FROM Tags", Conn);
+                using (SQLiteDataReader r = q.ExecuteReader())
+                {
+                    while (r.Read())
+                    {
+                        GUTag tag = ReadGUTagFromR(r);
+                        if(tag!=null)
+                        {
+                            all.Add(tag);
+                        }
+                    }
+                   
+                }
+                
+                all.Sort((x, y) => x.Id.CompareTo(y.Id));
+                foreach (GUTag j in all)
+                {
+                    w.WriteLine(JsonConvert.SerializeObject(j));
+                }
+
+            }
+            return 0;
+        }
         #endregion
     }
 }
