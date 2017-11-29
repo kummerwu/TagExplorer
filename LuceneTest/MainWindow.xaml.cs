@@ -277,6 +277,7 @@ namespace TagExplorer
                 case "1.2":
                     {
                         tagDB.Import(CfgPath.TagDBPath_Export);
+                        uriDB.Import(CfgPath.UriDBPath_Export);
                         break;
                     }
             }

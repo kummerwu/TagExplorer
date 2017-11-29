@@ -235,6 +235,17 @@ namespace TagExplorer.UriMgr
             }
             return item;
         }
+        private void AddUpdate(URIItem item)
+        {
+            if(string.IsNullOrEmpty(item.Title))
+            {
+                AddUris(new string[] {item.Uri }, item.Tags);
+            }
+            else
+            {
+                AddUriWithTitle(item.Uri, item.Tags, item.Title);
+            }
+        }
         public URIItem GetInf(string Uri)
         {
             URIItem ret = null;
@@ -334,11 +345,14 @@ namespace TagExplorer.UriMgr
         }
         private void Commit()
         {
-            writer.Commit();
-            reader = writer.GetReader();
-            search = new IndexSearcher(reader);
-            dbChangedHandler?.Invoke();
-            DBChanged();
+            if (!SuspendCommit)
+            {
+                writer.Commit();
+                reader = writer.GetReader();
+                search = new IndexSearcher(reader);
+                dbChangedHandler?.Invoke();
+                DBChanged();
+            }
         }
         private Document GetDocEx(string Uri,out bool needUpdate)
         {
@@ -502,10 +516,7 @@ namespace TagExplorer.UriMgr
             return 0;
         }
 
-        public int Import(string importFile)
-        {
-            throw new NotImplementedException();
-        }
+        
         private List<string> GetDocTags(Document doc)
         {
             List<string> tags = new List<string>();
@@ -514,6 +525,41 @@ namespace TagExplorer.UriMgr
                 tags.Add(f.StringValue);
             }
             return tags;
+        }
+        private bool SuspendCommit = false;
+        
+        public int Import(string importFile)
+        {
+            int newCnt = 0, uptCnt = 0;
+            SuspendCommit = true;
+            string[] lns = System.IO.File.ReadAllLines(importFile);
+            foreach (string ln in lns)
+            {
+                URIItem importURI = JsonConvert.DeserializeObject<URIItem>(ln);
+                if (importURI != null)
+                {
+                    URIItem myURI = GetInf(importURI.Key);
+                    if (myURI == null)
+                    {
+                        AddUpdate(importURI);
+                        newCnt++;
+                    }
+                    else if (!importURI.IsSame(myURI))
+                    {
+                        AddUpdate(URIItem.MergeTag(importURI, myURI));
+                        uptCnt++;
+                    }
+                    else
+                    {
+                        //两边完全相同，不用处理
+                    }
+                }
+
+            }
+            SuspendCommit = false;
+            Commit();
+            DBChanged();
+            return 0;
         }
         public int Export(string exportFile)
         {
@@ -524,6 +570,7 @@ namespace TagExplorer.UriMgr
                 //w.WriteLine(@"IDX,F_ID,F_KEY,F_URI,DEL,TAGS");
                 for (int i = 0; i < max; i++)
                 {
+                    if (reader.IsDeleted(i)) continue;
                     Document doc = search.Doc(i);
                     if (doc != null)
                     {

@@ -95,7 +95,7 @@ namespace TagExplorer.UriMgr
         public string Key;
         public string Uri;
         public string Title;
-        public List<string> Tags;
+        public List<string> Tags = new List<string>();
         public DateTime CreateTime;
         public DateTime AccessTime;
 
@@ -110,6 +110,47 @@ namespace TagExplorer.UriMgr
         [JsonIgnore]
         public string[] SearchFields = { F_KEY, F_URI, F_URI_TAGS, F_URI_TITLE };
 
+        internal bool IsSame(URIItem oTag)
+        {
+            if (oTag.Key != Key) return false;
+            if (oTag.Uri != Uri) return false;
+            if (oTag.Title != Title) return false;
+            //时间不参与比较，否则每次导入都需要有大量的更新，其实没有必要
+            //if (oTag.CreateTime != CreateTime) return false;
+            //if (oTag.AccessTime != AccessTime) return false;
+            if (oTag.Tags.Count != Tags.Count) return false;
+            for(int i = 0;i<Tags.Count;i++)
+            {
+                if (oTag.Tags[i] != Tags[i]) return false;
+            }
+            return true;
+        }
+        private void AddTag(string tag)
+        {
+            if(!Tags.Contains(tag))
+            {
+                Tags.Add(tag);
+            }
+        }
+        internal static URIItem MergeTag(URIItem iTag, URIItem oTag)
+        {
+            URIItem it = new URIItem();
+            it.Key = iTag.Key;
+            it.Uri = string.IsNullOrEmpty(iTag.Uri)?oTag.Uri:iTag.Uri;
+            it.Title = string.IsNullOrEmpty(iTag.Title) ? oTag.Title : iTag.Title;
+            it.CreateTime = iTag.CreateTime > oTag.CreateTime ? iTag.CreateTime : oTag.CreateTime;
+            it.AccessTime = iTag.AccessTime > oTag.AccessTime ? iTag.AccessTime : oTag.AccessTime;
+            foreach(string s in iTag.Tags)
+            {
+                it.AddTag(s);
+            }
+            foreach(string s in oTag.Tags)
+            {
+                it.AddTag(s);
+            }
+            return it;
 
+
+        }
     }
 }
