@@ -35,6 +35,7 @@ namespace TagExplorer.UriInfList
             List<SearchResultItem> ret = new List<SearchResultItem>();
             foreach (string uri in files)
             {
+                string formatUri = CfgPath.ChangePathRoot(uri);
                 if (PathHelper.IsValidUri(uri))
                 {
                     SearchResultItem it = new SearchResultItem();

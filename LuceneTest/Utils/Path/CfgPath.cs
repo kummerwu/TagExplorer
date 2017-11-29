@@ -20,7 +20,21 @@ namespace TagExplorer.Utils
             UriDB
 
        */
-
+        public static string ChangePathRoot(string fullPath)
+        {
+            //是链接或有效文件，直接返回
+            if (!PathHelper.IsValidUri(fullPath))
+            {
+                //不是链接，并且该文件和目录不存在，尝试换根目录，看看能否找到。
+                int idx = fullPath.IndexOf("\\DocumentBase\\Doc\\");
+                if (idx > 0)
+                {
+                    string tmp = Path.Combine(RootPath, fullPath.Substring(idx));
+                    if (PathHelper.IsValidUri(tmp)) return tmp;
+                }
+            }
+            return fullPath;
+        }
         private static string InvalidChar(string tag)
         {
             bool hasErr = false;
@@ -118,16 +132,14 @@ namespace TagExplorer.Utils
         {
             get
             {
-                string tdbDir = RootSubDir("Exchange");
-                return Path.Combine(tdbDir, "Export-Tags.json");
+                return Path.Combine(Exchange_Path, "Export-Tags.json");
             }
         }
         public static string UriDBPath_Export
         {
             get
             {
-                string tdbDir = RootSubDir("Exchange");
-                return Path.Combine(tdbDir, "Export-Uris.json");
+                return Path.Combine(Exchange_Path, "Export-Uris.json");
             }
         }
         public static string TagDBPath_SQLite
@@ -147,7 +159,8 @@ namespace TagExplorer.Utils
         public static string RecycleDir { get { return SubDir(DocBasePath, "Recycle"); } }
         public static string TemplatePath { get { return Path.Combine(DocBasePath, "Template"); } }
         public static string Res_Path { get { return SubDir(DocBasePath, "Res"); } }
-        
+        public static string Exchange_Path { get { return SubDir(DocBasePath, "Exchange"); } }
+
         public static string GetRecycleName(string name)
         {
             string dst = Path.Combine(CfgPath.RecycleDir, name);
