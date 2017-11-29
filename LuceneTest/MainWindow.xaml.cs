@@ -274,6 +274,11 @@ namespace TagExplorer
             {
                 case "1.0":Import1_0();break;
                 case "1.1":Import1_1();break;
+                case "1.2":
+                    {
+                        tagDB.Import(CfgPath.TagDBPath_Export);
+                        break;
+                    }
             }
             
         }

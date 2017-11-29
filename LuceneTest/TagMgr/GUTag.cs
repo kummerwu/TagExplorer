@@ -163,5 +163,46 @@ namespace TagExplorer.TagMgr
             return !(l==r);
         }
         #endregion
+
+        #region 归并函数
+        
+        public bool IsSame(GUTag other)
+        {
+            if (other.Id != Id) return false;
+            if (other.PId != PId) return false;
+            if (other.Alias.Count != Alias.Count) return false;
+            if (other.Children.Count != Children.Count) return false;
+            for(int i = 0;i<Alias.Count;i++)
+            {
+                if (other.Alias[i] != Alias[i]) return false;
+            }
+            for (int i = 0; i < Children.Count; i++)
+            {
+                if (other.Children[i] != Children[i]) return false;
+            }
+            return true;
+        }
+        public static GUTag MergeTag(GUTag iTag, GUTag oTag)
+        {
+            GUTag nTag = new GUTag();
+            //ID
+            nTag.Id = iTag.Id;
+            //PID
+            nTag.PId = iTag.PId;
+            //Alias
+            nTag.Alias.AddRange(iTag.Alias);
+            foreach (string s in iTag.Alias)
+            {
+                nTag.AddAlias(s);
+            }
+            //Children
+            nTag.Children.AddRange(iTag.Children);
+            foreach (Guid s in iTag.Children)
+            {
+                nTag.AddChild(s);
+            }
+            return nTag;
+        }
+        #endregion
     }
 }

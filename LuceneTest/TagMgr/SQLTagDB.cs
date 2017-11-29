@@ -286,11 +286,11 @@ VALUES (@ID,@Title,@Alias,@PID,@Children)",Conn);
         public GUTag NewTag(string title)
         {
             GUTag tag = new GUTag(title);
-            AddToHash(tag);
+            SaveAndUpdateCache(tag);
             //ChangeNotify();//这个地方可以不用notify，在设置父子关系的时候再notify
             return tag;
         }
-        private void AddToHash(GUTag j)
+        private void SaveAndUpdateCache(GUTag j)
         {
             //Debug.Assert(id2Gutag[j.Id] == null);
             if (id2TagCache!=null)
@@ -412,7 +412,7 @@ VALUES (@ID,@Title,@Alias,@PID,@Children)",Conn);
             aliasTag = QueryTag(aliasTag.Id);
             RemoveFromHash(aliasTag);
             mainTag.Merge(aliasTag);
-            AddToHash(mainTag);
+            SaveAndUpdateCache(mainTag);
             //allTag.Add(tag2, tmp1);//别名也需要快速索引
             ChangeNotify();
             return ITagDBConst.R_OK;
@@ -579,36 +579,38 @@ VALUES (@ID,@Title,@Alias,@PID,@Children)",Conn);
         #endregion
 
         #region 从老的json数据导出数据库
+        
         public int Import(string importInf)
         {
-            int ret = 0;
-            GUTag dtag = NewTag(StaticCfg.Ins.DefaultTag);
-
+            int newCnt = 0, uptCnt = 0;
             Hashtable title2GUtag = new Hashtable();
-            title2GUtag.Add(StaticCfg.Ins.DefaultTag, dtag);
-            AddUptSqlDB(dtag);
             string[] lns = File.ReadAllLines(importInf);
             List<GUTag> oldGUTags = new List<GUTag>();
             foreach (string ln in lns)
             {
-                GUTag j = JsonConvert.DeserializeObject<GUTag>(ln);
-                AddToHash(j);
-                oldGUTags.Add(j);
-            }
-            foreach(GUTag t in oldGUTags)
-            {
-                foreach(Guid cid in t.Children)
+                GUTag iTag = JsonConvert.DeserializeObject<GUTag>(ln);
+                if (iTag != null)
                 {
-                    GUTag ctag = QueryTag(cid);
-                    if(ctag!=null)
-                    { 
-                        ctag.PId = t.Id;
-                        AddUptSqlDB(ctag);
+                    GUTag oTag = QueryTag(iTag.Id);
+                    if(oTag==null)
+                    {
+                        SaveAndUpdateCache(iTag);
+                        newCnt++;
+                    }
+                    else if(!iTag.IsSame(oTag))
+                    {
+                        SaveAndUpdateCache(GUTag.MergeTag(iTag, oTag));
+                        uptCnt++;
+                    }
+                    else
+                    {
+                        //两边完全相同，不用处理
                     }
                 }
+
             }
-            
-            return ret;
+            ChangeNotify();
+            return 0;
         }
 
         public int Export(string exportFile)

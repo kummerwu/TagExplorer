@@ -9,7 +9,7 @@ namespace TagExplorer.Utils
     public class StaticCfg
     {
         [JsonIgnore]
-        public  const string CURRENT_VERSION = "1.1";
+        public  const string CURRENT_VERSION = "1.2";
 
         #region 配置的保存与恢复
         private static StaticCfg ins = null;
