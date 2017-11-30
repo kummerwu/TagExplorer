@@ -141,63 +141,65 @@ namespace TagExplorer.TagLayout.TreeLayout
 
         private static int GetTagTreeWidth(GUTag tag,ITagDB db,int level,int maxlevel)
         {
-            int ret = 1;
-
+            int ret = -1;
+            List<GUTag> children = db.QueryTagChildren(tag);
             if (level > maxlevel)
             {
-                ret = 0;
-                Logger.D("GetTagTreeWidth : {0} {1}", tag.ToString(), ret);
-                return ret;
+                ret = 1;
+                
             }
             else if (level == maxlevel)
             {
+                ret = children.Count+1; //所有子节点+自己
+            }
+
+            //只有两种情况下不需要换行：
+            //1. 父节点 -- 子， 孙，重孙
+            //2. 父节点 -- 子，子，子，子
+            else if (children.Count <= 1) //情况1：
+            {
+                //只有一列子孙节点，所有都是独生子
                 ret = 1;
-                Logger.D("GetTagTreeWidth : {0} {1}", tag.ToString(), ret);
+                GUTag tmp = tag;
+                for (int i = level; i < maxlevel; i++)
+                {
+                    children = db.QueryTagChildren(tmp);
+                    if (children.Count > 1)
+                    {
+                        ret = -1;
+                        break;
+                    }
+                    else if (children.Count == 0)
+                    {
+                        ret++;
+                        break;
+                    }
+                    else if (children.Count == 1)
+                    {
+                        tmp = children[0];
+                        ret++;
+                    }
+
+                }
                 return ret;
             }
-
-            
-            //只有一层子节点，所有子节点都是叶子
-            List<GUTag> children = db.QueryTagChildren(tag);
-            foreach(GUTag ctag in children)
+            else
             {
-                if(db.QueryChildrenCount(ctag)>0)
+                //情况2：只有一层子节点，所有子节点都是叶子(显示为子，子，子，子）
+                ret = children.Count;
+                foreach (GUTag ctag in children)
                 {
-                    ret = 2;
-                    break;
+                    if (db.QueryChildrenCount(ctag) > 0) //有子节点非叶子，并且自己子节点数量>1,表示不能在一行内显示
+                    {
+                        ret = -1;
+                    }
                 }
-            }
-            if (ret == 1)
-            {
-                Logger.D("GetTagTreeWidth : {0} {1}", tag.ToString(), ret);
-                return ret;
-            }
-
-
-            //只有一列子孙节点，所有都是独生子
-            ret = 1;
-            GUTag tmp = tag;
-            for(int i = level;i<maxlevel;i++)
-            {
-                children = db.QueryTagChildren(tmp);
-                if(children.Count>1)
-                {
-                    ret = 2;
-                    break;
-                }
-                else if(children.Count==0)
-                {
-                    break;
-                }
-                else if(children.Count==1)
-                {
-                    tmp = children[0];
-                }
-
             }
 
             Logger.D("GetTagTreeWidth : {0} {1}", tag.ToString(), ret);
             return ret;
+
+            
         }
         private static GTagBoxTree ExpandChildMoreCompact(int level, int MaxLevel,ITagDB db, GTagBoxTree root, GTagBoxTree pre, GUTag ctag,int direct,Size size,TreeLayoutEnv env,LayoutMode mode)
         {
@@ -210,17 +212,18 @@ namespace TagExplorer.TagLayout.TreeLayout
             //只有满足严格条件的情况下，才放在兄弟节点的后面，否则在父节点后展开
             TagBoxSizeInf sizeinf =new TagBoxSizeInf(ctag, level+1, StaticCfg.Ins.GFontName);
             bool leftOK = true, rightOK = true;
-            //右边是否有足够空间
+
+            int OneLineChild = GetTagTreeWidth(ctag, db, level + 1, MaxLevel);
+            //右边是否有足够空间(初步预估，用OneLineChild*本节点的宽度预估)
             if (pre!=null && direct == 1 ) { rightOK = pre.totalRange.Right + sizeinf.OutterBoxSize.Width < size.Width; }
             //左边是否有足够空间
             if (pre!=null && direct == -1) { leftOK = sizeinf.OutterBoxSize.Width < pre.totalRange.Left; }
             
 
-            if (pre != null &&
+            if (pre != null && (OneLineChild >= 0 &&
                 /*(db.QueryTagChildren(ctag).Count == 0 && db.QueryTagChildren(pre.box.Tag).Count == 0)*/
-                rightOK  &&
-                leftOK &&
-                (GetTagTreeWidth(ctag, db,level+1,MaxLevel)<=1))    
+                rightOK  && leftOK 
+                ))    
             {
                 Logger.D("Place {0} after {1}:follow", ctag, pre.GTagBox.Tag);
                 //这种情况下不换行
@@ -267,17 +270,19 @@ namespace TagExplorer.TagLayout.TreeLayout
                     pre == null ? 0 : pre.totalRange.Right,
                     ctag, db.QueryTagChildren(ctag).Count);
 
-            TagBoxSizeInf sizeinf = new TagBoxSizeInf(ctag, rootLevel + 1, StaticCfg.Ins.GFontName);
-
             bool leftOK = true, rightOK = true;
-            if (pre != null && direct == 1) { rightOK = pre.totalRange.Right + sizeinf.OutterBoxSize.Width < size.Width; }
-            if (pre != null && direct == -1) { leftOK = sizeinf.OutterBoxSize.Width < pre.totalRange.Left; }
+            TagBoxSizeInf sizeinf = new TagBoxSizeInf(ctag, rootLevel + 1, StaticCfg.Ins.GFontName);
+            int OneLineChild = GetTagTreeWidth(ctag, db, rootLevel + 1, MaxLevel);
+            //右边是否有足够空间(初步预估，用OneLineChild*本节点的宽度预估)
+            if (pre != null && direct == 1) { rightOK = pre.totalRange.Right +  sizeinf.OutterBoxSize.Width < size.Width; }
+            //左边是否有足够空间
+            if (pre != null && direct == -1) { leftOK =  sizeinf.OutterBoxSize.Width < pre.totalRange.Left; }
+            
+            
             //只有满足严格条件的情况下，才放在兄弟节点的后面，否则在父节点后展开
-            if (pre != null &&
+            if (pre != null && OneLineChild>=0 &&
                 (db.QueryTagChildren(pre.GTagBox.Tag).Count == 0 || rootLevel + 1 == MaxLevel) &&
-                rightOK && 
-                leftOK &&
-                (GetTagTreeWidth(ctag, db,rootLevel+1,MaxLevel) <= 1 ))    
+                rightOK &&  leftOK  )    
             {
                 Logger.D("Place {0} after {1}:follow", ctag, pre.GTagBox.Tag);
                 cur = ExpandNode(ctag, rootLevel + 1, db,

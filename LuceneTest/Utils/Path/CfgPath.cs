@@ -156,7 +156,7 @@ namespace TagExplorer.Utils
 
         //获得文档存放根路径（TODO，后面可能需要支持文档根路径有多个，类似于编译器的-I选项）
         public static string DocDir { get { return SubDir(DocBasePath, "Doc"); } }
-        public static string RecycleDir { get { return SubDir(DocBasePath, "Recycle"); } }
+        public static string RecycleDir { get { return RootSubDir("Recycle"); } }//{ get { return SubDir(DocBasePath, "Recycle"); } }
         public static string TemplatePath { get { return Path.Combine(DocBasePath, "Template"); } }
         public static string Res_Path { get { return SubDir(DocBasePath, "Res"); } }
         public static string Exchange_Path { get { return SubDir(DocBasePath, "Exchange"); } }
