@@ -48,7 +48,7 @@ namespace TagExplorer.Utils.Cfg
         #endregion
 
         #region 所有动态配置属性（会在程序中动态修改，并需要保存恢复的信息）
-        private string mainCanvasHeight = "50*";
+        private string mainCanvasHeight = "200";
         public string MainCanvasHeight { get { return mainCanvasHeight; } set { mainCanvasHeight = value;Save(); } }
 
 

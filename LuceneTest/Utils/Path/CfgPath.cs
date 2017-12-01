@@ -74,6 +74,18 @@ namespace TagExplorer.Utils
             
         }
         private static string rootPath = null;
+        public static bool SetRootPathNoSave(string dir)
+        {
+            if(Directory.Exists(dir))
+            {
+                rootPath = dir;
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
         public static string RootPath
         {
             get
@@ -91,10 +103,10 @@ namespace TagExplorer.Utils
                         }
 
                     }
-                    return rootPath;
+                    
 
                 }
-                else return rootPath;
+                return rootPath;
             }
             set
             {

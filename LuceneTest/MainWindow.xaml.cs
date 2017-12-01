@@ -65,6 +65,7 @@ namespace TagExplorer
             IDisposableFactory.New<MainWindow>(this);
 
             richTxt.Focus();
+            this.Title = "TagExplorer " + CfgPath.RootPath;
 
         }
         private void Window_Closed(object sender, EventArgs e)

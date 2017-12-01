@@ -93,10 +93,32 @@ namespace TagExplorer
             }
             return null;
         }
-
+        private void Dbg()
+        {
+            if (File.Exists(@"B:\DbgTagExplorer=1"))
+            {
+                string dir = @"B:\TagExplorerBase";
+                if (Directory.Exists(dir) && MessageBox.Show(dir, "Del", MessageBoxButton.OKCancel) == MessageBoxResult.OK)
+                {
+                    Directory.Delete(dir, true);
+                }
+                if (!Directory.Exists(dir))
+                {
+                    Directory.CreateDirectory(dir);
+                }
+                CfgPath.SetRootPathNoSave(dir);
+            }
+        }
         private void App_Startup(object sender, StartupEventArgs e)
         {
-        retry:
+            
+            if(e.Args.Length>0)
+            {
+                CfgPath.SetRootPathNoSave(e.Args[0]);
+            }
+            Dbg();
+
+            retry:
             if (CfgPath.RootPath == null)
             {
                 System.Windows.Forms.FolderBrowserDialog fd = new System.Windows.Forms.FolderBrowserDialog();
