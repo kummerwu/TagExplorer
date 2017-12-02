@@ -36,10 +36,10 @@ namespace TagExplorer.UriInfList
             foreach (string uri in files)
             {
                 string formatUri = CfgPath.ChangePathRoot(uri);
-                if (PathHelper.IsValidUri(uri))
+                if (PathHelper.IsValidUri(formatUri))
                 {
                     SearchResultItem it = new SearchResultItem();
-                    it.Init(uri, db);
+                    it.Init(uri,formatUri, db);
                     ret.Add(it);
                 }
             }
@@ -128,10 +128,10 @@ namespace TagExplorer.UriInfList
             }
         }
         //私有成员方法************************************************************
-        private void Init(string fullPath, IUriDB db)//TODO 支持http图标
+        private void Init(string originalUri,string fullPath, IUriDB db)//TODO 支持http图标
         {
             fullUri = fullPath;
-            uriItem = db.GetInf(fullUri);
+            uriItem = db.GetInf(originalUri);
             if (uriItem == null) return;
 
             //http链接

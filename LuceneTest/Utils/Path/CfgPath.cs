@@ -29,7 +29,7 @@ namespace TagExplorer.Utils
                 int idx = fullPath.IndexOf("\\DocumentBase\\Doc\\");
                 if (idx > 0)
                 {
-                    string tmp = Path.Combine(RootPath, fullPath.Substring(idx));
+                    string tmp = Path.Combine(RootPath, fullPath.Substring(idx+1));
                     if (PathHelper.IsValidUri(tmp)) return tmp;
                 }
             }
