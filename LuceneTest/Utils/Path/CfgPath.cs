@@ -173,6 +173,22 @@ namespace TagExplorer.Utils
         public static string Res_Path { get { return SubDir(DocBasePath, "Res"); } }
         public static string Exchange_Path { get { return SubDir(DocBasePath, "Exchange"); } }
 
+
+        public static void MoveToRecycle(string f)
+        {
+            if (File.Exists(f))
+            {
+                File.Move(f, CfgPath.GetRecycleByPath(f));
+            }
+        }
+
+        public static string GetRecycleByPath(string s)
+        {
+            string name = System.IO.File.Exists(s) ? System.IO.Path.GetFileName(s) : new System.IO.DirectoryInfo(s).Name;
+            string dst = CfgPath.GetRecycleName(name);
+            return dst;
+        }
+
         public static string GetRecycleName(string name)
         {
             string dst = Path.Combine(CfgPath.RecycleDir, name);

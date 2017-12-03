@@ -128,8 +128,7 @@ namespace TagExplorer.UriMgr
             {
                 if (PathHelper.IsValidFS(s))
                 {
-                    string name = System.IO.File.Exists(s) ? System.IO.Path.GetFileName(s) : new System.IO.DirectoryInfo(s).Name;
-                    string dst = CfgPath.GetRecycleName(name);
+                    string dst = CfgPath.GetRecycleByPath(s);
                     dstList.Add(dst);
                     srcList.Add(s);
                 }
@@ -137,6 +136,7 @@ namespace TagExplorer.UriMgr
             FileShell.SHMoveFiles(srcList.ToArray(), dstList.ToArray());
         }
 
+        
         public void Dispose()
         {
             search.Dispose();

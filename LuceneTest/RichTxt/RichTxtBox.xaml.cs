@@ -74,9 +74,16 @@ namespace TagExplorer.RichTxt
                 {
                     TextRange range = new TextRange(richTxt.Document.ContentStart,
                                             richTxt.Document.ContentEnd);
-                    FileStream fs = new FileStream(file, FileMode.Create);
-                    range.Save(fs, System.Windows.DataFormats.Rtf);
-                    fs.Close();
+                    if (range.IsEmpty)
+                    {
+                        CfgPath.MoveToRecycle(file);
+                    }
+                    else
+                    {
+                        FileStream fs = new FileStream(file, FileMode.Create);
+                        range.Save(fs, System.Windows.DataFormats.Rtf);
+                        fs.Close();
+                    }
                 }
             }catch(Exception e)
             {
@@ -84,6 +91,7 @@ namespace TagExplorer.RichTxt
                 MessageBox.Show(e.Message, "保存文件失败", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
+
         
         public void Dispose()
         {
