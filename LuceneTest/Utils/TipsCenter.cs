@@ -10,6 +10,7 @@ namespace TagExplorer.Utils
         public string ListInf { set { SetInf(value, 3); } }
         public string TagDBInf { set { SetInf(value, 4); } }
         public string UriDBInf { set { SetInf(value, 5); } }
+        public string BackTaskInf { set { SetInf(value, 6); } }
         public static TipsCenter Ins
         {
             get
@@ -37,7 +38,7 @@ namespace TagExplorer.Utils
 
         private string tips;
         private static TipsCenter _ins;
-        private string[] infs = new string[6];
+        private string[] infs = new string[60];
         private string MergeInf
         {
             get
@@ -45,7 +46,10 @@ namespace TagExplorer.Utils
                 string all = "";
                 for (int i = 0; i < infs.Length; i++)
                 {
-                    all += infs[i] + "\r\n";
+                    if (!string.IsNullOrEmpty(infs[i]))
+                    {
+                        all += infs[i] + "\r\n";
+                    }
                 }
                 return all;
             }

@@ -55,7 +55,11 @@ namespace TagExplorer.Utils
 
 
             //获取cmd窗口的输出信息
-            string output = p.StandardOutput.ReadToEnd();
+            //string output = p.StandardOutput.ReadToEnd();//Bug：有时候这个地方会挂死
+            while(p.StandardOutput.Peek()>-1)
+            {
+                p.StandardOutput.ReadLine();
+            }
 
             //StreamReader reader = p.StandardOutput;
             //string line=reader.ReadLine();

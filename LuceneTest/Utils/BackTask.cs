@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using TagExplorer.UriMgr;
+using TagExplorer.Utils.Net;
 
 namespace TagExplorer.Utils
 {
@@ -19,10 +20,37 @@ namespace TagExplorer.Utils
             Tag = tag;
             Title = title;
         }
-
+        public override string ToString()
+        {
+            return "DownloadTask:" + Url + " " + Tag + " " + Title;
+        }
         public void Run()
         {
             WebHelper.Download(Url, Tag, Title);
+        }
+    }
+    class GitPullTaskInf:IRunable
+    {
+        public void Run()
+        {
+            GitHelper h = new GitHelper();
+            h.Pull();
+        }
+        public override string ToString()
+        {
+            return "GitPullTask";
+        }
+    }
+    class GitPushTaskInf : IRunable
+    {
+        public void Run()
+        {
+            GitHelper h = new GitHelper();
+            h.Push();
+        }
+        public override string ToString()
+        {
+            return "GitPushTask";
         }
     }
     class UpdateTitleTaskInf:IRunable
@@ -35,6 +63,10 @@ namespace TagExplorer.Utils
             Uri = uri;
             UriDB = db;
             Tag = tag;
+        }
+        public override string ToString()
+        {
+            return "UpdateTitle:" + Uri + " " + Tag;
         }
         public void Run()
         {
@@ -56,6 +88,10 @@ namespace TagExplorer.Utils
         public DelTagTaskInf(string tag)
         {
             Tag = tag;
+        }
+        public override string ToString()
+        {
+            return "DelTag" + Tag;
         }
         public void Run()
         {
@@ -101,9 +137,20 @@ namespace TagExplorer.Utils
             lock(this)
             {
                 ins.tasks.Add(t);
+                TipsCenter.Ins.BackTaskInf = ToString();
             }
         }
-        
+        public override string ToString()
+        {
+            string tip = "";
+            foreach(IRunable i in tasks)
+            {
+                if (i == currentTask) tip += ">>";
+                tip += (i.ToString()+"\r\n");
+            }
+            return tip;
+        }
+        private IRunable currentTask = null;
         private void RunTask()
         {
             while(true)
@@ -120,7 +167,10 @@ namespace TagExplorer.Utils
                 }
                 if(t!=null)
                 {
+                    currentTask = t;
                     t.Run();
+                    currentTask = null;
+                    TipsCenter.Ins.BackTaskInf = ToString();
                 }
                 else
                 {

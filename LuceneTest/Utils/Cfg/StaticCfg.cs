@@ -111,9 +111,13 @@ namespace TagExplorer.Utils
 
 
         public string RootDir = @"J:\00TagExplorerBase";
-        
-        
 
+        public bool GitEnable = true;
+        public string GitLink = @"https://gitee.com/kummerwu/testlibgit2sharp.git";
+        public string GitUser = @"kummerwu";
+        public string GitEMail = @"kummerwu@foxmail.com";
+        public string GitLoginUser = @"kummerwu";
+        public string GitLoginPassword = @"asdf1234";
 
 
         //字体:存储字符串，转换为FontFamily

@@ -11,6 +11,7 @@ using TagExplorer.TagMgr;
 using TagExplorer.UriMgr;
 using TagExplorer.Utils;
 using TagExplorer.Utils.Cfg;
+using TagExplorer.Utils.Net;
 using Xceed.Wpf.AvalonDock.Layout.Serialization;
 
 namespace TagExplorer
@@ -205,7 +206,11 @@ namespace TagExplorer
 
                 tagDB.Export(CfgPath.TagDBPath_Export);
                 uriDB.Export(CfgPath.UriDBPath_Export);
-                MessageBox.Show("导出完成！");
+                MessageBox.Show("导出完成！"+(StaticCfg.Ins.GitEnable?" 正在上传数据":""));
+                if(StaticCfg.Ins.GitEnable)
+                {
+                    BackTask.Ins.Add(new GitPushTaskInf());
+                }
             }
         }
 
@@ -287,6 +292,7 @@ namespace TagExplorer
 
         private void test_Click(object sender, RoutedEventArgs e)
         {
+
             if (MessageBox.Show("开始20次show根节点","测试",MessageBoxButton.OKCancel) == MessageBoxResult.OK)
             {
                 DateTime t1 = DateTime.Now;
@@ -297,6 +303,17 @@ namespace TagExplorer
                 }
                 DateTime t2 = DateTime.Now;
                 MessageBox.Show("总共耗时:" + (t2 - t1).TotalSeconds+TreeLayoutEnv.StatInf);
+            }
+            else
+            {
+                string dir = @"E:\testall\testgitee";
+                string git = @"https://gitee.com/kummerwu/testlibgit2sharp.git";
+                GitHelper h = new GitHelper();
+                h.Connect(git, dir);
+                //h.Clone();
+                //File.WriteAllText(Path.Combine(dir,  "test.txt"),DateTime.Now.ToLongDateString()+DateTime.Now.ToLongTimeString());
+
+                h.Pull();
             }
         }
 
