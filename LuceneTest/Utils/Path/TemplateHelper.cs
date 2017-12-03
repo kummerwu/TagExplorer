@@ -30,7 +30,7 @@ namespace TagExplorer.Utils
         }
         public static string GetTemplateFileFilter()
         {
-            string ret = "";
+            string ret = "文本文件(*.txt)|*.txt";
             string[] allTemplate = Directory.GetFiles(TemplateDir, "*.*");
             foreach (string f in allTemplate)
             {
