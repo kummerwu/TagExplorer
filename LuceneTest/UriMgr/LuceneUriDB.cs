@@ -530,6 +530,9 @@ namespace TagExplorer.UriMgr
         
         public int Import(string importFile)
         {
+            if (!System.IO.File.Exists(importFile)) return 0;
+
+
             int newCnt = 0, uptCnt = 0;
             SuspendCommit = true;
             string[] lns = System.IO.File.ReadAllLines(importFile);

@@ -49,10 +49,13 @@ namespace TagExplorer.Utils.Net
         }
         public void Clone()
         {
-            Repository.Clone(gitLink, baseDir, new CloneOptions()
+            if (!Repository.IsValid(baseDir))
             {
-                CredentialsProvider = (_url, _user, _cred) => CreateUsernamePasswordCredentials(GitLoginUser, GitLoginPass, false)
-            });
+                Repository.Clone(gitLink, baseDir, new CloneOptions()
+                {
+                    CredentialsProvider = (_url, _user, _cred) => CreateUsernamePasswordCredentials(GitLoginUser, GitLoginPass, false)
+                });
+            }
         }
 
         public void Push()
@@ -74,6 +77,17 @@ namespace TagExplorer.Utils.Net
             }
         }
         public void Pull()
+        {
+            if(Repository.IsValid(baseDir))
+            {
+                PullIn();
+            }
+            else
+            {
+                Clone();
+            }
+        }
+        public void PullIn()
         {
             try
             {

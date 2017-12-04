@@ -113,6 +113,7 @@ namespace TagExplorer.Utils
         public string RootDir = @"J:\00TagExplorerBase";
 
         public bool GitEnable = true;
+        //public string GitLink = @"https://gitee.com/kummerwu/DocumentBase.git";// 
         public string GitLink = @"https://gitee.com/kummerwu/testlibgit2sharp.git";
         public string GitUser = @"kummerwu";
         public string GitEMail = @"kummerwu@foxmail.com";

@@ -582,6 +582,8 @@ VALUES (@ID,@Title,@Alias,@PID,@Children)",Conn);
         
         public int Import(string importInf)
         {
+            if (!File.Exists(importInf)) return 0;
+
             int newCnt = 0, uptCnt = 0;
             Hashtable title2GUtag = new Hashtable();
             string[] lns = File.ReadAllLines(importInf);

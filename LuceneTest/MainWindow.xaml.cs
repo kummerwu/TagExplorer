@@ -276,18 +276,24 @@ namespace TagExplorer
         }
         private void btImport_Click(object sender, RoutedEventArgs e)
         {
-            switch(StaticCfg.CURRENT_VERSION)
+            if (StaticCfg.Ins.GitEnable)
             {
-                case "1.0":Import1_0();break;
-                case "1.1":Import1_1();break;
-                case "1.2":
-                    {
-                        tagDB.Import(CfgPath.TagDBPath_Export);
-                        uriDB.Import(CfgPath.UriDBPath_Export);
-                        break;
-                    }
+                BackTask.Ins.Add(new GitPullTaskInf(this));
             }
-            
+            else
+            {
+                switch (StaticCfg.CURRENT_VERSION)
+                {
+                    case "1.0": Import1_0(); break;
+                    case "1.1": Import1_1(); break;
+                    case "1.2":
+                        {
+                            tagDB.Import(CfgPath.TagDBPath_Export);
+                            uriDB.Import(CfgPath.UriDBPath_Export);
+                            break;
+                        }
+                }
+            }
         }
 
         private void test_Click(object sender, RoutedEventArgs e)
@@ -316,7 +322,11 @@ namespace TagExplorer
                 h.Pull();
             }
         }
-
+        public void GitFinished()
+        {
+            tagDB.Import(CfgPath.TagDBPath_Export);
+            uriDB.Import(CfgPath.UriDBPath_Export);
+        }
         private void btUp_Click(object sender, RoutedEventArgs e)
         {
             tagCanvas.UpTag();

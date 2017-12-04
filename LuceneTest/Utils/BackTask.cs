@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
+using System.Windows;
 using TagExplorer.UriMgr;
 using TagExplorer.Utils.Net;
 
@@ -10,6 +11,15 @@ namespace TagExplorer.Utils
     interface IRunable
     {
         void Run();
+        //public virtual void Run()
+        //{
+        //    if(ui!=null)
+        //    {
+        //        ui.Dispatcher.Invoke(ui.GitFinished);  
+        //    }
+        //}
+        //MainWindow ui;
+
     }
     class DownloadTaskInf:IRunable
     {
@@ -31,10 +41,19 @@ namespace TagExplorer.Utils
     }
     class GitPullTaskInf:IRunable
     {
-        public void Run()
+        MainWindow ui = null;
+        public GitPullTaskInf(MainWindow ui)
+        {
+            this.ui = ui;
+        }
+        public  void Run()
         {
             GitHelper h = new GitHelper();
             h.Pull();
+            if (ui != null)
+            {
+                ui.Dispatcher.Invoke(ui.GitFinished);
+            }
         }
         public override string ToString()
         {

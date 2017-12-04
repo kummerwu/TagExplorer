@@ -7,6 +7,7 @@ using System.Windows;
 using TagExplorer.Utils;
 
 using System.IO;
+using TagExplorer.Utils.Net;
 
 namespace TagExplorer
 {
@@ -97,7 +98,7 @@ namespace TagExplorer
         {
             if (File.Exists(@"B:\DbgTagExplorer=1"))
             {
-                string dir = @"B:\TagExplorerBase";
+                string dir = @"B:\TagExplorer";
                 if (Directory.Exists(dir) && MessageBox.Show(dir, "Del", MessageBoxButton.OKCancel) == MessageBoxResult.OK)
                 {
                     Directory.Delete(dir, true);
@@ -107,6 +108,8 @@ namespace TagExplorer
                     Directory.CreateDirectory(dir);
                 }
                 CfgPath.SetRootPathNoSave(dir);
+                GitHelper h = new GitHelper();
+                h.Clone();
             }
         }
         private void App_Startup(object sender, StartupEventArgs e)
