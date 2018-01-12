@@ -101,7 +101,7 @@
                     <Image Source="pack://siteoforigin:,,,/Resources/information.png" ></Image>
                 </Button.Content>
             </Button>
-            <Button Width="30" >
+            <Button Width="30" Click="Button_Click_1">
                 <Button.ToolTip>
                     <ToolTip>
                         <TextBlock Text="{Binding Path=Tips,Source={x:Static utils:TipsCenter.Ins}}"></TextBlock>

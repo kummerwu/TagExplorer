@@ -114,7 +114,7 @@ namespace TagExplorer
         }
         private void App_Startup(object sender, StartupEventArgs e)
         {
-            
+            TipsCenter.Ins.StartTime = "App:117" ;
             if(e.Args.Length>0)
             {
                 CfgPath.SetRootPathNoSave(e.Args[0]);

@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 namespace TagExplorer.Utils
 {
     public class TipsCenter : INotifyPropertyChanged
@@ -11,6 +12,19 @@ namespace TagExplorer.Utils
         public string TagDBInf { set { SetInf(value, 4); } }
         public string UriDBInf { set { SetInf(value, 5); } }
         public string BackTaskInf { set { SetInf(value, 6); } }
+        private DateTime lastTime = DateTime.MinValue;
+        public string StartTime {
+            set {
+                string inf = value + DateTime.Now.ToString("===mm:ss.fff  ##");
+                if (lastTime!=DateTime.MinValue)
+                {
+                    inf += (int)((DateTime.Now - lastTime).TotalMilliseconds) + "ms";
+                }
+                inf += "\r\n";
+                lastTime = DateTime.Now;
+                SetInf((infs[7]==null?"":infs[7] )+ inf, 7);
+            }
+        }
         public static TipsCenter Ins
         {
             get

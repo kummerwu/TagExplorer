@@ -39,34 +39,43 @@ namespace TagExplorer
         public MainWindow()
         {
             Logger.I(@"init main window");
-
+            TipsCenter.Ins.StartTime = "mw:42:beforeinit";
             InitializeComponent();
 
             //URI DB初始化
             Logger.I("InitializeComponent Finished!，init uridb");
             uriDB = UriDBFactory.CreateUriDB();
             uriDB.UriDBChanged += UriDBChangedCallback;
+            TipsCenter.Ins.StartTime = "UriDB Init";
             
             //TAG DB初始化
             Logger.I("InitializeComponent Finished!，init tagdb");
             tagDB = TagDBFactory.CreateTagDB();
             tagDB.TagDBChanged += TagDBChanged;
+            TipsCenter.Ins.StartTime = "TagDB Init";
 
             //查询输入框初始化
             SearchBox.textBox.TextChanged += SearchBoxTextChanged_Callback;
             SearchBox.SearchDataProvider = tagDB;
+            TipsCenter.Ins.StartTime = "SearchBoxInit";
 
             //Tag视图初始化
             tagCanvas.InitDB(tagDB,uriDB);
             tagCanvas.SelectedTagChanged += SelectedTagChanged_Callback;
-            GUTag mroot = GUTag.Parse(DynamicCfg.Ins.MainCanvasRoot,tagDB);
-            GUTag sroot = GUTag.Parse(DynamicCfg.Ins.SubCanvasRoot,tagDB);
-            ShowTagGraph(mroot,sroot);
+            TipsCenter.Ins.StartTime = "tagCanvasInit";
 
+            GUTag mroot = GUTag.Parse(DynamicCfg.Ins.MainCanvasRoot,tagDB);
+            TipsCenter.Ins.StartTime = "mRoot";
+            GUTag sroot = GUTag.Parse(DynamicCfg.Ins.SubCanvasRoot,tagDB);
+            TipsCenter.Ins.StartTime = "sRoot";
+            TipsCenter.Ins.StartTime = "MainWindow:64(before showtaggraph)";
+            ShowTagGraph(mroot,sroot);
+            TipsCenter.Ins.StartTime = "AfterShowTagGraph";
             IDisposableFactory.New<MainWindow>(this);
 
             richTxt.Focus();
             this.Title = "TagExplorer " + CfgPath.RootPath;
+            TipsCenter.Ins.StartTime = "MainWindow:70" ;
 
         }
         private void Window_Closed(object sender, EventArgs e)
@@ -337,5 +346,10 @@ namespace TagExplorer
             tagCanvas.HomeTag();
         }
         #endregion
+
+        private void Button_Click_1(object sender, RoutedEventArgs e)
+        {
+            MessageBox.Show(TipsCenter.Ins.Tips);
+        }
     }
 }
