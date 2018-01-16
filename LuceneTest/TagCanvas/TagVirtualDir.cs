@@ -41,8 +41,11 @@ namespace TagExplorer.TagCanvas
             foreach (string t in TagHistory)
             {
                 string tagVDir = CfgPath.GetVDirByTag(t);
-                string tagDir = CfgPath.GetDirByTag(t);
-                PathHelper.LinkDir(tagVDir, tagDir);
+                string tagDir = CfgPath.GetDirByTag(t);//目前这个功能已经废除了，但不需要在这儿新建目录
+                if (Directory.Exists(tagDir))
+                {
+                    PathHelper.LinkDir(tagVDir, tagDir);
+                }
             }
 
             //如果溢出的话，淘汰老的目录

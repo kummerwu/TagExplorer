@@ -114,7 +114,7 @@ namespace TagExplorer.Utils
         }
         public void Run()
         {
-            string src = CfgPath.GetDirByTag(Tag);
+            string src = CfgPath.GetDirByTag(Tag);//删除目录，不需要再这儿创建目录
             
             if(Directory.Exists(src))
             {

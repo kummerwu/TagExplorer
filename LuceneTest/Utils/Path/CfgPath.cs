@@ -200,7 +200,7 @@ namespace TagExplorer.Utils
         }
         public static string GetTemplateFileByTag(string tag,string dotPostfix)
         {
-            string file = CfgPath.GetFileByTag(tag, "note"+dotPostfix);
+            string file = CfgPath.GetFileByTag(tag, "note"+dotPostfix,true);//这儿保证目录创建，并且file不为null
             string tmplateFile = TemplateHelper.GetTemplateByExtension(dotPostfix);
             if (!File.Exists(file) && File.Exists(tmplateFile))
             {
@@ -300,14 +300,16 @@ namespace TagExplorer.Utils
         /// <param name="tag">标签名称</param>
         /// <param name="postfix">文件后缀名（不带.) </param>
         /// <returns></returns>
-        public static string GetFileByTag(string tag, string postfix)
+        public static string GetFileByTag(string tag, string postfix,bool createDir = false)
         {
-            return System.IO.Path.Combine(GetDirByTag(tag), tag + "." + postfix);
+            string dir = GetDirByTag(tag,createDir);//不要再这儿创建目录
+            return System.IO.Path.Combine(dir, tag + "." + postfix);//TODO 待定
+            
         }
-        public static string GetDirByTag(string tag)
+        public static string GetDirByTag(string tag,bool create = false)
         {
             string dir = System.IO.Path.Combine(CfgPath.DocDir, tag);
-            if (!Directory.Exists(dir))
+            if (create && !Directory.Exists(dir))
             {
                 Directory.CreateDirectory(dir);
             }
