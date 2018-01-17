@@ -124,7 +124,7 @@ namespace TagExplorer.Utils
             if (title != null)
             {
                 string tag = title;
-                string dir = CfgPath.GetDirByTag(tag);
+                string dir = CfgPath.GetDirByTag(tag,true);//打开目录，现在创建
                 Logger.D("OpenTagDir {0} {1}", tag, dir);
                 Process.Start(dir);
             }
@@ -343,11 +343,11 @@ namespace TagExplorer.Utils
             if (title != null && postfix != null)
             {
                 string tag = title;
-                string file = CfgPath.GetFileByTag(tag, postfix);
+                string file = CfgPath.GetFileByTag(tag, postfix);//file可能为null
                 //string file = System.IO.Path.Combine(MyPath.DocRoot, tag + GConfig.DefaultPostfix);
 
                 //如果文件已经存在，直接打开
-                if (File.Exists(file))
+                if (file!=null &&File.Exists(file))
                 {
                     System.Diagnostics.Process.Start(file);
                 }
@@ -355,14 +355,20 @@ namespace TagExplorer.Utils
                 {
                     //如果文件不存在，尝试在其他路径上查找
                     string[] files = Directory.GetFiles(CfgPath.DocDir, tag + "." + postfix);
-                    string[] files2 = Directory.GetFiles(CfgPath.GetDirByTag(tag), tag + "." + postfix);
+                    string dir = CfgPath.GetDirByTag(tag); //如果目录不存在，就不要再这儿创建了。
+                    string[] files2 = null;
+
+                    if (Directory.Exists(dir))
+                    {
+                        files2 = Directory.GetFiles(dir, tag + "." + postfix);
+                    }
 
                     if (files.Length > 0)
                     {
                         file = files[0];
                         System.Diagnostics.Process.Start(file);
                     }
-                    else if (files2.Length > 0)
+                    else if (files2!=null && files2.Length > 0)
                     {
                         file = files2[0];
                         System.Diagnostics.Process.Start(file);

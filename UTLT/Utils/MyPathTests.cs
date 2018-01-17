@@ -44,7 +44,7 @@ namespace AnyTags.Net.Tests
         {
             string testFile = @"B:\hello";
             File.Create(testFile).Close();
-            FilesRelocationTest(new string[] { CfgPath.GetDirByTag("test") + "\\hello" },
+            FilesRelocationTest(new string[] { CfgPath.GetDirByTag("test",true) + "\\hello" },
                                 new string[] { testFile },
                                 "test");
             File.Delete(testFile);

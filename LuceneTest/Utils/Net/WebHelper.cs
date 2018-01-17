@@ -119,7 +119,7 @@ namespace TagExplorer.Utils
         {
             if (PathHelper.IsValidHttp(url))
             {
-                string d = CfgPath.GetDirByTag(tag);
+                string d = CfgPath.GetDirByTag(tag,true);
                 if (string.IsNullOrEmpty(title))
                 {
                     title = SearchResultItem.GetTitle(url);

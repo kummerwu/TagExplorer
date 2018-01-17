@@ -24,7 +24,7 @@ namespace TagExplorer.Utils
                 {
                     System.Diagnostics.Debug.Assert(PathHelper.IsValidFS(s));
                     string n = Path.GetFileName(s);
-                    string d = Path.Combine(CfgPath.GetDirByTag(currentTag), n);
+                    string d = Path.Combine(CfgPath.GetDirByTag(currentTag,true), n);//如果目录不存在，现在创建
                     dsts[i] = d;
                 }
                 

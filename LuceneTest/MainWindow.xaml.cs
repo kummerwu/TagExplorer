@@ -146,7 +146,7 @@ namespace TagExplorer
         {
             SearchBox.Text = tag.Title;
             //现在自己的这个richtextbox非常不好用，将其暂时废除，除非有一个好用的再说
-            string uri = CfgPath.GetFileByTag(tag.Title,"note.rtf");
+            string uri = CfgPath.GetFileByTag(tag.Title,"note.rtf"); //uri可能不存在
             richTxt.Load(uri);
             ShowUrlListByText();
             //修改text后，会自动触发 TextBox_TextChanged
@@ -308,6 +308,10 @@ namespace TagExplorer
                     case "1.1": Import1_1(); break;
                     case "1.2":
                         {
+                            if(File.Exists(CfgPath.TagDBPath_Json))
+                            {
+                                tagDB.Import(CfgPath.TagDBPath_Json);
+                            }
                             tagDB.Import(CfgPath.TagDBPath_Export);
                             uriDB.Import(CfgPath.UriDBPath_Export);
                             break;
