@@ -31,7 +31,7 @@ namespace TagExplorer.RichTxt
         private void ChangeFile(string f)
         {
             file = f;
-            richTxt.IsEnabled = (file != null);
+            //richTxt.IsEnabled = (file != null && File.Exists(file));
         }
         public void Load(string f)
         {
@@ -66,6 +66,25 @@ namespace TagExplorer.RichTxt
                 MessageBox.Show(e.Message, "打开文件失败", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
+        private void EnsureDirExist(string f)
+        {
+            DirectoryInfo dir = new FileInfo(f).Directory;
+            EnsureCreateDir(dir);
+        }
+        private void EnsureCreateDir(DirectoryInfo dir)
+        {
+
+            if (!dir.Exists)
+            {
+                DirectoryInfo parent = dir.Parent;
+                if (!parent.Exists)
+                {
+                    EnsureCreateDir(parent);
+                    
+                }
+                dir.Create();
+            }
+        }
         public void Save()
         {
             try
@@ -80,6 +99,10 @@ namespace TagExplorer.RichTxt
                     }
                     else
                     {
+                        if (!File.Exists(file))
+                        {
+                            EnsureDirExist(file);
+                        }
                         FileStream fs = new FileStream(file, FileMode.Create);
                         range.Save(fs, System.Windows.DataFormats.Rtf);
                         fs.Close();
@@ -159,7 +182,6 @@ namespace TagExplorer.RichTxt
             
         }
         
-
         
     }
 }

@@ -855,7 +855,7 @@ namespace TagExplorer.TagCanvas
                 {
                     System.Diagnostics.Debug.Assert(PathHelper.IsValidFS(f));
                     FileInfo fi = new FileInfo(f);
-                    string dstDir = CfgPath.GetDirByTag(tag);
+                    string dstDir = CfgPath.GetDirByTag(tag,true);//新建文件，保证目录存在
                     string dstFile = System.IO.Path.Combine(dstDir, fi.Name);
                     if (dstFile == f)
                     {
@@ -900,7 +900,7 @@ namespace TagExplorer.TagCanvas
         private void miCopyTagFullPath_Click(object sender, RoutedEventArgs e)
         {
             UpdateCurrentTagByContextMenu();
-            ClipBoardSafe.SetText(CfgPath.GetDirByTag(SelectedTag.Title));
+            ClipBoardSafe.SetText(CfgPath.GetDirByTag(SelectedTag.Title,true)); //拷贝完整路径名，需要保证目录存在
         }
 
         private void tagAreaMenu_ContextMenuOpening(object sender, ContextMenuEventArgs e)
@@ -923,7 +923,7 @@ namespace TagExplorer.TagCanvas
         private void miNewFile_Click(object sender, RoutedEventArgs e)
         {
             UpdateCurrentTagByContextMenu();
-            string initDir = CfgPath.GetDirByTag(SelectedTag.Title);
+            string initDir = CfgPath.GetDirByTag(SelectedTag.Title,true);//新建文件，保证目录存在
             SaveFileDialog sf = new SaveFileDialog();
             sf.InitialDirectory = initDir;
 
@@ -1147,7 +1147,7 @@ namespace TagExplorer.TagCanvas
         private void miCopyTagFullPathEx_Click(object sender, RoutedEventArgs e)
         {
             UpdateCurrentTagByContextMenu();
-            string dir = CfgPath.GetDirByTag(SelectedTag.Title);
+            string dir = CfgPath.GetDirByTag(SelectedTag.Title,true);//拷贝目录名，需要保证路径存在
             dir = System.IO.Path.Combine(dir, DateTime.Now.ToString("yyyyMMdd") + "-");
             ClipBoardSafe.SetText(dir);
         }

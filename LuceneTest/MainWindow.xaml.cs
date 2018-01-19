@@ -41,43 +41,52 @@ namespace TagExplorer
             Logger.I(@"init main window");
             TipsCenter.Ins.StartTime = "mw:42:beforeinit";
             InitializeComponent();
-
-            //URI DB初始化
-            Logger.I("InitializeComponent Finished!，init uridb");
-            uriDB = UriDBFactory.CreateUriDB();
-            uriDB.UriDBChanged += UriDBChangedCallback;
-            TipsCenter.Ins.StartTime = "UriDB Init";
-            
-            //TAG DB初始化
-            Logger.I("InitializeComponent Finished!，init tagdb");
-            tagDB = TagDBFactory.CreateTagDB();
-            tagDB.TagDBChanged += TagDBChanged;
-            TipsCenter.Ins.StartTime = "TagDB Init";
-
-            //查询输入框初始化
-            SearchBox.textBox.TextChanged += SearchBoxTextChanged_Callback;
-            SearchBox.SearchDataProvider = tagDB;
-            TipsCenter.Ins.StartTime = "SearchBoxInit";
-
-            //Tag视图初始化
-            tagCanvas.InitDB(tagDB,uriDB);
-            tagCanvas.SelectedTagChanged += SelectedTagChanged_Callback;
-            TipsCenter.Ins.StartTime = "tagCanvasInit";
-
-            GUTag mroot = GUTag.Parse(DynamicCfg.Ins.MainCanvasRoot,tagDB);
-            TipsCenter.Ins.StartTime = "mRoot";
-            GUTag sroot = GUTag.Parse(DynamicCfg.Ins.SubCanvasRoot,tagDB);
-            TipsCenter.Ins.StartTime = "sRoot";
-            TipsCenter.Ins.StartTime = "MainWindow:64(before showtaggraph)";
-            ShowTagGraph(mroot,sroot);
-            TipsCenter.Ins.StartTime = "AfterShowTagGraph";
-            IDisposableFactory.New<MainWindow>(this);
-
-            richTxt.Focus();
-            this.Title = "TagExplorer " + CfgPath.RootPath;
-            TipsCenter.Ins.StartTime = "MainWindow:70" ;
+            TipsCenter.Ins.StartTime = "InitializeComponent";
 
         }
+
+        private void InitialViews()
+        {
+            if (uriDB == null || tagDB == null)
+            {
+                TipsCenter.Ins.StartTime = "Before Init DBS ";
+                //URI DB初始化
+                Logger.I("InitializeComponent Finished!，init uridb");
+                uriDB = UriDBFactory.CreateUriDB();
+                uriDB.UriDBChanged += UriDBChangedCallback;
+                TipsCenter.Ins.StartTime = "UriDB Init";
+
+                //TAG DB初始化
+                Logger.I("InitializeComponent Finished!，init tagdb");
+                tagDB = TagDBFactory.CreateTagDB();
+                tagDB.TagDBChanged += TagDBChanged;
+                TipsCenter.Ins.StartTime = "TagDB Init";
+
+                //查询输入框初始化
+                SearchBox.textBox.TextChanged += SearchBoxTextChanged_Callback;
+                SearchBox.SearchDataProvider = tagDB;
+                TipsCenter.Ins.StartTime = "SearchBoxInit";
+
+                //Tag视图初始化
+                tagCanvas.InitDB(tagDB, uriDB);
+                tagCanvas.SelectedTagChanged += SelectedTagChanged_Callback;
+                TipsCenter.Ins.StartTime = "tagCanvasInit";
+
+                GUTag mroot = GUTag.Parse(DynamicCfg.Ins.MainCanvasRoot, tagDB);
+                TipsCenter.Ins.StartTime = "mRoot";
+                GUTag sroot = GUTag.Parse(DynamicCfg.Ins.SubCanvasRoot, tagDB);
+                TipsCenter.Ins.StartTime = "sRoot";
+                TipsCenter.Ins.StartTime = "MainWindow:64(before showtaggraph)";
+                ShowTagGraph(mroot, sroot);
+                TipsCenter.Ins.StartTime = "AfterShowTagGraph";
+                IDisposableFactory.New<MainWindow>(this);
+
+                richTxt.Focus();
+                this.Title = "TagExplorer " + CfgPath.RootPath;
+                TipsCenter.Ins.StartTime = "MainWindow:70";
+            }
+        }
+
         private void Window_Closed(object sender, EventArgs e)
         {
             IDisposableFactory.Dispose(tagDB);
@@ -137,7 +146,7 @@ namespace TagExplorer
         {
             SearchBox.Text = tag.Title;
             //现在自己的这个richtextbox非常不好用，将其暂时废除，除非有一个好用的再说
-            string uri = CfgPath.GetFileByTag(tag.Title,"note.rtf");
+            string uri = CfgPath.GetFileByTag(tag.Title,"note.rtf"); //uri可能不存在
             richTxt.Load(uri);
             ShowUrlListByText();
             //修改text后，会自动触发 TextBox_TextChanged
@@ -260,7 +269,9 @@ namespace TagExplorer
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
+            //InitialViews();
             LoadLayout();
+            
         }
 #endregion
         private void tagCanvas_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -297,6 +308,10 @@ namespace TagExplorer
                     case "1.1": Import1_1(); break;
                     case "1.2":
                         {
+                            if(File.Exists(CfgPath.TagDBPath_Json))
+                            {
+                                tagDB.Import(CfgPath.TagDBPath_Json);
+                            }
                             tagDB.Import(CfgPath.TagDBPath_Export);
                             uriDB.Import(CfgPath.UriDBPath_Export);
                             break;
@@ -350,6 +365,11 @@ namespace TagExplorer
         private void Button_Click_1(object sender, RoutedEventArgs e)
         {
             MessageBox.Show(TipsCenter.Ins.Tips);
+        }
+
+        private void Window_Activated(object sender, EventArgs e)
+        {
+            InitialViews();
         }
     }
 }

@@ -10,7 +10,7 @@
         xmlns:avalonDock="http://schemas.xceed.com/wpf/xaml/avalondock"
         xmlns:richtxt="clr-namespace:TagExplorer.RichTxt"
         mc:Ignorable="d"
-        Title="TagExplorer" Height="350" Width="525" SizeChanged="Window_SizeChanged" WindowState="Maximized" WindowStartupLocation="CenterScreen" Closed="Window_Closed" Loaded="Window_Loaded" >
+        Title="TagExplorer" Height="350" Width="525" SizeChanged="Window_SizeChanged" WindowState="Maximized" WindowStartupLocation="CenterScreen" Closed="Window_Closed" Loaded="Window_Loaded" Activated="Window_Activated" >
     <Window.CommandBindings>
         <CommandBinding Command="Paste" CanExecute="Paste_CanExecute" Executed="Paste_Executed"/>
         <CommandBinding Command="Cut" CanExecute="Cut_CanExecute" Executed="Cut_Executed"/>
