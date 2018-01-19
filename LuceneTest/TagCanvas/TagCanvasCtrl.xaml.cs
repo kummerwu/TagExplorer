@@ -768,14 +768,14 @@ namespace TagExplorer.TagCanvas
            
         }
         private void PasteFiles() { PasteFiles(true); }
-        private void PasteFiles(bool NeedCopy)
+        private void PasteFiles(bool NeedCopy,bool download = false)
         {
             Cursor bak = this.Cursor;
             try
             {
                 this.Cursor = Cursors.Wait;
                 UpdateCurrentTagByContextMenu();
-                AddUri(FileShell.GetFileListFromClipboard(), NeedCopy);
+                AddUri(FileShell.GetFileListFromClipboard(), NeedCopy,download);
             }
             catch (Exception e)
             {
@@ -796,7 +796,7 @@ namespace TagExplorer.TagCanvas
             }
         }
         private void AddUri(List<string> files) { AddUri(files, true); }
-        private void AddUri(List<string> files, bool NeedCopy)
+        private void AddUri(List<string> files, bool NeedCopy,bool download = false)
         {
             if (UriDB == null || SelectedTag == null ||SelectedTag.Title==null || SelectedTag.Title.Length == 0) return;
 
@@ -822,7 +822,7 @@ namespace TagExplorer.TagCanvas
                     //{
                     //    UriDB.UpdateTitle(uri, title);
                     //}
-                    BackTask.Ins.Add(new UpdateTitleTaskInf(uri, UriDB, SelectedTag.Title));
+                    BackTask.Ins.Add(new UpdateTitleTaskInf(uri, UriDB, SelectedTag.Title,download));
                 }
             }
             //foreach(string f in dst)
@@ -1206,7 +1206,10 @@ namespace TagExplorer.TagCanvas
         {
             miPasteFile_Click(sender, e);
         }
-
+        private void PasteDownloadFile_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            PasteFiles(false, true);
+        }
         private void LinkFile_Executed(object sender, ExecutedRoutedEventArgs e)
         {
             miLinkInFile_Click(sender, e);
@@ -1412,9 +1415,13 @@ namespace TagExplorer.TagCanvas
         {
             ChangeLayoutMode(LayoutMode.LRTREE_COMPACT_MORE);
         }
+
         #endregion
 
-        
+        private void CommandBinding_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+
+        }
     }
     
     

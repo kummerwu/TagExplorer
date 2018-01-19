@@ -56,10 +56,10 @@ namespace TagExplorer.UriMgr
                                     new UriAnalyser(),
                                     create,
                                     IndexWriter.MaxFieldLength.UNLIMITED);
+            TipsCenter.Ins.StartTime = "NewIndexWriter";
 
-
-            reader = writer.GetReader();
-            search = new IndexSearcher(reader);
+            reader = writer.GetReader();                TipsCenter.Ins.StartTime = "GetReader";
+            search = new IndexSearcher(reader);         TipsCenter.Ins.StartTime = "newIndexSearch";
 
             //搜索查询：从哪些字段中进行搜索查询
             parser = new MultiFieldQueryParser(Lucene.Net.Util.Version.LUCENE_30,

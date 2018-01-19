@@ -77,11 +77,13 @@ namespace TagExplorer.Utils
         string Uri = null;
         IUriDB UriDB = null;
         string Tag = null;
-        public UpdateTitleTaskInf(string uri,IUriDB db,string tag)
+        bool autoDownload = false;
+        public UpdateTitleTaskInf(string uri,IUriDB db,string tag,bool download)
         {
             Uri = uri;
             UriDB = db;
             Tag = tag;
+            autoDownload = download;
         }
         public override string ToString()
         {
@@ -93,7 +95,7 @@ namespace TagExplorer.Utils
             if(title!=null)
             {
                 UriDB.UpdateTitle(Uri, title);
-                if (StaticCfg.Ins.Opt.AutoDownloadUrl)
+                if (autoDownload)
                 {
                     //WebHelper.Download(uri, currentTag.Title, title);
                     BackTask.Ins.Add(new DownloadTaskInf(Uri, Tag, title));

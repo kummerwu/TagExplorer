@@ -110,6 +110,13 @@
                 <KeyGesture>Ctrl+P</KeyGesture>
             </RoutedUICommand.InputGestures>
         </RoutedUICommand>
+
+        <RoutedUICommand x:Key="PasteDownloadFile" Text="粘贴并下载文件" >
+            <RoutedUICommand.InputGestures>
+                <KeyGesture>Ctrl+P</KeyGesture>
+            </RoutedUICommand.InputGestures>
+        </RoutedUICommand>
+        
         <RoutedUICommand x:Key="LinkFile" Text="链接文件" >
             <RoutedUICommand.InputGestures>
                 <KeyGesture>Ctrl+L</KeyGesture>
@@ -163,6 +170,7 @@
             <Separator></Separator>
             <MenuItem Command="{StaticResource NewFile}" />
             <MenuItem Command="{StaticResource PasteFile}" />
+            <MenuItem Command="{StaticResource PasteDownloadFile}" />
             <MenuItem Command="{StaticResource LinkFile}" />
             <MenuItem Name="miEdit"         Header="编辑文件">
                 <MenuItem Command="{StaticResource EditOneFile}" />
@@ -201,6 +209,7 @@
         <!--文件操作  CTRL-->
         <CommandBinding Command="{StaticResource NewFile}" Executed="NewFile_Executed"/>
         <CommandBinding Command="{StaticResource PasteFile}" Executed="PasteFile_Executed"/>
+        <CommandBinding Command="{StaticResource PasteDownloadFile}" Executed="PasteDownloadFile_Executed"/>
         <CommandBinding Command="{StaticResource LinkFile}" Executed="LinkFile_Executed"/>
         <CommandBinding Command="{StaticResource EditOneFile}" Executed="EditFile_Executed"/>
         <CommandBinding Command="{StaticResource EditRTFFile}" Executed="EditRTFFile_Executed"/>
